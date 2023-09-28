@@ -23,3 +23,22 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('getByData', selector => {
+  return cy.get(`[data-test=${selector}]`)
+})
+
+Cypress.Commands.add('login', () => {
+  cy.visit('http://localhost:4000')
+  cy.getByData('email-input').type('admin@example.com')
+  cy.getByData('password-input').type('password')
+  cy.get("button[type='submit']").contains('Log in').click()
+  cy.location('pathname').should('equal', '/dashboard')
+})
+
+Cypress.Commands.add('deleteBook', title => {
+  cy.visit('http://localhost:4000/dashboard/')
+  cy.contains(title).parent().parent().find('.ant-card-actions li').click()
+
+  cy.contains(title).should('not.exist')
+})
