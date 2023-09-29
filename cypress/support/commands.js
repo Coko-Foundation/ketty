@@ -30,8 +30,8 @@ Cypress.Commands.add('getByData', selector => {
 
 Cypress.Commands.add('login', () => {
   cy.visit('http://localhost:4000')
-  cy.getByData('email-input').type('admin@example.com')
-  cy.getByData('password-input').type('password')
+  cy.get('#email').type('admin@example.com')
+  cy.get('#password').type('password{enter}')
   cy.get("button[type='submit']").contains('Log in').click()
   cy.location('pathname').should('equal', '/dashboard')
 })
