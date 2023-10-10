@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 /* eslint-disable jest/expect-expect */
 describe('Start writing', () => {
   beforeEach(() => {
@@ -45,3 +46,21 @@ describe('Start writing', () => {
     cy.deleteBook('Book One')
   })
 })
+
+/*
+describe('Adding many books quickly', () => {
+  beforeEach(() => {
+    cy.login()
+  })
+
+  it('adding 100 books by clicking "start writing" button', () => {
+    for (let i = 1; i <= 100; i++) {
+      cy.contains('Start writing your book').click()
+      cy.contains("Don't overthink it, you can change your title at any time")
+      cy.log(`Book ${i} was created`)
+      cy.get('a[href="/dashboard"]').last().click()
+      cy.location('pathname').should('equal', '/dashboard')
+    }
+  })
+})
+*/
