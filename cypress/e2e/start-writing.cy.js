@@ -6,44 +6,61 @@ describe('Start writing', () => {
   })
 
   it('creating a book by clicking "Start writing" button', () => {
-    cy.getByData('start-writing-button')
+    // cy.getByData('start-writing-button')
+    cy.get('button:nth(1)')
       .should('have.text', 'Start writing your book')
       .click()
 
-    cy.getByData('book-title-input')
+    // cy.getByData('book-title-input')
+    cy.get('#bookTitle')
       .invoke('attr', 'placeholder')
       .should('contain', 'Book title')
 
-    cy.getByData('book-title-input')
-      .parent()
+    cy.get('form')
       .find('p')
       .should(
         'have.text',
         "Don't overthink it, you can change your title at any time",
       )
 
-    cy.getByData('book-title-input')
-      .parent()
+    cy.get('form')
       .find('button')
       .should('have.text', 'Continue')
       .should('be.disabled')
 
-    cy.getByData('book-title-input').type('Book One')
+    cy.get('#bookTitle').type('Book One')
 
-    cy.getByData('book-title-input')
-      .parent()
-      .find('button')
-      .should('have.text', 'Continue')
-      .click()
-
+    cy.get('form').find('button').should('have.text', 'Continue').click()
+    cy.contains('Book One').click()
     cy.contains('Book Metadata')
     cy.contains('Book One')
+
+    // Adding a chapter
+    cy.get('.anticon-plus').click()
+    cy.contains('Untitled Chapter').click()
+    cy.get('[title="Change to Title"]').click()
+    cy.get('h1').type('Title of chapter 1')
+
+    // Going back to dashboard
     cy.get("a[href='/dashboard']").last().click()
     cy.location('pathname').should('equal', '/dashboard')
     cy.log('Confirms that book exists in the dashboard')
     cy.get('.ant-card-body').contains('Book One')
-    cy.log('Deletes book from dashboard')
-    cy.deleteBook('Book One')
+  })
+
+  it('verifying enter key is working correctly in title page', () => {
+    cy.get('button:nth(1)')
+      .should('have.text', 'Start writing your book')
+      .click()
+
+    cy.get('#bookTitle').type('00 Test Book{enter}')
+    cy.contains('Book Metadata')
+    cy.contains('00 Test Book')
+
+    cy.get("a[href='/dashboard']").last().click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.log('Confirms that book exists in the dashboard')
+    cy.get('.ant-card-body').contains('00 Test Book')
   })
 })
 

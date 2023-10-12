@@ -5,12 +5,11 @@ describe('Start writing', () => {
   })
 
   it('creating a book by importing files', () => {
-    cy.getByData('import-files-button')
-      .should('have.text', 'Import your files')
-      .click()
+    // cy.getByData('import-files-button')
+    cy.get('button:nth(2)').should('have.text', 'Import your files').click()
 
     cy.get('h1').should('have.text', 'Import')
-    cy.get('p').first().should('have.text', 'Files supported: .doc, .docx')
+    cy.get('p').first().should('have.text', 'Files supported: .docx')
 
     cy.get('p')
       .last()
@@ -24,56 +23,70 @@ describe('Start writing', () => {
       'Drag and drop files, or Browse',
     )
 
-    cy.getByData('continue-btn')
+    // cy.getByData('continue-btn')
+    cy.get('button:nth(1)')
       .should('have.text', 'Continue')
       .should('be.disabled')
 
-    cy.getByData('upload-files-btn').selectFile(
+    // cy.getByData('upload-files-btn')
+    cy.get('input[type="file"]').selectFile(
       'cypress/fixtures/docs/test_document.docx',
       { force: true },
     )
 
     cy.get('.ant-upload-drag').should('contain', 'test_document.docx')
+    cy.get('[data-icon="close"]').click()
 
-    cy.getByData('continue-btn').click()
+    cy.uploadMultipleFiles([
+      'chapter1_test.docx',
+      'chapter2_test.docx',
+      'chapter3_test.docx',
+    ])
 
-    cy.getByData('book-title-input')
+    cy.contains('Continue').click()
+
+    // cy.getByData('book-title-input')
+    cy.get('#bookTitle')
       .invoke('attr', 'placeholder')
       .should('contain', 'Book title')
 
-    cy.getByData('book-title-input')
-      .parent()
+    cy.get('form')
       .find('p')
       .should(
         'have.text',
         "Don't overthink it, you can change your title at any time",
       )
 
-    cy.getByData('book-title-input')
-      .parent()
+    cy.get('form')
       .find('button')
       .should('have.text', 'Continue')
       .should('be.disabled')
 
-    cy.getByData('book-title-input').type('Book Two')
+    cy.get('#bookTitle').type('Book Two')
 
-    cy.getByData('book-title-input')
-      .parent()
-      .find('button')
-      .should('have.text', 'Continue')
-      .click()
+    cy.get('form').find('button').should('have.text', 'Continue').click()
 
     cy.contains('Book Metadata')
     cy.contains('Book Two')
 
     // cy.getByData('book-chapters-list').wait(10000)
-    cy.contains('test_document')
+    cy.get('ul:nth(2)').contains('Processing')
+    cy.get('ul:nth(2)').contains('chapter1_test', { timeout: 8000 })
+    cy.get('ul:nth(2)').contains('chapter2_test', { timeout: 8000 })
+    cy.get('ul:nth(2)').contains('chapter3_test', { timeout: 8000 })
 
-    /*    cy.get("a[href='/dashboard']").last().click()
-      cy.location("pathname").should("equal", "/dashboard")
-      cy.log("Confirms that book exists in the dashboard")
-      cy.get(".ant-card-body").contains("Book Two")
-      cy.log("Deletes book from dashboard")
-      cy.deleteBook("Book Two") */
+    cy.get("a[href='/dashboard']").last().click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.log('Confirms that book exists in the dashboard')
+    cy.get('.ant-card-body').contains('Book Two')
+  })
+})
+
+Cypress.Commands.add('uploadMultipleFiles', filePaths => {
+  filePaths.forEach(filePath => {
+    cy.get('input[type="file"]').selectFile(
+      `cypress/fixtures/docs/${filePath}`,
+      { force: true },
+    )
   })
 })

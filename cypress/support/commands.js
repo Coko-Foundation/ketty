@@ -36,6 +36,18 @@ Cypress.Commands.add('login', () => {
   cy.location('pathname').should('equal', '/dashboard')
 })
 
+Cypress.Commands.add('addBook', title => {
+  cy.visit('http://localhost:4000/dashboard/')
+  cy.contains('Start writing your book').click()
+  cy.get('#bookTitle').type(title)
+  cy.contains('Continue').click()
+  cy.contains(title)
+  cy.get('a[href="/dashboard"]').last().click()
+  cy.location('pathname').should('equal', '/dashboard')
+  cy.contains(title)
+  cy.log(`Book ${title} was created`)
+})
+
 Cypress.Commands.add('deleteBook', title => {
   cy.visit('http://localhost:4000/dashboard/')
   cy.contains(title).parent().parent().find('.ant-card-actions li').click()
