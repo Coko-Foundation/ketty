@@ -1,8 +1,15 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
 describe('checking elements of the dashboard', () => {
+  before(() => {
+    cy.login()
+    cy.addBook('Book 1')
+    cy.logout()
+  })
+
   beforeEach(() => {
     cy.login()
-    // cy.addBook('Book 1')
   })
 
   it('uploading a dashboard image for a book', () => {
@@ -10,7 +17,7 @@ describe('checking elements of the dashboard', () => {
     cy.get('li:nth(0)').find('[data-icon="more"]').click()
     cy.contains('Upload book placeholder image').should('exist')
 
-    cy.get('input[type="file"].SimpleUpload__HiddenInput-sc-1y6v8od-0.hRHGEm')
+    cy.get('input[type="file"]')
       .should('exist') // Check if the element exists
       .then($input => {
         cy.wrap($input).selectFile('cypress/fixtures/images/Design1.jpg', {
@@ -20,7 +27,7 @@ describe('checking elements of the dashboard', () => {
 
     cy.log('Replacing an existing dashboard image')
 
-    cy.get('input[type="file"].SimpleUpload__HiddenInput-sc-1y6v8od-0.hRHGEm')
+    cy.get('input[type="file"]')
       .should('exist') // Check if the element exists
       .then($input => {
         cy.wrap($input).selectFile('cypress/fixtures/images/Design2.jpg', {
@@ -37,20 +44,49 @@ describe('checking elements of the dashboard', () => {
     cy.contains('Book 2').should('not.exist')
   })
 
-  //   it.skip('checking that books are sorted in ascending order', () => {
-  //     // Adding 10 books with titles "Book 2" to "Book 11"
-  //     // for (let i = 2; i <= 11; i++) {
-  //     //   cy.addBook(`Book ${i}`)
-  //     // }
+  it('checking that books are sorted in alphanumeric order', () => {
+    // Adding 10 books with titles "Book 2" to "Book 11"
+    for (let i = 2; i <= 11; i++) {
+      cy.addBook(`Book ${i}`)
+    }
 
-  //     // Verifying the ordering
-  //     cy.get('li')
-  //       //      .should('have.length', 11) // Make sure there are 11 books
-  //       .invoke('text')
-  //       .then(titles => {
-  //         // Sort the book titles in ascending order
-  //         const sortedTitles = titles.sort()
+    // Verifying the ordering - Page 1
+    cy.get('li[title="1"]').should(
+      'have.attr',
+      'aria-label',
+      'Page 1 , Current Page',
+    )
+    cy.get('li[title="2"]').should('have.attr', 'aria-label', 'Go to page 2')
 
-  //         // Verify that the sorted titles match the expected order      })
-  //   })
+    // Define an array of expected book titles
+    const expectedTitles = [
+      'Book 1',
+      'Book 10',
+      'Book 11',
+      'Book 2',
+      'Book 3',
+      'Book 4',
+      'Book 5',
+      'Book 6',
+      'Book 7',
+      'Book 8',
+    ]
+
+    // Loop through the expectedTitles array
+    expectedTitles.forEach((title, index) => {
+      const columnIndex = index
+      cy.get(`.ant-col:nth(${columnIndex})`).should('contain', title)
+    })
+
+    // Page 2
+    cy.get('li[title="2"]').click()
+    cy.get('li[title="2"]').should(
+      'have.attr',
+      'aria-label',
+      'Page 2 , Current Page',
+    )
+    cy.get('li[title="1"]').should('have.attr', 'aria-label', 'Go to page 1')
+
+    cy.get('.ant-col').should('contain', 'Book 9')
+  })
 })

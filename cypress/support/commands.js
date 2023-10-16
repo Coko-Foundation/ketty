@@ -54,3 +54,9 @@ Cypress.Commands.add('deleteBook', title => {
 
   cy.contains(title).should('not.exist')
 })
+
+Cypress.Commands.add('logout', () => {
+  cy.get('.ant-avatar-string').click()
+  cy.get('li[role="menuitem"]').contains('Logout').click()
+  cy.location('pathname').should('equal', '/login')
+})
