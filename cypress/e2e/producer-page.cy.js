@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 /* eslint-disable jest/expect-expect */
 describe('Producer Page', () => {
   before(() => {
@@ -23,6 +22,14 @@ describe('Producer Page', () => {
 
     // uploading a file
     // cy.get('.ant-btn-icon').first().parent().click()
+    // cy.get('input[type="file"]').selectFile(
+    //   'cypress/fixtures/docs/test_document.docx',
+    //   { force: true },
+    // )
+    // cy.get('.ant-btn-icon').first().parent().click()
+    // cy.get('input[type="file"]')
+    //   .should('exist')
+    //   .trigger('change', { force: true })
     // cy.get('input[type="file"]').selectFile(
     //   'cypress/fixtures/docs/test_document.docx',
     //   { force: true },
@@ -159,7 +166,7 @@ describe('Producer Page', () => {
         ]
 
         // Iterate through checkboxes
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i += 1) {
           cy.get(`.ant-checkbox:nth(${i})`)
             .siblings()
             .should('have.text', checkboxLabels[i])

@@ -29,7 +29,7 @@ Cypress.Commands.add('getByData', selector => {
 })
 
 Cypress.Commands.add('login', () => {
-  cy.visit('http://localhost:4000')
+  cy.visit('http://localhost:4000/login')
   cy.get('#email').type('admin@example.com')
   cy.get('#password').type('password{enter}')
   cy.get("button[type='submit']").contains('Log in').click()
@@ -59,4 +59,10 @@ Cypress.Commands.add('logout', () => {
   cy.get('.ant-avatar-string').click()
   cy.get('li[role="menuitem"]').contains('Logout').click()
   cy.location('pathname').should('equal', '/login')
+})
+
+Cypress.Commands.add('goToBook', title => {
+  cy.contains(title).click()
+  cy.url().should('include', '/producer')
+  cy.contains('div', title)
 })
