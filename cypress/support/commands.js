@@ -66,3 +66,30 @@ Cypress.Commands.add('goToBook', title => {
   cy.url().should('include', '/producer')
   cy.contains('div', title)
 })
+
+Cypress.Commands.add('signup', user => {
+  cy.visit('http://localhost:4000')
+  cy.get("a[href='/signup']")
+    .contains('Do you want to sign up instead?')
+    .click()
+  cy.location('pathname').should('equal', '/signup')
+
+  cy.get('#givenNames').type(user.name)
+  cy.get('#surname').type(user.surname)
+  cy.get('#email').type(user.email)
+  cy.get('#password').type(user.password)
+  cy.get('#confirmPassword').type(user.password)
+  cy.get('#agreedTc').click()
+
+  cy.get('button[type="submit"]').contains('Sign up').click()
+
+  cy.get('div[role="alert"]').should(
+    'have.text',
+    "Sign up successful!We've sent you a verification email. Click on the link in the email to activate your account.",
+  )
+  cy.get('div[role="alert"]').contains(
+    "We've sent you a verification email. Click on the link in the email to activate your account.",
+  )
+
+  cy.visit('http://localhost:4000/login')
+})
