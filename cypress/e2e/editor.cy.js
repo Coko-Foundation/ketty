@@ -1,4 +1,5 @@
 /* eslint-disable jest/expect-expect */
+const { admin } = require('../support/credentials')
 
 describe('Book editor', () => {
   let display
@@ -52,12 +53,12 @@ describe('Book editor', () => {
         },
       ]
     })
-    cy.login()
+    cy.login(admin)
     cy.addBook('Test Book')
     cy.logout()
   })
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
     cy.goToBook('Test Book')
   })
 
@@ -192,6 +193,7 @@ describe('Book editor', () => {
 
     cy.get('.ProseMirror').contains('∑')
 
+    cy.clickSpecialCharacterSection()
     cy.get('input[placeholder="Search"]').clear()
     cy.get('input[placeholder="Search"]').type('copyright')
     cy.clickSpecialCharacterSection()

@@ -1,12 +1,14 @@
 /* eslint-disable jest/expect-expect */
+const { admin } = require('../support/credentials')
+
 describe('Producer Page', () => {
   before(() => {
-    cy.login()
+    cy.login(admin)
     cy.addBook('Test Book')
     cy.logout()
   })
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
     cy.contains('Test Book').click()
     cy.url().should('include', '/producer')
     cy.contains('div', 'Test Book')

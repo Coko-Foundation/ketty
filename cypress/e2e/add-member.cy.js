@@ -1,6 +1,7 @@
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-commented-out-tests */
 const {
+  admin,
   author,
   collaborator1,
   collaborator2,
@@ -11,12 +12,12 @@ describe('Checking "Add members" modal', () => {
     cy.signup(author)
     cy.signup(collaborator1)
     cy.signup(collaborator2)
-    cy.login()
+    cy.login(admin)
     cy.addBook('Test Book')
     cy.logout()
   })
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
     cy.goToBook('Test Book')
   })
 
@@ -241,7 +242,7 @@ describe('add multiple members', () => {
   // TO RUN THE NEXT STEP, IT IS NECCESSARY TO VERIFY THE USERS CREATED ABOVE
 
   it.skip('adding collaborators', () => {
-    cy.login()
+    cy.login(admin)
     cy.contains('1').click()
     cy.contains('Book Members').click()
 

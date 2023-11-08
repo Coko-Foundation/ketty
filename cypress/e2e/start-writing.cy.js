@@ -1,8 +1,10 @@
 /* eslint-disable jest/no-commented-out-tests */
 /* eslint-disable jest/expect-expect */
+const { admin } = require('../support/credentials')
+
 describe('Start writing', () => {
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
   })
 
   it('creating a book by clicking "Start writing" button', () => {
@@ -67,7 +69,7 @@ describe('Start writing', () => {
 /*
 describe('Adding many books quickly', () => {
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
   })
 
   it('adding 100 books by clicking "start writing" button', () => {

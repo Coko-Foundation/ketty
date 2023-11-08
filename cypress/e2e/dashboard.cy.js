@@ -1,15 +1,17 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable jest/valid-expect */
 /* eslint-disable jest/expect-expect */
+const { admin } = require('../support/credentials')
+
 describe('checking elements of the dashboard', () => {
   before(() => {
-    cy.login()
+    cy.login(admin)
     cy.addBook('Book 1')
     cy.logout()
   })
 
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
   })
 
   it('uploading a dashboard image for a book', () => {

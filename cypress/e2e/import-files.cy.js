@@ -1,7 +1,9 @@
 /* eslint-disable jest/expect-expect */
+const { admin } = require('../support/credentials')
+
 describe('Start writing', () => {
   beforeEach(() => {
-    cy.login()
+    cy.login(admin)
   })
 
   it('creating a book by importing files', () => {

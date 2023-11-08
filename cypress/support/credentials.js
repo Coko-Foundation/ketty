@@ -1,6 +1,6 @@
 const credentials = {
   admin: {
-    username: 'admin',
+    email: 'admin@example.com',
     password: 'password',
   },
   author: {
