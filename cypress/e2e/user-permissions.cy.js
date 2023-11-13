@@ -124,14 +124,10 @@ describe('Checking permissions for dashboard', () => {
   it("checking ADMIN's permissions in the producer page", () => {
     cy.login(admin)
 
-    cy.log(
-      'Admin can create a new component', ///  only in books s/he is owner or collaborator.???
-    )
+    cy.log('Admin can create a new component in any book')
     cy.goToBook(adminBook)
     cy.createChapter()
-    cy.log(
-      'Admin can edit and use to Wax toolbar', ///  only in books s/he is owner or collaborator.???
-    )
+    cy.log('Admin can edit and use to Wax toolbar in any book')
     cy.canUseWaxToolbar('admin', 'not.have.attr')
 
     // Upload a chapter
@@ -146,11 +142,24 @@ describe('Checking permissions for dashboard', () => {
     cy.log('Admin can edit Metadata')
     cy.canEditMetadata('admin', 'not.have.attr')
 
-    // Checking for a book that admin isn't owner or collaborator
-    // cy.goToDashboard()
-    // cy.goToBook(authorBook)
-    // cy.createChapter()
-    // cy.canUseWaxToolbar('admin', 'not.have.attr')
+    // Checking for a book that admin isn't owner or collaborator ???
+    cy.goToDashboard()
+    cy.goToBook(authorBook)
+    cy.reload()
+    cy.createChapter()
+    cy.canUseWaxToolbar('admin', 'not.have.attr')
+    cy.deleteChapter('Untitled Chapter')
+
+    cy.contains('button', 'Book Metadata').click()
+    cy.canEditMetadata('admin', 'not.have.attr')
+
+    cy.log("Admin can see people's access in any book.")
+    cy.contains('button', 'Book Members').click()
+    cy.canSeeAccess()
+
+    cy.log("Admin can change members's access in any book.")
+    cy.canChangeAccess('yes')
+    // cy.canChangeAccess('no')
   })
 
   it("checking AUTHOR's permissions in the producer page", () => {
@@ -173,6 +182,13 @@ describe('Checking permissions for dashboard', () => {
 
     cy.log('Author can edit Metadata')
     cy.canEditMetadata('author', 'not.have.attr')
+
+    cy.log("Author can see people's access in the book he/she is owner.")
+    cy.contains('button', 'Book Members').click()
+    cy.canSeeAccess()
+
+    cy.log("Author can change members's access in the book he/she is owner.")
+    cy.canChangeAccess('yes')
   })
 
   it('checking COLLABORATOR with EDIT access permissions in the producer page', () => {
@@ -205,6 +221,18 @@ describe('Checking permissions for dashboard', () => {
       'COLLABORATOR with EDIT access can edit Metadata in the book he/she is collaborator.',
     )
     cy.canEditMetadata('COLLABORATOR with EDIT access', 'not.have.attr')
+
+    cy.log(
+      "COLLABORATORS can see people's access in the book he/she is collaborator.",
+    )
+    cy.contains('button', 'Book Members').click()
+    cy.canSeeAccess()
+
+    cy.log(
+      "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
+    )
+
+    cy.canChangeAccess('no')
   })
 
   it('checking COLLABORATOR with VIEW access permissions in the producer page', () => {
@@ -247,6 +275,18 @@ describe('Checking permissions for dashboard', () => {
       'COLLABORATOR with VIEW access can NOT edit Metadata in the book he/she is collaborator.',
     )
     cy.canEditMetadata('COLLABORATOR with VIEW access', 'have.attr')
+
+    cy.log(
+      "COLLABORATORS can see people's access in the book he/she is collaborator.",
+    )
+    cy.contains('button', 'Book Members').click()
+    cy.canSeeAccess()
+
+    cy.log(
+      "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
+    )
+
+    cy.canChangeAccess('no')
   })
 })
 
@@ -314,6 +354,7 @@ Cypress.Commands.add('canUploadThumbnail', (bookTitle, ariaDisAttr) => {
 })
 
 Cypress.Commands.add('createChapter', () => {
+  cy.url().should('include', '/producer')
   cy.get('.anticon-plus').click()
   cy.contains('Untitled Chapter', { timeout: 8000 }).click()
 })
@@ -330,6 +371,7 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
     cy.get(`button[title="Redo"]`).click()
     // Checking Heading styles is clickable
     cy.get('.Dropdown-control').click()
+    cy.get('.Dropdown-menu > :nth-child(4)').click()
   } else {
     cy.get('.ProseMirror').should('not.be.enabled')
     // Checking Heading styles is not clickable
@@ -340,7 +382,8 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
     'Undo',
     'Change to Title',
     'Wrap in ordered list',
-    'Wrap in bullet list', // Lift out
+    'Wrap in bullet list',
+    'Lift out of enclosing block', // Lift out
     'Upload Image',
     'Toggle strong',
     'Toggle emphasis', // Add or remove link
@@ -353,14 +396,18 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
   })
 
   // Everyone can click Find and Replace
+  cy.get('button[title="Find And Replace"]').click()
   // Something more about Find and replace
   cy.get('button[title="Find And Replace"]').should('have.not.attr', 'disabled')
+  cy.get('button[title="Find And Replace"]').click()
+  // Not everyone can click more though: check manually
 
   // Everyone can click full screen
   cy.get('button[title="Full screen"]').should('have.not.attr', 'disabled')
 })
 
 Cypress.Commands.add('deleteChapter', chapterTitle => {
+  cy.url().should('include', '/producer')
   cy.contains(chapterTitle).parent().parent().find('[data-icon="more"]').click()
   cy.contains('Delete').click()
   cy.contains('You don’t have any chapters yet').should('exist')
@@ -400,4 +447,50 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
       cy.get(radioButton).click()
     }
   })
+  cy.contains('Close').click()
+})
+
+Cypress.Commands.add('canSeeAccess', () => {
+  const members = [
+    { name: 'Author 1', initials: 'A1', access: 'Owner' },
+    { name: 'Collaborator 1', initials: 'C1', access: 'Can edit' },
+    { name: 'Collaborator 2', initials: 'C2', access: 'Can view' },
+  ]
+
+  members.forEach(({ name, initials, access }) => {
+    cy.contains(name).parent().should('contain', initials, access)
+  })
+})
+
+Cypress.Commands.add('canChangeAccess', status => {
+  if (status === 'yes') {
+    // Changing Collaborator 2 access to Can edit
+    cy.contains('Collaborator 2').parent().parent().find('.ant-select').click()
+    cy.get('[role="option"]:nth(1)').should('have.text', 'Can edit').click()
+    cy.contains('Collaborator 2')
+      .parent()
+      .parent()
+      .should('contain', 'Can edit')
+    // Removing access of Collaborator 2
+    cy.contains('Collaborator 2').parent().parent().find('.ant-select').click()
+    cy.get('[role="option"]:nth(2)')
+      .should('have.text', 'Remove access')
+      .click()
+
+    cy.log(`Author and admin can give members's access.`)
+
+    // Adding Collaborator 2 again with View access
+    cy.get('.ant-select-selection-overflow').type(collaborator2.email)
+    cy.get('div[role="option"]').click()
+    cy.contains('Add user').click()
+  } else {
+    cy.get('input[type="search"]:nth(2)').should('have.attr', 'disabled')
+
+    cy.log(
+      "COLLABORATORS can NOT give members's access in the book he/she is collaborator.",
+    )
+
+    cy.get('input[type="search"]:nth(0)').should('have.attr', 'disabled')
+    cy.contains('Add user').should('be.disabled')
+  }
 })
