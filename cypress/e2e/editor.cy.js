@@ -64,7 +64,7 @@ describe('Book editor', () => {
 
   it('Adding content', () => {
     cy.get('.anticon-plus').click()
-    cy.contains('Untitled Chapter').click()
+    cy.contains('Untitled Chapter', { timeout: 8000 }).click()
 
     display.forEach(option => {
       cy.get(option.button, { timeout: 8000 }).click({
@@ -134,20 +134,23 @@ describe('Book editor', () => {
     cy.contains(addedText).should('exist')
   })
 
-  // it('Checking adding links', () => {
-  //   cy.contains('Test Book').click()
-  //   cy.url().should('include', '/producer')
-  //   cy.contains('div', 'Test Book')
-  //   cy.contains('The Test book').click()
-  //   cy.get('button[title="Add or remove link"]').should('be.disabled')
-  //   cy.get('.ProseMirror').type(
-  //     'This is a link.{shift}{rightArrow}{rightArrow}{rightArrow}{rightArrow}',
-  //     { release: false }, )
+  it('Checking adding links', () => {
+    cy.createUntitledChapter()
+    cy.get('button[title="Add or remove link"]').should('be.disabled')
+    cy.get('.ProseMirror').type('Some link{selectall}')
 
-  //   cy.get('button[title="Add or remove link"]').should('not.be.disabled')
-  //   // cy.get('.ProseMirror').type('This is a link.{selectall}')
-  //   cy.get('button[title="Add or remove link"]').click({ force: true })
-  // })
+    cy.get('button[title="Add or remove link"]').should('not.be.disabled')
+    cy.get('button[title="Add or remove link"]').click({ force: true })
+
+    cy.addLink('www.examplelink.com')
+
+    cy.contains('button', 'Edit').should('exist')
+    cy.contains('button', 'Remove').should('exist')
+    cy.contains('button', 'Edit').click()
+    cy.get('input').last().clear()
+
+    cy.addLink('www.examplelink-edited.com')
+  })
 
   it('Checking lifting out of enclosing blocks', () => {
     cy.contains('The Test book').click()
@@ -180,6 +183,7 @@ describe('Book editor', () => {
     const specialCharacters = ['Vowels', 'Consonants', 'Latin', 'Math', 'Misc']
 
     cy.clickSpecialCharacterSection()
+
     specialCharacters.forEach(character => {
       cy.contains(character)
     })
@@ -193,6 +197,7 @@ describe('Book editor', () => {
 
     cy.get('.ProseMirror').contains('∑')
 
+    cy.get('button[title="Special Characters"]').click()
     cy.clickSpecialCharacterSection()
     cy.get('input[placeholder="Search"]').clear()
     cy.get('input[placeholder="Search"]').type('copyright')
@@ -205,7 +210,11 @@ describe('Book editor', () => {
   })
 
   it('Checking find and replace', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Untitled Chapter').click()
+    cy.get('.ProseMirror').clear()
+    cy.get('.ProseMirror').type(
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac mi nibh. Morbi metus tortor, tincidunt nec finibus ac, posuere varius libero. Maecenas vitae dignissim diam. Proin bibendum leo sit amet sem mollis, ut maximus tortor dignissim.',
+    )
     cy.get('button[title="Find And Replace"]').click()
     cy.get('input[placeholder="Find"]').should('exist')
     cy.verifySearchResultCount('0 of 0')
@@ -214,26 +223,31 @@ describe('Book editor', () => {
     cy.get('[role="button"]:nth(2)').contains('Next')
 
     // Checking results
-    cy.log('checking search results for letter T')
-    cy.get('input[placeholder="Find"]').type('T')
-    cy.verifySearchResultCount('0 of 34')
-    cy.get('[role="button"]:nth(0)').click()
-    cy.verifySearchResultCount('0 of 9')
-    cy.get('[role="button"]:nth(2)').click()
-    cy.verifySearchResultCount('2 of 9')
-    cy.get('[role="button"]:nth(1)').click()
-    cy.verifySearchResultCount('1 of 9')
-    cy.get('[role="button"]:nth(0)').click() // Untoggle "match case"
+    cy.log('checking search results for letter M')
+    cy.get('input[placeholder="Find"]').type('M')
+    cy.verifySearchResultCount('0 of 16')
+    cy.clickButtonInFind('Match Case')
+    cy.verifySearchResultCount('0 of 2')
+
+    cy.clickButtonInFind('Next')
+    cy.verifySearchResultCount('0 of 2')
+    cy.clickButtonInFind('Next')
+    cy.verifySearchResultCount('1 of 2')
+    cy.clickButtonInFind('Next')
+    cy.verifySearchResultCount('2 of 2')
+    cy.clickButtonInFind('Previous')
+    cy.verifySearchResultCount('1 of 2')
+    cy.clickButtonInFind('Match Case') // Untoggle "match case"
 
     cy.get('input[placeholder="Find"]').clear()
-    cy.get('[role="button"]:nth(0)')
+    cy.clickButtonInFind('Match Case')
       .siblings()
-      .contains('Expand')
+      .contains('more')
       .click({ force: true })
 
     // checking the replace section
-    cy.contains('Find & Replace').should('exist')
-    cy.contains('Find & Replace').siblings().contains('Close').should('exist')
+    cy.contains('Find& Replace').should('exist')
+    cy.contains('Find& Replace').siblings().contains('Close').should('exist')
 
     cy.get('input[id="search-input"]').should(
       'have.attr',
@@ -243,22 +257,21 @@ describe('Book editor', () => {
     cy.contains('Replace with')
     cy.get('input[placeholder="Replace text"]').should('exist')
     // cy.get('input[id="case-sensitive"]').should('not.have.attr', 'checked')
-    cy.contains('button', 'Replace').should('exist')
-    cy.contains('button', 'Replace All').should('exist')
+    cy.contains('button', 'Replace with').should('exist')
+    cy.contains('button', 'Replace with All').should('exist')
 
-    // Replacing the first "T"
-    cy.get('input[id="search-input"]').type('T')
-    cy.verifySearchResultCount('1 of 34')
+    // Replacing the first "M"
+    cy.contains('Morbi').should('exist')
+    cy.contains('Torbi').should('not.exist')
+    cy.get('input[id="search-input"]').type('M')
+    cy.get('input[id="case-sensitive"]').uncheck({ force: true })
+    cy.verifySearchResultCount('5 of 16')
     cy.get('input[id="case-sensitive"]').check({ force: true })
-    cy.verifySearchResultCount('1 of 9')
-    cy.get('input[placeholder="Replace text"]').type('W')
-    cy.get('[role="button"]:nth(1)').click() // Clicking Next
-    cy.get('[role="button"]:nth(0)').click() // Clicking Previous
-    cy.contains('button', 'Replace').click()
-    cy.verifySearchResultCount('1 of 8')
-    cy.contains('Whe Test book').should('exist')
-    cy.get('button[title="Undo"]').click()
-    cy.contains('The Test book').should('exist')
+    cy.verifySearchResultCount('1 of 2')
+    cy.get('input[placeholder="Replace text"]').type('T')
+    cy.contains('button', 'Replace with').click()
+    cy.verifySearchResultCount('1 of 1')
+    cy.contains('Torbi').should('exist')
   })
 
   it('Checking uploading images', () => {
@@ -281,10 +294,10 @@ describe('Book editor', () => {
 
   it('Checking fullscreen', () => {
     cy.contains('The Test book').click()
-    cy.get('button[title="full screen"]').click()
+    cy.get('button[title="Full screen"]').click()
     cy.contains('Book Metadata').should('not.exist')
 
-    cy.get('button[title="full screen"]').click() // exit full screen
+    cy.get('button[title="Exit full screen"]').click()
     cy.contains('Book Metadata').should('exist')
   })
 })
@@ -295,4 +308,27 @@ Cypress.Commands.add('clickSpecialCharacterSection', () => {
 
 Cypress.Commands.add('verifySearchResultCount', count => {
   cy.get('input:nth(1)').siblings().should('contain', count)
+})
+
+Cypress.Commands.add('addLink', link => {
+  cy.contains('button', 'Apply').should('exist')
+  cy.contains('button', 'Cancel').should('exist')
+  cy.get('input').last().type(link)
+  cy.contains('button', 'Apply').click()
+})
+
+Cypress.Commands.add('clickButtonInFind', buttonText => {
+  switch (buttonText) {
+    case 'Match Case':
+      cy.get('[role="button"]:nth(0)').click()
+      break
+    case 'Previous':
+      cy.get('[role="button"]:nth(1)').click()
+      break
+    case 'Next':
+      cy.get('[role="button"]:nth(2)').click()
+      break
+    default:
+      throw new Error(`Unsupported button parameter: ${buttonText}`)
+  }
 })

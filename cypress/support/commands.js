@@ -93,3 +93,9 @@ Cypress.Commands.add('signup', user => {
 
   cy.visit('http://localhost:4000/login')
 })
+
+Cypress.Commands.add('createUntitledChapter', () => {
+  cy.url().should('include', '/producer')
+  cy.get('.anticon-plus').click()
+  cy.contains('Untitled Chapter', { timeout: 8000 }).click()
+})

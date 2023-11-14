@@ -11,9 +11,9 @@ const authorBook = 'Author Book'
 
 describe('Checking permissions for dashboard', () => {
   before(() => {
-    cy.signup(author)
-    cy.signup(collaborator1)
-    cy.signup(collaborator2)
+    // cy.signup(author)
+    // cy.signup(collaborator1)
+    // cy.signup(collaborator2)
     cy.login(admin)
     cy.log('Admin can create a book')
     cy.addBook(adminBook)
@@ -126,7 +126,7 @@ describe('Checking permissions for dashboard', () => {
 
     cy.log('Admin can create a new component in any book')
     cy.goToBook(adminBook)
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.log('Admin can edit and use to Wax toolbar in any book')
     cy.canUseWaxToolbar('admin', 'not.have.attr')
 
@@ -142,11 +142,11 @@ describe('Checking permissions for dashboard', () => {
     cy.log('Admin can edit Metadata')
     cy.canEditMetadata('admin', 'not.have.attr')
 
-    // Checking for a book that admin isn't owner or collaborator ???
+    // Checking for a book that admin isn't owner or collaborator
     cy.goToDashboard()
     cy.goToBook(authorBook)
     cy.reload()
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.canUseWaxToolbar('admin', 'not.have.attr')
     cy.deleteChapter('Untitled Chapter')
 
@@ -159,7 +159,6 @@ describe('Checking permissions for dashboard', () => {
 
     cy.log("Admin can change members's access in any book.")
     cy.canChangeAccess('yes')
-    // cy.canChangeAccess('no')
   })
 
   it("checking AUTHOR's permissions in the producer page", () => {
@@ -167,7 +166,7 @@ describe('Checking permissions for dashboard', () => {
 
     cy.log('Author can create a new component in the book he/she is owner.')
     cy.goToBook(authorBook)
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.log('Author can use Wax toolbar in the book he/she is owner.')
     cy.canUseWaxToolbar('author', 'not.have.attr')
 
@@ -198,7 +197,7 @@ describe('Checking permissions for dashboard', () => {
       'COLLABORATOR with EDIT access can create a new component in the book he/she is collaborator.',
     )
     cy.goToBook(authorBook)
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.log(
       'COLLABORATOR with EDIT access can use Wax toolbar in the book he/she is collaborator.',
     )
@@ -239,7 +238,7 @@ describe('Checking permissions for dashboard', () => {
     // Adding a chapter by author in order to check permissions
     cy.login(author)
     cy.goToBook(authorBook)
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.logout()
 
     cy.login(collaborator2)
@@ -248,7 +247,7 @@ describe('Checking permissions for dashboard', () => {
       'COLLABORATOR with VIEW access can NOT create a new component in the book he/she is collaborator.',
     )
     cy.goToBook(authorBook)
-    cy.createChapter()
+    cy.createUntitledChapter()
     cy.log(
       'COLLABORATOR with VIEW access can NOT use Wax toolbar in the book he/she is collaborator.',
     )
@@ -351,12 +350,6 @@ Cypress.Commands.add('canUploadThumbnail', (bookTitle, ariaDisAttr) => {
     .parent()
     .parent()
     .should('have.attr', 'aria-disabled', ariaDisAttr)
-})
-
-Cypress.Commands.add('createChapter', () => {
-  cy.url().should('include', '/producer')
-  cy.get('.anticon-plus').click()
-  cy.contains('Untitled Chapter', { timeout: 8000 }).click()
 })
 
 Cypress.Commands.add('goToDashboard', () => {
