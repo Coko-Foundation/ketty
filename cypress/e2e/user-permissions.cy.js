@@ -11,9 +11,9 @@ const authorBook = 'Author Book'
 
 describe('Checking permissions for dashboard', () => {
   before(() => {
-    // cy.signup(author)
-    // cy.signup(collaborator1)
-    // cy.signup(collaborator2)
+    cy.signup(author)
+    cy.signup(collaborator1)
+    cy.signup(collaborator2)
     cy.login(admin)
     cy.log('Admin can create a book')
     cy.addBook(adminBook)
@@ -26,267 +26,314 @@ describe('Checking permissions for dashboard', () => {
     cy.addMember(collaborator2, 'view')
     cy.logout()
   })
-  beforeEach(() => {})
 
-  it("checking ADMIN's permissions in the dashboard", () => {
-    cy.login(admin)
+  context('Checking permissions in the dashboard', () => {
+    it("checking ADMIN's permissions", () => {
+      cy.login(admin)
 
-    cy.log('Admin can import files when creating a new book.')
-    cy.createImportedBook('Admin imported book')
+      cy.log('Admin can import files when creating a new book.')
+      cy.createImportedBook('Admin imported book')
 
-    cy.log('Admin can see all books.')
-    cy.contains(adminBook).should('exist')
-    cy.contains(authorBook).should('exist')
+      cy.log('Admin can see all books.')
+      cy.contains(adminBook).should('exist')
+      cy.contains(authorBook).should('exist')
 
-    cy.log('Admin can delete all books')
-    cy.canDeleteBook(adminBook, 'false')
-    cy.canDeleteBook(authorBook, 'false')
+      cy.log('Admin can delete all books')
+      cy.canDeleteBook(adminBook, 'false')
+      cy.canDeleteBook(authorBook, 'false')
 
-    cy.log('Admin can go to the producer page for any book.')
-    cy.goToBook(adminBook)
-    cy.goToDashboard()
-    cy.goToBook(authorBook)
-    cy.goToDashboard()
+      cy.log('Admin can go to the producer page for any book.')
+      cy.goToBook(adminBook)
+      cy.goToDashboard()
+      cy.goToBook(authorBook)
+      cy.goToDashboard()
 
-    cy.log('Admin can upload thumbnail for all books')
-    cy.canUploadThumbnail(adminBook, 'false')
-    cy.canUploadThumbnail(authorBook, 'false')
+      cy.log('Admin can upload thumbnail for all books')
+      cy.canUploadThumbnail(adminBook, 'false')
+      cy.canUploadThumbnail(authorBook, 'false')
+    })
+
+    it("checking AUTHOR's permissions", () => {
+      cy.login(author)
+
+      cy.log('Author can import files when creating a new book.')
+      cy.createImportedBook('Author imported book')
+
+      cy.log('Author can see only the books he/she has access to.')
+      cy.contains(adminBook).should('not.exist')
+      cy.contains(authorBook).should('exist')
+
+      cy.log('Author can delete his/her book')
+      cy.canDeleteBook(authorBook, 'false')
+
+      cy.log('Author can go to the producer page for his/her book.')
+      cy.goToBook(authorBook)
+      cy.goToDashboard()
+
+      cy.log('Author can upload thumbnail for his/her book.')
+      cy.canUploadThumbnail(authorBook, 'false')
+    })
+
+    it('checking COLLABORATOR with EDIT access permissions', () => {
+      cy.login(collaborator1)
+
+      cy.log('Collaborator can import files when creating a new book.')
+      cy.createImportedBook("Collaborator's imported book")
+
+      cy.log('Collaborator can see only the books he/she has access to.')
+      cy.contains(adminBook).should('not.exist')
+      cy.contains(authorBook).should('exist')
+
+      cy.log('Collaborators cannot delete books they have access to.')
+      cy.canDeleteBook(authorBook, 'true')
+
+      cy.log(
+        'Collaborators can go to the producer page of the books they have access to.',
+      )
+      cy.goToBook(authorBook)
+      cy.goToDashboard()
+
+      cy.log(
+        'Collaborators cannot upload thumbnail for the books they have acess to.',
+      )
+      cy.canUploadThumbnail(authorBook, 'true')
+    })
+
+    it('checking COLLABORATOR with VIEW access permissions', () => {
+      cy.login(collaborator2)
+
+      cy.log('Collaborator can see only the books he/she has access to.')
+      cy.contains(adminBook).should('not.exist')
+      cy.contains(authorBook).should('exist')
+
+      cy.log('Collaborators cannot delete books they have access to.')
+      cy.canDeleteBook(authorBook, 'true')
+
+      cy.log(
+        'Collaborators can go to the producer page of the books they have access to.',
+      )
+      cy.goToBook(authorBook)
+      cy.goToDashboard()
+
+      cy.log(
+        'Collaborators cannot upload thumbnail for the books they have acess to.',
+      )
+      cy.canUploadThumbnail(authorBook, 'true')
+    })
   })
 
-  it("checking AUTHOR's permissions in the dashboard", () => {
-    cy.login(author)
+  context('Checking permissions in the producer page', () => {
+    it("checking ADMIN's permissions in the producer page", () => {
+      cy.login(admin)
 
-    cy.log('Author can import files when creating a new book.')
-    cy.createImportedBook('Author imported book')
+      cy.log('Admin can create a new component in any book')
+      cy.goToBook(adminBook)
+      cy.createUntitledChapter()
+      cy.log('Admin can edit and use to Wax toolbar in any book')
+      cy.canUseWaxToolbar('admin', 'not.have.attr')
 
-    cy.log('Author can see only the books he/she has access to.')
-    cy.contains(adminBook).should('not.exist')
-    cy.contains(authorBook).should('exist')
+      // Upload a chapter
+      // Reorder chapters
 
-    cy.log('Author can delete his/her book')
-    cy.canDeleteBook(authorBook, 'false')
+      cy.log('Admin can delete unlocked chapters for any book.')
+      cy.deleteChapter('Untitled Chapter')
 
-    cy.log('Author can go to the producer page for his/her book.')
-    cy.goToBook(authorBook)
-    cy.goToDashboard()
+      cy.log('Admin can access Metadata')
+      cy.contains('button', 'Book Metadata').click()
 
-    cy.log('Author can upload thumbnail for his/her book.')
-    cy.canUploadThumbnail(authorBook, 'false')
+      cy.log('Admin can edit Metadata')
+      cy.canEditMetadata('admin', 'not.have.attr')
+
+      // Checking for a book that admin isn't owner or collaborator
+      cy.goToDashboard()
+      cy.goToBook(authorBook)
+      cy.reload()
+      cy.createUntitledChapter()
+      cy.canUseWaxToolbar('admin', 'not.have.attr')
+      cy.deleteChapter('Untitled Chapter')
+
+      cy.contains('button', 'Book Metadata').click()
+      cy.canEditMetadata('admin', 'not.have.attr')
+
+      cy.log("Admin can see people's access in any book.")
+      cy.contains('button', 'Book Members').click()
+      cy.canSeeAccess()
+
+      cy.log("Admin can change members's access in any book.")
+      cy.canChangeAccess('yes')
+    })
+
+    it("checking AUTHOR's permissions in the producer page", () => {
+      cy.login(author)
+
+      cy.log('Author can create a new component in the book he/she is owner.')
+      cy.goToBook(authorBook)
+      cy.createUntitledChapter()
+      cy.log('Author can use Wax toolbar in the book he/she is owner.')
+      cy.canUseWaxToolbar('author', 'not.have.attr')
+
+      // Upload a chapter
+      // Reorder chapters
+
+      cy.log('Author can delete unlocked chapters in the book he/she is owner.')
+      cy.deleteChapter('Untitled Chapter')
+
+      cy.log('Author can access Metadata')
+      cy.contains('button', 'Book Metadata').click()
+
+      cy.log('Author can edit Metadata')
+      cy.canEditMetadata('author', 'not.have.attr')
+
+      cy.log("Author can see people's access in the book he/she is owner.")
+      cy.contains('button', 'Book Members').click()
+      cy.canSeeAccess()
+
+      cy.log("Author can change members's access in the book he/she is owner.")
+      cy.canChangeAccess('yes')
+    })
+
+    it('checking COLLABORATOR with EDIT access permissions in the producer page', () => {
+      cy.login(collaborator1)
+
+      cy.log(
+        'COLLABORATOR with EDIT access can create a new component in the book he/she is collaborator.',
+      )
+      cy.goToBook(authorBook)
+      cy.createUntitledChapter()
+      cy.log(
+        'COLLABORATOR with EDIT access can use Wax toolbar in the book he/she is collaborator.',
+      )
+      cy.canUseWaxToolbar('COLLABORATOR with EDIT access', 'not.have.attr')
+
+      // Upload a chapter
+      // Reorder chapters
+
+      cy.log(
+        'COLLABORATOR with EDIT access can delete unlocked chapters in the book he/she is collaborator.',
+      )
+      cy.deleteChapter('Untitled Chapter')
+
+      cy.log(
+        'COLLABORATOR with EDIT access can access Metadata in the book he/she is collaborator.',
+      )
+      cy.contains('button', 'Book Metadata').click()
+
+      cy.log(
+        'COLLABORATOR with EDIT access can edit Metadata in the book he/she is collaborator.',
+      )
+      cy.canEditMetadata('COLLABORATOR with EDIT access', 'not.have.attr')
+
+      cy.log(
+        "COLLABORATORS can see people's access in the book he/she is collaborator.",
+      )
+      cy.contains('button', 'Book Members').click()
+      cy.canSeeAccess()
+
+      cy.log(
+        "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
+      )
+
+      cy.canChangeAccess('no')
+    })
+
+    it('checking COLLABORATOR with VIEW access permissions in the producer page', () => {
+      // Adding a chapter by author in order to check permissions
+      cy.login(author)
+      cy.goToBook(authorBook)
+      cy.createUntitledChapter()
+      cy.logout()
+
+      cy.login(collaborator2)
+
+      cy.log(
+        'COLLABORATOR with VIEW access can NOT create a new component in the book he/she is collaborator.',
+      )
+      cy.goToBook(authorBook)
+      cy.createUntitledChapter()
+      cy.log(
+        'COLLABORATOR with VIEW access can NOT use Wax toolbar in the book he/she is collaborator.',
+      )
+      cy.canUseWaxToolbar('COLLABORATOR with VIEW access', 'have.attr')
+
+      // Upload a chapter
+      // Reorder chapters
+
+      cy.log(
+        'COLLABORATOR with VIEW access can NOT delete unlocked chapters in the book he/she is collaborator.',
+      )
+      cy.contains('Untitled Chapter')
+        .parent()
+        .parent()
+        .find('[data-icon="more"]')
+        .should('not.be.enabled')
+
+      cy.log(
+        'COLLABORATOR with VIEW access can access Metadata in the book he/she is collaborator.',
+      )
+      cy.contains('button', 'Book Metadata').click()
+
+      cy.log(
+        'COLLABORATOR with VIEW access can NOT edit Metadata in the book he/she is collaborator.',
+      )
+      cy.canEditMetadata('COLLABORATOR with VIEW access', 'have.attr')
+
+      cy.log(
+        "COLLABORATORS can see people's access in the book he/she is collaborator.",
+      )
+      cy.contains('button', 'Book Members').click()
+      cy.canSeeAccess()
+
+      cy.log(
+        "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
+      )
+
+      cy.canChangeAccess('no')
+    })
   })
 
-  it('checking COLLABORATOR with EDIT access permissions in the dashboard', () => {
-    cy.login(collaborator1)
+  context(
+    'Checking permissions for reordering chapters by drag and drop',
+    () => {
+      before(() => {
+        cy.login(author)
+        cy.goToBook(authorBook)
+        const chapters = ['Chapter 1', 'Chapter 2', 'Chapter 3']
+        chapters.forEach(chapter => {
+          cy.createChapter(chapter)
+        })
+        cy.logout()
+      })
 
-    cy.log('Collaborator can import files when creating a new book.')
-    cy.createImportedBook("Collaborator's imported book")
+      it('ADMIN can reorder chapters', () => {
+        cy.login(admin)
+        cy.goToBook(authorBook)
+        cy.reload()
 
-    cy.log('Collaborator can see only the books he/she has access to.')
-    cy.contains(adminBook).should('not.exist')
-    cy.contains(authorBook).should('exist')
+        cy.canReorderChapters()
+      })
 
-    cy.log('Collaborators cannot delete books they have access to.')
-    cy.canDeleteBook(authorBook, 'true')
+      it('AUTHOR can reorder chapters', () => {
+        cy.login(author)
+        cy.goToBook(authorBook)
+        cy.canReorderChapters()
+      })
 
-    cy.log(
-      'Collaborators can go to the producer page of the books they have access to.',
-    )
-    cy.goToBook(authorBook)
-    cy.goToDashboard()
+      it('COLLABORATOR with EDIT access can reorder chapters', () => {
+        cy.login(collaborator1)
+        cy.goToBook(authorBook)
+        cy.canReorderChapters()
+      })
 
-    cy.log(
-      'Collaborators cannot upload thumbnail for the books they have acess to.',
-    )
-    cy.canUploadThumbnail(authorBook, 'true')
-  })
-
-  it('checking COLLABORATOR with VIEW access permissions in the dashboard', () => {
-    cy.login(collaborator2)
-
-    cy.log('Collaborator can see only the books he/she has access to.')
-    cy.contains(adminBook).should('not.exist')
-    cy.contains(authorBook).should('exist')
-
-    cy.log('Collaborators cannot delete books they have access to.')
-    cy.canDeleteBook(authorBook, 'true')
-
-    cy.log(
-      'Collaborators can go to the producer page of the books they have access to.',
-    )
-    cy.goToBook(authorBook)
-    cy.goToDashboard()
-
-    cy.log(
-      'Collaborators cannot upload thumbnail for the books they have acess to.',
-    )
-    cy.canUploadThumbnail(authorBook, 'true')
-  })
-
-  it("checking ADMIN's permissions in the producer page", () => {
-    cy.login(admin)
-
-    cy.log('Admin can create a new component in any book')
-    cy.goToBook(adminBook)
-    cy.createUntitledChapter()
-    cy.log('Admin can edit and use to Wax toolbar in any book')
-    cy.canUseWaxToolbar('admin', 'not.have.attr')
-
-    // Upload a chapter
-    // Reorder chapters
-
-    cy.log('Admin can delete unlocked chapters for any book.')
-    cy.deleteChapter('Untitled Chapter')
-
-    cy.log('Admin can access Metadata')
-    cy.contains('button', 'Book Metadata').click()
-
-    cy.log('Admin can edit Metadata')
-    cy.canEditMetadata('admin', 'not.have.attr')
-
-    // Checking for a book that admin isn't owner or collaborator
-    cy.goToDashboard()
-    cy.goToBook(authorBook)
-    cy.reload()
-    cy.createUntitledChapter()
-    cy.canUseWaxToolbar('admin', 'not.have.attr')
-    cy.deleteChapter('Untitled Chapter')
-
-    cy.contains('button', 'Book Metadata').click()
-    cy.canEditMetadata('admin', 'not.have.attr')
-
-    cy.log("Admin can see people's access in any book.")
-    cy.contains('button', 'Book Members').click()
-    cy.canSeeAccess()
-
-    cy.log("Admin can change members's access in any book.")
-    cy.canChangeAccess('yes')
-  })
-
-  it("checking AUTHOR's permissions in the producer page", () => {
-    cy.login(author)
-
-    cy.log('Author can create a new component in the book he/she is owner.')
-    cy.goToBook(authorBook)
-    cy.createUntitledChapter()
-    cy.log('Author can use Wax toolbar in the book he/she is owner.')
-    cy.canUseWaxToolbar('author', 'not.have.attr')
-
-    // Upload a chapter
-    // Reorder chapters
-
-    cy.log('Author can delete unlocked chapters in the book he/she is owner.')
-    cy.deleteChapter('Untitled Chapter')
-
-    cy.log('Author can access Metadata')
-    cy.contains('button', 'Book Metadata').click()
-
-    cy.log('Author can edit Metadata')
-    cy.canEditMetadata('author', 'not.have.attr')
-
-    cy.log("Author can see people's access in the book he/she is owner.")
-    cy.contains('button', 'Book Members').click()
-    cy.canSeeAccess()
-
-    cy.log("Author can change members's access in the book he/she is owner.")
-    cy.canChangeAccess('yes')
-  })
-
-  it('checking COLLABORATOR with EDIT access permissions in the producer page', () => {
-    cy.login(collaborator1)
-
-    cy.log(
-      'COLLABORATOR with EDIT access can create a new component in the book he/she is collaborator.',
-    )
-    cy.goToBook(authorBook)
-    cy.createUntitledChapter()
-    cy.log(
-      'COLLABORATOR with EDIT access can use Wax toolbar in the book he/she is collaborator.',
-    )
-    cy.canUseWaxToolbar('COLLABORATOR with EDIT access', 'not.have.attr')
-
-    // Upload a chapter
-    // Reorder chapters
-
-    cy.log(
-      'COLLABORATOR with EDIT access can delete unlocked chapters in the book he/she is collaborator.',
-    )
-    cy.deleteChapter('Untitled Chapter')
-
-    cy.log(
-      'COLLABORATOR with EDIT access can access Metadata in the book he/she is collaborator.',
-    )
-    cy.contains('button', 'Book Metadata').click()
-
-    cy.log(
-      'COLLABORATOR with EDIT access can edit Metadata in the book he/she is collaborator.',
-    )
-    cy.canEditMetadata('COLLABORATOR with EDIT access', 'not.have.attr')
-
-    cy.log(
-      "COLLABORATORS can see people's access in the book he/she is collaborator.",
-    )
-    cy.contains('button', 'Book Members').click()
-    cy.canSeeAccess()
-
-    cy.log(
-      "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
-    )
-
-    cy.canChangeAccess('no')
-  })
-
-  it('checking COLLABORATOR with VIEW access permissions in the producer page', () => {
-    // Adding a chapter by author in order to check permissions
-    cy.login(author)
-    cy.goToBook(authorBook)
-    cy.createUntitledChapter()
-    cy.logout()
-
-    cy.login(collaborator2)
-
-    cy.log(
-      'COLLABORATOR with VIEW access can NOT create a new component in the book he/she is collaborator.',
-    )
-    cy.goToBook(authorBook)
-    cy.createUntitledChapter()
-    cy.log(
-      'COLLABORATOR with VIEW access can NOT use Wax toolbar in the book he/she is collaborator.',
-    )
-    cy.canUseWaxToolbar('COLLABORATOR with VIEW access', 'have.attr')
-
-    // Upload a chapter
-    // Reorder chapters
-
-    cy.log(
-      'COLLABORATOR with VIEW access can NOT delete unlocked chapters in the book he/she is collaborator.',
-    )
-    cy.contains('Untitled Chapter')
-      .parent()
-      .parent()
-      .find('[data-icon="more"]')
-      .should('not.be.enabled')
-
-    cy.log(
-      'COLLABORATOR with VIEW access can access Metadata in the book he/she is collaborator.',
-    )
-    cy.contains('button', 'Book Metadata').click()
-
-    cy.log(
-      'COLLABORATOR with VIEW access can NOT edit Metadata in the book he/she is collaborator.',
-    )
-    cy.canEditMetadata('COLLABORATOR with VIEW access', 'have.attr')
-
-    cy.log(
-      "COLLABORATORS can see people's access in the book he/she is collaborator.",
-    )
-    cy.contains('button', 'Book Members').click()
-    cy.canSeeAccess()
-
-    cy.log(
-      "COLLABORATORS can NOT change members's access in the book he/she is collaborator..",
-    )
-
-    cy.canChangeAccess('no')
-  })
+      it('COLLABORATOR with VIEW access can NOT reorder chapters', () => {
+        cy.login(collaborator2)
+        cy.goToBook(authorBook)
+        cy.reload()
+        cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
+        cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)')
+        cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
+      })
+    },
+  )
 })
 
 Cypress.Commands.add('addMember', (collaborator, access) => {
@@ -486,4 +533,26 @@ Cypress.Commands.add('canChangeAccess', status => {
     cy.get('input[type="search"]:nth(0)').should('have.attr', 'disabled')
     cy.contains('Add user').should('be.disabled')
   }
+})
+
+Cypress.Commands.add('canReorderChapters', status => {
+  cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)')
+
+  cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
+  cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 3')
+  cy.get('.ant-list-items > :nth-child(3)').should('contain', 'Chapter 1')
+
+  cy.log('Chapter 1 was moved below chapter 3')
+
+  cy.contains('Chapter 2').dragAndDrop('div:nth(44)', 'div:nth(53)')
+  cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 3')
+  cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 1')
+  cy.get('.ant-list-items > :nth-child(3)').should('contain', 'Chapter 2')
+
+  cy.log('Chapter 2 was moved below chapter 1')
+
+  cy.contains('Chapter 3').dragAndDrop('div:nth(44)', 'div:nth(53)')
+  cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
+  cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 2')
+  cy.get('.ant-list-items > :nth-child(3)').should('contain', 'Chapter 3')
 })

@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -98,4 +99,58 @@ Cypress.Commands.add('createUntitledChapter', () => {
   cy.url().should('include', '/producer')
   cy.get('.anticon-plus').click()
   cy.contains('Untitled Chapter', { timeout: 8000 }).click()
+})
+
+Cypress.Commands.add('createChapter', chapterTitle => {
+  cy.get('.anticon-plus').click()
+  cy.contains('Untitled Chapter').click()
+  cy.get('[title="Change to Title"]').click()
+  cy.get('h1').type(chapterTitle)
+})
+
+Cypress.Commands.add('dragAndDrop', (subject, target) => {
+  Cypress.log({
+    name: 'DRAGNDROP',
+    message: `Dragging element ${subject} to ${target}`,
+    consoleProps: () => {
+      return {
+        subject,
+        target,
+      }
+    },
+  })
+  const BUTTON_INDEX = 0
+  const SLOPPY_CLICK_THRESHOLD = 10
+  cy.get(target)
+    .first()
+    .then($target => {
+      const coordsDrop = $target[0].getBoundingClientRect()
+      cy.get(subject)
+        .first()
+        // eslint-disable-next-line no-shadow
+        .then(subject => {
+          const coordsDrag = subject[0].getBoundingClientRect()
+          cy.wrap(subject)
+            .trigger('mousedown', {
+              button: BUTTON_INDEX,
+              clientX: coordsDrag.x,
+              clientY: coordsDrag.y,
+              force: true,
+            })
+            .trigger('mousemove', {
+              button: BUTTON_INDEX,
+              clientX: coordsDrag.x + SLOPPY_CLICK_THRESHOLD,
+              clientY: coordsDrag.y,
+              force: true,
+            })
+          cy.get('body')
+            .trigger('mousemove', {
+              button: BUTTON_INDEX,
+              clientX: coordsDrop.x,
+              clientY: coordsDrop.y,
+              force: true,
+            })
+            .trigger('mouseup')
+        })
+    })
 })
