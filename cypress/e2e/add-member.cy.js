@@ -9,9 +9,15 @@ const {
 
 describe('Checking "Add members" modal', () => {
   before(() => {
-    cy.signup(author)
-    cy.signup(collaborator1)
-    cy.signup(collaborator2)
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1')
+    cy.log('Author 1 is created.')
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1')
+    cy.log('Collaborator 1 is created.')
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2')
+    cy.log('Collaborator 2 is created.')
+    // cy.signup(author)
+    // cy.signup(collaborator1)
+    // cy.signup(collaborator2)
     cy.login(admin)
     cy.addBook('Test Book')
     cy.logout()
@@ -19,6 +25,7 @@ describe('Checking "Add members" modal', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToBook('Test Book')
+    cy.reload()
   })
 
   it('checking the defaults of the modal', () => {
@@ -240,6 +247,9 @@ describe('add multiple members', () => {
   })
 
   // TO RUN THE NEXT STEP, IT IS NECCESSARY TO VERIFY THE USERS CREATED ABOVE
+  // Run in the database the following script:
+  // update public.users set is_active=true;
+  // update public.identities set is_verified=true;
 
   it.skip('adding collaborators', () => {
     cy.login(admin)

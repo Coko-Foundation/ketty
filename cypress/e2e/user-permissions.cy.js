@@ -11,9 +11,15 @@ const authorBook = 'Author Book'
 
 describe('Checking permissions for dashboard', () => {
   before(() => {
-    cy.signup(author)
-    cy.signup(collaborator1)
-    cy.signup(collaborator2)
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1')
+    cy.log('Author 1 is created.')
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1')
+    cy.log('Collaborator 1 is created.')
+    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2')
+    cy.log('Collaborator 2 is created.')
+    // cy.signup(author)
+    // cy.signup(collaborator1)
+    // cy.signup(collaborator2)
     cy.login(admin)
     cy.log('Admin can create a book')
     cy.addBook(adminBook)
