@@ -42,7 +42,14 @@ describe('Checking Producer Page', () => {
       // adding a chapter
       cy.get('.anticon-plus').click()
       cy.contains('Untitled Chapter').click()
-      cy.get('[title="Change to Title"]').click()
+      // cy.get('[title="Change to Title"]').click()
+      cy.get('[aria-controls="block-level-options"]').click()
+      cy.get(`#block-level-options > :nth-child(${1})`)
+        .contains('Title')
+        .click({
+          timeout: 5000,
+          force: true,
+        })
       cy.get('h1').type('Title of chapter 1')
 
       // deleting a chapter
@@ -111,11 +118,21 @@ describe('Checking Producer Page', () => {
 
       // Checking default values for copyright page section
       cy.get('h2').last().should('have.text', 'COPYRIGHT PAGE')
-      checkDefaultFieldValues(
-        'ISBN',
-        '#isbn',
-        'Update this ISBN before exporting versions requiring unique identifier',
-      )
+      cy.get('label[title="ISBN List"]').should('have.text', 'ISBN List')
+      cy.contains('button', ' Add ISBN').should('exist').click()
+
+      cy.get('#isbns_0_label')
+        .should('have.attr', 'placeholder', 'Label')
+        .should('be.empty')
+
+      cy.get('#isbns_0_isbn')
+        .should(
+          'have.attr',
+          'placeholder',
+          'ISBN: update this value before exporting versions requiring unique identifier',
+        )
+        .should('be.empty')
+
       checkDefaultFieldValues(
         'Top of the page',
         '#topPage',
@@ -164,6 +181,69 @@ describe('Checking Producer Page', () => {
           'checked',
         )
       })
+    })
+
+    it('checking multiple ISBNs', () => {
+      // Adding the first ISBN
+      cy.contains('button', ' Add ISBN').click()
+      cy.setValue('#isbns_0_label', 'Paperback')
+      cy.setValue('#isbns_0_isbn', '978-3-16-148410-0')
+
+      // Adding multiple ISBNs
+      cy.contains('button', ' Add ISBN').should('not.exist')
+      cy.contains('button', 'Add Another ISBN').should('exist').click()
+
+      cy.get('#isbns_1_label')
+        .should('have.attr', 'placeholder', 'Label')
+        .should('be.empty')
+
+      cy.get('#isbns_1_isbn')
+        .should(
+          'have.attr',
+          'placeholder',
+          'ISBN: update this value before exporting versions requiring unique identifier',
+        )
+        .should('be.empty')
+
+      cy.setValue('#isbns_1_label', 'Paperback')
+      cy.setValue('#isbns_1_isbn', '978-3-16-148410-0')
+
+      cy.get('.ant-modal-footer').contains('Save').click()
+
+      // Cannot have two ISBNs with the same label
+      cy.contains('Duplicate Label values: "Paperback"')
+
+      // Cannot have two ISBNs with the same label
+      cy.contains('Duplicate ISBN values: "978-3-16-148410-0"')
+      cy.get('#isbns_1_label').clear()
+      cy.contains('Label is required (for multiple ISBNs)')
+      cy.setValue('#isbns_1_label', 'Hardcover')
+
+      cy.get('#isbns_1_isbn').clear()
+      cy.contains('ISBN is required')
+      cy.setValue('#isbns_1_isbn', 'aaaa')
+      cy.get('.ant-modal-footer').contains('Save').click()
+
+      // Adding non numeric characters to ISBN is not allowed
+      cy.contains('ISBN is invalid').should('exist')
+      cy.get('#isbns_1_isbn').clear()
+      cy.get('#isbns_1_isbn').type('978-3-16-148540-0')
+      cy.contains('ISBN is required').should('not.exist')
+      cy.get('.ant-modal-footer').contains('Save').click()
+
+      // Removing ISBNs
+      cy.contains('button', 'Book Metadata').click()
+      cy.get('.ant-modal-title').should('have.text', 'Book Metadata')
+      cy.get('[aria-label="minus-circle"]:nth(0)').should('exist')
+      cy.get('[aria-label="minus-circle"]:nth(1)').should('exist')
+      cy.get('[aria-label="minus-circle"]:nth(0)').click()
+      cy.get('[aria-label="minus-circle"]:nth(0)').click()
+      cy.get('.ant-modal-footer').contains('Save').click()
+
+      cy.contains('button', 'Book Metadata').click()
+      cy.contains('Hardcover').should('not.exist')
+      cy.contains('Paperback').should('not.exist')
+      cy.contains('button', ' Add ISBN').should('exist')
     })
 
     it('checking copyright licenses options', () => {
@@ -294,7 +374,10 @@ describe('Checking Producer Page', () => {
       cy.setValue('#title', 'New title')
       cy.setValue('#subtitle', 'New subtitle')
       cy.setValue('#authors', 'Test Author')
-      cy.setValue('#isbn', '978-3-16-148410-0')
+
+      cy.contains('button', ' Add ISBN').click()
+      cy.setValue('#isbns_0_label', 'Paperback')
+      cy.setValue('#isbns_0_isbn', '978-3-16-148410-0')
       cy.setValue(
         '#topPage',
         'Portions of this book are works of fiction. Any references to historical events, real people, or real places are used fictitiously.',
@@ -308,7 +391,8 @@ describe('Checking Producer Page', () => {
       cy.verifyValue('#title', 'New title')
       cy.verifyValue('#subtitle', 'New subtitle')
       cy.verifyValue('#authors', 'Test Author')
-      cy.verifyValue('#isbn', '978-3-16-148410-0')
+      cy.verifyValue('#isbns_0_label', 'Paperback')
+      cy.verifyValue('#isbns_0_isbn', '978-3-16-148410-0')
       cy.verifyValue(
         '#topPage',
         'Portions of this book are works of fiction. Any references to historical events, real people, or real places are used fictitiously.',

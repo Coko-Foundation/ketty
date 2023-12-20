@@ -104,7 +104,12 @@ Cypress.Commands.add('createUntitledChapter', () => {
 Cypress.Commands.add('createChapter', chapterTitle => {
   cy.get('.anticon-plus').click()
   cy.contains('Untitled Chapter').click()
-  cy.get('[title="Change to Title"]').click()
+  // cy.get('[title="Change to Title"]').click()
+  cy.get('[aria-controls="block-level-options"]').click()
+  cy.get(`#block-level-options > :nth-child(${1})`).contains('Title').click({
+    timeout: 5000,
+    force: true,
+  })
   cy.get('h1').type(chapterTitle)
 })
 

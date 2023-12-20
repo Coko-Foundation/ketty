@@ -40,7 +40,12 @@ describe('Start writing', () => {
     // Adding a chapter
     cy.get('.anticon-plus').click()
     cy.contains('Untitled Chapter').click()
-    cy.get('[title="Change to Title"]').click()
+    // cy.get('[title="Change to Title"]').click()
+    cy.get('[aria-controls="block-level-options"]').click()
+    cy.get(`#block-level-options > :nth-child(${1})`).contains('Title').click({
+      timeout: 5000,
+      force: true,
+    })
     cy.get('h1').type('Title of chapter 1')
 
     // Going back to dashboard

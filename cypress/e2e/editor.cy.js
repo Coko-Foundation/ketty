@@ -9,11 +9,6 @@ describe('Book editor', () => {
     cy.fixture('book-content').then(bookContent => {
       display = [
         {
-          button: "[title='Change to Title']",
-          element: 'h1',
-          content: bookContent['title-h1'],
-        },
-        {
           button: "[title='Toggle strong']",
           element: 'strong',
           content: bookContent.bold,
@@ -31,6 +26,11 @@ describe('Book editor', () => {
       ]
       listItems = ['item1', 'item2', 'item3']
       levels = [
+        {
+          title: 'Title',
+          element: 'h1',
+          content: bookContent['title-h1'],
+        },
         {
           title: 'Heading 2',
           element: 'h2',
@@ -66,6 +66,20 @@ describe('Book editor', () => {
     cy.get('.anticon-plus').click()
     cy.contains('Untitled Chapter', { timeout: 8000 }).click()
 
+    let i = 1
+    levels.forEach(option => {
+      cy.get('[aria-controls="block-level-options"]').click() // Click the Dropdown-control at the current index
+      cy.get(`#block-level-options > :nth-child(${i})`)
+        .contains(option.title)
+        .click({
+          timeout: 5000,
+          force: true,
+        }) // Find and click the option with the specific content within the Dropdown-menu
+      cy.get('.ProseMirror').type(`${option.content}{enter}`)
+      i += 1
+    })
+    cy.get('.ProseMirror').type('{enter}')
+
     display.forEach(option => {
       cy.get(option.button, { timeout: 8000 }).click({
         timeout: 5000,
@@ -88,22 +102,10 @@ describe('Book editor', () => {
       cy.get('.ProseMirror').type(`${li}{enter}`)
     })
     cy.get('.ProseMirror').type('{enter}')
-
-    let i = 1
-    levels.forEach(option => {
-      cy.get('.Dropdown-control').click() // Click the Dropdown-control at the current index
-      cy.get(`.Dropdown-menu > :nth-child(${i})`).contains(option.title).click({
-        timeout: 5000,
-        force: true,
-      }) // Find and click the option with the specific content within the Dropdown-menu
-      cy.get('.ProseMirror').type(`${option.content}{enter}`)
-      i += 1
-    })
-    cy.get('.ProseMirror').type('{enter}')
   })
 
   it('Verifying content', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
 
     display.forEach(option => {
       cy.contains(option.element, option.content, { timeout: 8000 })
@@ -124,7 +126,7 @@ describe('Book editor', () => {
   })
 
   it('Checking redo and undo', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
     const addedText = 'I added this text.'
     cy.get('.ProseMirror').type(`${addedText}{enter}`)
     cy.contains(addedText).should('exist')
@@ -153,27 +155,27 @@ describe('Book editor', () => {
   })
 
   it('Checking lifting out of enclosing blocks', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
 
     // adding a code block
     cy.get('.ProseMirror').type(`This is an enclosed block`)
-    cy.get('.Dropdown-control').click()
-    cy.get(`.Dropdown-menu > :nth-child(${4})`)
-      .contains(levels[3].title)
+    cy.get('[aria-controls="block-level-options"]').click()
+    cy.get(`#block-level-options > :nth-child(5)`)
+      .contains(levels[4].title)
       .click({
         force: true,
       })
 
-    cy.contains(levels[3].element, 'This is an enclosed block')
+    cy.contains(levels[4].element, 'This is an enclosed block')
 
     cy.get('button[title="Lift out of enclosing block"]').click()
-    cy.contains(levels[3].element, 'This is an enclosed block').should(
+    cy.contains(levels[4].element, 'This is an enclosed block').should(
       'not.exist',
     )
   })
 
   it('Checking adding special characters', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
 
     cy.get('.ProseMirror').type(
       '{Enter}The following are some special characters:{enter}',
@@ -197,7 +199,6 @@ describe('Book editor', () => {
 
     cy.get('.ProseMirror').contains('∑')
 
-    cy.get('button[title="Special Characters"]').click()
     cy.clickSpecialCharacterSection()
     cy.get('input[placeholder="Search"]').clear()
     cy.get('input[placeholder="Search"]').type('copyright')
@@ -257,8 +258,8 @@ describe('Book editor', () => {
     cy.contains('Replace with')
     cy.get('input[placeholder="Replace text"]').should('exist')
     // cy.get('input[id="case-sensitive"]').should('not.have.attr', 'checked')
-    cy.contains('button', 'Replace with').should('exist')
-    cy.contains('button', 'Replace with All').should('exist')
+    cy.contains('button', 'Replace').should('exist')
+    cy.contains('button', 'Replace All').should('exist')
 
     // Replacing the first "M"
     cy.contains('Morbi').should('exist')
@@ -269,13 +270,13 @@ describe('Book editor', () => {
     cy.get('input[id="case-sensitive"]').check({ force: true })
     cy.verifySearchResultCount('1 of 2')
     cy.get('input[placeholder="Replace text"]').type('T')
-    cy.contains('button', 'Replace with').click()
+    cy.contains('button', 'Replace').click()
     cy.verifySearchResultCount('1 of 1')
     cy.contains('Torbi').should('exist')
   })
 
   it('Checking uploading images', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
 
     cy.get('.ProseMirror').type('{enter}Next an image will be added. {enter}')
     cy.get('input[id="file-upload"]').selectFile(
@@ -286,14 +287,14 @@ describe('Book editor', () => {
     )
 
     // Checking if the image exists in Editor
-    cy.get('figure', { timeout: 5000 }).should('exist')
-    cy.get('img').last().click()
+    cy.get('figure', { timeout: 10000 }).should('exist')
+    cy.get('figure').last().click()
     cy.get('input[placeholder="Alt Text"]').type('some alternative text')
     cy.get('figcaption').type('Caption of the first image')
   })
 
   it('Checking fullscreen', () => {
-    cy.contains('The Test book').click()
+    cy.contains('Test Chapter').click()
     cy.get('button[title="Full screen"]').click()
     cy.contains('Book Metadata').should('not.exist')
 
