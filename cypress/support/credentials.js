@@ -7,19 +7,19 @@ const credentials = {
     name: 'Author',
     surname: '1',
     email: 'author.1@example.com',
-    password: 'Test@123',
+    password: 'password',
   },
   collaborator1: {
     name: 'Collaborator',
     surname: '1',
     email: 'collaborator.1@example.com',
-    password: 'Test@123',
+    password: 'password',
   },
   collaborator2: {
     name: 'Collaborator',
     surname: '2',
     email: 'collaborator.2@example.com',
-    password: 'Test@123',
+    password: 'password',
   },
 }
 

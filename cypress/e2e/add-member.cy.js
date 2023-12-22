@@ -9,11 +9,17 @@ const {
 
 describe('Checking "Add members" modal', () => {
   before(() => {
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+    )
     cy.log('Author 1 is created.')
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+    )
     cy.log('Collaborator 1 is created.')
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+    )
     cy.log('Collaborator 2 is created.')
     // cy.signup(author)
     // cy.signup(collaborator1)
@@ -57,7 +63,7 @@ describe('Checking "Add members" modal', () => {
 
     cy.get('[data-icon="question-circle"]').should('exist').trigger('mouseover')
     cy.get('.ant-tooltip-inner').contains(
-      'Only the book owner can add team members who are already signed up on the system, and can determine their permissions. Collaborators with Edit access can change book content or metadata and view export previews, but cannot download PDF or Epub files. Collaborators with View access cannot change book content or metadata or download PDF or Epub files, but can view export previews.',
+      'Only the book owner can add team members who are already signed up on the system, and can determine their permissions. Collaborators with Edit access can change book content or metadata, view export previews, and download PDF and Epub files, but cannot delete the book. Collaborators with View access cannot delete the book, change book content or metadata, or download PDF or Epub files, but can view export previews.',
     )
   })
 

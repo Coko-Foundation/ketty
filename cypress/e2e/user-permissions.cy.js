@@ -11,11 +11,17 @@ const authorBook = 'Author Book'
 
 describe('Checking permissions for dashboard', () => {
   before(() => {
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+    )
     cy.log('Author 1 is created.')
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+    )
     cy.log('Collaborator 1 is created.')
-    cy.exec('docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2')
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+    )
     cy.log('Collaborator 2 is created.')
     // cy.signup(author)
     // cy.signup(collaborator1)
@@ -416,17 +422,16 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
     // Checking Redo button
     cy.get(`button[title="Redo"]`).click()
     // Checking Heading styles is clickable
-    cy.get('.Dropdown-control').click()
-    cy.get('.Dropdown-menu > :nth-child(4)').click()
+    cy.get('[aria-controls="block-level-options"]').click()
+    cy.get('#block-level-options > :nth-child(5)').click()
   } else {
     cy.get('.ProseMirror').should('not.be.enabled')
     // Checking Heading styles is not clickable
-    cy.get('.Dropdown-control').should('not.be.enabled')
+    cy.get('[aria-controls="block-level-options"]').should('not.be.enabled')
   }
 
   const buttons = [
     'Undo',
-    'Change to Title',
     'Wrap in ordered list',
     'Wrap in bullet list',
     'Lift out of enclosing block', // Lift out
@@ -464,7 +469,6 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
     '#title',
     '#subtitle',
     '#authors',
-    '#isbn',
     '#topPage',
     '#bottomPage',
   ]
@@ -493,6 +497,15 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
       cy.get(radioButton).click()
     }
   })
+
+  // Adding ISBN
+  cy.contains('button', 'Add ISBN').should(disabledStatus, 'disabled')
+
+  if (disabledStatus === 'not.have.attr') {
+    // editing Metadata fields
+    cy.contains('button', 'Add ISBN').click()
+  }
+
   cy.contains('Close').click()
 })
 
