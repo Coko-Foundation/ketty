@@ -1,4 +1,4 @@
-const admin = require('../support/credentials')
+const { admin } = require('../support/credentials')
 
 describe('Checking the Preview section', () => {
   before(() => {
