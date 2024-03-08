@@ -113,6 +113,31 @@ Cypress.Commands.add('createChapter', chapterTitle => {
   cy.get('h1').type(chapterTitle)
 })
 
+Cypress.Commands.add('addMember', (collaborator, access) => {
+  cy.contains('button', 'Share').click()
+  cy.get('.ant-select-selection-overflow').type(collaborator.email)
+  cy.get('div[role="option"]').click()
+
+  cy.get('.ant-select-selection-overflow').should(
+    'contain',
+    collaborator.name,
+    collaborator.surname,
+  )
+
+  if (access === 'edit') {
+    // Default permission is 'Can view'
+    cy.contains('Can view').click()
+
+    // Changing permission to 'Can edit'
+    cy.contains('Can edit').click()
+    cy.contains('Add user').click()
+  } else if (access === 'view') {
+    cy.contains('Add user').click()
+  }
+
+  cy.get('.ant-modal-close').click()
+})
+
 Cypress.Commands.add('dragAndDrop', (subject, target) => {
   Cypress.log({
     name: 'DRAGNDROP',

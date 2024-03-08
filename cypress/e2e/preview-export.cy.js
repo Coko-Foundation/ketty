@@ -9,7 +9,7 @@ describe('Checking the Preview section', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToBook('Test Book')
-    cy.contains('a', 'Preview & Export').click()
+    cy.contains('a', 'Preview').click()
   })
 
   it.skip('checking preview section', () => {

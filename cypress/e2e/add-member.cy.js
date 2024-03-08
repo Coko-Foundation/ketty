@@ -35,7 +35,7 @@ describe('Checking "Add members" modal', () => {
   })
 
   it('checking the defaults of the modal', () => {
-    cy.contains('button', 'Book Members')
+    cy.contains('button', 'Share')
       .should('exist')
       .should('not.be.disabled')
       .click()
@@ -68,7 +68,7 @@ describe('Checking "Add members" modal', () => {
   })
 
   it('checking "Add user" button is disabled if user types in an incorrect email', () => {
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
     cy.contains('Add user').should('be.disabled')
 
     cy.log('author.10@example.com does not exist')
@@ -91,7 +91,7 @@ describe('Checking "Add members" modal', () => {
   })
 
   it('adding a single user and changing permissions', () => {
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
     cy.contains('Add user').should('be.disabled')
 
     cy.get('.ant-select-selection-overflow').type(author.email)
@@ -130,7 +130,7 @@ describe('Checking "Add members" modal', () => {
   })
 
   it('removing a collaborator', () => {
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
 
     cy.log('Adding a user with view permission')
     cy.get('.ant-select-selection-overflow').type(collaborator1.email)
@@ -153,7 +153,7 @@ describe('Checking "Add members" modal', () => {
   })
 
   it('check that changes are saved when closing the modal', () => {
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
 
     cy.log('Adding a user with view permission')
     cy.get('.ant-select-selection-overflow').type(collaborator1.email)
@@ -170,7 +170,7 @@ describe('Checking "Add members" modal', () => {
     cy.get('.ant-modal-close').click()
 
     // reopening the modal
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
     cy.get('.ant-list-item').should(
       'contain',
       'C1',
@@ -188,12 +188,12 @@ describe('Checking "Add members" modal', () => {
     cy.get('.ant-modal-close').click()
 
     // reopening the modal
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
     cy.contains(collaborator1.name, collaborator1.surname).should('not.exist')
   })
 
   it('adding multiple members at once', () => {
-    cy.contains('button', 'Book Members').click()
+    cy.contains('button', 'Share').click()
 
     cy.get('.ant-select-selection-overflow').type(collaborator1.email)
     cy.get('div[role="option"]')
@@ -260,7 +260,7 @@ describe('add multiple members', () => {
   it.skip('adding collaborators', () => {
     cy.login(admin)
     cy.contains('1').click()
-    cy.contains('Book Members').click()
+    cy.contains('Share').click()
 
     for (let i = 1; i <= 150; i++) {
       const surname = i

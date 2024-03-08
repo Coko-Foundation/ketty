@@ -5,6 +5,7 @@ describe('Checking Producer Page', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('Test Book')
+    cy.addBook('AI Book')
     cy.logout()
   })
 
@@ -73,7 +74,7 @@ describe('Checking Producer Page', () => {
         )
       })
 
-      cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(57)') // moving chapter 1 below chapter 3
+      cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)') // moving chapter 1 below chapter 3
 
       cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
       cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 3')
@@ -400,6 +401,73 @@ describe('Checking Producer Page', () => {
       cy.verifyValue('#bottomPage', 'www.author-website.com')
 
       // verify only one of the radio buttons in "Copyright License" section can be selected
+    })
+  })
+
+  context('Book Settings & AI', () => {
+    beforeEach(() => {
+      cy.login(admin)
+      cy.contains('AI Book').click()
+      cy.url().should('include', '/producer')
+      cy.contains('div', 'AI Book')
+    })
+
+    it('checking editor toolbar and book settings when AI is off', () => {
+      cy.get('button[title="Toggle Ai"]').should('not.exist')
+
+      // Confirm default values for Book Settings
+      cy.get('[role="menuitem"]:nth(3)').click()
+      cy.contains('Book settings').should('exist')
+      cy.contains('Use AI').should('exist')
+      cy.contains('Users with edit access can use AI writing prompts').should(
+        'exist',
+      )
+      cy.get('[role="switch"]')
+        .should('have.attr', 'aria-checked')
+        .and('equal', 'false')
+      cy.get('[data-icon="close"]').click()
+    })
+
+    it('switching AI to on', () => {
+      cy.createUntitledChapter()
+      //   Enable AI
+      cy.get('[role="menuitem"]:nth(3)').click()
+      cy.get('[role="switch"]').click()
+      cy.get('[role="switch"]')
+        .should('have.attr', 'aria-checked')
+        .and('equal', 'true')
+      cy.get('[data-icon="close"]').click()
+      cy.get('button[title="Toggle Ai"]')
+        .should('exist')
+        .should('have.attr', 'aria-pressed')
+        .and('equal', 'false')
+
+      cy.get('.ProseMirror').type('Add a paragraph{selectall}')
+
+      cy.get('button[title="Toggle Ai"]').should('not.be.disabled')
+
+      cy.get('button[title="Toggle Ai"]').click({ force: true })
+
+      cy.get('input[id="askAiInput"]')
+        .should('have.attr', 'placeholder')
+        .and('eq', 'How can I help you? Type your prompt here.')
+
+      cy.get('input[id="askAiInput"]')
+        .should('be.visible')
+        .then($input => {
+          // Focus on the input field explicitly
+          cy.wrap($input).focus()
+          cy.wrap($input).type('Replace this with a familiar sentence {enter}')
+        })
+
+      cy.contains('Try again').click()
+      cy.contains('Discard').click()
+      cy.get('input[id="askAiInput"]')
+        .parent()
+        // .click()
+        .type('Replace this with a familiar sentence {enter}')
+      cy.contains('Replace selected text').click()
+      cy.contains('Add a paragraph').should('not.exist')
     })
   })
 

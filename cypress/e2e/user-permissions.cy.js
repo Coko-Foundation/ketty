@@ -168,7 +168,7 @@ describe('Checking permissions for dashboard', () => {
       cy.canEditMetadata('admin', 'not.have.attr')
 
       cy.log("Admin can see people's access in any book.")
-      cy.contains('button', 'Book Members').click()
+      cy.contains('button', 'Share').click()
       cy.canSeeAccess()
 
       cy.log("Admin can change members's access in any book.")
@@ -197,7 +197,7 @@ describe('Checking permissions for dashboard', () => {
       cy.canEditMetadata('author', 'not.have.attr')
 
       cy.log("Author can see people's access in the book he/she is owner.")
-      cy.contains('button', 'Book Members').click()
+      cy.contains('button', 'Share').click()
       cy.canSeeAccess()
 
       cy.log("Author can change members's access in the book he/she is owner.")
@@ -238,7 +238,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         "COLLABORATORS can see people's access in the book he/she is collaborator.",
       )
-      cy.contains('button', 'Book Members').click()
+      cy.contains('button', 'Share').click()
       cy.canSeeAccess()
 
       cy.log(
@@ -292,7 +292,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         "COLLABORATORS can see people's access in the book he/she is collaborator.",
       )
-      cy.contains('button', 'Book Members').click()
+      cy.contains('button', 'Share').click()
       cy.canSeeAccess()
 
       cy.log(
@@ -346,31 +346,6 @@ describe('Checking permissions for dashboard', () => {
       })
     },
   )
-})
-
-Cypress.Commands.add('addMember', (collaborator, access) => {
-  cy.contains('button', 'Book Members').click()
-  cy.get('.ant-select-selection-overflow').type(collaborator.email)
-  cy.get('div[role="option"]').click()
-
-  cy.get('.ant-select-selection-overflow').should(
-    'contain',
-    collaborator.name,
-    collaborator.surname,
-  )
-
-  if (access === 'edit') {
-    // Default permission is Can view
-    cy.contains('Can view').click()
-
-    // Changing permission to Can edit
-    cy.contains('Can edit').click()
-    cy.contains('Add user').click()
-  } else if (access === 'view') {
-    cy.contains('Add user').click()
-  }
-
-  cy.get('.ant-modal-close').click()
 })
 
 Cypress.Commands.add('createImportedBook', bookTitle => {
