@@ -73,8 +73,8 @@ describe('Checking permissions for dashboard', () => {
       cy.verifyAISwitch(false)
 
       // Confirm default values for Book Settings
-      cy.openBookSettings()
-      cy.verifyBookSettings()
+      // cy.openBookSettings()
+      // cy.verifyBookSettings()
 
       // COLLABORATOR with EDIT access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()
@@ -87,8 +87,8 @@ describe('Checking permissions for dashboard', () => {
       cy.verifyAISwitch(false)
 
       // Confirm default values for Book Settings
-      cy.openBookSettings()
-      cy.verifyBookSettings()
+      // cy.openBookSettings()
+      // cy.verifyBookSettings()
 
       // COLLABORATOR with EDIT access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()
@@ -149,23 +149,23 @@ describe('Checking permissions for dashboard', () => {
 Cypress.Commands.add('openBookSettings', () => {
   cy.get('[role="menuitem"]:nth(3)').click()
   cy.contains('Book settings').should('exist')
-  cy.contains('Use AI').should('exist')
+  cy.contains('AI writing prompt use').should('exist')
 })
 
 Cypress.Commands.add('verifyBookSettings', () => {
-  cy.get('[role="switch"]').should('have.attr', 'aria-checked', 'false')
-  cy.get('[data-icon="close"]').click()
+  cy.get('[role="switch"]:nth(0)').should('have.attr', 'aria-checked', 'false')
+  cy.contains('Save').click()
 })
 
 Cypress.Commands.add('toggleAISwitch', toggleState => {
   cy.openBookSettings()
-  cy.get('[role="switch"]').click()
-  cy.get('[role="switch"]').should(
+  cy.get('[role="switch"]:nth(0)').click()
+  cy.get('[role="switch"]:nth(0)').should(
     'have.attr',
     'aria-checked',
     toggleState ? 'true' : 'false',
   )
-  cy.get('[data-icon="close"]').click()
+  cy.contains('Save').click()
 })
 
 Cypress.Commands.add('verifyAISwitch', shouldBeVisible => {

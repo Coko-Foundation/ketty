@@ -418,11 +418,11 @@ describe('Checking Producer Page', () => {
       // Confirm default values for Book Settings
       cy.get('[role="menuitem"]:nth(3)').click()
       cy.contains('Book settings').should('exist')
-      cy.contains('Use AI').should('exist')
-      cy.contains('Users with edit access can use AI writing prompts').should(
-        'exist',
-      )
-      cy.get('[role="switch"]')
+      cy.contains('AI writing prompt use').should('exist')
+      cy.contains(
+        'Users with edit access to this book can use AI writing prompts',
+      ).should('exist')
+      cy.get('[role="switch"]:nth(0)')
         .should('have.attr', 'aria-checked')
         .and('equal', 'false')
       cy.get('[data-icon="close"]').click()
@@ -432,11 +432,11 @@ describe('Checking Producer Page', () => {
       cy.createUntitledChapter()
       //   Enable AI
       cy.get('[role="menuitem"]:nth(3)').click()
-      cy.get('[role="switch"]').click()
-      cy.get('[role="switch"]')
+      cy.get('[role="switch"]:nth(0)').click()
+      cy.get('[role="switch"]:nth(0)')
         .should('have.attr', 'aria-checked')
         .and('equal', 'true')
-      cy.get('[data-icon="close"]').click()
+      cy.contains('Save').click()
       cy.get('button[title="Toggle Ai"]')
         .should('exist')
         .should('have.attr', 'aria-pressed')
