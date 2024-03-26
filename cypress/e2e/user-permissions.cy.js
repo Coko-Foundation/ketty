@@ -341,7 +341,10 @@ describe('Checking permissions for dashboard', () => {
         cy.goToBook(authorBook)
         cy.reload()
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
-        cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)')
+        cy.contains('Chapter 1').dragAndDrop(
+          ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
+          'div:nth(55)',
+        )
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
       })
     },
@@ -530,7 +533,10 @@ Cypress.Commands.add('canChangeAccess', status => {
 })
 
 Cypress.Commands.add('canReorderChapters', status => {
-  cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)')
+  cy.contains('Chapter 1').dragAndDrop(
+    ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
+    'div:nth(55)',
+  )
 
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 3')
@@ -538,14 +544,20 @@ Cypress.Commands.add('canReorderChapters', status => {
 
   cy.log('Chapter 1 was moved below chapter 3')
 
-  cy.contains('Chapter 2').dragAndDrop('div:nth(44)', 'div:nth(53)')
+  cy.contains('Chapter 2').dragAndDrop(
+    ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
+    'div:nth(55)',
+  )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 3')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 1')
   cy.get('.ant-list-items > :nth-child(3)').should('contain', 'Chapter 2')
 
   cy.log('Chapter 2 was moved below chapter 1')
 
-  cy.contains('Chapter 3').dragAndDrop('div:nth(44)', 'div:nth(53)')
+  cy.contains('Chapter 3').dragAndDrop(
+    ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
+    'div:nth(55)',
+  )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 2')
   cy.get('.ant-list-items > :nth-child(3)').should('contain', 'Chapter 3')

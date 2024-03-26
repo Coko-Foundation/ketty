@@ -74,7 +74,10 @@ describe('Checking Producer Page', () => {
         )
       })
 
-      cy.contains('Chapter 1').dragAndDrop('div:nth(44)', 'div:nth(53)') // moving chapter 1 below chapter 3
+      cy.contains('Chapter 1').dragAndDrop(
+        ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
+        'div:nth(55)',
+      ) // moving chapter 1 below chapter 3
 
       cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
       cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 3')
