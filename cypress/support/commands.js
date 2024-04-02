@@ -138,6 +138,11 @@ Cypress.Commands.add('addMember', (collaborator, access) => {
   cy.get('.ant-modal-close').click()
 })
 
+Cypress.Commands.add('goToPreview', () => {
+  cy.contains('a', 'Preview').click()
+  cy.url().should('include', '/exporter')
+})
+
 Cypress.Commands.add('dragAndDrop', (subject, target) => {
   Cypress.log({
     name: 'DRAGNDROP',

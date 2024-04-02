@@ -1,4 +1,6 @@
 /* eslint-disable jest/expect-expect */
+const { author } = require('../support/credentials')
+
 describe('Login', () => {
   beforeEach(() => {
     cy.visit('http://localhost:4000')
@@ -134,10 +136,15 @@ describe('Signup', () => {
     cy.get('div[role="alert"]').contains(
       "We've sent you a verification email. Click on the link in the email to activate your account.",
     )
-
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+    )
     cy.visit('http://localhost:4000/login')
+
     // New user logs in
+    cy.login(author)
     // Check avatar for the initials of the new user
+    cy.get('.ant-avatar-string').should('exist').contains('A1')
   })
 
   it('does NOT allow users with same email address to signup', () => {
@@ -190,7 +197,7 @@ describe('Reset Password', () => {
   })
 
   // it('existing user resets password and logs in with new password', () => {
-  // needs verified user
+  // needs script to change password
   // })
 
   it('does NOT allow invalid email', () => {
