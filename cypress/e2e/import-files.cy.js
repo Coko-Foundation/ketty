@@ -8,7 +8,7 @@ describe('Start writing', () => {
 
   it('creating a book by importing files', () => {
     // cy.getByData('import-files-button')
-    cy.get('button:nth(2)').should('have.text', 'Import your files').click()
+    cy.get('button:nth(3)').should('have.text', 'Import your files').click()
 
     cy.get('h1').should('have.text', 'Import')
     cy.get('p').first().should('have.text', 'Files supported: .docx')
@@ -26,7 +26,7 @@ describe('Start writing', () => {
     )
 
     // cy.getByData('continue-btn')
-    cy.get('button:nth(1)')
+    cy.get('button:nth(2)')
       .should('have.text', 'Continue')
       .should('be.disabled')
 

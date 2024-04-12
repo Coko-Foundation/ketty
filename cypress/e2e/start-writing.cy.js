@@ -9,7 +9,7 @@ describe('Start writing', () => {
 
   it('creating a book by clicking "Start writing" button', () => {
     // cy.getByData('start-writing-button')
-    cy.get('button:nth(1)')
+    cy.get('button:nth(2)')
       .should('have.text', 'Start writing your book')
       .click()
 
@@ -56,7 +56,7 @@ describe('Start writing', () => {
   })
 
   it('verifying enter key is working correctly in title page', () => {
-    cy.get('button:nth(1)')
+    cy.get('button:nth(2)')
       .should('have.text', 'Start writing your book')
       .click()
 

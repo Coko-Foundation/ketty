@@ -17,7 +17,7 @@ describe('Login', () => {
     cy.log('Verify initals of admin show in the avatar')
     cy.get('.ant-avatar-string').should('exist').contains('AA')
     cy.get('.ant-avatar-string').click()
-    cy.get('li[role="menuitem"]').contains('Logout').click()
+    cy.contains('Logout').click()
     cy.location('pathname').should('equal', '/login')
   })
 

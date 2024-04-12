@@ -353,7 +353,7 @@ describe('Checking permissions for dashboard', () => {
 
 Cypress.Commands.add('createImportedBook', bookTitle => {
   cy.location('pathname').should('equal', '/dashboard')
-  cy.get('button:nth(2)').should('have.text', 'Import your files').click()
+  cy.get('button:nth(3)').should('have.text', 'Import your files').click()
   cy.get('input[type="file"]').selectFile(
     'cypress/fixtures/docs/test_document.docx',
     { force: true },
@@ -519,7 +519,7 @@ Cypress.Commands.add('canChangeAccess', status => {
     // Adding Collaborator 2 again with View access
     cy.get('.ant-select-selection-overflow').type(collaborator2.email)
     cy.get('div[role="option"]').click()
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
   } else {
     cy.get('input[type="search"]:nth(2)').should('have.attr', 'disabled')
 
@@ -528,7 +528,7 @@ Cypress.Commands.add('canChangeAccess', status => {
     )
 
     cy.get('input[type="search"]:nth(0)').should('have.attr', 'disabled')
-    cy.contains('Add user').should('be.disabled')
+    cy.get('button[type="submit"]').should('be.disabled')
   }
 })
 

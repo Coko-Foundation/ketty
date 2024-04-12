@@ -7,7 +7,7 @@ const {
   collaborator2,
 } = require('../support/credentials')
 
-describe('Checking "Add members" modal', () => {
+describe('Checking "Share" modal', () => {
   before(() => {
     cy.exec(
       'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
@@ -43,7 +43,7 @@ describe('Checking "Add members" modal', () => {
     cy.get('[data-icon="question-circle"]')
       .parent()
       .siblings()
-      .should('contain', 'Book members')
+      .should('contain', 'Share book')
 
     cy.contains('Email, comma separated').should('exist')
     cy.get('.ant-select-selection-item').should(
@@ -57,26 +57,30 @@ describe('Checking "Add members" modal', () => {
     cy.get('[role="option"]:nth(1)').should('contain', 'Can edit')
     cy.get('button[type="submit"]')
       .should('be.disabled')
-      .should('contain', 'Add user')
+      .should('contain', 'Share')
 
     cy.get('.ant-list-item').should('have.text', 'AAAdmin AdminiusOwner')
 
-    cy.get('[data-icon="question-circle"]').should('exist').trigger('mouseover')
+    cy.get('[aria-label="question-circle"]')
+      .should('exist')
+      .trigger('mouseover')
     cy.get('.ant-tooltip-inner').contains(
-      'Only the book owner can add team members who are already signed up on the system, and can determine their permissions. Collaborators with Edit access can change book content or metadata, view export previews, and download PDF and Epub files, but cannot delete the book. Collaborators with View access cannot delete the book, change book content or metadata, or download PDF or Epub files, but can view export previews.',
+      "Only the book owner can share the book. Collaborators with 'edit access' can edit the book and its metadata, view the preview, and download PDF and Epub files. Collaborators with 'view access' can view the book, its metadata, and the preview.",
     )
   })
 
-  it('checking "Add user" button is disabled if user types in an incorrect email', () => {
+  it('checking "Share" button is disabled if user types in an incorrect email', () => {
     cy.contains('button', 'Share').click()
-    cy.contains('Add user').should('be.disabled')
+    cy.get('button[type="submit"]').should('contain', 'Share')
+    cy.get('button[type="submit"]').should('be.disabled')
 
     cy.log('author.10@example.com does not exist')
     cy.get('.ant-select-selection-overflow').type(
       'author.10@example.com{enter}',
     )
     cy.get('div[role="option"]').should('not.exist')
-    cy.contains('Add user').should('be.disabled')
+    cy.get('button[type="submit"]').should('contain', 'Share')
+    cy.get('button[type="submit"]').should('be.disabled')
 
     cy.log('author.1@example.com exists')
     cy.get('.ant-select-selection-overflow').type(author.email)
@@ -87,12 +91,13 @@ describe('Checking "Add members" modal', () => {
       author.name,
       author.surname,
     )
-    cy.contains('Add user').should('not.be.disabled')
+    cy.get('button[type="submit"]').should('not.be.disabled')
   })
 
   it('adding a single user and changing permissions', () => {
     cy.contains('button', 'Share').click()
-    cy.contains('Add user').should('be.disabled')
+    cy.get('button[type="submit"]').should('contain', 'Share')
+    cy.get('button[type="submit"]').should('be.disabled')
 
     cy.get('.ant-select-selection-overflow').type(author.email)
     cy.get('div[role="option"]').click()
@@ -102,14 +107,14 @@ describe('Checking "Add members" modal', () => {
       author.name,
       author.surname,
     )
-    cy.contains('Add user').should('not.be.disabled')
+    cy.get('button[type="submit"]').should('not.be.disabled')
 
     // default permission is Can view
     cy.contains('Can view').click()
 
     // changing permission to Can edit
     cy.contains('Can edit').click()
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
 
     cy.get('.ant-list-item').should('contain', 'A1', 'Author 1', 'Can edit')
 
@@ -135,7 +140,7 @@ describe('Checking "Add members" modal', () => {
     cy.log('Adding a user with view permission')
     cy.get('.ant-select-selection-overflow').type(collaborator1.email)
     cy.get('div[role="option"]').click()
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
 
     cy.get('.ant-list-item').should(
       'contain',
@@ -158,7 +163,7 @@ describe('Checking "Add members" modal', () => {
     cy.log('Adding a user with view permission')
     cy.get('.ant-select-selection-overflow').type(collaborator1.email)
     cy.get('div[role="option"]').click()
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
 
     cy.get('.ant-list-item').should(
       'contain',
@@ -204,7 +209,7 @@ describe('Checking "Add members" modal', () => {
     cy.get('div[role="option"]')
       .should('contain', collaborator2.surname)
       .click({ timeout: 8000 })
-    cy.contains('Add user').click({ force: true })
+    cy.get('button[type="submit"]').click({ force: true })
 
     cy.get('.ant-list-item').should(
       'contain',

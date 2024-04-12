@@ -58,7 +58,7 @@ Cypress.Commands.add('deleteBook', title => {
 
 Cypress.Commands.add('logout', () => {
   cy.get('.ant-avatar-string').click()
-  cy.get('li[role="menuitem"]').contains('Logout').click()
+  cy.contains('Logout').click()
   cy.location('pathname').should('equal', '/login')
 })
 
@@ -130,9 +130,9 @@ Cypress.Commands.add('addMember', (collaborator, access) => {
 
     // Changing permission to 'Can edit'
     cy.contains('Can edit').click()
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
   } else if (access === 'view') {
-    cy.contains('Add user').click()
+    cy.get('button[type="submit"]').click()
   }
 
   cy.get('.ant-modal-close').click()
