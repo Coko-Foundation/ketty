@@ -1,15 +1,28 @@
-const { admin } = require('../support/credentials')
+const { admin, author } = require('../support/credentials')
 
 describe('accessing admin dashboard', () => {
-  beforeEach(() => {
-    cy.login(admin)
+  before(() => {
+    cy.exec(
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+    )
+    cy.log('Author 1 is created.')
   })
 
   it('admin can acess the admin dashboard', () => {
+    cy.login(admin)
     cy.get('.ant-avatar-string').click()
     cy.contains('Admin').click()
     cy.location('pathname').should('equal', '/admin')
     cy.get('h1').should('have.text', 'Admin dashboard')
+    cy.logout()
+  })
+
+  it('other users cannot access the admin dashboard', () => {
+    cy.login(author)
+    cy.get('.ant-avatar-string').click()
+    cy.contains('Admin').should('not.exist')
+    cy.contains('Logout').should('exist').click()
+    cy.location('pathname').should('equal', '/login')
   })
 })
 
@@ -177,7 +190,7 @@ describe('checking Terms & Conditions', () => {
     cy.log('Checking that T&C modal in Sign up page is empty.')
     cy.logout()
     cy.openTCModal()
-    cy.get('p').should('have.text', '')
+    cy.get('p').should('not.exist')
     cy.contains('span', 'Agree').should('exist')
   })
 
