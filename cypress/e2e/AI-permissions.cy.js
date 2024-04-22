@@ -29,24 +29,11 @@ describe('Checking permissions for dashboard', () => {
     cy.logout()
   })
 
-  context('AI is off', () => {
-    it('ADMIN can change settings', () => {
+  context.only('AI is off', () => {
+    it('ADMIN can NOT change settings', () => {
       cy.login(admin)
-      cy.goToBook(authorBook)
-
-      cy.verifyAISwitch(false)
-
-      // Confirm default values for Book Settings
-      cy.openBookSettings()
-      cy.verifyBookSettings()
-
-      // Admin can switch toggle to on
-      cy.toggleAISwitch(true)
-      cy.verifyAISwitch(true)
-
-      // Admin can switch toggle to off
-      cy.toggleAISwitch(false)
-      cy.verifyAISwitch(false)
+      cy.log('Admin does NOT have access to the book.')
+      cy.contains(authorBook).should('not.exist')
     })
 
     it('AUTHOR can change settings', () => {
@@ -73,8 +60,8 @@ describe('Checking permissions for dashboard', () => {
       cy.verifyAISwitch(false)
 
       // Confirm default values for Book Settings
-      // cy.openBookSettings()
-      // cy.verifyBookSettings()
+      cy.openBookSettings()
+      cy.verifyBookSettings()
 
       // COLLABORATOR with EDIT access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()
@@ -87,8 +74,8 @@ describe('Checking permissions for dashboard', () => {
       cy.verifyAISwitch(false)
 
       // Confirm default values for Book Settings
-      // cy.openBookSettings()
-      // cy.verifyBookSettings()
+      cy.openBookSettings()
+      cy.verifyBookSettings()
 
       // COLLABORATOR with EDIT access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()

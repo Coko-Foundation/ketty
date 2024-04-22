@@ -1,4 +1,3 @@
-/* eslint-disable jest/expect-expect */
 const { admin } = require('../support/credentials')
 
 describe('Checking Producer Page', () => {
@@ -76,7 +75,7 @@ describe('Checking Producer Page', () => {
 
       cy.contains('Chapter 1').dragAndDrop(
         ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-        'div:nth(55)',
+        'div:nth(59)',
       ) // moving chapter 1 below chapter 3
 
       cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
@@ -264,6 +263,7 @@ describe('Checking Producer Page', () => {
           'have.text',
           labels.holder,
         )
+
         cy.get(`#${holderName}`).should('be.empty')
 
         cy.get(`label[title="${labels.year}"]`).should('have.text', labels.year)
@@ -463,12 +463,18 @@ describe('Checking Producer Page', () => {
           cy.wrap($input).type('Replace this with a familiar sentence {enter}')
         })
 
+      /* eslint-disable cypress/no-unnecessary-waiting */
+      cy.wait(7000)
       cy.contains('Try again').click()
+      /* eslint-disable cypress/no-unnecessary-waiting */
+      cy.wait(7000)
       cy.contains('Discard').click()
       cy.get('input[id="askAiInput"]')
         .parent()
         // .click()
         .type('Replace this with a familiar sentence {enter}')
+      /* eslint-disable cypress/no-unnecessary-waiting */
+      cy.wait(7000)
       cy.contains('Replace selected text').click()
       cy.contains('Add a paragraph').should('not.exist')
     })

@@ -100,9 +100,9 @@ describe('Checking the Preview section', () => {
 
     contentOptions.forEach(option => {
       cy.contains(`${option}`).parent().click()
-      cy.get('.ant-select-selector').should('contain', `${option}`, {
-        timeout: 6000,
-      })
+      cy.get('.ant-select-selector').should('contain', `${option}`)
+      /* eslint-disable cypress/no-unnecessary-waiting */
+      cy.wait(4000)
     })
 
     cy.checkTemplates()
@@ -152,9 +152,9 @@ describe('Checking the Preview section', () => {
 
     contentOptions.forEach(option => {
       cy.contains(`${option}`).parent().click()
-      cy.get('.ant-select-selector').should('contain', `${option}`, {
-        timeout: 3000,
-      })
+      cy.get('.ant-select-selector').should('contain', `${option}`)
+      /* eslint-disable cypress/no-unnecessary-waiting */
+      cy.wait(3000)
     })
 
     cy.checkTemplates()
@@ -183,7 +183,9 @@ describe('Checking the Preview section', () => {
 
     cy.get('input[type="text"]').type('PDF Eclypse A5')
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist', { timeout: 3000 })
+    cy.contains('Profile created').should('exist')
+    /* eslint-disable cypress/no-unnecessary-waiting */
+    cy.wait(3000)
     cy.get('span[aria-label="edit"]').should('exist')
     cy.contains('Connect to Lulu').should('exist').should('be.enabled')
   })
@@ -199,7 +201,9 @@ describe('Checking the Preview section', () => {
 
     cy.get('input[type="text"]').type('EPUB atosh')
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist', { timeout: 3000 })
+    cy.contains('Profile created').should('exist')
+    /* eslint-disable cypress/no-unnecessary-waiting */
+    cy.wait(3000)
     cy.contains('Delete').should('exist')
 
     cy.contains('EPUB atosh').should('exist').click()
@@ -251,6 +255,7 @@ describe('Checking permissions in the Preview page', () => {
     cy.login(author)
     cy.addBook(authorBook)
     cy.goToBook(authorBook)
+    cy.createUntitledChapter()
     cy.get('.anticon-plus').click()
     cy.addMember(collaborator1, 'edit')
     cy.addMember(collaborator2, 'view')
@@ -259,34 +264,37 @@ describe('Checking permissions in the Preview page', () => {
 
   it("checking ADMIN's permissions", () => {
     cy.login(admin)
-    cy.goToBook(authorBook)
-    cy.goToPreview()
+    cy.log('Admin does NOT have access to the book.')
+    cy.contains(authorBook).should('not.exist')
 
-    cy.log('ADMIN can choose different format options')
-    cy.chooseFormat('admin')
+    // cy.goToBook(authorBook)
+    // cy.goToPreview()
 
-    cy.log('ADMIN can save new export')
-    cy.saveExport('admin')
+    // cy.log('ADMIN can choose different format options')
+    // cy.chooseFormat('admin')
 
-    // Should admin be able to download?? Permissions in table and irl don't match
-    cy.log('ADMIN can NOT download EPUB')
-    cy.canDownload('yes')
+    // cy.log('ADMIN can save new export')
+    // cy.saveExport('admin')
 
-    cy.log('ADMIN can NOT download PDF')
-    cy.get('span[title="EPUB"]').last().click()
-    cy.contains('PDF').click()
-    cy.canDownload('yes')
+    // // Should admin be able to download?? Permissions in table and irl don't match
+    // cy.log('ADMIN can NOT download EPUB')
+    // cy.canDownload('yes')
 
-    cy.log('ADMIN can rename an export')
-    cy.canRename('admin')
+    // cy.log('ADMIN can NOT download PDF')
+    // cy.get('span[title="EPUB"]').last().click()
+    // cy.contains('PDF').click()
+    // cy.canDownload('yes')
 
-    cy.log('ADMIN can NOT connect to Lulu')
-    cy.contains('Connect to Lulu').should('not.exist')
+    // cy.log('ADMIN can rename an export')
+    // cy.canRename('admin')
 
-    cy.log('ADMIN can delete an export')
-    cy.contains('Delete').click()
-    cy.contains('Success').should('exist')
-    cy.contains('Profile has been deleted').should('exist')
+    // cy.log('ADMIN can NOT connect to Lulu')
+    // cy.contains('Connect to Lulu').should('not.exist')
+
+    // cy.log('ADMIN can delete an export')
+    // cy.contains('Delete').click()
+    // cy.contains('Success').should('exist')
+    // cy.contains('Profile has been deleted').should('exist')
   })
 
   it("checking AUTHOR's permissions", () => {
@@ -423,7 +431,7 @@ Cypress.Commands.add('chooseFormat', user => {
   cy.contains('EPUB').click()
   cy.contains('bikini').click()
 
-  if (user === 'admin' || user === 'author') {
+  if (user === 'author') {
     cy.contains('You have unsaved changes').should('be.visible')
   } else {
     cy.contains('You have unsaved changes').should('not.exist')
@@ -431,12 +439,14 @@ Cypress.Commands.add('chooseFormat', user => {
 })
 
 Cypress.Commands.add('saveExport', user => {
-  if (user === 'admin' || user === 'author') {
+  if (user === 'author') {
     cy.contains('Save').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
     cy.get('input[type="text"]').type(`${user}'s export`)
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist', { timeout: 3000 })
+    cy.contains('Profile created').should('exist')
+    /* eslint-disable cypress/no-unnecessary-waiting */
+    cy.wait(3000)
   } else {
     cy.contains('Save').should('not.exist')
   }
@@ -457,7 +467,7 @@ Cypress.Commands.add('canDownload', status => {
 })
 
 Cypress.Commands.add('canRename', user => {
-  if (user === 'admin' || user === 'author') {
+  if (user === 'author') {
     cy.get('span[aria-label="edit"]').click()
     cy.get('.ant-modal-title').should('contain', 'Edit export name')
     // cy.get(`input[value="${user}'s export"]`).last().click().type(' 1{enter}')

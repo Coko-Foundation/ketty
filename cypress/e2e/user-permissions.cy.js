@@ -343,7 +343,7 @@ describe('Checking permissions for dashboard', () => {
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
         cy.contains('Chapter 1').dragAndDrop(
           ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-          'div:nth(55)',
+          'div:nth(59)',
         )
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
       })
@@ -535,7 +535,7 @@ Cypress.Commands.add('canChangeAccess', status => {
 Cypress.Commands.add('canReorderChapters', status => {
   cy.contains('Chapter 1').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(55)',
+    'div:nth(59)',
   )
 
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
@@ -546,7 +546,7 @@ Cypress.Commands.add('canReorderChapters', status => {
 
   cy.contains('Chapter 2').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(55)',
+    'div:nth(59)',
   )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 3')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 1')
@@ -556,7 +556,7 @@ Cypress.Commands.add('canReorderChapters', status => {
 
   cy.contains('Chapter 3').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(55)',
+    'div:nth(59)',
   )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 2')
