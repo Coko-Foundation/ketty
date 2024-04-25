@@ -29,7 +29,7 @@ describe('Checking permissions for dashboard', () => {
     cy.logout()
   })
 
-  context.only('AI is off', () => {
+  context('AI is off', () => {
     it('ADMIN can NOT change settings', () => {
       cy.login(admin)
       cy.log('Admin does NOT have access to the book.')
@@ -44,6 +44,7 @@ describe('Checking permissions for dashboard', () => {
       // Confirm default values for Book Settings
       cy.openBookSettings()
       cy.verifyBookSettings()
+      cy.contains('Save').click()
 
       // Author can switch toggle to on
       cy.toggleAISwitch(true)
@@ -62,6 +63,8 @@ describe('Checking permissions for dashboard', () => {
       // Confirm default values for Book Settings
       cy.openBookSettings()
       cy.verifyBookSettings()
+      cy.contains('Save').should('be.disabled')
+      cy.contains('Cancel').click()
 
       // COLLABORATOR with EDIT access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()
@@ -76,27 +79,31 @@ describe('Checking permissions for dashboard', () => {
       // Confirm default values for Book Settings
       cy.openBookSettings()
       cy.verifyBookSettings()
+      cy.contains('Save').should('be.disabled')
+      cy.contains('Cancel').click()
 
-      // COLLABORATOR with EDIT access can NOT switch toggle
+      // COLLABORATOR with VIEW access can NOT switch toggle
       cy.get('[role="menuitem"]:nth(3)').click()
       cy.get('button[role="switch"]').should('have.attr', 'disabled')
     })
   })
 
   context('AI is on', () => {
-    it('ADMIN can use AI', () => {
+    it("ADMIN can NOT use AI in others' books", () => {
       cy.login(admin)
-      cy.goToBook(authorBook)
-      cy.verifyAISwitch(false)
+      cy.log('Admin does NOT have access to the book.')
+      cy.contains(authorBook).should('not.exist')
+      // cy.goToBook(authorBook)
+      // cy.verifyAISwitch(false)
 
-      // Admin switches toggle to on
-      cy.toggleAISwitch(true)
-      cy.createUntitledChapter()
-      cy.usingAIPrompt()
+      // // Admin switches toggle to on
+      // cy.toggleAISwitch(true)
+      // cy.createUntitledChapter()
+      // cy.usingAIPrompt()
 
-      // Admin switches toggle to off
-      cy.toggleAISwitch(false)
-      cy.verifyAISwitch(false)
+      // // Admin switches toggle to off
+      // cy.toggleAISwitch(false)
+      // cy.verifyAISwitch(false)
     })
 
     it('AUTHOR can use AI', () => {
@@ -106,8 +113,6 @@ describe('Checking permissions for dashboard', () => {
 
       // Author switches toggle to on
       cy.toggleAISwitch(true)
-
-      cy.deleteUntitledChapter()
       cy.createUntitledChapter()
       cy.usingAIPrompt()
     })
@@ -117,7 +122,7 @@ describe('Checking permissions for dashboard', () => {
       cy.goToBook(authorBook)
       cy.verifyAISwitch(true) // switch turned on by the author of the book
 
-      cy.deleteUntitledChapter()
+      cy.deleteUntitledChapter() // was created by author of the book
       cy.createUntitledChapter()
       cy.usingAIPrompt()
     })
@@ -141,7 +146,6 @@ Cypress.Commands.add('openBookSettings', () => {
 
 Cypress.Commands.add('verifyBookSettings', () => {
   cy.get('[role="switch"]:nth(0)').should('have.attr', 'aria-checked', 'false')
-  cy.contains('Save').click()
 })
 
 Cypress.Commands.add('toggleAISwitch', toggleState => {
@@ -180,16 +184,23 @@ Cypress.Commands.add('usingAIPrompt', () => {
     .should('be.visible')
     .then($input => {
       // Focus on the input field explicitly
-      // cy.wrap($input).focus()
+      cy.wrap($input).focus()
       cy.wrap($input).type('Replace this with a familiar sentence {enter}')
     })
 
+  /* eslint-disable cypress/no-unnecessary-waiting */
+  cy.wait(6000)
+  /* eslint-disable cypress/no-unnecessary-waiting */
   cy.contains('Try again').click()
+  /* eslint-disable cypress/no-unnecessary-waiting */
+  cy.wait(6000)
   cy.contains('Discard').click()
   cy.get('input[id="askAiInput"]')
     .parent()
     // .click()
     .type('Replace this with a familiar sentence {enter}')
+  /* eslint-disable cypress/no-unnecessary-waiting */
+  cy.wait(6000)
   cy.contains('Replace selected text').click()
   cy.contains('Add a paragraph').should('not.exist')
 })

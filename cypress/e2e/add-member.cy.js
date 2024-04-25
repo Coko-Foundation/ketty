@@ -45,7 +45,9 @@ describe('Checking "Share" modal', () => {
       .siblings()
       .should('contain', 'Share book')
 
-    cy.contains('Email, comma separated').should('exist')
+    cy.contains(
+      'Enter usernames or email addresses, separated by commas',
+    ).should('exist')
     cy.get('.ant-select-selection-item').should(
       'have.attr',
       'title',

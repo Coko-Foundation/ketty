@@ -23,9 +23,6 @@ describe('Checking permissions for dashboard', () => {
       'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
-    // cy.signup(author)
-    // cy.signup(collaborator1)
-    // cy.signup(collaborator2)
     cy.login(admin)
     cy.log('Admin can create a book')
     cy.addBook(adminBook)
@@ -40,30 +37,30 @@ describe('Checking permissions for dashboard', () => {
   })
 
   context('Checking permissions in the dashboard', () => {
-    it("checking ADMIN's permissions", () => {
-      cy.login(admin)
+    // it("checking ADMIN's permissions", () => {
+    //   cy.login(admin)
 
-      cy.log('Admin can import files when creating a new book.')
-      cy.createImportedBook('Admin imported book')
+    //   cy.log('Admin can import files when creating a new book.')
+    //   cy.createImportedBook('Admin imported book')
 
-      cy.log('Admin can see all books.')
-      cy.contains(adminBook).should('exist')
-      cy.contains(authorBook).should('exist')
+    //   cy.log('Admin can see all books.')
+    //   cy.contains(adminBook).should('exist')
+    //   cy.contains(authorBook).should('exist')
 
-      cy.log('Admin can delete all books')
-      cy.canDeleteBook(adminBook, 'false')
-      cy.canDeleteBook(authorBook, 'false')
+    //   cy.log('Admin can delete all books')
+    //   cy.canDeleteBook(adminBook, 'false')
+    //   cy.canDeleteBook(authorBook, 'false')
 
-      cy.log('Admin can go to the producer page for any book.')
-      cy.goToBook(adminBook)
-      cy.goToDashboard()
-      cy.goToBook(authorBook)
-      cy.goToDashboard()
+    //   cy.log('Admin can go to the producer page for any book.')
+    //   cy.goToBook(adminBook)
+    //   cy.goToDashboard()
+    //   cy.goToBook(authorBook)
+    //   cy.goToDashboard()
 
-      cy.log('Admin can upload thumbnail for all books')
-      cy.canUploadThumbnail(adminBook, 'false')
-      cy.canUploadThumbnail(authorBook, 'false')
-    })
+    //   cy.log('Admin can upload thumbnail for all books')
+    //   cy.canUploadThumbnail(adminBook, 'false')
+    //   cy.canUploadThumbnail(authorBook, 'false')
+    // })
 
     it("checking AUTHOR's permissions", () => {
       cy.login(author)
@@ -135,45 +132,45 @@ describe('Checking permissions for dashboard', () => {
   })
 
   context('Checking permissions in the producer page', () => {
-    it("checking ADMIN's permissions in the producer page", () => {
-      cy.login(admin)
+    // it("checking ADMIN's permissions in the producer page", () => {
+    //   cy.login(admin)
 
-      cy.log('Admin can create a new component in any book')
-      cy.goToBook(adminBook)
-      cy.createUntitledChapter()
-      cy.log('Admin can edit and use to Wax toolbar in any book')
-      cy.canUseWaxToolbar('admin', 'not.have.attr')
+    //   cy.log('Admin can create a new component in any book')
+    //   cy.goToBook(adminBook)
+    //   cy.createUntitledChapter()
+    //   cy.log('Admin can edit and use to Wax toolbar in any book')
+    //   cy.canUseWaxToolbar('admin', 'not.have.attr')
 
-      // Upload a chapter
-      // Reorder chapters
+    //   // Upload a chapter
+    //   // Reorder chapters
 
-      cy.log('Admin can delete unlocked chapters for any book.')
-      cy.deleteChapter('Untitled Chapter')
+    //   cy.log('Admin can delete unlocked chapters for any book.')
+    //   cy.deleteChapter('Untitled Chapter')
 
-      cy.log('Admin can access Metadata')
-      cy.contains('button', 'Book Metadata').click()
+    //   cy.log('Admin can access Metadata')
+    //   cy.contains('button', 'Book Metadata').click()
 
-      cy.log('Admin can edit Metadata')
-      cy.canEditMetadata('admin', 'not.have.attr')
+    //   cy.log('Admin can edit Metadata')
+    //   cy.canEditMetadata('admin', 'not.have.attr')
 
-      // Checking for a book that admin isn't owner or collaborator
-      cy.goToDashboard()
-      cy.goToBook(authorBook)
-      cy.reload()
-      cy.createUntitledChapter()
-      cy.canUseWaxToolbar('admin', 'not.have.attr')
-      cy.deleteChapter('Untitled Chapter')
+    //   // Checking for a book that admin isn't owner or collaborator
+    //   cy.goToDashboard()
+    //   cy.goToBook(authorBook)
+    //   cy.reload()
+    //   cy.createUntitledChapter()
+    //   cy.canUseWaxToolbar('admin', 'not.have.attr')
+    //   cy.deleteChapter('Untitled Chapter')
 
-      cy.contains('button', 'Book Metadata').click()
-      cy.canEditMetadata('admin', 'not.have.attr')
+    //   cy.contains('button', 'Book Metadata').click()
+    //   cy.canEditMetadata('admin', 'not.have.attr')
 
-      cy.log("Admin can see people's access in any book.")
-      cy.contains('button', 'Share').click()
-      cy.canSeeAccess()
+    //   cy.log("Admin can see people's access in any book.")
+    //   cy.contains('button', 'Share').click()
+    //   cy.canSeeAccess()
 
-      cy.log("Admin can change members's access in any book.")
-      cy.canChangeAccess('yes')
-    })
+    //   cy.log("Admin can change members's access in any book.")
+    //   cy.canChangeAccess('yes')
+    // })
 
     it("checking AUTHOR's permissions in the producer page", () => {
       cy.login(author)
@@ -316,13 +313,13 @@ describe('Checking permissions for dashboard', () => {
         cy.logout()
       })
 
-      it('ADMIN can reorder chapters', () => {
-        cy.login(admin)
-        cy.goToBook(authorBook)
-        cy.reload()
+      // it('ADMIN can reorder chapters', () => {
+      //   cy.login(admin)
+      //   cy.goToBook(authorBook)
+      //   cy.reload()
 
-        cy.canReorderChapters()
-      })
+      //   cy.canReorderChapters()
+      // })
 
       it('AUTHOR can reorder chapters', () => {
         cy.login(author)

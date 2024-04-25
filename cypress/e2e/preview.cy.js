@@ -50,7 +50,7 @@ describe('Checking the Preview section', () => {
 
   it('checking default values for export sidebar', () => {
     cy.verifyDefault('format:', 'PDF')
-    cy.verifyDefault('size:', '8.5 x 11 inches, 216 x 279 mm (A4)')
+    cy.verifyDefault('size:', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
 
     const contentOptions = ['Copyright page', 'Table of contents', 'Title page']
 
@@ -74,12 +74,12 @@ describe('Checking the Preview section', () => {
   it('creating a new PDF profile export without saving changes', () => {
     // Changing size, content and template options for PDF format
     const sizeOptions = [
-      { index: 0, title: '8.5 x 11 inches, 216 x 279 mm (A4)' },
-      { index: 1, title: '6 x 9 inches, 152 x 229 mm' },
-      { index: 2, title: '5.5 x 8.5, 140 x 216 (A5)' },
+      { index: 0, title: 'Digest: 5.5 × 8.5 in | 140 × 216 mm' },
+      { index: 1, title: 'US Trade: 6 × 9 in | 152 × 229 mm' },
+      { index: 2, title: 'US Letter: 8.5 × 11 in | 216 × 279 mm' },
     ]
 
-    cy.get(`[title="8.5 x 11 inches, 216 x 279 mm (A4)"]`).click()
+    cy.get(`[title="Digest: 5.5 × 8.5 in | 140 × 216 mm"]`).click()
 
     sizeOptions.forEach(({ index, title }) => {
       cy.get(`[role="option"]:nth(${index})`).click()
@@ -120,7 +120,7 @@ describe('Checking the Preview section', () => {
 
     cy.contains('You have unsaved changes').should('not.exist')
     cy.verifyDefault('format:', 'PDF')
-    cy.verifyDefault('size:', '8.5 x 11 inches, 216 x 279 mm (A4)')
+    cy.verifyDefault('size:', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
 
     contentOptions.forEach(option => {
       cy.verifyDefault('content:', `${option}`)
@@ -168,8 +168,8 @@ describe('Checking the Preview section', () => {
 
   it('saving a new export profile', () => {
     // Changing size and template
-    cy.get(`[title="8.5 x 11 inches, 216 x 279 mm (A4)"]`).click()
-    cy.contains('5.5 x 8.5, 140 x 216 (A5)').click()
+    cy.get(`[title="Digest: 5.5 × 8.5 in | 140 × 216 mm"]`).click()
+    cy.contains('US Letter: 8.5 × 11 in | 216 × 279 mm').click()
     cy.contains('You have unsaved changes').should('be.visible').click()
     cy.contains('eclypse').click()
     cy.contains('Save').click()
@@ -181,7 +181,7 @@ describe('Checking the Preview section', () => {
     cy.contains('Save').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
 
-    cy.get('input[type="text"]').type('PDF Eclypse A5')
+    cy.get('input[type="text"]').type('PDF Eclypse US')
     cy.contains('button', 'OK').click()
     cy.contains('Profile created').should('exist')
     /* eslint-disable cypress/no-unnecessary-waiting */
