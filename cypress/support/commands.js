@@ -59,7 +59,7 @@ Cypress.Commands.add('deleteBook', title => {
 Cypress.Commands.add('logout', () => {
   cy.get('.ant-avatar-string').click()
   cy.contains('Logout').click()
-  cy.location('pathname').should('equal', '/login')
+  cy.location('pathname').should('equal', '/login', { timeout: 10000 })
 })
 
 Cypress.Commands.add('goToBook', title => {

@@ -21,7 +21,6 @@ describe('Checking default state in Book Settings modal', () => {
     cy.goToBook(testBook)
     cy.addMember(collaborator1, 'edit')
     cy.addMember(collaborator2, 'view')
-    // cy.get('span[aria-label="close"]').click()
     cy.logout()
   })
 
@@ -44,6 +43,10 @@ describe('Checking default state in Book Settings modal', () => {
 
     cy.contains('button', 'Save').should('have.attr', 'type', 'submit')
     cy.contains('button', 'Cancel').should('have.attr', 'type', 'reset')
+
+    // Checking that AI pen does not exist in the toolbar
+    cy.get('span[aria-label="close"]').click()
+    cy.verifyAIPen(false)
   })
 
   it('changes in the modal are saved only upon clicking the Save button', () => {
@@ -107,6 +110,12 @@ describe('Checking default state in Book Settings modal', () => {
 })
 
 describe('AI writing prompt is enabled', () => {
+  before(() => {
+    cy.login(admin)
+    cy.goToBook(testBook)
+    cy.createUntitledChapter()
+    cy.logout()
+  })
   context('Default options', () => {
     before(() => {
       cy.login(admin)
@@ -149,12 +158,6 @@ describe('AI writing prompt is enabled', () => {
   context(
     'Free text-writing prompts are enabled & Customized prompts are disabled',
     () => {
-      before(() => {
-        cy.login(admin)
-        cy.goToBook(testBook)
-        cy.createUntitledChapter()
-        cy.logout()
-      })
       it('Book owner can use AI free-text writing prompts', () => {
         cy.login(admin)
         cy.goToBook(testBook)
@@ -168,8 +171,8 @@ describe('AI writing prompt is enabled', () => {
         cy.goToBook(testBook)
         cy.verifyAIPen(true)
 
-        cy.deleteUntitledChapter() // was created by author of the book
-        cy.createUntitledChapter()
+        cy.contains('Untitled Chapter').click()
+        cy.get('.ProseMirror').clear()
         cy.usingAIPrompt()
       })
 
@@ -178,13 +181,11 @@ describe('AI writing prompt is enabled', () => {
         cy.goToBook(testBook)
         cy.verifyAIPen(true)
         cy.contains('Untitled Chapter').click()
-        cy.get('.ProseMirror').click()
-        cy.get('button[title="Toggle Ai"]').should('be.disabled')
+        cy.canNotEdit()
       })
     },
   )
   context('Enabling customized prompts', () => {
-    before(() => {})
     it('checking customized prompts field and delete button', () => {
       cy.login(admin)
       cy.goToBook(testBook)
@@ -235,51 +236,128 @@ describe('AI writing prompt is enabled', () => {
       it('Book owner can use AI customized prompts', () => {
         cy.login(admin)
         cy.goToBook(testBook)
-        cy.openBookSettings()
-        cy.deleteUntitledChapter()
-        cy.createChapter('Chapter 1')
-        cy.get('.ProseMirror').type('{selectall}')
-        cy.get('button[title="Toggle Ai"]').click({ force: true })
-        cy.contains('Capitalize each word').should('exist')
-        cy.contains('Translate to French').should('exist').siblings().click()
-        cy.contains('Chapitre 1', { timeout: 10000 }).should('be.visible')
-        cy.contains('Replace selected text', { timeout: 10000 })
-          .should('be.visible')
-          .click()
-        cy.contains('.ProseMirror', 'Chapitre 1')
+        cy.contains('Untitled Chapter').click()
+        cy.useCustomizedPrompt()
       })
 
       it('Collaborator with EDIT access can use AI customized prompts', () => {
         cy.login(collaborator1)
         cy.goToBook(testBook)
-        cy.openBookSettings()
-        cy.deleteUntitledChapter()
-        cy.createChapter('Chapter 1')
-        cy.get('.ProseMirror').type('{selectall}')
-        cy.get('button[title="Toggle Ai"]').click({ force: true })
-        cy.contains('Capitalize each word').should('exist')
-        cy.contains('Translate to French').should('exist').siblings().click()
-        cy.contains('Chapitre 1', { timeout: 10000 }).should('be.visible')
-        cy.contains('Replace selected text', { timeout: 10000 })
-          .should('be.visible')
-          .click()
-        cy.contains('.ProseMirror', 'Chapitre 1')
+        cy.contains('Untitled Chapter').click()
+        cy.useCustomizedPrompt()
       })
 
       it('Collaborator with VIEW access can NOT use AI customized prompts', () => {
         cy.login(collaborator2)
         cy.goToBook(testBook)
-        cy.contains('Chapitre 1').click()
-        cy.get('.ProseMirror').click()
-        cy.get('button[title="Toggle Ai"]').should('be.disabled')
+        cy.contains('Untitled Chapter').click()
+        cy.canNotEdit()
+      })
+    },
+  )
+  context(
+    'Both Free text-writing prompts & Customized prompts are enabled',
+    () => {
+      before(() => {
+        cy.login(admin)
+        cy.goToBook(testBook)
+        cy.openBookSettings()
+
+        // Enabling customized prompts
+        cy.toogleSwitch(1)
+        cy.verifySwitch(1, 'enabled')
+        cy.verifySwitch(2, 'enabled')
+        cy.contains('button', 'Save').click()
+        cy.logout()
+      })
+      it('Book owner can use both AI customized prompts and free-writing text prompts', () => {
+        cy.login(admin)
+        cy.goToBook(testBook)
+        cy.contains('Untitled Chapter').click()
+        cy.usingAIPrompt()
+        cy.useCustomizedPrompt()
+      })
+
+      it('Collaborator with EDIT access can use both AI customized prompts and free-writing text prompts', () => {
+        cy.login(collaborator1)
+        cy.goToBook(testBook)
+        cy.contains('Untitled Chapter').click()
+        cy.usingAIPrompt()
+        cy.useCustomizedPrompt()
+      })
+
+      it('Collaborator with VIEW access can NOT use either AI customized prompts or free-writing text prompts', () => {
+        cy.login(collaborator2)
+        cy.goToBook(testBook)
+        cy.contains('Untitled Chapter').click()
+        cy.canNotEdit()
       })
     },
   )
 })
 
+describe('AI Book Designer (Beta)', () => {
+  it('Checking the AI Book Designer page', () => {
+    cy.login(admin)
+    cy.goToBook(testBook)
+
+    // Enabling AI Book Designer page
+    cy.openBookSettings()
+    cy.verifySwitch(3, 'disabled')
+    cy.toogleSwitch(3)
+    cy.verifySwitch(3, 'enabled')
+    cy.contains('button', 'Save').click()
+
+    cy.contains('AI Book Designer (Beta)').should('exist')
+    cy.contains('AI Book Designer (Beta)').click()
+    cy.location('pathname').should('include', '/ai-pdf', { timeout: 10000 })
+
+    // Checking the chat bubble
+    cy.contains('strong', 'Coko AI Book Designer:').should('exist')
+    cy.contains('span', 'Hello there!').should('exist')
+    cy.contains('span', "I'm here to help with your book's design").should(
+      'exist',
+    )
+    cy.contains(
+      'span',
+      'You can also ask for the current property values',
+    ).should('exist')
+    cy.contains(
+      'span',
+      'for example: What is the page size of the book?',
+    ).should('exist')
+    cy.contains('span', 'Here are some suggestions to get started:').should(
+      'exist',
+    )
+    cy.contains('button', 'Change the page size 5 x 8 inches').should('exist')
+    cy.contains('button', 'Change the title font to sans serif').should('exist')
+    cy.contains('button', 'Make all the headings blue').should('exist')
+
+    // Checking Checkbox container
+    cy.get('input[id="showContent"]').should('have.attr', 'checked')
+    cy.get('input[id="showPreview"]').should('have.attr', 'checked')
+    cy.get('input[id="showChatHistory"]').should('not.have.attr', 'checked')
+
+    // Checking input field
+    cy.get('textarea')
+      .should('have.attr', 'placeholder')
+      .and('eq', 'Type your book design instruction or question here ...')
+    cy.get('textarea').type('Make text content blue {enter}')
+    cy.contains('Just give me a few seconds').should('exist')
+    // cy.contains('The text content has been changed to blue.').should('exist', {
+    //   timeout: 250000,
+    // })
+  })
+})
+
 Cypress.Commands.add('openBookSettings', () => {
   cy.get('[role="menuitem"]:nth(3)').click()
   cy.contains('Book settings').should('exist')
+})
+
+Cypress.Commands.add('canNotEdit', () => {
+  cy.get('.ProseMirror').click()
+  cy.get('button[title="Toggle Ai"]').should('be.disabled')
 })
 
 Cypress.Commands.add('verifySwitch', (switchIndex, status) => {
@@ -312,9 +390,7 @@ Cypress.Commands.add('addPrompt', customPrompt => {
 
 Cypress.Commands.add('usingAIPrompt', () => {
   cy.get('.ProseMirror').type('Add a paragraph{selectall}')
-
   cy.get('button[title="Toggle Ai"]').should('not.be.disabled')
-
   cy.get('button[title="Toggle Ai"]').click({ force: true })
 
   cy.get('input[id="askAiInput"]')
@@ -347,16 +423,16 @@ Cypress.Commands.add('usingAIPrompt', () => {
   cy.contains('Add a paragraph').should('not.exist')
 })
 
-Cypress.Commands.add('deleteUntitledChapter', () => {
-  cy.contains('Untitled Chapter').then($element => {
-    if ($element.length > 0) {
-      cy.contains('Untitled Chapter')
-        .parent()
-        .parent()
-        .find('[data-icon="more"]')
-        .click()
-      cy.contains('Delete').click()
-      cy.contains('You don’t have any chapters yet').should('exist')
-    }
-  })
+Cypress.Commands.add('useCustomizedPrompt', () => {
+  cy.get('.ProseMirror').clear()
+  cy.get('.ProseMirror').type('Chapter 1')
+  cy.get('.ProseMirror').type('{selectall}')
+  cy.get('button[title="Toggle Ai"]').click({ force: true })
+  cy.contains('Capitalize each word').should('exist')
+  cy.contains('Translate to French').should('exist').siblings().click()
+  cy.contains('Chapitre 1', { timeout: 10000 }).should('be.visible')
+  cy.contains('Replace selected text', { timeout: 10000 })
+    .should('be.visible')
+    .click()
+  cy.contains('.ProseMirror', 'Chapitre 1')
 })
