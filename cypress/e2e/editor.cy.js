@@ -88,20 +88,25 @@ describe('Book editor', () => {
       cy.get('.ProseMirror').type(`${option.content}{enter}`)
     })
 
-    // Adding ordered list
-    cy.get("[title='Wrap in ordered list']").click()
-    listItems.forEach(li => {
-      cy.get('.ProseMirror').type(`${li}{enter}`)
-    })
-    cy.get('.ProseMirror').type('{enter}')
+    // // Adding ordered list
+    // cy.get("[title='Wrap in ordered list']").click()
+    // listItems.forEach(li => {
+    //   cy.get('.ProseMirror').type(`${li}{enter}`)
+    // })
+    // cy.get('.ProseMirror').type('{enter}')
 
-    // Adding Bullet list
-    cy.get("[title='Wrap in bullet list']").click()
+    // // Adding Bullet list
+    // cy.get("[title='Wrap in bullet list']").click()
 
-    listItems.forEach(li => {
-      cy.get('.ProseMirror').type(`${li}{enter}`)
-    })
-    cy.get('.ProseMirror').type('{enter}')
+    // listItems.forEach(li => {
+    //   cy.get('.ProseMirror').type(`${li}{enter}`)
+    // })
+    // cy.get('.ProseMirror').type('{enter}')
+    // Add ordered list
+    cy.addList('ordered', listItems)
+
+    // Add bullet list
+    cy.addList('bullet', listItems)
   })
 
   it('Verifying content', () => {
@@ -332,4 +337,12 @@ Cypress.Commands.add('clickButtonInFind', buttonText => {
     default:
       throw new Error(`Unsupported button parameter: ${buttonText}`)
   }
+})
+
+Cypress.Commands.add('addList', (listType, listItems) => {
+  cy.get(`[title='Wrap in ${listType} list']`).click()
+  listItems.forEach(li => {
+    cy.get('.ProseMirror').type(`${li}{enter}`)
+  })
+  cy.get('.ProseMirror').type('{enter}')
 })
