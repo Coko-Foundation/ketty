@@ -110,12 +110,12 @@ describe('Checking default state in Book Settings modal', () => {
 })
 
 describe('AI writing prompt is enabled', () => {
-  before(() => {
-    cy.login(admin)
-    cy.goToBook(testBook)
-    cy.createUntitledChapter()
-    cy.logout()
-  })
+  // before(() => {
+  //   cy.login(admin)
+  //   cy.goToBook(testBook)
+  // cy.createUntitledChapter()
+  //   cy.logout()
+  // })
   context('Default options', () => {
     before(() => {
       cy.login(admin)
@@ -162,7 +162,7 @@ describe('AI writing prompt is enabled', () => {
         cy.login(admin)
         cy.goToBook(testBook)
         cy.verifyAIPen(true)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.usingAIPrompt()
       })
 
@@ -171,7 +171,7 @@ describe('AI writing prompt is enabled', () => {
         cy.goToBook(testBook)
         cy.verifyAIPen(true)
 
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.get('.ProseMirror').clear()
         cy.usingAIPrompt()
       })
@@ -180,7 +180,7 @@ describe('AI writing prompt is enabled', () => {
         cy.login(collaborator2)
         cy.goToBook(testBook)
         cy.verifyAIPen(true)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.canNotEdit()
       })
     },
@@ -236,21 +236,21 @@ describe('AI writing prompt is enabled', () => {
       it('Book owner can use AI customized prompts', () => {
         cy.login(admin)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.useCustomizedPrompt()
       })
 
       it('Collaborator with EDIT access can use AI customized prompts', () => {
         cy.login(collaborator1)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.useCustomizedPrompt()
       })
 
       it('Collaborator with VIEW access can NOT use AI customized prompts', () => {
         cy.login(collaborator2)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.canNotEdit()
       })
     },
@@ -273,7 +273,7 @@ describe('AI writing prompt is enabled', () => {
       it('Book owner can use both AI customized prompts and free-writing text prompts', () => {
         cy.login(admin)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.usingAIPrompt()
         cy.useCustomizedPrompt()
       })
@@ -281,7 +281,7 @@ describe('AI writing prompt is enabled', () => {
       it('Collaborator with EDIT access can use both AI customized prompts and free-writing text prompts', () => {
         cy.login(collaborator1)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.usingAIPrompt()
         cy.useCustomizedPrompt()
       })
@@ -289,7 +289,7 @@ describe('AI writing prompt is enabled', () => {
       it('Collaborator with VIEW access can NOT use either AI customized prompts or free-writing text prompts', () => {
         cy.login(collaborator2)
         cy.goToBook(testBook)
-        cy.contains('Untitled Chapter').click()
+        cy.contains('Untitled Chapter')
         cy.canNotEdit()
       })
     },

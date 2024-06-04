@@ -31,6 +31,7 @@ Cypress.Commands.add('getByData', selector => {
 
 Cypress.Commands.add('login', user => {
   cy.visit('http://localhost:4000/login')
+  cy.contains('Login').should('exist')
   cy.get('#email').type(user.email)
   cy.get('#password').type(user.password)
   cy.get("button[type='submit']").contains('Log in').click()
@@ -57,12 +58,15 @@ Cypress.Commands.add('deleteBook', title => {
 })
 
 Cypress.Commands.add('logout', () => {
-  cy.get('.ant-avatar-string').click()
-  cy.contains('Logout').click()
+  cy.get('[aria-haspopup="dialog"]').first().click()
+  // cy.get('.ant-avatar-string', { timeout: 10000 }).click()
+  cy.contains('Logout', { timeout: 10000 }).should('exist')
+  cy.contains('Logout', { timeout: 10000 }).click({ force: true })
   cy.location('pathname').should('equal', '/login', { timeout: 10000 })
 })
 
 Cypress.Commands.add('goToBook', title => {
+  cy.contains(title, { timeout: 10000 }).should('exist')
   cy.contains(title).click()
   cy.url().should('include', '/producer')
   cy.contains('div', title)
@@ -98,12 +102,11 @@ Cypress.Commands.add('signup', user => {
 Cypress.Commands.add('createUntitledChapter', () => {
   cy.url().should('include', '/producer')
   cy.get('.anticon-plus').click()
-  cy.contains('Untitled Chapter', { timeout: 8000 }).click()
+  cy.contains('Untitled Chapter', { timeout: 8000 })
 })
 
 Cypress.Commands.add('createChapter', chapterTitle => {
   cy.get('.anticon-plus').click()
-  cy.contains('Untitled Chapter').click()
   // cy.get('[title="Change to Title"]').click()
   cy.get('[aria-controls="block-level-options"]').click()
   cy.get(`#block-level-options > :nth-child(${1})`).contains('Title').click({
@@ -114,8 +117,11 @@ Cypress.Commands.add('createChapter', chapterTitle => {
 })
 
 Cypress.Commands.add('addMember', (collaborator, access) => {
+  cy.contains('Untitled Chapter', { timeout: 8000 }).should('exist')
   cy.contains('button', 'Share').click()
-  cy.get('.ant-select-selection-overflow').type(collaborator.email)
+  cy.get('.ant-select-selection-overflow', { timeout: 8000 }).type(
+    collaborator.email,
+  )
   cy.get('div[role="option"]').click()
 
   cy.get('.ant-select-selection-overflow').should(

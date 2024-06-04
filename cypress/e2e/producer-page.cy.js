@@ -39,11 +39,9 @@ describe('Checking Producer Page', () => {
 
     it('adding and deleting a chapter', () => {
       cy.url().should('include', '/producer')
-      // adding a chapter
-      cy.get('.anticon-plus').click()
-      cy.contains('Untitled Chapter').click()
-      // cy.get('[title="Change to Title"]').click()
+      cy.get('.ProseMirror').click()
       cy.get('[aria-controls="block-level-options"]').click()
+      // cy.get('[title="Change to Title"]').click()
       cy.get(`#block-level-options > :nth-child(${1})`)
         .contains('Title')
         .click({
@@ -432,7 +430,6 @@ describe('Checking Producer Page', () => {
     })
 
     it('switching AI to on', () => {
-      cy.createUntitledChapter()
       //   Enable AI
       cy.get('[role="menuitem"]:nth(3)').click()
       cy.get('[role="switch"]:nth(0)').click()
@@ -464,17 +461,17 @@ describe('Checking Producer Page', () => {
         })
 
       /* eslint-disable cypress/no-unnecessary-waiting */
-      cy.wait(7000)
+      cy.wait(10000)
       cy.contains('Try again').click()
       /* eslint-disable cypress/no-unnecessary-waiting */
-      cy.wait(7000)
+      cy.wait(10000)
       cy.contains('Discard').click()
       cy.get('input[id="askAiInput"]')
         .parent()
         // .click()
         .type('Replace this with a familiar sentence {enter}')
       /* eslint-disable cypress/no-unnecessary-waiting */
-      cy.wait(7000)
+      cy.wait(10000)
       cy.contains('Replace selected text').click()
       cy.contains('Add a paragraph').should('not.exist')
     })

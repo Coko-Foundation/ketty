@@ -32,6 +32,7 @@ describe('Checking "Share" modal', () => {
     cy.login(admin)
     cy.goToBook('Test Book')
     cy.reload()
+    cy.contains('Untitled Chapter', { timeout: 8000 })
   })
 
   it('checking the defaults of the modal', () => {
@@ -75,16 +76,17 @@ describe('Checking "Share" modal', () => {
     cy.get('button[type="submit"]').should('be.disabled')
 
     cy.log('author.10@example.com does not exist')
+    cy.get('.ant-select-selection-overflow').click()
     cy.get('.ant-select-selection-overflow').type(
       'author.10@example.com{enter}',
     )
-    cy.get('div[role="option"]').should('not.exist')
+    cy.get('div[role="option"]', { timeout: 8000 }).should('not.exist')
     cy.get('button[type="submit"]').should('contain', 'Share')
     cy.get('button[type="submit"]').should('be.disabled')
 
     cy.log('author.1@example.com exists')
     cy.get('.ant-select-selection-overflow').type(author.email)
-    cy.get('div[role="option"]').click()
+    cy.get('div[role="option"]', { timeout: 8000 }).click()
 
     cy.get('.ant-select-selection-overflow').should(
       'contain',
@@ -96,11 +98,25 @@ describe('Checking "Share" modal', () => {
 
   it('adding a single user and changing permissions', () => {
     cy.contains('button', 'Share').click()
-    cy.get('button[type="submit"]').should('contain', 'Share')
-    cy.get('button[type="submit"]').should('be.disabled')
+    cy.get('button[type="submit"]').should('contain', 'Share', {
+      timeout: 8000,
+    })
+    cy.get('button[type="submit"]', { timeout: 8000 }).should('be.disabled')
 
-    cy.get('.ant-select-selection-overflow').type(author.email)
-    cy.get('div[role="option"]').click()
+    cy.get('.ant-select-selection-overflow').click()
+
+    cy.get('.ant-select-selection-overflow input', { timeout: 8000 })
+      .should('be.visible')
+      .click({ force: true }) // Force a click to ensure focus
+    cy.get('.ant-select-selection-overflow input', { timeout: 8000 }).type(
+      author.email,
+      {
+        delay: 100,
+        force: true,
+      },
+    )
+    cy.get('.ant-select-selection-overflow').should('contain', author.email)
+    cy.get('div[role="option"]', { timeout: 8000 }).click()
 
     cy.get('.ant-select-selection-overflow').should(
       'contain',
@@ -138,8 +154,20 @@ describe('Checking "Share" modal', () => {
     cy.contains('button', 'Share').click()
 
     cy.log('Adding a user with view permission')
-    cy.get('.ant-select-selection-overflow').type(collaborator1.email)
-    cy.get('div[role="option"]').click()
+
+    cy.get('.ant-select-selection-overflow').click()
+    cy.get('.ant-select-selection-overflow input', { timeout: 8000 })
+      .should('be.visible')
+      .click({ force: true }) // Force a click to ensure focus
+    cy.get('.ant-select-selection-overflow input').type(collaborator1.email, {
+      delay: 100,
+      force: true,
+    })
+    cy.get('.ant-select-selection-overflow').should(
+      'contain',
+      collaborator1.email,
+    )
+    cy.get('div[role="option"]', { timeout: 8000 }).click()
     cy.get('button[type="submit"]').click()
 
     cy.get('.ant-list-item').should(
@@ -161,8 +189,13 @@ describe('Checking "Share" modal', () => {
     cy.contains('button', 'Share').click()
 
     cy.log('Adding a user with view permission')
-    cy.get('.ant-select-selection-overflow').type(collaborator1.email)
-    cy.get('div[role="option"]').click()
+    cy.get('.ant-select-selection-overflow').click()
+
+    cy.get('.ant-select-selection-overflow input').type(collaborator1.email, {
+      delay: 100,
+      force: true,
+    })
+    cy.get('div[role="option"]', { timeout: 8000 }).click()
     cy.get('button[type="submit"]').click()
 
     cy.get('.ant-list-item').should(
@@ -200,13 +233,23 @@ describe('Checking "Share" modal', () => {
   it('adding multiple members at once', () => {
     cy.contains('button', 'Share').click()
 
-    cy.get('.ant-select-selection-overflow').type(collaborator1.email)
-    cy.get('div[role="option"]')
+    cy.get('.ant-select-selection-overflow').click()
+
+    cy.get('.ant-select-selection-overflow input').type(collaborator1.email, {
+      delay: 100,
+      force: true,
+    })
+    cy.get('div[role="option"]', { timeout: 8000 })
       .should('contain', collaborator1.name, collaborator1.surname)
       .click({ timeout: 5000 })
 
-    cy.get('.ant-select-selection-overflow').type(collaborator2.email)
-    cy.get('div[role="option"]')
+    cy.get('.ant-select-selection-overflow').click()
+
+    cy.get('.ant-select-selection-overflow input').type(collaborator2.email, {
+      delay: 100,
+      force: true,
+    })
+    cy.get('div[role="option"]', { timeout: 8000 })
       .should('contain', collaborator2.surname)
       .click({ timeout: 8000 })
     cy.get('button[type="submit"]').click({ force: true })

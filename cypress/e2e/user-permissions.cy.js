@@ -177,7 +177,7 @@ describe('Checking permissions for dashboard', () => {
 
       cy.log('Author can create a new component in the book he/she is owner.')
       cy.goToBook(authorBook)
-      cy.createUntitledChapter()
+      // cy.createUntitledChapter()
       cy.log('Author can use Wax toolbar in the book he/she is owner.')
       cy.canUseWaxToolbar('author', 'not.have.attr')
 
@@ -297,6 +297,19 @@ describe('Checking permissions for dashboard', () => {
       )
 
       cy.canChangeAccess('no')
+      cy.get('.ant-modal-close').click()
+      cy.logout()
+
+      // Author deletes chapter
+      cy.login(author)
+      cy.goToBook(authorBook)
+      cy.get('[data-icon="more"]').click()
+      cy.contains('Delete', { timeout: 8000 }).should('exist')
+      cy.contains('Delete').click()
+      cy.contains(
+        'Create or select a chapter in the chapters panel to start writing',
+      ).should('exist')
+      cy.logout()
     })
   })
 

@@ -63,8 +63,8 @@ describe('Book editor', () => {
   })
 
   it('Adding content', () => {
-    cy.get('.anticon-plus').click()
-    cy.contains('Untitled Chapter', { timeout: 8000 }).click()
+    // cy.get('.anticon-plus').click()
+    // cy.contains('Untitled Chapter', { timeout: 8000 }).click()
 
     let i = 1
     levels.forEach(option => {
@@ -110,7 +110,7 @@ describe('Book editor', () => {
   })
 
   it('Verifying content', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
 
     display.forEach(option => {
       cy.contains(option.element, option.content, { timeout: 8000 })
@@ -131,7 +131,7 @@ describe('Book editor', () => {
   })
 
   it('Checking redo and undo', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
     const addedText = 'I added this text.'
     cy.get('.ProseMirror').type(`${addedText}{enter}`)
     cy.contains(addedText).should('exist')
@@ -160,7 +160,7 @@ describe('Book editor', () => {
   })
 
   it('Checking lifting out of enclosing blocks', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
 
     // adding a code block
     cy.get('.ProseMirror').type(`This is an enclosed block`)
@@ -180,7 +180,7 @@ describe('Book editor', () => {
   })
 
   it('Checking adding special characters', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
 
     cy.get('.ProseMirror').type(
       '{Enter}The following are some special characters:{enter}',
@@ -281,7 +281,7 @@ describe('Book editor', () => {
   })
 
   it('Checking uploading images', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
 
     cy.get('.ProseMirror').type('{enter}Next an image will be added. {enter}')
     cy.get('input[id="file-upload"]').selectFile(
@@ -299,7 +299,7 @@ describe('Book editor', () => {
   })
 
   it('Checking fullscreen', () => {
-    cy.contains('Test Chapter').click()
+    // cy.contains('Test Chapter').click()
     cy.get('button[title="Full screen"]').click()
     cy.contains('Book Metadata').should('not.exist')
 

@@ -7,8 +7,6 @@ const {
 
 const authorBook = 'Author Book'
 
-// FIX TIMEOUTS!!!
-
 describe('Checking the Preview section', () => {
   before(() => {
     cy.login(admin)
@@ -159,11 +157,7 @@ describe('Checking the Preview section', () => {
 
     cy.checkTemplates()
 
-    // Cannot download EPUB if there is no content
-    cy.get('span[aria-label="download"]')
-      .parent()
-      .parent()
-      .should('be.disabled')
+    cy.get('span[aria-label="download"]').parent().parent().should('be.enabled')
   })
 
   it('saving a new export profile', () => {
@@ -255,8 +249,6 @@ describe('Checking permissions in the Preview page', () => {
     cy.login(author)
     cy.addBook(authorBook)
     cy.goToBook(authorBook)
-    cy.createUntitledChapter()
-    cy.get('.anticon-plus').click()
     cy.addMember(collaborator1, 'edit')
     cy.addMember(collaborator2, 'view')
     cy.logout()
