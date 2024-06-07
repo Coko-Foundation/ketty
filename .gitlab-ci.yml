@@ -151,21 +151,42 @@ publish production demo:
 #     name: storybook
 #     url: https://$STORYBOOK_SSH_URL
 
-deploy develop:
-  extends: .deploy base
+# deploy develop:
+#   extends: .deploy base
+#   stage: Deploy
+#   needs:
+#     - publish production develop
+#   variables:
+#     URL: $DEVELOP_SSH_URL
+#     PORT: $DEVELOP_SSH_PORT
+#     USER: $DEVELOP_SSH_USER
+#     PRIVATE_KEY: $DEVELOP_SSH_PRIVATE_KEY
+#     APP_PATH_ON_SERVER: $DEVELOP_APP_PATH_ON_SERVER
+#     COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEVELOP
+#     SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEVELOP
+#   only:
+#     - develop
+
+deploy:
   stage: Deploy
-  needs:
-    - publish production develop
+  image: $CI_REGISTRY/cokoinfra/ansible-deployer
+  services:
+    - docker:23-dind
   variables:
-    URL: $DEVELOP_SSH_URL
-    PORT: $DEVELOP_SSH_PORT
-    USER: $DEVELOP_SSH_USER
-    PRIVATE_KEY: $DEVELOP_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $DEVELOP_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEVELOP
-    SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEVELOP
-  only:
-    - develop
+    ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true #this is needed on some db setups like DO
+    COMPOSE_SERVICES: client,server #comma separated value for each docker-compose service that should be converted into k8s object
+    COMPOSE_SERVICES_client_URL: ketty-dev.coko.app #<service name> is each value defined in COMPOSE_SERVICES
+    COMPOSE_SERVICES_client_IMAGE: cokoapps/ketty-client:latest # name of the image
+    COMPOSE_SERVICES_server_URL: ketty-dev-server.coko.app #<service name> is each value defined in COMPOSE_SERVICES
+    COMPOSE_SERVICES_server_IMAGE: cokoapps/ketty-server:latest # name of the image
+    do_spaces_access_key: $DIGITAL_OCEAN_SPACES_ACCESS_KEY
+    do_spaces_secret_key: $DIGITAL_OCEAN_SPACES_SECRET_KEY
+  script:
+    - kubectl config get-contexts
+    - kubectl config use-context <group>/agent:agent-1
+    - cp docker-compose.demo-deploy.yml /ansible
+    - cd /ansible
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=docker-compose.demo-deploy.yml"
 
 deploy demo:
   extends: .deploy base
