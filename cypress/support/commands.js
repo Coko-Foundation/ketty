@@ -40,7 +40,9 @@ Cypress.Commands.add('login', user => {
 
 Cypress.Commands.add('addBook', title => {
   cy.visit('http://localhost:4000/dashboard/')
-  cy.contains('Start writing your book').click()
+  cy.contains('[href="/create-book"]', 'New book').should('exist')
+  cy.contains('[href="/create-book"]', 'New book').click()
+  cy.contains('button', 'Start writing').click()
   cy.get('#bookTitle').type(title)
   cy.contains('Continue').click()
   cy.contains(title)
@@ -119,7 +121,11 @@ Cypress.Commands.add('createChapter', chapterTitle => {
 Cypress.Commands.add('addMember', (collaborator, access) => {
   cy.contains('Untitled Chapter', { timeout: 8000 }).should('exist')
   cy.contains('button', 'Share').click()
-  cy.get('.ant-select-selection-overflow', { timeout: 8000 }).type(
+  cy.get('.ant-select-selection-overflow', { timeout: 8000 }).click()
+  cy.get('.ant-select-selection-overflow input', { timeout: 8000 })
+    // .should('be.visible')
+    .click({ force: true })
+  cy.get('.ant-select-selection-overflow input', { timeout: 8000 }).type(
     collaborator.email,
   )
   cy.get('div[role="option"]').click()

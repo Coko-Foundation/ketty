@@ -9,10 +9,20 @@ describe('Start writing', () => {
 
   it('creating a book by clicking "Start writing" button', () => {
     // cy.getByData('start-writing-button')
-    cy.get('button:nth(2)')
-      .should('have.text', 'Start writing your book')
-      .click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.contains('You don’t have any books yet').should('exist')
+    cy.contains('[href="/create-book"]', 'New book').should('exist')
+    cy.contains('[href="/create-book"]', 'New book').click()
 
+    cy.location('pathname').should('equal', '/create-book')
+    cy.contains('h2', 'Write from scratch')
+    cy.contains(
+      'p',
+      'Start your book with a blank slate using the build-in Editor.',
+    )
+    cy.contains('button', 'Start writing').click()
+
+    cy.location('pathname').should('contain', '/rename')
     // cy.getByData('book-title-input')
     cy.get('#bookTitle')
       .invoke('attr', 'placeholder')
@@ -56,10 +66,14 @@ describe('Start writing', () => {
   })
 
   it('verifying enter key is working correctly in title page', () => {
-    cy.get('button:nth(2)')
-      .should('have.text', 'Start writing your book')
-      .click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.contains('[href="/create-book"]', 'New book').click()
 
+    cy.location('pathname').should('equal', '/create-book')
+
+    cy.contains('button', 'Start writing').click()
+
+    cy.location('pathname').should('contain', '/rename')
     cy.get('#bookTitle').type('00 Test Book{enter}')
     cy.contains('Book Metadata')
     cy.contains('00 Test Book')

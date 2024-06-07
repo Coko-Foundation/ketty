@@ -353,7 +353,7 @@ describe('Checking permissions for dashboard', () => {
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
         cy.contains('Chapter 1').dragAndDrop(
           ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-          'div:nth(59)',
+          'div:nth(58)',
         )
         cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
       })
@@ -363,7 +363,10 @@ describe('Checking permissions for dashboard', () => {
 
 Cypress.Commands.add('createImportedBook', bookTitle => {
   cy.location('pathname').should('equal', '/dashboard')
-  cy.get('button:nth(3)').should('have.text', 'Import your files').click()
+  cy.contains('[href="/create-book"]', 'New book').click()
+  cy.location('pathname').should('equal', '/create-book')
+  cy.contains('button', 'Select files').click()
+  cy.location('pathname').should('contain', '/import')
   cy.get('input[type="file"]').selectFile(
     'cypress/fixtures/docs/test_document.docx',
     { force: true },
@@ -382,21 +385,18 @@ Cypress.Commands.add('createImportedBook', bookTitle => {
 
 Cypress.Commands.add('canDeleteBook', (bookTitle, ariaDisAttr) => {
   cy.location('pathname').should('equal', '/dashboard')
-  cy.contains(bookTitle).siblings().find('[data-icon="more"]').click()
-  cy.contains('Delete book')
-    .parent()
-    .parent()
-    .should('have.attr', 'aria-disabled', ariaDisAttr)
+  cy.get('li:nth(0)').find('span[aria-label="more"]').click()
+  cy.get('li:nth(0)')
+    .find('span[aria-label="delete"]')
+    .should('have.attr', 'data-disabled', ariaDisAttr)
 })
 
 Cypress.Commands.add('canUploadThumbnail', (bookTitle, ariaDisAttr) => {
   cy.location('pathname').should('equal', '/dashboard')
-  cy.contains(bookTitle).siblings().find('[data-icon="more"]').click()
-  cy.contains('Upload book placeholder image')
-    .parent()
-    .parent()
-    .parent()
-    .should('have.attr', 'aria-disabled', ariaDisAttr)
+  cy.get('li:nth(0)').find('span[aria-label="more"]').click()
+  cy.get('li:nth(0)')
+    .find('span[aria-label="file-image"]')
+    .should('have.attr', 'data-disabled', ariaDisAttr)
 })
 
 Cypress.Commands.add('goToDashboard', () => {
@@ -545,7 +545,7 @@ Cypress.Commands.add('canChangeAccess', status => {
 Cypress.Commands.add('canReorderChapters', status => {
   cy.contains('Chapter 1').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(59)',
+    'div:nth(58)',
   )
 
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
@@ -556,7 +556,7 @@ Cypress.Commands.add('canReorderChapters', status => {
 
   cy.contains('Chapter 2').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(59)',
+    'div:nth(58)',
   )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 3')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 1')
@@ -566,7 +566,7 @@ Cypress.Commands.add('canReorderChapters', status => {
 
   cy.contains('Chapter 3').dragAndDrop(
     ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-    'div:nth(59)',
+    'div:nth(58)',
   )
   cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 1')
   cy.get('.ant-list-items > :nth-child(2)').should('contain', 'Chapter 2')

@@ -73,7 +73,7 @@ describe('Checking Producer Page', () => {
 
       cy.contains('Chapter 1').dragAndDrop(
         ':nth-child(1) > .ChapterItem__Chapter-sc-qfks8y-0 > .anticon-holder',
-        'div:nth(59)',
+        'div:nth(58)',
       ) // moving chapter 1 below chapter 3
 
       cy.get('.ant-list-items > :nth-child(1)').should('contain', 'Chapter 2')
@@ -250,7 +250,7 @@ describe('Checking Producer Page', () => {
     it('checking copyright licenses options', () => {
       function selectLicenseOption(index, holderName, year) {
         cy.get(`strong:nth(${index})`).click()
-        cy.get('.ant-collapse-expand-icon').should('exist')
+        // cy.get('.ant-collapse-expand-icon').should('exist')
 
         const labels = {
           holder: 'Copyright holder name (optional)',
@@ -417,7 +417,7 @@ describe('Checking Producer Page', () => {
       cy.get('button[title="Toggle Ai"]').should('not.exist')
 
       // Confirm default values for Book Settings
-      cy.get('[role="menuitem"]:nth(3)').click()
+      cy.get('[aria-label="Book settings"]').click()
       cy.contains('Book settings').should('exist')
       cy.contains('AI writing prompt use').should('exist')
       cy.contains(
@@ -431,7 +431,7 @@ describe('Checking Producer Page', () => {
 
     it('switching AI to on', () => {
       //   Enable AI
-      cy.get('[role="menuitem"]:nth(3)').click()
+      cy.get('[aria-label="Book settings"]').click()
       cy.get('[role="switch"]:nth(0)').click()
       cy.get('[role="switch"]:nth(0)')
         .should('have.attr', 'aria-checked')

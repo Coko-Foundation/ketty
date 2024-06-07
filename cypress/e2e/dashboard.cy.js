@@ -41,14 +41,14 @@ describe('checking elements of the dashboard', () => {
   it('deleting a book', () => {
     cy.addBook('Book 2')
     cy.get('li:nth(1)').should('contain', 'Book 2')
-    cy.get('li:nth(1)').find('[data-icon="more"]').click()
-    cy.contains('Delete').should('exist').click()
+    cy.get('li:nth(1)').find('span[aria-label="more"]').click()
+    cy.get('li:nth(1)').find('span[aria-label="delete"]').parent().click()
     cy.contains('Book 2').should('not.exist')
   })
 
   it('checking that books are sorted in alphanumeric order', () => {
     // Adding 10 books with titles "Book 2" to "Book 11"
-    for (let i = 2; i <= 11; i++) {
+    for (let i = 2; i <= 13; i++) {
       cy.addBook(`Book ${i}`)
     }
 
@@ -65,6 +65,8 @@ describe('checking elements of the dashboard', () => {
       'Book 1',
       'Book 10',
       'Book 11',
+      'Book 12',
+      'Book 13',
       'Book 2',
       'Book 3',
       'Book 4',
@@ -77,7 +79,7 @@ describe('checking elements of the dashboard', () => {
     // Loop through the expectedTitles array
     expectedTitles.forEach((title, index) => {
       const columnIndex = index
-      cy.get(`.ant-col:nth(${columnIndex})`).should('contain', title)
+      cy.get(`.ant-card-body:nth(${columnIndex})`).should('contain', title)
     })
 
     // Page 2
@@ -89,6 +91,6 @@ describe('checking elements of the dashboard', () => {
     )
     cy.get('li[title="1"]').should('have.attr', 'aria-label', 'Go to page 1')
 
-    cy.get('.ant-col').should('contain', 'Book 9')
+    cy.get('.ant-card-body').should('contain', 'Book 9')
   })
 })

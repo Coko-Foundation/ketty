@@ -8,8 +8,17 @@ describe('Start writing', () => {
 
   it('creating a book by importing files', () => {
     // cy.getByData('import-files-button')
-    cy.get('button:nth(3)').should('have.text', 'Import your files').click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.contains('You don’t have any books yet').should('exist')
+    cy.contains('[href="/create-book"]', 'New book').should('exist')
+    cy.contains('[href="/create-book"]', 'New book').click()
 
+    cy.location('pathname').should('equal', '/create-book')
+    cy.contains('h2', 'Upload your files')
+    cy.contains('p', 'Start your book with .docx files.')
+    cy.contains('button', 'Select files').click()
+
+    cy.location('pathname').should('contain', '/import')
     cy.get('h1').should('have.text', 'Import')
     cy.get('p').first().should('have.text', 'Files supported: .docx')
 
@@ -72,10 +81,10 @@ describe('Start writing', () => {
     cy.contains('Book Two')
 
     // cy.getByData('book-chapters-list').wait(10000)
-    cy.get('ul:nth(2)').contains('Processing')
-    cy.get('ul:nth(2)').contains('chapter1_test', { timeout: 8000 })
-    cy.get('ul:nth(2)').contains('chapter2_test', { timeout: 8000 })
-    cy.get('ul:nth(2)').contains('chapter3_test', { timeout: 8000 })
+    cy.get('ul:nth(0)').contains('Processing')
+    cy.get('ul:nth(0)').contains('chapter1_test', { timeout: 8000 })
+    cy.get('ul:nth(0)').contains('chapter2_test', { timeout: 8000 })
+    cy.get('ul:nth(0)').contains('chapter3_test', { timeout: 8000 })
 
     cy.get("a[href='/dashboard']").last().click()
     cy.location('pathname').should('equal', '/dashboard')

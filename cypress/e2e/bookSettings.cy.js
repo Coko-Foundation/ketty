@@ -351,7 +351,7 @@ describe('AI Book Designer (Beta)', () => {
 })
 
 Cypress.Commands.add('openBookSettings', () => {
-  cy.get('[role="menuitem"]:nth(3)').click()
+  cy.get('[aria-label="Book settings"]').click()
   cy.contains('Book settings').should('exist')
 })
 
