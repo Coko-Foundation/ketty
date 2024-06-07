@@ -183,7 +183,7 @@ deploy:
     do_spaces_secret_key: $DIGITAL_OCEAN_SPACES_SECRET_KEY
   script:
     - kubectl config get-contexts
-    - kubectl config use-context <group>/agent:agent-1
+    - kubectl config use-context ketty/agent:agent-1
     - cp docker-compose.demo-deploy.yml /ansible
     - cd /ansible
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=docker-compose.demo-deploy.yml"
