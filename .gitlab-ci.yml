@@ -228,7 +228,7 @@ deploy:
     - kubectl config use-context ketty/agent:agent-1
     - cp docker-compose.demo-deploy.yml /ansible
     - cd /ansible
-    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=docker-compose.demo-deploy.yml"
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=docker-compose.ci.yml"
 
 deploy demo:
   extends: .deploy base
