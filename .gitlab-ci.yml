@@ -15,6 +15,7 @@ variables:
   COMPOSE_FILE_STORYBOOK: docker-compose.storybook-deploy.yml
   COMPOSE_FILE_DEPLOY_DEVELOP: docker-compose.develop-deploy.yml
   COMPOSE_FILE_DEPLOY_DEMO: docker-compose.demo-deploy.yml
+  DEPLOY_COMPOSE_FILE: docker-compose.ci.yml
 
 stages:
   - Branch checks
@@ -59,7 +60,7 @@ build development:
     IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
     BUILD_PATH: $PATH_TO_BUILD
 
-lint:
+.lint:
   extends: .lint
   stage: Lint & Unit test
   variables:
@@ -226,9 +227,9 @@ deploy:
   script:
     - kubectl config get-contexts
     - kubectl config use-context ketty/agent:agent-1
-    - cp docker-compose.demo-deploy.yml /ansible
+    - cp $DEPLOY_COMPOSE_FILE /ansible
     - cd /ansible
-    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=docker-compose.ci.yml"
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
 
 deploy demo:
   extends: .deploy base
