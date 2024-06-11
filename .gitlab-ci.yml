@@ -53,27 +53,27 @@ pages:
 
 ## LINT & UNIT TEST
 
-build development:
-  extends: .build development
-  stage: Build development
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    BUILD_PATH: $PATH_TO_BUILD
+# build development:
+#   extends: .build development
+#   stage: Build development
+#   variables:
+#     IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
+#     BUILD_PATH: $PATH_TO_BUILD
 
-.lint:
-  extends: .lint
-  stage: Lint & Unit test
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    WORKDIR: $PATH_INSIDE_CONTAINER
-    STYLELINT: 1
+# lint:
+#   extends: .lint
+#   stage: Lint & Unit test
+#   variables:
+#     IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
+#     WORKDIR: $PATH_INSIDE_CONTAINER
+#     STYLELINT: 1
 
-.unit test:
-  extends: .client unit test
-  stage: Lint & Unit test
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    WORKDIR: $PATH_INSIDE_CONTAINER
+# unit test:
+#   extends: .client unit test
+#   stage: Lint & Unit test
+#   variables:
+#     IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
+#     WORKDIR: $PATH_INSIDE_CONTAINER
 
 ## BUILD PRODUCTION IMAGE
 
