@@ -7,8 +7,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Avatar } from 'antd'
-import isEmpty from 'lodash/isEmpty'
-import { SettingOutlined } from '@ant-design/icons'
+// import isEmpty from 'lodash/isEmpty'
+// import { SettingOutlined } from '@ant-design/icons'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import Button from './Button'
 
@@ -19,28 +19,28 @@ const StyledHeader = styled.header`
   border-bottom: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
   display: flex;
   height: 48px;
-  justify-content: flex-start;
+  justify-content: space-between;
   padding: ${grid(1)};
   width: 100%;
   z-index: 9;
 `
 
-const Navigation = styled.nav`
-  align-items: center;
-  background-color: ${th('colorBody')};
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
-  justify-content: space-between;
-`
+// const Navigation = styled.nav`
+//   align-items: center;
+//   background-color: ${th('colorBody')};
+//   display: flex;
+//   flex-grow: 1;
+//   height: 100%;
+//   justify-content: space-between;
+// `
 
-const LinksContainer = styled.div`
-  align-items: stretch;
-  display: flex;
-  gap: ${grid(6)};
-  height: 100%;
-  padding-inline: ${grid(2)};
-`
+// const LinksContainer = styled.div`
+//   align-items: stretch;
+//   display: flex;
+//   gap: ${grid(6)};
+//   height: 100%;
+//   padding-inline: ${grid(2)};
+// `
 
 const BrandingContainer = styled.div`
   margin-right: ${grid(2)};
@@ -143,6 +143,7 @@ const Header = props => {
     showAiAssistantLink,
     showKnowledgeBaseLink,
     bookId,
+    title,
     ...rest
   } = props
 
@@ -173,13 +174,13 @@ const Header = props => {
     )
   }
 
-  if (showInvite) {
-    navItemsRight.push(
-      <Button key="share" onClick={onInvite} type="text">
-        Share
-      </Button>,
-    )
-  }
+  // if (showInvite) {
+  //   navItemsRight.push(
+  //     <Button key="share" onClick={onInvite} type="text">
+  //       Share
+  //     </Button>,
+  //   )
+  // }
 
   if (showKnowledgeBaseLink) {
     navItemsRight.push(
@@ -197,19 +198,19 @@ const Header = props => {
     )
   }
 
-  if (showSettings) {
-    navItemsRight.push(
-      <Button
-        aria-label="Book settings"
-        key="settings"
-        onClick={onSettings}
-        title="Book settings"
-        type="text"
-      >
-        <SettingOutlined />
-      </Button>,
-    )
-  }
+  // if (showSettings) {
+  //   navItemsRight.push(
+  //     <Button
+  //       aria-label="Book settings"
+  //       key="settings"
+  //       onClick={onSettings}
+  //       title="Book settings"
+  //       type="text"
+  //     >
+  //       <SettingOutlined />
+  //     </Button>,
+  //   )
+  // }
 
   return (
     <StyledHeader role="banner" {...rest}>
@@ -222,37 +223,48 @@ const Header = props => {
           )}
         </UnstyledLink>
       </BrandingContainer>
-      <Navigation role="navigation">
+      <h1
+        style={{
+          maxWidth: '60ch',
+          overflow: 'hidden',
+          'text-overflow': 'ellipsis',
+          'white-space': 'nowrap',
+          'font-size': '18px',
+        }}
+      >
+        {title}
+      </h1>
+      {/* <Navigation role="navigation">
         <LinksContainer>
           {!isEmpty(navItemsLeft) && navItemsLeft.map(item => item)}
         </LinksContainer>
         <LinksContainer>
-          {!isEmpty(navItemsRight) && navItemsRight.map(item => item)}
-          <StyledPopup
-            alignment="end"
-            position="block-end"
-            toggle={
-              <Button type="text">
-                <Avatar>{getInitials(userDisplayName)}</Avatar>
-              </Button>
-            }
-          >
-            <PopupContentWrapper>
-              {canAccessAdminPage && (
-                <UnstyledLink
-                  onClick={() => {
-                    document.querySelector('#main-content').focus()
-                  }}
-                  to="/admin"
-                >
-                  Admin
-                </UnstyledLink>
-              )}
-              <Button onClick={onLogout}>Logout</Button>
-            </PopupContentWrapper>
-          </StyledPopup>
+           {!isEmpty(navItemsRight) && navItemsRight.map(item => item)} 
         </LinksContainer>
-      </Navigation>
+      </Navigation> */}
+      <StyledPopup
+        alignment="end"
+        position="block-end"
+        toggle={
+          <Button type="text">
+            <Avatar>{getInitials(userDisplayName)}</Avatar>
+          </Button>
+        }
+      >
+        <PopupContentWrapper>
+          {canAccessAdminPage && (
+            <UnstyledLink
+              onClick={() => {
+                document.querySelector('#main-content').focus()
+              }}
+              to="/admin"
+            >
+              Admin
+            </UnstyledLink>
+          )}
+          <Button onClick={onLogout}>Logout</Button>
+        </PopupContentWrapper>
+      </StyledPopup>
     </StyledHeader>
   )
 }
@@ -277,6 +289,7 @@ Header.propTypes = {
   dashboardURL: PropTypes.string,
   backToBookURL: PropTypes.string,
   previewURL: PropTypes.string,
+  title: PropTypes.string,
   dropdownItems: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
@@ -296,6 +309,7 @@ Header.defaultProps = {
   previewURL: null,
   showAiAssistantLink: false,
   showKnowledgeBaseLink: false,
+  title: '',
 }
 
 export default Header

@@ -5,12 +5,15 @@ import styled, { ThemeProvider } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
 import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
-import BookPanel from '../../bookPanel/BookPanel'
+
+import Sidebar from '../../bookPanel/Sidebar'
 import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
 import 'wax-table-service/dist/index.css'
+import Settings from '../../settings/Settings'
+import BookMetadataForm from '../../bookMetadata/BookMetadataForm'
 
 const Wrapper = styled.div`
   background: ${th('colorBackground')};
@@ -60,6 +63,12 @@ const EditorArea = styled.div`
   height: 100%;
   padding: 4px 0 0;
   width: ${({ isFullscreen }) => (isFullscreen ? '100%' : '80%')};
+
+  &:not([data-page='producer']) {
+    flex-grow: 0;
+    overflow: hidden;
+    width: 1px;
+  }
 `
 
 const WaxSurfaceScroll = styled.div`
@@ -110,13 +119,8 @@ const StyledSpin = styled(Spin)`
   width: 816px;
 `
 
-const StyledBookPanel = styled(BookPanel)`
-  border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
-  width: 32%;
-
-  @media (min-width: 1200px) {
-    flex: 0 0 49ch;
-  }
+const StyledMetadataForm = styled(BookMetadataForm)`
+  margin-inline: auto;
 `
 
 const NoSelectedChapterWrapper = styled.div`
@@ -166,16 +170,69 @@ const LuluLayout = ({ customProps, ...rest }) => {
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
+    id,
+    page,
+    bookSettings,
   } = customProps
+
+  const renderSection = whichPage => {
+    switch (whichPage) {
+      // case 'producer':
+      //   return (
+      //     <EditorArea isFullscreen={options.fullScreen}>
+      //       <WaxSurfaceScroll style={{ position: 'relative' }}>
+      //         <EditorContainer selectedChapterId={selectedChapterId}>
+      //           {selectedChapterId ? (
+      //             editor
+      //           ) : (
+      //             <NoSelectedChapterWrapper>
+      //               Create or select a chapter in the chapters panel to start
+      //               writing
+      //             </NoSelectedChapterWrapper>
+      //           )}
+      //         </EditorContainer>
+      //         {editorLoading && <StyledSpin spinning={editorLoading} />}
+      //       </WaxSurfaceScroll>
+      //     </EditorArea>
+      //   )
+      // break;
+
+      case 'settings':
+        return <Settings bookId={id} bookSettings={bookSettings} />
+
+      case 'metadata':
+        return (
+          <StyledMetadataForm
+            canChangeMetadata={canEdit}
+            initialValues={bookMetadataValues}
+            onSubmitBookMetadata={onSubmitBookMetadata}
+          />
+        )
+
+      default:
+        return null
+    }
+  }
+
+  // useEffect(() => {
+  //   // if (page === 'producer') {
+  //   //   // MainMenuToolBar = null
+  //   //   console.log('load toolbar')
+  //   //   MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
+  //   // } else {
+  //   //   // MainMenuToolBar = null
+  //   // }
+  // }, [page])
 
   return (
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu data-loading={editorLoading}>
-          <MainMenuToolBar />
+          {page === 'producer' && <MainMenuToolBar />}
         </TopMenu>
         <Main>
-          {!options.fullScreen && (
+          {/* {!options.fullScreen && (
+            
             <StyledBookPanel
               bookMetadataValues={bookMetadataValues}
               canEdit={canEdit}
@@ -194,10 +251,34 @@ const LuluLayout = ({ customProps, ...rest }) => {
               setMetadataModalOpen={setMetadataModalOpen}
               subtitle={subtitle}
               title={title}
+              id={id}
+            />
+          )} */}
+          {!options.fullScreen && (
+            <Sidebar
+              bookMetadataValues={bookMetadataValues}
+              canEdit={canEdit}
+              chapters={chapters}
+              chaptersActionInProgress={chaptersActionInProgress}
+              id={id}
+              metadataModalOpen={metadataModalOpen}
+              onAddChapter={onAddChapter}
+              onBookComponentParentIdChange={onBookComponentParentIdChange}
+              onBookComponentTypeChange={onBookComponentTypeChange}
+              onChapterClick={onChapterClick}
+              onDeleteChapter={onDeleteChapter}
+              onReorderChapter={onReorderChapter}
+              onSubmitBookMetadata={onSubmitBookMetadata}
+              onUploadChapter={onUploadChapter}
+              page={page}
+              selectedChapterId={selectedChapterId}
+              setMetadataModalOpen={setMetadataModalOpen}
+              subtitle={subtitle}
+              title={title}
             />
           )}
-
-          <EditorArea isFullscreen={options.fullScreen}>
+          {/* <section style={{ position: 'relative' }}> */}
+          <EditorArea data-page={page} isFullscreen={options.fullScreen}>
             <WaxSurfaceScroll
               id="wax-surface-scroll"
               style={{ position: 'relative' }}
@@ -215,6 +296,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
               {editorLoading && <StyledSpin spinning={editorLoading} />}
             </WaxSurfaceScroll>
           </EditorArea>
+          {renderSection(page)}
+          {/* </section> */}
         </Main>
       </Wrapper>
     </ThemeProvider>

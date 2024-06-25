@@ -1,17 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { th } from '@coko/client'
 import dayjs from 'dayjs'
 import mapValues from 'lodash/mapValues'
-import { Form, Modal } from 'antd'
+import debounce from 'lodash/debounce'
+import { Form } from 'antd'
 import { Input, TextArea } from '../common'
 import CopyrightLicenseInput from './CopyrightLicenseInput'
 import ISBNList from './ISBNList'
+import Center from '../common/styledPrimitives/Center'
 
 const StyledForm = styled(Form)`
-  height: calc(100vh - 156.5px);
+  height: 100%;
   margin: 0 auto;
   /* max-width: 800px; */
   overflow-y: auto;
@@ -32,9 +34,15 @@ const BookMetadataForm = ({
 }) => {
   const [form] = Form.useForm()
 
-  useEffect(() => {
-    form.setFieldsValue(initialValues)
-  }, [form, initialValues])
+  const isFirstRender = useRef(true)
+
+  // useEffect(() => {
+  //   if (isFirstRender.current) {
+  //     console.log('this????')
+  //     form.setFieldsValue(initialValues)
+  //     isFirstRender.current = false
+  //   }
+  // }, [form, initialValues])
 
   const transformedInitialValues = mapValues(initialValues, (value, key) => {
     const dateFields = ['ncCopyrightYear', 'saCopyrightYear']
@@ -48,48 +56,66 @@ const BookMetadataForm = ({
   }
 
   useEffect(() => {
-    form.setFieldsValue(transformedInitialValues)
+    if (isFirstRender.current) {
+      // form.setFieldsValue(initialValues)
+      form.setFieldsValue(transformedInitialValues)
+      isFirstRender.current = false
+    }
   }, [form, initialValues])
 
+  // <>
+  // // <Modal
+  // //   cancelText="Close"
+  // //   centered
+  // //   destroyOnClose
+  // //   maskClosable={false}
+  // //   okButtonProps={{
+  // //     style: { backgroundColor: canChangeMetadata ? 'black' : '' },
+  // //     disabled: !canChangeMetadata,
+  // //   }}
+  // //   okText="Save"
+  // //   onCancel={closeModal}
+  // //   onOk={() => {
+  // //     form
+  // //       .validateFields()
+  // //       .then(values => {
+  // //         onSubmitBookMetadata(values)
+  // //         closeModal()
+  // //       })
+  // //       .catch(info => {
+  // //         console.error('Validate Failed:', info)
+  // //       })
+  // //   }}
+  // //   open={open}
+  // //   title="Book Metadata"
+  // //   width={840}
+  // // >
+  const handleMetadataUpdate = vals => {
+    // console.log(vals)
+    // console.log(form.getFieldsValue())
+    debounce(() => {
+      form.validateFields().then(values => {
+        onSubmitBookMetadata(values)
+      })
+    }, 2000)()
+  }
+
   return (
-    <Modal
-      cancelText="Close"
-      centered
-      destroyOnClose
-      maskClosable={false}
-      okButtonProps={{
-        style: { backgroundColor: canChangeMetadata ? 'black' : '' },
-        disabled: !canChangeMetadata,
-      }}
-      okText="Save"
-      onCancel={closeModal}
-      onOk={() => {
-        form
-          .validateFields()
-          .then(values => {
-            onSubmitBookMetadata(values)
-            closeModal()
-          })
-          .catch(info => {
-            console.error('Validate Failed:', info)
-          })
-      }}
-      open={open}
-      title="Book Metadata"
-      width={840}
+    <StyledForm
+      form={form}
+      initialValues={transformedInitialValues}
+      // preserve={false}
+      onValuesChange={handleMetadataUpdate}
     >
-      <StyledForm
-        form={form}
-        initialValues={transformedInitialValues}
-        preserve={false}
-      >
+      <Center>
+        <h2>BOOK METADATA</h2>
         <p>
           This information will be used for additional book pages that are
           optional, go to Preview to see the pages and decide which ones you
           want to include in your book
         </p>
         <FormSection>
-          <h2>TITLE PAGE</h2>
+          <h3>TITLE PAGE</h3>
           <Form.Item
             label="Title"
             labelCol={{ span: 24 }}
@@ -122,7 +148,7 @@ const BookMetadataForm = ({
         </FormSection>
 
         <FormSection>
-          <h2>COPYRIGHT PAGE</h2>
+          <h3>COPYRIGHT PAGE</h3>
           <Form.Item
             label="ISBN List"
             labelCol={{ span: 24 }}
@@ -162,8 +188,8 @@ const BookMetadataForm = ({
             <CopyrightLicenseInput canChangeMetadata={canChangeMetadata} />
           </Form.Item>
         </FormSection>
-      </StyledForm>
-    </Modal>
+      </Center>
+    </StyledForm>
   )
 }
 

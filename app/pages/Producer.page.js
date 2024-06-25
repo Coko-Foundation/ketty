@@ -98,6 +98,11 @@ const ProducerPage = () => {
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
+
+  const page = history.location.pathname.substring(
+    history.location.pathname.lastIndexOf('/') + 1,
+  )
+
   const [tabId] = useState(uuid())
 
   const [selectedChapterId, setSelectedChapterId] = useState(
@@ -166,22 +171,21 @@ const ProducerPage = () => {
     },
   })
 
-  const { loading: bookComponentLoading, refetch: refetchBookComponent } =
-    useQuery(GET_BOOK_COMPONENT, {
-      fetchPolicy: 'network-only',
-      skip: !selectedChapterId || !bookQueryData,
-      variables: { id: selectedChapterId },
-      onError: () => {
-        if (!reconnecting) {
-          if (hasMembership) {
-            showGenericErrorModal()
-          }
+  const { loading: bookComponentLoading } = useQuery(GET_BOOK_COMPONENT, {
+    fetchPolicy: 'network-only',
+    skip: !selectedChapterId || !bookQueryData,
+    variables: { id: selectedChapterId },
+    onError: () => {
+      if (!reconnecting) {
+        if (hasMembership) {
+          showGenericErrorModal()
         }
-      },
-      onCompleted: data => {
-        setCurrentBookComponentContent(data.getBookComponent.content)
-      },
-    })
+      }
+    },
+    onCompleted: data => {
+      setCurrentBookComponentContent(data.getBookComponent.content)
+    },
+  })
 
   const [chatGPT] = useLazyQuery(USE_CHATGPT, {
     fetchPolicy: 'network-only',
@@ -226,6 +230,11 @@ const ProducerPage = () => {
       }
     }
   }, [currentUser])
+
+  useEffect(() => {
+    refetchBook()
+    setKey(uuid())
+  }, [page])
 
   const bookComponent =
     !loading &&
@@ -290,7 +299,7 @@ const ProducerPage = () => {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
     onData: async () => {
-      await refetchBookComponent()
+      await refetchBook()
       setKey(uuid())
     },
   })
@@ -995,6 +1004,7 @@ const ProducerPage = () => {
       aiOn={aiOn}
       bookComponentContent={currentBookComponentContent}
       bookMetadataValues={bookMetadataValues}
+      bookSettings={bookQueryData?.getBook.bookSettings}
       canEdit={canModify}
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
@@ -1004,6 +1014,7 @@ const ProducerPage = () => {
       editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
+      id={bookId}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       metadataModalOpen={metadataModalOpen}
@@ -1020,6 +1031,7 @@ const ProducerPage = () => {
       onReorderChapter={onReorderChapter}
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadChapter={onUploadChapter}
+      page={page}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}
       setMetadataModalOpen={setMetadataModalOpen}

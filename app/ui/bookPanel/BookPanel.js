@@ -1,14 +1,15 @@
 import React from 'react'
+// import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-import { grid, th } from '@coko/client'
+import { grid } from '@coko/client'
 import { Space } from 'antd'
-import find from 'lodash/find'
+// import find from 'lodash/find'
 
 import ChapterList from './ChapterList'
-import MetadataModal from '../bookMetadata/BookMetadataForm'
-import MetadataLockedModal from '../bookMetadata/BookMetadataLocked'
+// import MetadataModal from '../bookMetadata/BookMetadataForm'
+// import MetadataLockedModal from '../bookMetadata/BookMetadataLocked'
 import { Button } from '../common'
 
 const LeftPanelWrapper = styled.div`
@@ -19,24 +20,24 @@ const LeftPanelWrapper = styled.div`
   padding: ${grid(3)};
 `
 
-const TitleArea = styled.div`
-  flex-shrink: 0;
-  font-size: 26px;
-  margin-bottom: ${grid(4)};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`
+// const TitleArea = styled.div`
+//   flex-shrink: 0;
+//   font-size: 26px;
+//   margin-bottom: ${grid(4)};
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   white-space: nowrap;
+//   width: 100%;
+// `
 
-const MetadataArea = styled.div`
-  border-bottom: 1px solid ${th('colorBorder')};
-  border-top: 1px solid ${th('colorBorder')};
-  flex-shrink: 0;
-  margin-bottom: ${grid(4)};
-  padding: ${grid(2)} 0;
-  width: 100%;
-`
+// const MetadataArea = styled.div`
+//   border-bottom: 1px solid ${th('colorBorder')};
+//   border-top: 1px solid ${th('colorBorder')};
+//   flex-shrink: 0;
+//   margin-bottom: ${grid(4)};
+//   padding: ${grid(2)} 0;
+//   width: 100%;
+// `
 
 const ChaptersArea = styled.div`
   display: flex;
@@ -70,11 +71,11 @@ const IconWrapper = styled(Button)`
   cursor: pointer;
 `
 
-const StyledModalButton = styled(Button)`
-  border-radius: 0;
-  text-align: left;
-  width: 100%;
-`
+// const StyledModalButton = styled(Button)`
+//   border-radius: 0;
+//   text-align: left;
+//   width: 100%;
+// `
 
 const BookPanel = props => {
   const {
@@ -84,92 +85,121 @@ const BookPanel = props => {
     onChapterClick,
     selectedChapterId,
     onReorderChapter,
-    title,
+    // title,
     onAddChapter,
     onUploadChapter,
-    onSubmitBookMetadata,
-    bookMetadataValues,
+    // onSubmitBookMetadata,
+    // bookMetadataValues,
     chaptersActionInProgress,
     canEdit,
     metadataModalOpen,
-    setMetadataModalOpen,
+    // setMetadataModalOpen,
     onBookComponentTypeChange,
     onBookComponentParentIdChange,
+    // id,
   } = props
 
-  const closeModal = () => {
-    setMetadataModalOpen(false)
-  }
+  // const closeModal = () => {
+  //   setMetadataModalOpen(false)
+  // }
 
-  let showFormModal = false
-  let showLockedModal = false
+  // let showFormModal = false
+  // let showLockedModal = false
+
+  // const history = useHistory()
+  // const location = useLocation()
+
+  // console.log(history)
+
+  // const page = location.pathname.substring(
+  //   history.location.pathname.lastIndexOf('/') + 1,
+  // )
+
+  // const getBookId = () => {
+  //   return history.location.pathname.split('/')[2]
+  // }
+
+  // console.log(page)
 
   if (metadataModalOpen) {
     // Do no show meta data form if chapters are being processed
-    showLockedModal = find(chapters, { uploading: true })
-    showFormModal = !showLockedModal
+    // showLockedModal = find(chapters, { uploading: true })
+    // showFormModal = !showLockedModal
   }
 
   return (
     <LeftPanelWrapper className={className}>
-      <TitleArea>{title || 'Untitled Book'}</TitleArea>
-      <MetadataArea>
-        <StyledModalButton
-          onClick={() => setMetadataModalOpen(true)}
-          type="text"
-        >
-          Book Metadata
-        </StyledModalButton>
-      </MetadataArea>
-      <MetadataModal
-        canChangeMetadata={canEdit}
-        closeModal={closeModal}
-        initialValues={bookMetadataValues}
-        onSubmitBookMetadata={onSubmitBookMetadata}
-        open={showFormModal}
-      />
-      <MetadataLockedModal closeModal={closeModal} open={showLockedModal} />
+      {/* <TitleArea>{title || 'Untitled Book'}</TitleArea> */}
+      {/* {page === 'producer' ? ( */}
+      <>
+        {/* <MetadataArea>
+            <StyledModalButton
+              onClick={() => setMetadataModalOpen(true)}
+              type="text"
+            >
+              Book Metadata
+            </StyledModalButton>
+            <StyledModalButton
+              onClick={() => history.push(`/books/${getBookId()}/settings`)}
+              type="text"
+            >
+              Settings
+            </StyledModalButton>
+          </MetadataArea>
 
-      <ChaptersArea>
-        <ChaptersHeader>
-          <StyledHeading>Chapters</StyledHeading>
-          <ChaptersActions>
-            <IconWrapper
-              aria-label="Upload a chapter"
-              disabled={!canEdit}
-              icon={<CloudUploadOutlined />}
-              onClick={onUploadChapter}
-              title="Upload a chapter"
-              type="text"
-            />
-            <IconWrapper
-              aria-label="Create a chapter"
-              disabled={!canEdit}
-              icon={<PlusOutlined />}
-              onClick={onAddChapter}
-              title="Create a chapter"
-              type="text"
-            />
-          </ChaptersActions>
-        </ChaptersHeader>
-        <ChapterList
-          canEdit={canEdit}
-          chapters={chapters}
-          chaptersActionInProgress={chaptersActionInProgress}
-          onBookComponentParentIdChange={onBookComponentParentIdChange}
-          onBookComponentTypeChange={onBookComponentTypeChange}
-          onChapterClick={onChapterClick}
-          onDeleteChapter={onDeleteChapter}
-          onReorderChapter={onReorderChapter}
-          selectedChapterId={selectedChapterId}
-        />
-      </ChaptersArea>
+          <MetadataModal
+            canChangeMetadata={canEdit}
+            closeModal={closeModal}
+            initialValues={bookMetadataValues}
+            onSubmitBookMetadata={onSubmitBookMetadata}
+            open={showFormModal}
+          />
+          <MetadataLockedModal closeModal={closeModal} open={showLockedModal} /> */}
+
+        <ChaptersArea>
+          <ChaptersHeader>
+            <StyledHeading>Chapters</StyledHeading>
+            <ChaptersActions>
+              <IconWrapper
+                aria-label="Upload a chapter"
+                disabled={!canEdit}
+                icon={<CloudUploadOutlined />}
+                onClick={onUploadChapter}
+                title="Upload a chapter"
+                type="text"
+              />
+              <IconWrapper
+                aria-label="Create a chapter"
+                disabled={!canEdit}
+                icon={<PlusOutlined />}
+                onClick={onAddChapter}
+                title="Create a chapter"
+                type="text"
+              />
+            </ChaptersActions>
+          </ChaptersHeader>
+          <ChapterList
+            canEdit={canEdit}
+            chapters={chapters}
+            chaptersActionInProgress={chaptersActionInProgress}
+            onBookComponentParentIdChange={onBookComponentParentIdChange}
+            onBookComponentTypeChange={onBookComponentTypeChange}
+            onChapterClick={onChapterClick}
+            onDeleteChapter={onDeleteChapter}
+            onReorderChapter={onReorderChapter}
+            selectedChapterId={selectedChapterId}
+          />
+        </ChaptersArea>
+      </>
+      {/* // ) : ( //{' '} */}
+      {/* <Link to={`/books/${getBookId()}/producer`}>Back to book</Link> */}
+      {/* // )} */}
     </LeftPanelWrapper>
   )
 }
 
 BookPanel.propTypes = {
-  title: PropTypes.string,
+  // title: PropTypes.string,
   chapters: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -208,9 +238,9 @@ BookPanel.propTypes = {
     }),
     publicDomainType: PropTypes.string,
   }).isRequired,
-  onSubmitBookMetadata: PropTypes.func.isRequired,
+  // onSubmitBookMetadata: PropTypes.func.isRequired,
   metadataModalOpen: PropTypes.bool.isRequired,
-  setMetadataModalOpen: PropTypes.func.isRequired,
+  // setMetadataModalOpen: PropTypes.func.isRequired,
   chaptersActionInProgress: PropTypes.bool.isRequired,
   onBookComponentTypeChange: PropTypes.func,
   onBookComponentParentIdChange: PropTypes.func,
@@ -218,7 +248,7 @@ BookPanel.propTypes = {
 BookPanel.defaultProps = {
   chapters: [],
   selectedChapterId: undefined,
-  title: null,
+  // title: null,
   onBookComponentTypeChange: null,
   onBookComponentParentIdChange: null,
 }

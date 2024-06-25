@@ -39,6 +39,9 @@ const EditorWrapper = ({
   editorLoading,
   kbOn,
   editorKey,
+  id,
+  page,
+  bookSettings,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -59,6 +62,9 @@ const EditorWrapper = ({
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
+    id,
+    page,
+    bookSettings,
   })
 
   const selectedConfig = aiEnabled ? configWithAi : defaultConfig
@@ -124,6 +130,9 @@ const EditorWrapper = ({
       onBookComponentParentIdChange,
       editorLoading,
       editorKey,
+      id,
+      page,
+      bookSettings,
     })
   }, [
     title,
@@ -136,6 +145,8 @@ const EditorWrapper = ({
     metadataModalOpen,
     editorLoading,
     editorKey,
+    page,
+    bookSettings,
   ])
 
   if (!selectedConfig) return null

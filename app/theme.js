@@ -10,7 +10,7 @@ module.exports = {
   colorError: 'red',
   colorWarning: '#ffc300',
 
-  colorText: '#555',
+  colorText: '#444',
   colorTextLight: '#9c9c9c',
   colorTextReverse: 'white',
   colorOutline: '#3f85c6',
