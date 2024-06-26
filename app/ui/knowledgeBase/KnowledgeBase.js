@@ -7,11 +7,11 @@ import {
   FilePdfOutlined,
   FileWordOutlined,
 } from '@ant-design/icons'
-import { th } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { keys } from 'lodash'
 import FilesList from './FilesList'
-import ActionsSidebar from './ActionsSidebar'
-import KBHeader from './KBHeader'
+// import ActionsSidebar from './ActionsSidebar'
+// import KBHeader from './KBHeader'
 
 const xlFileExtensions = [
   '.xls',
@@ -32,10 +32,11 @@ const fileIcons = {
 }
 
 const Wrapper = styled.div`
-  display: grid;
+  /* display: grid;
   grid-template:
     'header sidebar' 70px 'main sidebar' 1fr /
-    1fr minmax(25%, 250px);
+    1fr minmax(25%, 250px); */
+  display: block;
 
   height: 100%;
   overflow: hidden;
@@ -65,14 +66,23 @@ const Wrapper = styled.div`
   }
 `
 
-const Sidebar = styled(ActionsSidebar)`
-  grid-area: sidebar;
+const FileList = styled(FilesList)`
+  height: 100%;
 `
 
-const FileList = styled(FilesList)`
-  grid-area: main;
-  inset: 0 0 48px 0;
-  position: absolute;
+const Header = styled.div`
+  align-items: center;
+  border-block-end: 1px solid ${th('colorBorder')};
+  display: flex;
+  justify-content: space-between;
+  padding: ${grid(2)} ${grid(7)};
+  white-space: nowrap;
+
+  h2 {
+    color: ${th('colorTextLight')};
+    font-size: 28px;
+    margin: 0;
+  }
 `
 
 const KnowledgeBase = props => {
@@ -84,7 +94,7 @@ const KnowledgeBase = props => {
 
   const scrollToTopOfFilesList = () => {
     document
-      .querySelectorAll('.ant-upload-wrapper')[1] // [1] as long as the other Upload exists on header
+      .querySelector('.ant-upload-wrapper') // [1] as long as the other Upload exists on header
       .scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }
 
@@ -145,10 +155,9 @@ const KnowledgeBase = props => {
 
   return (
     <Wrapper>
-      <KBHeader
-        filesToAccept={filesToAccept}
-        handleFileChange={handleFileChange}
-      />
+      <Header>
+        <h2>Knowledge Base</h2>
+      </Header>
       <FileList
         bulkActions={bulkActions}
         deleteDocument={deleteDocument}
@@ -165,11 +174,11 @@ const KnowledgeBase = props => {
         setSelectedFiles={setSelectedFiles}
         xlFileExtensions={xlFileExtensions}
       />
-      <Sidebar
+      {/* <Sidebar
         bulkActions={bulkActions}
         filesToUpload={filesToUpload}
         selectedFiles={selectedFiles}
-      />
+      /> */}
     </Wrapper>
   )
 }

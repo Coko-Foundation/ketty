@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { Upload as AntUpload } from 'antd'
 import {
   CloseOutlined,
   DeleteOutlined,
@@ -65,11 +66,15 @@ const FilesHeading = styled.div`
   border-block-end: 1px solid ${th('colorBorder')};
   display: flex;
   font-size: ${th('fontSizeBaseSmall')};
-  gap: ${grid(2)};
-  justify-content: space-between;
+  gap: ${grid(6)};
+  justify-content: start;
   padding: ${grid(1)} ${grid(7)};
   text-transform: uppercase;
   white-space: nowrap;
+
+  > :last-child {
+    margin-inline-start: auto;
+  }
 `
 
 const StyledUpload = styled(Upload)`
@@ -80,6 +85,32 @@ const StyledUpload = styled(Upload)`
   ul {
     margin-block: 0;
     padding-inline-start: 0;
+  }
+`
+
+const StyledUploadButton = styled(AntUpload)`
+  display: inline-block;
+
+  [role='button'] {
+    align-items: center;
+    background-color: #307bc0;
+    border-color: #307bc0;
+    border-radius: 3px;
+    box-shadow: none;
+    color: white;
+    display: flex;
+    font-size: ${th('fontSizeBase')};
+    height: 32px;
+    justify-content: center;
+    padding: ${grid(1)};
+    text-align: center;
+    text-transform: none;
+    width: 120px;
+
+    &&:hover {
+      border-color: #307bc0;
+      color: white;
+    }
   }
 `
 
@@ -106,6 +137,38 @@ const Spinner = styled.div`
 
 const NoFiles = styled.p`
   padding-block: 20%;
+`
+
+const StyledButton = styled(Button)`
+  background-color: #307bc0;
+  border-color: #307bc0;
+  border-radius: 3px;
+  box-shadow: none;
+  color: white;
+
+  font-size: ${th('fontSizeBase')};
+  width: 120px;
+
+  &&:hover {
+    border-color: #307bc0;
+    color: white;
+  }
+
+  &[data-type='danger'] {
+    background-color: white;
+    border-color: ${th('colorError')};
+    color: ${th('colorError')};
+
+    &:hover {
+      border-color: ${th('colorError')};
+      color: ${th('colorError')};
+    }
+  }
+`
+
+const Actions = styled.div`
+  display: flex;
+  gap: ${grid(4)};
 `
 
 /* eslint-disable react/prop-types */
@@ -259,6 +322,26 @@ const FilesList = props => {
         >
           <span>Select all</span>
         </Checkbox>
+
+        <StyledUploadButton
+          accept={filesToAccept}
+          aria-label="Upload files"
+          customRequest={handleFileChange}
+          multiple
+          showUploadList={false}
+        >
+          Browse Files
+        </StyledUploadButton>
+        <Actions>
+          <StyledButton
+            onClick={filesToUpload.length > 0 ? bulkActions.upload : null}
+          >
+            Upload
+          </StyledButton>
+          <StyledButton onClick={bulkActions.delete} data-type="danger">
+            Delete
+          </StyledButton>
+        </Actions>
         <p>Selected: {`${selectedFiles.length} / ${docs.length}`}</p>
       </FilesHeading>
 
@@ -268,7 +351,9 @@ const FilesList = props => {
         multiple
       >
         {noFilesNotUploads && (
-          <NoFiles>Upload your first document to the knowledge base</NoFiles>
+          <NoFiles>
+            Drop and upload your documents to the knowledge base
+          </NoFiles>
         )}
         <FilesToUploadMap
           fileBeingUploaded={fileBeingUploaded}
