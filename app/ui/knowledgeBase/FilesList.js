@@ -98,6 +98,7 @@ const StyledUploadButton = styled(AntUpload)`
     border-radius: 3px;
     box-shadow: none;
     color: white;
+    cursor: pointer;
     display: flex;
     font-size: ${th('fontSizeBase')};
     height: 32px;
