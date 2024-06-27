@@ -153,6 +153,12 @@ const StyledButton = styled(Button)`
   &&:hover {
     border-color: #307bc0;
     color: white;
+
+    &[disabled] {
+      background-color: rgba(85 85 85 / 4%);
+      border-color: ${th('colorSecondary')};
+      color: rgba(85 85 85 / 25%);
+    }
   }
 
   &[data-type='danger'] {
@@ -163,6 +169,12 @@ const StyledButton = styled(Button)`
     &:hover {
       border-color: ${th('colorError')};
       color: ${th('colorError')};
+    }
+
+    &[disabled] {
+      background-color: rgba(85 85 85 / 4%);
+      border-color: ${th('colorSecondary')};
+      color: rgba(85 85 85 / 25%);
     }
   }
 `
@@ -335,11 +347,18 @@ const FilesList = props => {
         </StyledUploadButton>
         <Actions>
           <StyledButton
-            onClick={filesToUpload.length > 0 ? bulkActions.upload : null}
+            aria-label="Upload pending files"
+            disabled={filesToUpload.length === 0}
+            onClick={bulkActions.upload}
           >
             Upload
           </StyledButton>
-          <StyledButton onClick={bulkActions.delete} data-type="danger">
+          <StyledButton
+            aria-label="Delete selected files"
+            disabled={selectedFiles.length === 0}
+            data-type="danger"
+            onClick={bulkActions.delete}
+          >
             Delete
           </StyledButton>
         </Actions>
