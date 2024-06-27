@@ -172,7 +172,7 @@ deploy:
   stage: Deploy
   image: $CI_REGISTRY/cokoinfra/ansible-deployer
   services:
-    - docker:23-dind
+    - docker:26-dind
   variables:
     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true #this is needed on some db setups like DO
     ANSCOMPOSE_SERVER_URL: ${SERVER_URL}
