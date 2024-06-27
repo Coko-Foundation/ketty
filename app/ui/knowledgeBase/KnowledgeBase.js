@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import {
@@ -12,6 +12,7 @@ import { keys } from 'lodash'
 import FilesList from './FilesList'
 // import ActionsSidebar from './ActionsSidebar'
 // import KBHeader from './KBHeader'
+import { GlobalContext } from '../../helpers/hooks/GlobalContext'
 
 const xlFileExtensions = [
   '.xls',
@@ -88,9 +89,14 @@ const Header = styled.div`
 const KnowledgeBase = props => {
   const { bookId, docs, createDocument, deleteDocument } = props
 
+  const {
+    filesToUpload,
+    setFilesToUpload,
+    fileBeingUploaded,
+    setFileBeingUploaded,
+  } = useContext(GlobalContext)
+
   const [selectedFiles, setSelectedFiles] = useState([])
-  const [filesToUpload, setFilesToUpload] = useState([])
-  const [fileBeingUploaded, setFileBeingUploaded] = useState('')
 
   const scrollToTopOfFilesList = () => {
     document
@@ -162,15 +168,12 @@ const KnowledgeBase = props => {
         bulkActions={bulkActions}
         deleteDocument={deleteDocument}
         docs={docs}
-        fileBeingUploaded={fileBeingUploaded}
         fileIcons={fileIcons}
         filesToAccept={filesToAccept}
-        filesToUpload={filesToUpload}
         handleFileChange={handleFileChange}
         handleUpload={handleUpload}
         noFilesNotUploads={noFilesNotUploads}
         selectedFiles={selectedFiles}
-        setFilesToUpload={setFilesToUpload}
         setSelectedFiles={setSelectedFiles}
         xlFileExtensions={xlFileExtensions}
       />

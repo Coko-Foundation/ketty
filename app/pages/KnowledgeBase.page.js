@@ -15,6 +15,7 @@ export const KnowledgeBasePage = () => {
   const { bookId } = params
 
   const { data } = useQuery(GET_DOCUMENTS, {
+    fetchPolicy: 'network-only',
     variables: {
       bookId,
     },

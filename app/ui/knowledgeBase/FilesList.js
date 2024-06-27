@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Upload as AntUpload } from 'antd'
@@ -11,6 +11,7 @@ import {
 import { rotate360, grid, th } from '@coko/client'
 import Upload from './Upload'
 import { Button, Checkbox, Each } from '../common'
+import { GlobalContext } from '../../helpers/hooks/GlobalContext'
 
 const FileMapRoot = styled.li`
   align-items: center;
@@ -276,10 +277,10 @@ const FilesMap = ({
               <span>
                 <Button
                   aria-label="Delete file"
-                  onClick={e => handleRemove(e, id)}
                   icon={<DeleteOutlined />}
-                  type="text"
+                  onClick={e => handleRemove(e, id)}
                   title="Delete file"
+                  type="text"
                 />
               </span>
             </FileMapRoot>
@@ -299,16 +300,16 @@ const FilesList = props => {
     selectedFiles,
     bulkActions,
     noFilesNotUploads,
-    fileBeingUploaded,
-    filesToUpload,
     handleUpload,
-    setFilesToUpload,
     deleteDocument,
     setSelectedFiles,
     xlFileExtensions,
     fileIcons,
     className,
   } = props
+
+  const { filesToUpload, setFilesToUpload, fileBeingUploaded } =
+    useContext(GlobalContext)
 
   return (
     <div className={className}>
@@ -379,15 +380,12 @@ FilesList.propTypes = {
   bulkActions: PropTypes.shape(),
   deleteDocument: PropTypes.func,
   docs: PropTypes.instanceOf(Array),
-  fileBeingUploaded: PropTypes.string,
   fileIcons: PropTypes.shape(),
   filesToAccept: PropTypes.string,
-  filesToUpload: PropTypes.instanceOf(Array),
   handleFileChange: PropTypes.func,
   handleUpload: PropTypes.func,
   noFilesNotUploads: PropTypes.bool,
   selectedFiles: PropTypes.instanceOf(Array),
-  setFilesToUpload: PropTypes.func,
   setSelectedFiles: PropTypes.func,
   xlFileExtensions: PropTypes.instanceOf(Array),
 }
@@ -396,15 +394,12 @@ FilesList.defaultProps = {
   bulkActions: null,
   deleteDocument: null,
   docs: [],
-  fileBeingUploaded: '',
   fileIcons: null,
   filesToAccept: '',
-  filesToUpload: [],
   handleFileChange: null,
   handleUpload: null,
   noFilesNotUploads: false,
   selectedFiles: [],
-  setFilesToUpload: null,
   setSelectedFiles: null,
   xlFileExtensions: [],
 }
