@@ -21,9 +21,9 @@ describe('Checking "Share" modal', () => {
       'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
-    // cy.signup(author)
-    // cy.signup(collaborator1)
-    // cy.signup(collaborator2)
+    cy.signup(author)
+    cy.signup(collaborator1)
+    cy.signup(collaborator2)
     cy.login(admin)
     cy.addBook('Test Book')
     cy.logout()
@@ -33,6 +33,11 @@ describe('Checking "Share" modal', () => {
     cy.goToBook('Test Book')
     cy.reload()
     cy.contains('Untitled Chapter', { timeout: 8000 })
+    cy.contains('Untitled Chapter').click()
+    cy.contains(
+      'Create or select a chapter in the chapters panel to start writing',
+      { timeout: 6000 },
+    )
   })
 
   it('checking the defaults of the modal', () => {

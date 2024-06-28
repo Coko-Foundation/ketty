@@ -20,6 +20,7 @@ describe('Checking default state in Book Settings modal', () => {
     cy.addBook(testBook)
     cy.goToBook(testBook)
     cy.addMember(collaborator1, 'edit')
+    cy.reload()
     cy.addMember(collaborator2, 'view')
     cy.logout()
   })
@@ -96,15 +97,15 @@ describe('Checking default state in Book Settings modal', () => {
       cy.contains('Cancel').click()
     })
 
-    it('COLLABORATOR with VIEW access can NOT change settings', () => {
+    it('COLLABORATOR with VIEW access can NOT access book settings', () => {
       cy.login(collaborator2)
       cy.goToBook(testBook)
-
-      cy.openBookSettings()
-      cy.get('[role="switch"]:nth(0)').should('have.attr', 'disabled')
-      cy.get('[role="switch"]:nth(1)').should('have.attr', 'disabled')
-      cy.contains('button', 'Save').should('have.attr', 'disabled')
-      cy.contains('Cancel').click()
+      cy.get('[aria-label="Book settings"]').should('not.exist')
+      // cy.openBookSettings()
+      // cy.get('[role="switch"]:nth(0)').should('have.attr', 'disabled')
+      // cy.get('[role="switch"]:nth(1)').should('have.attr', 'disabled')
+      // cy.contains('button', 'Save').should('have.attr', 'disabled')
+      // cy.contains('Cancel').click()
     })
   })
 })
@@ -405,16 +406,21 @@ Cypress.Commands.add('usingAIPrompt', () => {
       // Explicitly focus on the input field
       cy.wrap($input)
         // .focus()
-        .type('Replace this with a familiar sentence {enter}', { delay: 100 })
+        .type('Replace this with a similiar sentence {enter}', { delay: 100 })
     })
 
-  cy.contains('Try again', { timeout: 10000 }).should('be.visible').click()
+  cy.contains('Try Again', { timeout: 10000 }).should('be.visible').click()
+
+  // There is a bug with the insert button. Add test when it is fixed.
+  // cy.contains('Insert', { timeout: 10000 })
+  //   .should('be.visible')
+  //   .click()
   cy.contains('Discard', { timeout: 10000 }).should('be.visible').click()
 
   cy.get('@askAiInput')
     .parent()
     .should('be.visible')
-    .type('Replace this with a familiar sentence {enter}')
+    .type('Replace this with a similiar sentence {enter}')
 
   cy.contains('Replace selected text', { timeout: 10000 })
     .should('be.visible')
@@ -429,7 +435,11 @@ Cypress.Commands.add('useCustomizedPrompt', () => {
   cy.get('.ProseMirror').type('{selectall}')
   cy.get('button[title="Toggle Ai"]').click({ force: true })
   cy.contains('Capitalize each word').should('exist')
-  cy.contains('Translate to French').should('exist').siblings().click()
+  cy.contains('Translate to French').should('exist').click()
+  cy.get('#askAiInput')
+    .should('have.value', 'Translate to French', { timeout: 6000 })
+    .siblings()
+    .click()
   cy.contains('Chapitre 1', { timeout: 10000 }).should('be.visible')
   cy.contains('Replace selected text', { timeout: 10000 })
     .should('be.visible')

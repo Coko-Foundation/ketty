@@ -120,6 +120,11 @@ Cypress.Commands.add('createChapter', chapterTitle => {
 
 Cypress.Commands.add('addMember', (collaborator, access) => {
   cy.contains('Untitled Chapter', { timeout: 8000 }).should('exist')
+  cy.contains('Untitled Chapter').click()
+  cy.contains(
+    'Create or select a chapter in the chapters panel to start writing',
+    { timeout: 6000 },
+  )
   cy.contains('button', 'Share').click()
   cy.get('.ant-select-selection-overflow', { timeout: 8000 }).click()
   cy.get('.ant-select-selection-overflow input', { timeout: 8000 })
