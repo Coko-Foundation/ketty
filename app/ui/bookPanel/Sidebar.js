@@ -30,11 +30,12 @@ const BookMenu = styled(Cluster)`
 `
 
 const StyledLink = styled(Link)`
+  --accent: rgb(63 133 198);
   /* background-color: rgb(246 171 27); */
-  border: 1px solid rgb(231 229 25);
-  box-shadow: rgb(231 229 25) 2px 2px 2px;
+  border: 1px solid var(--accent);
+  box-shadow: var(--accent) 2px 2px 2px;
   /* color: ${th('colorText')}; */
-  color: #444;
+  color: var(--accent);
   font-size: 20px;
   font-weight: bold;
   padding: ${grid(1)} ${grid(2)};

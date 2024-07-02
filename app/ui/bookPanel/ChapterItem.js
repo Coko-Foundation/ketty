@@ -37,7 +37,7 @@ const InnerWrapper = styled.div`
   transition: border-inline-start-color 0.1s ease, background-color 0.1s ease;
 
   &[data-selected='true'] {
-    background-color: #3f85c655;
+    background-color: rgb(131 131 131 / 33%);
     border-inline-start-color: ${th('colorOutline')};
   }
 
@@ -132,11 +132,11 @@ const Chapter = styled.div`
 
 const UserAvatar = styled.div`
   align-items: center;
-  background-color: #e9e71b;
+  background-color: rgb(63 133 198);
   border-radius: 50%;
-  color: #3e3e3e;
+  color: #fff;
   display: flex;
-  font-size: 14px;
+  font-size: ${th('fontSizeBaseSmall')};
   font-weight: bold;
   height: ${grid(6)};
   justify-content: center;
