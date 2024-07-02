@@ -191,6 +191,7 @@ const FilesToUploadMap = ({
   fileBeingUploaded,
   handleUpload,
   setFilesToUpload,
+  bulkUploading,
 }) => {
   return (
     <ul>
@@ -209,13 +210,15 @@ const FilesToUploadMap = ({
             </div>
             {fileBeingUploaded !== file.name ? (
               <span>
-                <Button
-                  aria-label="Upload"
-                  icon={<UploadOutlined />}
-                  onClick={async () => handleUpload(file)}
-                  title="Upload"
-                  type="text"
-                />
+                {!bulkUploading && (
+                  <Button
+                    aria-label="Upload"
+                    icon={<UploadOutlined />}
+                    onClick={async () => handleUpload(file)}
+                    title="Upload"
+                    type="text"
+                  />
+                )}
                 <Button
                   aria-label="Remove"
                   icon={<CloseOutlined />}
@@ -318,6 +321,7 @@ const FilesList = props => {
     xlFileExtensions,
     fileIcons,
     className,
+    bulkUploading,
   } = props
 
   const { filesToUpload, setFilesToUpload, fileBeingUploaded } =
@@ -349,15 +353,15 @@ const FilesList = props => {
         <Actions>
           <StyledButton
             aria-label="Upload pending files"
-            disabled={filesToUpload.length === 0}
+            disabled={filesToUpload.length === 0 || bulkUploading}
             onClick={bulkActions.upload}
           >
             Upload
           </StyledButton>
           <StyledButton
             aria-label="Delete selected files"
-            disabled={selectedFiles.length === 0}
             data-type="danger"
+            disabled={selectedFiles.length === 0}
             onClick={bulkActions.delete}
           >
             Delete
@@ -377,6 +381,7 @@ const FilesList = props => {
           </NoFiles>
         )}
         <FilesToUploadMap
+          bulkUploading={bulkUploading}
           fileBeingUploaded={fileBeingUploaded}
           filesToUpload={filesToUpload}
           handleUpload={handleUpload}
@@ -397,6 +402,7 @@ const FilesList = props => {
 
 FilesList.propTypes = {
   bulkActions: PropTypes.shape(),
+  bulkUploading: PropTypes.bool,
   deleteDocument: PropTypes.func,
   docs: PropTypes.instanceOf(Array),
   fileIcons: PropTypes.shape(),
@@ -411,6 +417,7 @@ FilesList.propTypes = {
 
 FilesList.defaultProps = {
   bulkActions: null,
+  bulkUploading: false,
   deleteDocument: null,
   docs: [],
   fileIcons: null,

@@ -97,6 +97,7 @@ const KnowledgeBase = props => {
   } = useContext(GlobalContext)
 
   const [selectedFiles, setSelectedFiles] = useState([])
+  const [bulkUploading, setBulkUploading] = useState(false)
 
   const scrollToTopOfFilesList = () => {
     document
@@ -120,12 +121,17 @@ const KnowledgeBase = props => {
 
   const bulkActions = {
     async upload() {
+      setBulkUploading(true)
+
       try {
         // eslint-disable-next-line no-restricted-syntax
         for await (const file of filesToUpload) {
           await handleUpload(file)
         }
+
+        setBulkUploading(false)
       } catch (error) {
+        setBulkUploading(false)
         console.error(error)
       }
     },
@@ -166,6 +172,7 @@ const KnowledgeBase = props => {
       </Header>
       <FileList
         bulkActions={bulkActions}
+        bulkUploading={bulkUploading}
         deleteDocument={deleteDocument}
         docs={docs}
         fileIcons={fileIcons}
@@ -177,11 +184,6 @@ const KnowledgeBase = props => {
         setSelectedFiles={setSelectedFiles}
         xlFileExtensions={xlFileExtensions}
       />
-      {/* <Sidebar
-        bulkActions={bulkActions}
-        filesToUpload={filesToUpload}
-        selectedFiles={selectedFiles}
-      /> */}
     </Wrapper>
   )
 }
