@@ -5,7 +5,6 @@ import debounce from 'lodash/debounce'
 import { LuluLayout } from './layout'
 import defaultConfig from './config/config'
 import configWithAi from './config/configWithAI'
-import { LuluWaxContext } from './luluWaxContext'
 
 const EditorWrapper = ({
   title,
@@ -100,8 +99,9 @@ const EditorWrapper = ({
         ...selectedConfig.AskAiContentService,
         AiOn: aiOn,
       }
+      selectedConfig.editorKey = editorKey
     }
-  }, [aiOn])
+  }, [aiOn, editorKey])
 
   useEffect(() => {
     setLuluWax({
@@ -123,6 +123,7 @@ const EditorWrapper = ({
       onBookComponentTypeChange,
       onBookComponentParentIdChange,
       editorLoading,
+      editorKey,
     })
   }, [
     title,
@@ -134,24 +135,23 @@ const EditorWrapper = ({
     canEdit,
     metadataModalOpen,
     editorLoading,
+    editorKey,
   ])
 
   if (!selectedConfig) return null
 
   return (
-    <LuluWaxContext.Provider value={{ luluWax, setLuluWax }}>
-      <Wax
-        autoFocus
-        config={selectedConfig}
-        fileUpload={onImageUpload}
-        key={editorKey}
-        layout={LuluLayout}
-        onChange={onPeriodicBookComponentContentChange}
-        readonly={isReadOnly}
-        ref={editorRef}
-        value={bookComponentContent || ''}
-      />
-    </LuluWaxContext.Provider>
+    <Wax
+      autoFocus
+      config={selectedConfig}
+      customProps={luluWax}
+      fileUpload={onImageUpload}
+      layout={LuluLayout}
+      onChange={onPeriodicBookComponentContentChange}
+      readonly={isReadOnly}
+      ref={editorRef}
+      value={bookComponentContent || ''}
+    />
   )
 }
 

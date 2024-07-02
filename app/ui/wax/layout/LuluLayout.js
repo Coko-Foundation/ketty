@@ -4,9 +4,8 @@ import React, { useContext } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
+import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 import BookPanel from '../../bookPanel/BookPanel'
-import { useLuluWaxContext } from '../luluWaxContext'
 import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
@@ -38,6 +37,14 @@ const TopMenu = styled.div`
   height: 48px;
   justify-content: center;
   user-select: none;
+
+  [aria-controls='block-level-options'] {
+    width: 100px;
+  }
+
+  #block-level-options {
+    width: 110px;
+  }
 
   &[data-loading='true'] [aria-controls='block-level-options'] {
     > span {
@@ -88,11 +95,6 @@ const EditorContainer = styled.div`
     figcaption {
       width: 624px;
     }
-
-    &:focus-visible {
-      /* stylelint-disable-next-line declaration-no-important */
-      outline: none !important;
-    }
   }
 `
 
@@ -126,9 +128,7 @@ const NoSelectedChapterWrapper = styled.div`
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 
-const LuluLayout = ({ editor }) => {
-  const { luluWax } = useLuluWaxContext()
-
+const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
 
   let fullScreenStyles = {}
@@ -166,7 +166,7 @@ const LuluLayout = ({ editor }) => {
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
-  } = luluWax
+  } = customProps
 
   return (
     <ThemeProvider theme={theme}>
@@ -201,7 +201,7 @@ const LuluLayout = ({ editor }) => {
             <WaxSurfaceScroll style={{ position: 'relative' }}>
               <EditorContainer selectedChapterId={selectedChapterId}>
                 {selectedChapterId ? (
-                  editor
+                  <WaxView {...rest} />
                 ) : (
                   <NoSelectedChapterWrapper>
                     Create or select a chapter in the chapters panel to start
