@@ -3,7 +3,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
-import { ComponentPlugin } from 'wax-prosemirror-core'
+import { ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 
 const LayoutWrapper = styled.div`
   align-self: stretch;
@@ -15,6 +15,10 @@ const EditorWrapper = styled.div`
 `
 
 const ToolbarContainer = styled.div`
+  align-items: center;
+  display: flex;
+  margin-block-end: ${grid(2)};
+
   > div:first-child {
     > :is(button) {
       block-size: 24px;
@@ -45,7 +49,9 @@ const ToolbarContainer = styled.div`
 
 const SimpleToolBar = ComponentPlugin('topBar')
 
-const SimpleLayout = ({ editor, className }) => {
+const SimpleLayout = props => {
+  const { className, ...rest } = props
+
   return (
     <LayoutWrapper
       className={className}
@@ -55,7 +61,9 @@ const SimpleLayout = ({ editor, className }) => {
       <ToolbarContainer>
         <SimpleToolBar />
       </ToolbarContainer>
-      <EditorWrapper>{editor}</EditorWrapper>
+      <EditorWrapper>
+        <WaxView {...rest} />
+      </EditorWrapper>
     </LayoutWrapper>
   )
 }

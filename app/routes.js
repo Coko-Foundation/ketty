@@ -63,7 +63,7 @@ const GlobalStyle = createGlobalStyle`
       }
     }
 
-    * {
+    *:not([contenteditable="true"]) {
       &:focus {
         outline: none;
       }
