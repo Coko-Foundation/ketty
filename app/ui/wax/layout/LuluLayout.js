@@ -198,7 +198,10 @@ const LuluLayout = ({ customProps, ...rest }) => {
           )}
 
           <EditorArea isFullscreen={options.fullScreen}>
-            <WaxSurfaceScroll style={{ position: 'relative' }}>
+            <WaxSurfaceScroll
+              id="wax-surface-scroll"
+              style={{ position: 'relative' }}
+            >
               <EditorContainer selectedChapterId={selectedChapterId}>
                 {selectedChapterId ? (
                   <WaxView {...rest} />
