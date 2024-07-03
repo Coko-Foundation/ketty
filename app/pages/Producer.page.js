@@ -382,14 +382,6 @@ const ProducerPage = () => {
   const [deleteBookComponent, { loading: deleteBookComponentInProgress }] =
     useMutation(DELETE_BOOK_COMPONENT, {
       refetchQueries: [GET_ENTIRE_BOOK],
-      onCompleted: (_, { variables }) => {
-        const { input } = variables
-        const { id: deletedId } = input
-
-        if (selectedChapterId && selectedChapterId === deletedId) {
-          setSelectedChapterId(null)
-        }
-      },
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
@@ -559,6 +551,10 @@ const ProducerPage = () => {
         showUnauthorizedActionModal(false, null, 'lockedChapterDelete')
         return
       }
+    }
+
+    if (selectedChapterId === bookComponentId) {
+      setSelectedChapterId(null)
     }
 
     deleteBookComponent({
