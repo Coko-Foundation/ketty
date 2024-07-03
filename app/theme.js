@@ -10,9 +10,10 @@ module.exports = {
   colorError: 'red',
   colorWarning: '#ffc300',
 
-  colorText: '#696969',
+  colorText: '#555',
   colorTextLight: '#9c9c9c',
   colorTextReverse: 'white',
+  colorOutline: '#3f85c6',
 
   fontInterface:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
@@ -22,7 +23,7 @@ module.exports = {
 
   gridUnit: '4px',
 
-  borderRadius: '3px',
+  borderRadius: '0px',
   borderWidth: '1px',
   borderStyle: 'solid',
 

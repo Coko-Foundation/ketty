@@ -5,7 +5,6 @@ import debounce from 'lodash/debounce'
 import { LuluLayout } from './layout'
 import defaultConfig from './config/config'
 import configWithAi from './config/configWithAI'
-import { LuluWaxContext } from './luluWaxContext'
 
 const EditorWrapper = ({
   title,
@@ -15,6 +14,8 @@ const EditorWrapper = ({
   isReadOnly,
   onImageUpload,
   onBookComponentTitleChange,
+  onBookComponentTypeChange,
+  onBookComponentParentIdChange,
   onAddChapter,
   onChapterClick,
   bookComponentContent,
@@ -34,12 +35,18 @@ const EditorWrapper = ({
   editorRef,
   freeTextPromptsOn,
   customPrompts,
+  customPromptsOn,
+  editorLoading,
+  kbOn,
+  editorKey,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
     onChapterClick,
     onDeleteChapter,
     onReorderChapter,
+    onBookComponentTypeChange,
+    onBookComponentParentIdChange,
     chapters,
     selectedChapterId,
     onUploadChapter,
@@ -51,6 +58,7 @@ const EditorWrapper = ({
     bookMetadataValues,
     metadataModalOpen,
     setMetadataModalOpen,
+    editorLoading,
   })
 
   const selectedConfig = aiEnabled ? configWithAi : defaultConfig
@@ -73,7 +81,9 @@ const EditorWrapper = ({
       AskAiContentTransformation: queryAI,
       AiOn: aiOn,
       FreeTextPromptsOn: freeTextPromptsOn,
-      CustomPrompts: customPrompts,
+      CustomPromptsOn: customPromptsOn,
+      CustomPrompts: customPromptsOn ? customPrompts : [],
+      ...(kbOn ? { AskKb: true } : {}),
     }
   }
 
@@ -89,8 +99,9 @@ const EditorWrapper = ({
         ...selectedConfig.AskAiContentService,
         AiOn: aiOn,
       }
+      selectedConfig.editorKey = editorKey
     }
-  }, [aiOn])
+  }, [aiOn, editorKey])
 
   useEffect(() => {
     setLuluWax({
@@ -109,6 +120,10 @@ const EditorWrapper = ({
       canEdit,
       metadataModalOpen,
       setMetadataModalOpen,
+      onBookComponentTypeChange,
+      onBookComponentParentIdChange,
+      editorLoading,
+      editorKey,
     })
   }, [
     title,
@@ -119,24 +134,24 @@ const EditorWrapper = ({
     chaptersActionInProgress,
     canEdit,
     metadataModalOpen,
+    editorLoading,
+    editorKey,
   ])
 
   if (!selectedConfig) return null
 
   return (
-    <LuluWaxContext.Provider value={{ luluWax, setLuluWax }}>
-      <Wax
-        autoFocus
-        config={selectedConfig}
-        fileUpload={onImageUpload}
-        key={`${selectedChapterId}-${isReadOnly}-${aiOn}-${customPrompts?.length}-${freeTextPromptsOn}`}
-        layout={LuluLayout}
-        onChange={onPeriodicBookComponentContentChange}
-        readonly={isReadOnly}
-        ref={editorRef}
-        value={bookComponentContent || ''}
-      />
-    </LuluWaxContext.Provider>
+    <Wax
+      autoFocus
+      config={selectedConfig}
+      customProps={luluWax}
+      fileUpload={onImageUpload}
+      layout={LuluLayout}
+      onChange={onPeriodicBookComponentContentChange}
+      readonly={isReadOnly}
+      ref={editorRef}
+      value={bookComponentContent || ''}
+    />
   )
 }
 

@@ -65,6 +65,24 @@ const UPDATE_BOOK_COMPONENT_CONTENT = gql`
   }
 `
 
+const UPDATE_BOOK_COMPONENT_TYPE = gql`
+  mutation UpdateBookComponentType($input: UpdateBookComponentInput!) {
+    updateComponentType(input: $input) {
+      id
+      componentType
+    }
+  }
+`
+
+const UPDATE_BOOK_COMPONENT_PARENT_ID = gql`
+  mutation UpdateBookComponentParentId($input: UpdateBookComponentInput!) {
+    updateBookComponentParentId(input: $input) {
+      id
+      parentComponentId
+    }
+  }
+`
+
 const RENAME_BOOK_COMPONENT_TITLE = gql`
   mutation RenameBookComponentTitle($input: UpdateBookComponentInput!) {
     renameBookComponent(input: $input) {
@@ -266,5 +284,7 @@ export {
   LOCK_BOOK_COMPONENT,
   UNLOCK_BOOK_COMPONENT,
   SET_BOOK_COMPONENT_STATUS,
+  UPDATE_BOOK_COMPONENT_TYPE,
+  UPDATE_BOOK_COMPONENT_PARENT_ID,
   // BOOK_COMPONENT_UPDATED_SUBSCRIPTION,
 }

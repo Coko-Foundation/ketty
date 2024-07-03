@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { Avatar, Menu } from 'antd'
+import { Avatar } from 'antd'
 import isEmpty from 'lodash/isEmpty'
 import { SettingOutlined } from '@ant-design/icons'
 import Popup from '@coko/client/dist/ui/common/Popup'
@@ -23,12 +23,6 @@ const StyledHeader = styled.header`
   padding: ${grid(1)};
   width: 100%;
   z-index: 9;
-
-  .ant-menu-horizontal > .ant-menu-item::after,
-  .ant-menu-horizontal > .ant-menu-submenu::after {
-    border-bottom: none;
-    transition: none;
-  }
 `
 
 const Navigation = styled.nav`
@@ -40,12 +34,12 @@ const Navigation = styled.nav`
   justify-content: space-between;
 `
 
-const LeftNavContainer = styled.div``
-
-const RightNavContainer = styled.div`
-  align-items: center;
+const LinksContainer = styled.div`
+  align-items: stretch;
   display: flex;
-  justify-self: flex-end;
+  gap: ${grid(6)};
+  height: 100%;
+  padding-inline: ${grid(2)};
 `
 
 const BrandingContainer = styled.div`
@@ -53,13 +47,17 @@ const BrandingContainer = styled.div`
 `
 
 const UnstyledLink = styled(Link)`
+  align-items: center;
+  border-radius: ${th('borderRadius')};
   color: inherit;
-  line-height: 22px;
+  display: inline-flex;
+  padding: 4px;
   text-decoration: none;
 
   &:hover,
   &:focus,
   &:active {
+    background-color: rgba(105 105 105 / 6%);
     color: inherit;
     text-decoration: none;
   }
@@ -104,7 +102,6 @@ const PopupContentWrapper = styled.div`
   > * {
     background-color: transparent;
     border: none;
-    border-radius: 3px;
     padding: 5px 12px;
 
     &:focus,
@@ -112,11 +109,6 @@ const PopupContentWrapper = styled.div`
       background-color: rgb(105 105 105 / 4%);
       color: inherit !important;
       outline: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid black !important;
-      outline-offset: 1px !important;
     }
   }
 `
@@ -149,82 +141,74 @@ const Header = props => {
     previewURL,
     dropdownItems,
     showAiAssistantLink,
+    showKnowledgeBaseLink,
     bookId,
     ...rest
   } = props
-
-  // const [navLeftCurrentSelected, setNavLeftCurrentSelected] = useState([])
-  // const [navRightCurrentSelected, setNavRightCurrentSelected] = useState([])
-
-  // const navRightSelectHandler = e => {
-  //   setNavRightCurrentSelected([])
-  // }
-
-  // const navLeftSelectHandler = e => {
-  //   setNavLeftCurrentSelected([])
-  // }
 
   const navItemsLeft = []
   const navItemsRight = []
 
   if (showDashboard) {
-    navItemsLeft.push({
-      key: 'dashboard',
-      label: <UnstyledLink to="/dashboard">Dashboard</UnstyledLink>,
-    })
+    navItemsLeft.push(
+      <UnstyledLink key="dashboard" to="/dashboard">
+        Dashboard
+      </UnstyledLink>,
+    )
   }
 
   if (showBackToBook) {
-    navItemsLeft.push({
-      key: 'backToBook',
-      label: (
-        <UnstyledLink to={`/books/${bookId}/producer`}>
-          Back to book
-        </UnstyledLink>
-      ),
-    })
+    navItemsLeft.push(
+      <UnstyledLink key="back" to={`/books/${bookId}/producer`}>
+        Back to book
+      </UnstyledLink>,
+    )
   }
 
   if (showPreview) {
-    navItemsRight.push({
-      key: 'export',
-      label: (
-        <UnstyledLink to={`/books/${bookId}/exporter`}>Preview</UnstyledLink>
-      ),
-    })
+    navItemsRight.push(
+      <UnstyledLink key="preiew" to={`/books/${bookId}/exporter`}>
+        Preview
+      </UnstyledLink>,
+    )
   }
 
   if (showInvite) {
-    navItemsRight.push({
-      key: 'invite',
-      label: (
-        <Button onClick={onInvite} type="text">
-          Share
-        </Button>
-      ),
-    })
+    navItemsRight.push(
+      <Button key="share" onClick={onInvite} type="text">
+        Share
+      </Button>,
+    )
+  }
+
+  if (showKnowledgeBaseLink) {
+    navItemsRight.push(
+      <UnstyledLink key="kb" to={`/books/${bookId}/knowledge-base`}>
+        Knowledge base
+      </UnstyledLink>,
+    )
   }
 
   if (showAiAssistantLink) {
-    navItemsRight.push({
-      key: 'aiPdfDesigner',
-      label: (
-        <UnstyledLink to={`/books/${bookId}/ai-pdf`}>
-          AI Book Designer (Beta)
-        </UnstyledLink>
-      ),
-    })
+    navItemsRight.push(
+      <UnstyledLink key="ai-designer" to={`/books/${bookId}/ai-pdf`}>
+        AI Book Designer (Beta)
+      </UnstyledLink>,
+    )
   }
 
   if (showSettings) {
-    navItemsRight.push({
-      key: 'settings',
-      label: (
-        <Button onClick={onSettings} type="text">
-          <SettingOutlined />
-        </Button>
-      ),
-    })
+    navItemsRight.push(
+      <Button
+        aria-label="Book settings"
+        key="settings"
+        onClick={onSettings}
+        title="Book settings"
+        type="text"
+      >
+        <SettingOutlined />
+      </Button>,
+    )
   }
 
   return (
@@ -239,31 +223,11 @@ const Header = props => {
         </UnstyledLink>
       </BrandingContainer>
       <Navigation role="navigation">
-        <LeftNavContainer>
-          {!isEmpty(navItemsLeft) && (
-            <Menu
-              disabledOverflow
-              items={navItemsLeft}
-              mode="horizontal"
-              // onClick={navLeftSelectHandler}
-              selectable={false}
-              // selectedKeys={navLeftCurrentSelected}
-              style={{ borderBottom: 'none' }}
-            />
-          )}
-        </LeftNavContainer>
-        <RightNavContainer>
-          {!isEmpty(navItemsRight) && (
-            <Menu
-              disabledOverflow
-              items={navItemsRight}
-              mode="horizontal"
-              // onClick={navRightSelectHandler}
-              selectable={false}
-              // selectedKeys={navRightCurrentSelected}
-              style={{ borderBottom: 'none' }}
-            />
-          )}
+        <LinksContainer>
+          {!isEmpty(navItemsLeft) && navItemsLeft.map(item => item)}
+        </LinksContainer>
+        <LinksContainer>
+          {!isEmpty(navItemsRight) && navItemsRight.map(item => item)}
           <StyledPopup
             alignment="end"
             position="block-end"
@@ -276,10 +240,10 @@ const Header = props => {
             <PopupContentWrapper>
               {canAccessAdminPage && (
                 <UnstyledLink
-                  to="/admin"
                   onClick={() => {
                     document.querySelector('#main-content').focus()
                   }}
+                  to="/admin"
                 >
                   Admin
                 </UnstyledLink>
@@ -287,7 +251,7 @@ const Header = props => {
               <Button onClick={onLogout}>Logout</Button>
             </PopupContentWrapper>
           </StyledPopup>
-        </RightNavContainer>
+        </LinksContainer>
       </Navigation>
     </StyledHeader>
   )
@@ -304,6 +268,7 @@ Header.propTypes = {
   showBackToBook: PropTypes.bool.isRequired,
   showDashboard: PropTypes.bool.isRequired,
   showAiAssistantLink: PropTypes.bool,
+  showKnowledgeBaseLink: PropTypes.bool,
   showInvite: PropTypes.bool.isRequired,
   showSettings: PropTypes.bool.isRequired,
   onInvite: PropTypes.func.isRequired,
@@ -330,6 +295,7 @@ Header.defaultProps = {
   backToBookURL: null,
   previewURL: null,
   showAiAssistantLink: false,
+  showKnowledgeBaseLink: false,
 }
 
 export default Header

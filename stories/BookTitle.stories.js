@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React from 'react'
 import styled from 'styled-components'
-import BookTitle from '../app/ui/BookTitle'
+import { BookTitle } from '../app/ui/createBook'
 
 const Wrapper = styled.div`
   align-items: center;

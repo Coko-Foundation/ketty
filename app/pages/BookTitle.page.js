@@ -10,7 +10,7 @@ import {
   showGenericErrorModal,
 } from '../helpers/commonModals'
 
-import BookTitle from '../ui/BookTitle'
+import { BookTitle } from '../ui/createBook'
 import Spin from '../ui/common/Spin'
 
 const StyledSpin = styled(Spin)`

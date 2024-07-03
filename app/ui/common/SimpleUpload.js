@@ -27,6 +27,7 @@ const SimpleUpload = props => {
     <div>
       <HiddenInput
         accept={acceptedTypes}
+        aria-label="Select book thumbnail"
         disabled={disabled}
         onChange={e => handleFileChange(e.target.files[0])}
         ref={fileInputRef}

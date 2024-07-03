@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { EditOutlined, CloudUploadOutlined } from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import { grid } from '@coko/client'
-import { Space } from 'antd'
-import { Button } from '../common'
+import { Link } from 'react-router-dom'
 import { BookGrid } from '../bookGrid'
 
 const Wrapper = styled.div`
@@ -13,7 +12,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: ${grid(4)};
+  position: relative;
 
   .ant-spin-container,
   .ant-spin-nested-loading {
@@ -21,13 +20,36 @@ const Wrapper = styled.div`
   }
 `
 
-const DashboardActions = styled(Space)`
+const SectionHeader = styled.div`
   align-items: center;
+  box-shadow: 0 6px 6px 1px rgb(180 180 180 / 5%);
   display: flex;
-  flex-shrink: 0;
+  justify-content: space-between;
+  padding: ${grid(4)} clamp(${grid(4)}, 10.4348px + 1.7391vi, ${grid(8)});
+  z-index: 1;
+
+  h1 {
+    margin: 0;
+  }
+`
+
+const StyledLink = styled(Link)`
+  align-items: center;
+  background-color: black;
+  border-radius: 3px;
+  color: white;
+  display: flex;
+  font-size: 16px;
+  gap: 8px;
   height: 40px;
-  justify-content: flex-start;
-  margin-bottom: ${grid(4)};
+  padding: ${grid(2)} ${grid(4)};
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #222;
+    color: white;
+  }
 `
 
 const Dashboard = props => {
@@ -38,54 +60,23 @@ const Dashboard = props => {
     onClickDelete,
     totalCount,
     currentPage,
-    onCreateBook,
-    onImportBook,
     canDeleteBook,
     canUploadBookThumbnail,
     loading,
     onUploadBookThumbnail,
   } = props
 
-  const [loadingCreateBook, setLoadingCreateBook] = useState(false)
-  const [loadingImportBook, setLoadingImportBook] = useState(false)
-
-  const handleCreateBook = () => {
-    setLoadingCreateBook(true)
-    onCreateBook().finally(() => {
-      setLoadingCreateBook(false)
-    })
-  }
-
-  const handleImportBook = () => {
-    setLoadingImportBook(true)
-    onImportBook().finally(() => {
-      setLoadingImportBook(false)
-    })
-  }
-
   return (
     <Wrapper>
-      <DashboardActions>
-        <Button
-          disabled={loadingCreateBook || loadingImportBook}
-          icon={<EditOutlined />}
-          loading={loadingCreateBook}
-          onClick={handleCreateBook}
-          size="large"
-          type="primary"
-        >
-          Start writing your book
-        </Button>
-        <Button
-          disabled={loadingCreateBook || loadingImportBook}
-          icon={<CloudUploadOutlined />}
-          loading={loadingImportBook}
-          onClick={handleImportBook}
-          size="large"
-        >
-          Import your files
-        </Button>
-      </DashboardActions>
+      <SectionHeader>
+        <h1>Your books</h1>
+        <StyledLink to="/create-book">
+          <span>
+            <EditOutlined />
+          </span>
+          <span>New book</span>
+        </StyledLink>
+      </SectionHeader>
 
       <BookGrid
         books={books}
@@ -97,7 +88,6 @@ const Dashboard = props => {
         onClickDelete={onClickDelete}
         onPageChange={onPageChange}
         onUploadBookThumbnail={onUploadBookThumbnail}
-        title="Your books"
         totalCount={totalCount}
       />
     </Wrapper>
@@ -119,8 +109,6 @@ Dashboard.propTypes = {
   onClickDelete: PropTypes.func.isRequired,
   totalCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
-  onCreateBook: PropTypes.func.isRequired,
-  onImportBook: PropTypes.func.isRequired,
   canDeleteBook: PropTypes.func.isRequired,
   canUploadBookThumbnail: PropTypes.func.isRequired,
 }

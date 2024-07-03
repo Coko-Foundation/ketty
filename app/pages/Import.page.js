@@ -6,7 +6,7 @@ import { useCurrentUser } from '@coko/client'
 import styled from 'styled-components'
 
 import { INGEST_WORD_FILES, DELETE_BOOK_COMPONENT } from '../graphql'
-import Import from '../ui/import/Import'
+import { Import } from '../ui/createBook'
 import Spin from '../ui/common/Spin'
 
 import { isOwner, hasEditAccess, isAdmin } from '../helpers/permissions'
@@ -110,8 +110,8 @@ const ImportPage = () => {
   return (
     <Import
       canImport={canImport}
-      onClickContinue={onClickContinue}
       loading={deleteLoading || loading}
+      onClickContinue={onClickContinue}
     />
   )
 }

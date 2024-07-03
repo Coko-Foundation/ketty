@@ -9,11 +9,14 @@ import {
   DisplayBlockLevelService,
   TextBlockLevelService,
   SpecialCharactersService,
+  BlockQuoteService,
   BlockDropDownToolGroupService,
   FindAndReplaceService,
   FullScreenService,
   disallowPasteImagesPlugin,
 } from 'wax-prosemirror-services'
+
+import { TablesService, tableEditing } from 'wax-table-service'
 
 import charactersList from './charactersList'
 
@@ -26,6 +29,7 @@ export default {
       toolGroups: [
         { name: 'Base', exclude: ['Save'] },
         'BlockDropDown',
+        { name: 'BlockQuoteTool', exclude: ['Lift'] },
         { name: 'Lists', exclude: ['JoinUp'] },
         'Images',
         {
@@ -38,6 +42,7 @@ export default {
             'Superscript',
           ],
         },
+        // 'Tables',
         'SpecialCharacters',
         'FindAndReplaceTool',
         'FullScreen',
@@ -47,6 +52,7 @@ export default {
   SchemaService: DefaultSchema,
   SpecialCharactersService: charactersList,
   PmPlugins: [
+    tableEditing(),
     disallowPasteImagesPlugin(() =>
       onInfoModal(
         `Pasting external images is not supported. Please use platform's Asset Manager infrastructure`,
@@ -60,9 +66,11 @@ export default {
     new LinkService(),
     new ListsService(),
     new BaseService(),
+    new TablesService(),
     new DisplayBlockLevelService(),
     new TextBlockLevelService(),
     new SpecialCharactersService(),
+    new BlockQuoteService(),
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),

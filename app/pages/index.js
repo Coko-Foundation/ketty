@@ -6,6 +6,7 @@ export { default as RequestVerificationEmailPage } from './RequestVerificationEm
 export { default as UnverifiedUserPage } from './UnverifiedUser.page'
 export { default as ResetPasswordPage } from './ResetPassword.page'
 export { default as SignupPage } from './Signup.page'
+export { default as CreateBook } from './CreateBook.page'
 export { default as BookTitlePage } from './BookTitle.page'
 export { default as ImportPage } from './Import.page'
 export { default as VerifyEmailPage } from './VerifyEmail.page'
@@ -14,3 +15,4 @@ export { default as ExporterPage } from './Exporter.page'
 // console.log(AiPDFDesignerPage)
 export { default as AiPDFDesignerPage } from './AiPDFDesigner.page'
 export { default as AdminPage } from './Admin.page'
+export { default as KnowledgeBasePage } from './KnowledgeBase.page'

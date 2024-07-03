@@ -3,14 +3,15 @@ import styled from 'styled-components'
 import { grid } from '@coko/client'
 import { Button } from 'antd'
 import PropTypes from 'prop-types'
-import { Form, Page } from '.'
+import { Form, Page } from '../common'
 
 const StyledInput = styled.input`
   border: 0;
   font-size: 2em;
 
   :focus-visible {
-    outline: 0;
+    /* stylelint-disable-next-line declaration-no-important */
+    outline: 0 !important;
   }
 `
 

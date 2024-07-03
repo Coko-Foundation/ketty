@@ -57,6 +57,7 @@ const GET_ENTIRE_BOOK = gql`
             surname
             id
           }
+          parentComponentId
         }
       }
       bookSettings {
@@ -65,6 +66,7 @@ const GET_ENTIRE_BOOK = gql`
         customPrompts
         freeTextPromptsOn
         customPromptsOn
+        knowledgeBaseOn
       }
     }
   }
@@ -95,6 +97,7 @@ const GET_BOOK_SETTINGS = gql`
         customPrompts
         freeTextPromptsOn
         customPromptsOn
+        knowledgeBaseOn
       }
     }
   }
@@ -155,6 +158,7 @@ const UPDATE_SETTINGS = gql`
     $freeTextPromptsOn: Boolean
     $customPrompts: [String]
     $customPromptsOn: Boolean
+    $knowledgeBaseOn: Boolean
   ) {
     updateBookSettings(
       bookId: $bookId
@@ -164,10 +168,12 @@ const UPDATE_SETTINGS = gql`
         freeTextPromptsOn: $freeTextPromptsOn
         customPrompts: $customPrompts
         customPromptsOn: $customPromptsOn
+        knowledgeBaseOn: $knowledgeBaseOn
       }
     ) {
       aiOn
       aiPdfDesignerOn
+      knowledgeBaseOn
       id
       customPrompts
       freeTextPromptsOn

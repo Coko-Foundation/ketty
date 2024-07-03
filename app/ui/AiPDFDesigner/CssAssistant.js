@@ -120,10 +120,11 @@ const CssAssistant = ({
 
   const [callOpenAi, { loading }] = useLazyQuery(USE_CHATGPT, {
     onCompleted: ({ openAi }) => {
-      if (openAi.startsWith('{')) {
+      const { message = '' } = JSON.parse(openAi)
+
+      if (message.content.startsWith('{')) {
         try {
-          const response = JSON.parse(openAi)
-          // console.log(response)
+          const response = JSON.parse(message.content)
           const { css, rules, feedback, textContent = '' } = response
           const ctxIsHtmlSrc = selectedCtx.node === htmlSrc
 
@@ -231,20 +232,17 @@ const CssAssistant = ({
     userPrompt
       ? callOpenAi({
           variables: {
-            input: `${userPrompt}.\nNOTE: Ensure to output the expected valid JSON`,
-            history: [
-              {
-                role: 'system',
-                content: systemGuidelinesV2({
-                  ctx: selectedCtx || getCtxBy('node', htmlSrc),
-                  sheet: styleSheetRef?.current?.textContent,
-                  selectors: validSelectors?.current?.join(', '),
-                  providedText: '',
-                  // selectedNode !== htmlSrc && selectedCtx.node.textContent,
-                }),
-              },
-              ...(takeRight(selectedCtx.history, 14) || []),
-            ],
+            input: { text: [userPrompt] },
+            history: takeRight(selectedCtx.history, 14) || [],
+            // TODO: update the system message and pass it as object
+            system: {
+              text: systemGuidelinesV2({
+                ctx: selectedCtx || getCtxBy('node', htmlSrc),
+                sheet: styleSheetRef?.current?.textContent,
+                selectors: validSelectors?.current?.join(', '),
+                providedText: '',
+              }),
+            },
           },
         })
       : setFeedback('Please, tell me what you want to do')

@@ -12,15 +12,38 @@ import {
 import { isAdmin, isOwner } from '../../helpers/permissions'
 import { Button, Input } from '../common'
 
-const Wrapper = styled.div``
+const Stack = styled.div`
+  --space: 24px;
+  /* ↓ The flex context */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+
+  > * {
+    /* ↓ Any extant vertical margins are removed */
+    margin-block: 0;
+  }
+
+  > * + * {
+    /* ↓ Top margin is only applied to successive elements */
+    margin-block-start: var(--space, 2rem);
+  }
+`
+
+const Indented = styled.div`
+  padding-inline-start: ${grid(3)};
+`
 
 const SettingsWrapper = styled.div`
-  margin: 24px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 `
 
 const SettingTitle = styled.strong``
 
-const SettingItem = styled.div`
+const SettingInfo = styled.div`
   display: flex;
   justify-content: space-between;
 `
@@ -44,6 +67,7 @@ const StyledForm = styled(Form)`
 `
 
 const StyledFormItem = styled(Form.Item)`
+  margin-block-end: 0;
   width: 100%;
 `
 
@@ -51,12 +75,15 @@ const StyledFormButton = styled(Button)`
   height: fit-content;
 `
 
-const StyledList = styled.div``
+const StyledList = styled.ul`
+  list-style-type: none;
+  padding-inline-start: 0;
+`
 
-const StyledListItem = styled.div`
+const StyledListItem = styled.li`
   display: flex;
   justify-content: space-between;
-  margin: 8px 0;
+  margin: 0 0 0 ${grid(1)};
 `
 
 const StyledListButton = styled(Button)`
@@ -88,6 +115,10 @@ const SettingsModal = ({
   )
 
   const [prompts, setPrompts] = useState(bookSettings.customPrompts || [])
+
+  const [isKnowledgeBaseOn, setIsKnowledgeBaseOn] = useState(
+    !!bookSettings.knowledgeBaseOn,
+  )
 
   // MUTATIONS SECTION START
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
@@ -133,8 +164,17 @@ const SettingsModal = ({
         freeTextPromptsOn: isFreeTextPromptsOn,
         customPrompts: prompts,
         customPromptsOn: isCustomPromptsOn,
+        knowledgeBaseOn: isKnowledgeBaseOn,
       },
     })
+  }
+
+  const toggleAiOn = toggle => {
+    setIsAiOn(toggle)
+
+    if (isKnowledgeBaseOn && !toggle) {
+      setIsKnowledgeBaseOn(false)
+    }
   }
 
   const handleDeletePrompt = prompt => {
@@ -170,6 +210,10 @@ const SettingsModal = ({
     if (!isCustomPromptsOn && toggle === false) {
       setIsCustomPromptsOn(true)
     }
+
+    if (isKnowledgeBaseOn && !toggle) {
+      setIsKnowledgeBaseOn(false)
+    }
   }
 
   const toggleCustomPromptsSwitch = toggle => {
@@ -181,108 +225,141 @@ const SettingsModal = ({
     }
   }
 
+  const toggleKnowledgeBase = value => {
+    setIsKnowledgeBaseOn(value)
+
+    if (value === true && !isAiOn) {
+      setIsAiOn(true)
+    }
+
+    if (value === true && !isFreeTextPromptsOn) {
+      setIsFreeTextPromptsOn(true)
+    }
+  }
+
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
 
   return (
-    <Wrapper>
-      <SettingsWrapper>
-        <SettingTitle>AI writing prompt use</SettingTitle>
-        <SettingItem>
-          Users with edit access to this book can use AI writing prompts
-          <Switch
-            checked={isAiOn}
-            disabled={updateLoading || !canChangeSettings}
-            onChange={e => setIsAiOn(e)}
-          />
-        </SettingItem>
+    <Stack>
+      <SettingsWrapper style={{ marginTop: '24px' }}>
+        <div>
+          <SettingTitle>AI writing prompt use</SettingTitle>
+          <SettingInfo>
+            Users with edit access to this book can use AI writing prompts
+          </SettingInfo>
+        </div>
+        <Switch
+          checked={isAiOn}
+          disabled={updateLoading || !canChangeSettings}
+          onChange={toggleAiOn}
+        />
       </SettingsWrapper>
 
       {isAiOn && (
-        <>
-          <SettingsWrapper>
-            <SettingItem>
-              <SettingTitle>Free-text writing prompts</SettingTitle>
+        <Indented>
+          <Stack>
+            <SettingsWrapper>
+              <SettingInfo>
+                <SettingTitle>Free-text writing prompts</SettingTitle>
+              </SettingInfo>
               <Switch
                 checked={isFreeTextPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleFreePromptSwitch(e)}
               />
-            </SettingItem>
-          </SettingsWrapper>
+            </SettingsWrapper>
 
-          <SettingsWrapper>
-            <SettingItem>
-              <SettingTitle>Customize AI writing prompts</SettingTitle>
+            <SettingsWrapper>
+              <SettingInfo>
+                <SettingTitle>Customize AI writing prompts</SettingTitle>
+              </SettingInfo>
               <Switch
                 checked={isCustomPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleCustomPromptsSwitch(e)}
               />
-            </SettingItem>
 
-            {isCustomPromptsOn && (
-              <Wrapper>
-                {canChangeSettings && (
-                  <StyledForm form={form} onFinish={handleAddPrompt}>
-                    <StyledFormItem
-                      name="prompt"
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Please input a prompt',
-                          validator: (_, value) => {
-                            if (!value.trim().length) {
-                              return Promise.reject()
-                            }
+              {isCustomPromptsOn && (
+                <Stack style={{ width: '100%' }}>
+                  {canChangeSettings && (
+                    <StyledForm form={form} onFinish={handleAddPrompt}>
+                      <StyledFormItem
+                        name="prompt"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please input a prompt',
+                            validator: (_, value) => {
+                              if (!value.trim().length) {
+                                return Promise.reject()
+                              }
 
-                            return Promise.resolve()
+                              return Promise.resolve()
+                            },
                           },
-                        },
-                      ]}
-                    >
-                      <Input placeholder="Add Prompt" />
-                    </StyledFormItem>
-                    <StyledFormButton
-                      disabled={updateLoading || !canChangeSettings}
-                      htmlType="submit"
-                    >
-                      Add Prompt
-                    </StyledFormButton>
-                  </StyledForm>
-                )}
-
-                <StyledList>
-                  {prompts.map(prompt => (
-                    <StyledListItem key={prompt}>
-                      {prompt}
-                      <StyledListButton
+                        ]}
+                      >
+                        <Input placeholder="Add Prompt" />
+                      </StyledFormItem>
+                      <StyledFormButton
                         disabled={updateLoading || !canChangeSettings}
                         htmlType="submit"
-                        onClick={() => handleDeletePrompt(prompt)}
                       >
-                        <DeleteOutlined />
-                      </StyledListButton>
-                    </StyledListItem>
-                  ))}
-                </StyledList>
-              </Wrapper>
-            )}
-          </SettingsWrapper>
-        </>
+                        Add Prompt
+                      </StyledFormButton>
+                    </StyledForm>
+                  )}
+
+                  <StyledList>
+                    {prompts.map(prompt => (
+                      <StyledListItem key={prompt}>
+                        {prompt}
+                        <StyledListButton
+                          disabled={updateLoading || !canChangeSettings}
+                          htmlType="submit"
+                          onClick={() => handleDeletePrompt(prompt)}
+                        >
+                          <DeleteOutlined />
+                        </StyledListButton>
+                      </StyledListItem>
+                    ))}
+                  </StyledList>
+                </Stack>
+              )}
+            </SettingsWrapper>
+          </Stack>
+        </Indented>
       )}
 
       <SettingsWrapper>
-        <SettingTitle>AI Book Designer (Beta)</SettingTitle>
-        <SettingItem>
-          Users with edit access to this book can use the AI Book Designer
-          <Switch
-            checked={isAiPdfOn}
-            disabled={updateLoading || !canChangeSettings}
-            onChange={e => setIsAiPdfOn(e)}
-          />
-        </SettingItem>
+        <div>
+          <SettingTitle>AI Book Designer (Beta)</SettingTitle>
+          <SettingInfo>
+            Users with edit access to this book can use the AI Book Designer
+          </SettingInfo>
+        </div>
+        <Switch
+          checked={isAiPdfOn}
+          disabled={updateLoading || !canChangeSettings}
+          onChange={e => setIsAiPdfOn(e)}
+        />
       </SettingsWrapper>
 
+      <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
+        <div>
+          <SettingTitle>Knowledge Base</SettingTitle>
+          <SettingInfo>
+            Users with edit access to this book can create and query a knowledge
+            base. <br /> Requires AI writing prompts and free text prompts to be
+            on.
+          </SettingInfo>
+        </div>
+        <Switch
+          checked={isKnowledgeBaseOn}
+          disabled={updateLoading || !canChangeSettings}
+          onChange={e => toggleKnowledgeBase(e)}
+        />
+      </SettingsWrapper>
       <ButtonsContainer>
         <StyledButton
           disabled={!canChangeSettings}
@@ -302,7 +379,7 @@ const SettingsModal = ({
           Cancel
         </StyledButton>
       </ButtonsContainer>
-    </Wrapper>
+    </Stack>
   )
 }
 
@@ -314,6 +391,7 @@ SettingsModal.propTypes = {
     freeTextPromptsOn: PropTypes.bool,
     customPrompts: PropTypes.arrayOf(PropTypes.string),
     customPromptsOn: PropTypes.bool,
+    knowledgeBaseOn: PropTypes.bool,
   }),
   closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
@@ -325,6 +403,7 @@ SettingsModal.defaultProps = {
     aiPdfDesignerOn: false,
     freeTextPromptsOn: false,
     customPromptsOn: false,
+    knowledgeBaseOn: false,
   },
 }
 export default SettingsModal

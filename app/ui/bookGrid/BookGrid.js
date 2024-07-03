@@ -1,3 +1,4 @@
+/* stylelint-disable string-quotes */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -7,36 +8,51 @@ import BookCard from './BookCard'
 import { List } from '../common'
 
 const StyledList = styled(List)`
-  height: calc(100% - 40px - ${grid(4)});
-`
+  ul.ant-list-items {
+    display: grid;
+    gap: 3em;
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
+    padding: ${grid(8)} ${grid(8)} ${grid(20)};
 
-const StyledListItem = styled(List.Item)`
-  && {
-    padding: 0;
+    @media (min-width: 500px) {
+      grid-template-columns: repeat(2, minmax(190px, 1fr));
+    }
+
+    @media (min-width: 750px) {
+      grid-template-columns: repeat(3, minmax(200px, 1fr));
+    }
+
+    @media (min-width: 1000px) {
+      grid-template-columns: repeat(4, minmax(200px, 1fr));
+    }
+
+    @media (min-width: 1500px) {
+      grid-template-columns: repeat(6, minmax(200px, 1fr));
+    }
   }
-`
 
-const SectionHeader = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: 40px;
-
-  h2 {
-    margin: 0;
+  [data-gridview='false'] {
+    ul.ant-list-items {
+      gap: 0;
+      grid-template-columns: 1fr;
+      margin-inline: auto;
+      max-width: 120ch;
+    }
   }
-  margin-bottom: ${grid(4)};
 `
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 40px - ${grid(4)});
+  height: calc(100% - 72px);
+
+  > * + * {
+    margin-block-start: ${grid(4)};
+  }
 `
 
 const BookGrid = ({
   books,
-  title,
   booksPerPage,
   onPageChange,
   onClickDelete,
@@ -56,19 +72,8 @@ const BookGrid = ({
 
   return (
     <Wrapper>
-      <SectionHeader>{title && <h2>{title}</h2>}</SectionHeader>
-
       <StyledList
         dataSource={books}
-        grid={{
-          gutter: 64,
-          xs: 1,
-          sm: 2,
-          md: 4,
-          lg: 5,
-          xl: 5,
-          xxl: 5,
-        }}
         itemLayout="horizontal"
         loading={loading}
         locale={{
@@ -81,16 +86,14 @@ const BookGrid = ({
         }}
         pagination={paginationConfig}
         renderItem={book => (
-          <StyledListItem>
-            <BookCard
-              {...book}
-              canDeleteBook={canDeleteBook}
-              canUploadBookThumbnail={canUploadBookThumbnail}
-              onClickDelete={onClickDelete}
-              onUploadBookThumbnail={onUploadBookThumbnail}
-              showActions
-            />
-          </StyledListItem>
+          <BookCard
+            {...book}
+            canDeleteBook={canDeleteBook}
+            canUploadBookThumbnail={canUploadBookThumbnail}
+            onClickDelete={onClickDelete}
+            onUploadBookThumbnail={onUploadBookThumbnail}
+            showActions
+          />
         )}
         showPagination={totalCount > 10}
         totalCount={totalCount}
@@ -100,7 +103,6 @@ const BookGrid = ({
 }
 
 BookGrid.propTypes = {
-  title: PropTypes.string,
   books: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -120,9 +122,8 @@ BookGrid.propTypes = {
 }
 
 BookGrid.defaultProps = {
-  title: null,
   books: [],
-  booksPerPage: 10,
+  booksPerPage: 12,
   totalCount: 0,
 }
 

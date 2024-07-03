@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useQuery, useMutation, useSubscription } from '@apollo/client'
-import { useHistory } from 'react-router-dom'
 import { useCurrentUser } from '@coko/client'
 
 import {
   GET_BOOKS,
-  CREATE_BOOK,
   DELETE_BOOK,
   UPLOAD_BOOK_THUMBNAIL,
   BOOK_DELETED_SUBSCRIPTION,
@@ -22,8 +20,7 @@ import {
 const loaderDelay = 700
 
 const DashboardPage = () => {
-  const history = useHistory()
-  const { currentUser, setCurrentUser } = useCurrentUser()
+  const { currentUser } = useCurrentUser()
   const [actionInProgress, setActionInProgress] = useState(false)
 
   const canTakeActionOnBook = bookId =>
@@ -31,7 +28,7 @@ const DashboardPage = () => {
 
   const [paginationParams, setPaginationParams] = useState({
     currentPage: 1,
-    booksPerPage: 10,
+    booksPerPage: 12,
   })
 
   const [books, setBooks] = useState({ result: [], totalCount: 0 })
@@ -126,12 +123,6 @@ const DashboardPage = () => {
     onError: error => console.error(error),
   })
 
-  const [createBook] = useMutation(CREATE_BOOK, {
-    onError: () => {
-      return showGenericErrorModal()
-    },
-  })
-
   const [deleteBook] = useMutation(DELETE_BOOK, {
     update(cache) {
       cache.modify({
@@ -202,36 +193,6 @@ const DashboardPage = () => {
     })
   }
 
-  const createBookHandler = whereNext => {
-    const variables = { input: { addUserToBookTeams: ['owner'] } }
-
-    return createBook({ variables }).then(res => {
-      const { data } = res
-      const { createBook: createBookData } = data
-      const { book: { id, divisions } = {}, newUserTeam } = createBookData
-
-      setCurrentUser({
-        ...currentUser,
-        teams: [...currentUser.teams, newUserTeam],
-      })
-
-      history.push({
-        pathname: `/books/${id}/${whereNext}`,
-        state: { createdChapterId: divisions[1]?.bookComponents[0]?.id },
-      })
-    })
-  }
-
-  const onCreateBook = () => {
-    setActionInProgress(true)
-    return createBookHandler('rename')
-  }
-
-  const onImportBook = () => {
-    setActionInProgress(true)
-    return createBookHandler('import')
-  }
-
   const onClickDelete = bookId => {
     if (!canTakeActionOnBook(bookId)) {
       return showUnauthorizedActionModal(false)
@@ -271,11 +232,8 @@ const DashboardPage = () => {
       currentPage={currentPage}
       loading={loading || actionInProgress}
       onClickDelete={onClickDelete}
-      onCreateBook={onCreateBook}
-      onImportBook={onImportBook}
       onPageChange={onPageChange}
       onUploadBookThumbnail={onUploadBookThumbnail}
-      title="Your books"
       totalCount={books.totalCount}
     />
   )

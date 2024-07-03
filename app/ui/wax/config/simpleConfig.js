@@ -1,13 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   InlineAnnotationsService,
+  BaseService,
   LinkService,
   ListsService,
-  MathService,
   SpecialCharactersService,
   DisplayBlockLevelService,
   TextBlockLevelService,
-  BlockDropDownToolGroupService,
 } from 'wax-prosemirror-services'
 
 import { DefaultSchema } from 'wax-prosemirror-core'
@@ -21,10 +20,8 @@ export default {
           name: 'Display',
           include: ['Title', 'Heading2', 'Heading3'],
         },
-        {
-          name: 'Text',
-          include: ['Paragraph'],
-        },
+        // 'TextBlock',
+        { name: 'Text', include: ['Paragraph'] },
         {
           name: 'Annotations',
           // include: ['Strong', 'Emphasis', 'Link'],
@@ -50,13 +47,12 @@ export default {
   ImageService: { showAlt: true },
 
   services: [
+    new BaseService(),
     new LinkService(),
     new ListsService(),
     new InlineAnnotationsService(),
-    new MathService(),
     new SpecialCharactersService(),
     new DisplayBlockLevelService(),
     new TextBlockLevelService(),
-    new BlockDropDownToolGroupService(),
   ],
 }
