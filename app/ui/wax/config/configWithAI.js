@@ -43,7 +43,7 @@ export default {
             'Superscript',
           ],
         },
-        'Tables',
+        // 'Tables',
         'SpecialCharacters',
         'FindAndReplaceTool',
         'ToggleAi',
