@@ -375,7 +375,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting && err.toString().includes('NotFoundError'))
+      } else if (!reconnecting && !err.toString().includes('NotFoundError'))
         // added the second clause to avoid weird race condition trying to rename deleted chapter
         showGenericErrorModal()
     },
