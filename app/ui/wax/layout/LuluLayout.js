@@ -4,7 +4,12 @@ import React, { useContext } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import {
+  WaxContext,
+  ComponentPlugin,
+  WaxView,
+  DocumentHelpers,
+} from 'wax-prosemirror-core'
 import BookPanel from '../../bookPanel/BookPanel'
 import theme from '../../../theme'
 
@@ -126,10 +131,21 @@ const NoSelectedChapterWrapper = styled.div`
   place-content: center;
 `
 
+const CommentsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 35%;
+`
+
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
+const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
-  const { options } = useContext(WaxContext)
+  const {
+    pmViews: { main },
+    options,
+  } = useContext(WaxContext)
 
   let fullScreenStyles = {}
 
@@ -146,6 +162,12 @@ const LuluLayout = ({ customProps, ...rest }) => {
       zIndex: '99999',
     }
   }
+
+  const commentsTracksCount =
+    main && DocumentHelpers.getCommentsTracksCount(main)
+
+  const trackBlockNodesCount =
+    main && DocumentHelpers.getTrackBlockNodesCount(main)
 
   const {
     chapters,
@@ -213,6 +235,18 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 )}
               </EditorContainer>
               {editorLoading && <StyledSpin spinning={editorLoading} />}
+              <CommentsContainer>
+                {/* <CommentTrackToolsContainer>
+                  <CommentTrackTools> */}
+                {commentsTracksCount + trackBlockNodesCount} COMMENTS AND
+                SUGGESTIONS
+                {/* <CommentTrackOptions>
+                      <CommentTrackToolBar />
+                    </CommentTrackOptions>
+                  </CommentTrackTools> */}
+                {/* </CommentTrackToolsContainer> */}
+                <RightArea area="main" />
+              </CommentsContainer>
             </WaxSurfaceScroll>
           </EditorArea>
         </Main>

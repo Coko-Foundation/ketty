@@ -14,6 +14,7 @@ import {
   FindAndReplaceService,
   FullScreenService,
   disallowPasteImagesPlugin,
+  // YjsService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing } from 'wax-table-service'
@@ -61,6 +62,7 @@ export default {
   ],
 
   services: [
+    // new YjsService(),
     new InlineAnnotationsService(),
     new ImageService(),
     new LinkService(),

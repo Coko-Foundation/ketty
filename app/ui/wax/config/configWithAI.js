@@ -15,6 +15,7 @@ import {
   FullScreenService,
   disallowPasteImagesPlugin,
   AskAiContentService,
+  CommentsService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing } from 'wax-table-service'
@@ -22,6 +23,15 @@ import { TablesService, tableEditing } from 'wax-table-service'
 import charactersList from './charactersList'
 
 import { onInfoModal } from '../../../helpers/commonModals'
+
+const getComments = comments => {
+  /* eslint-disable-next-line no-console */
+  console.log(comments)
+}
+
+const setComments = (comments = []) => {
+  return comments
+}
 
 export default {
   MenuService: [
@@ -63,6 +73,12 @@ export default {
     ),
   ],
 
+  CommentsService: {
+    showTitle: true,
+    getComments,
+    setComments,
+  },
+
   services: [
     new InlineAnnotationsService(),
     new AskAiContentService(),
@@ -78,5 +94,6 @@ export default {
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),
+    new CommentsService(),
   ],
 }
