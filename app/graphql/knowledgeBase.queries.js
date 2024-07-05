@@ -29,3 +29,9 @@ export const GET_DOCUMENTS = gql`
     }
   }
 `
+
+export const KB_UPDATED_SUBSCRIPTION = gql`
+  subscription KbUpdated($bookId: ID!) {
+    kbUpdated(bookId: $bookId)
+  }
+`
