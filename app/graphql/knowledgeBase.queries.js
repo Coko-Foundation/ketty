@@ -13,8 +13,8 @@ export const CREATE_DOCUMENT = gql`
 `
 
 export const DELETE_DOCUMENT = gql`
-  mutation DeleteFolder($id: ID!) {
-    deleteFolder(id: $id)
+  mutation DeleteFolder($id: ID!, $bookId: ID!) {
+    deleteFolder(id: $id, bookId: $bookId)
   }
 `
 

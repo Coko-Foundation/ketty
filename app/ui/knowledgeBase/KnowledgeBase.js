@@ -126,7 +126,9 @@ const KnowledgeBase = props => {
       try {
         // eslint-disable-next-line no-restricted-syntax
         for await (const file of filesToUpload) {
-          await handleUpload(file)
+          if (file.name !== fileBeingUploaded) {
+            await handleUpload(file)
+          }
         }
 
         setBulkUploading(false)
@@ -141,7 +143,7 @@ const KnowledgeBase = props => {
       try {
         await Promise.all(
           selectedFiles.map(async id => {
-            deleteDocument({ variables: { id } })
+            deleteDocument({ variables: { id, bookId } })
           }),
         )
       } catch (error) {
