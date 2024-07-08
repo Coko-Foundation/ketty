@@ -122,7 +122,8 @@ describe('Book editor', () => {
   })
 
   it('Checking redo and undo', () => {
-    cy.get('.ProseMirror').should('be.visible')
+    cy.wait(5000)
+    cy.get('.ProseMirror').type(`{enter}`)
 
     const addedText = 'I added this text.'
     cy.get('.ProseMirror').should('be.visible')
@@ -169,6 +170,7 @@ describe('Book editor', () => {
 
   it('Checking adding special characters', () => {
     cy.get('.ProseMirror').should('be.visible')
+    cy.wait(5000)
     cy.get('.ProseMirror').type(
       '{Enter}The following are some special characters:{enter}',
     )

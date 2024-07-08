@@ -50,7 +50,7 @@ describe('Checking Producer Page', () => {
           timeout: 5000,
           force: true,
         })
-      cy.get('h1').type('Title of chapter 1')
+      cy.get('h1').type('Title of chapter 1', { delay: 100 })
 
       // deleting a chapter
       cy.contains('Title of chapter 1')

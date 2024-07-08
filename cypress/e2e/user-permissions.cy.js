@@ -454,11 +454,22 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
 Cypress.Commands.add('deleteChapter', chapterTitle => {
   cy.url().should('include', '/producer')
   // cy.contains(chapterTitle).parent().parent().find('[data-icon="more"]').click()
-  cy.get('span[aria-label="more"]').click()
-  cy.contains('button', 'Delete', { timeout: 8000 }).click()
+  cy.contains(`${chapterTitle}`)
+    .parent()
+    .parent()
+    .find('[data-icon="more"]')
+    .click()
+  cy.contains('button', 'Delete').click()
   cy.contains(
     'Create or select a chapter in the chapters panel to start writing',
+    { timeout: 8000 },
   ).should('exist')
+
+  // cy.get('span[aria-label="more"]').click()
+  // cy.contains('button', 'Delete', { timeout: 8000 }).click()
+  // cy.contains(
+  //   'Create or select a chapter in the chapters panel to start writing',
+  // ).should('exist')
 })
 
 Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
