@@ -81,6 +81,7 @@ const FilesHeading = styled.div`
 const StyledUpload = styled(Upload)`
   background-color: ${th('colorBackgroundHue')};
   display: block;
+  flex-grow: 1;
   overflow-y: auto;
 
   ul {
@@ -201,7 +202,11 @@ const FilesToUploadMap = ({
           <FileMapRoot data-uploaded="false">
             <div>
               <Checkbox disabled />
-              {fileBeingUploaded === file.name ? <Spinner /> : <FileOutlined />}
+              {fileBeingUploaded.indexOf(file.name) !== -1 ? (
+                <Spinner />
+              ) : (
+                <FileOutlined />
+              )}
               <p>
                 {fileBeingUploaded === file.name
                   ? `${file.name || fileBeingUploaded}`
@@ -348,7 +353,7 @@ const FilesList = props => {
           multiple
           showUploadList={false}
         >
-          Browse Files
+          Add Files
         </StyledUploadButton>
         <Actions>
           <StyledButton
@@ -356,7 +361,7 @@ const FilesList = props => {
             disabled={filesToUpload.length === 0 || bulkUploading}
             onClick={bulkActions.upload}
           >
-            Upload
+            Upload All
           </StyledButton>
           <StyledButton
             aria-label="Delete selected files"

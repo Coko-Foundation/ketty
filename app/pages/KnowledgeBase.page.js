@@ -2,11 +2,12 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery, useSubscription } from '@apollo/client'
 import {
   GET_DOCUMENTS,
   CREATE_DOCUMENT,
   DELETE_DOCUMENT,
+  KB_UPDATED_SUBSCRIPTION,
 } from '../graphql/knowledgeBase.queries'
 import { KnowledgeBase } from '../ui'
 
@@ -14,7 +15,7 @@ export const KnowledgeBasePage = () => {
   const params = useParams()
   const { bookId } = params
 
-  const { data } = useQuery(GET_DOCUMENTS, {
+  const { data, refetch } = useQuery(GET_DOCUMENTS, {
     fetchPolicy: 'network-only',
     variables: {
       bookId,
@@ -28,6 +29,17 @@ export const KnowledgeBasePage = () => {
 
   const [deleteDocument] = useMutation(DELETE_DOCUMENT, {
     refetchQueries: [GET_DOCUMENTS],
+  })
+
+  useSubscription(KB_UPDATED_SUBSCRIPTION, {
+    skip: !bookId,
+    variables: { bookId },
+    onData: () => {
+      refetch({
+        bookId,
+      })
+    },
+    onError: error => console.error(error),
   })
 
   return (
