@@ -9,7 +9,6 @@ import {
   DisplayBlockLevelService,
   TextBlockLevelService,
   SpecialCharactersService,
-  BlockQuoteService,
   BlockDropDownToolGroupService,
   FindAndReplaceService,
   FullScreenService,
@@ -29,7 +28,7 @@ export default {
       toolGroups: [
         { name: 'Base', exclude: ['Save'] },
         'BlockDropDown',
-        { name: 'BlockQuoteTool', exclude: ['Lift'] },
+        // { name: 'BlockQuoteTool', exclude: ['Lift'] },l
         { name: 'Lists', exclude: ['JoinUp'] },
         'Images',
         {
@@ -70,7 +69,6 @@ export default {
     new DisplayBlockLevelService(),
     new TextBlockLevelService(),
     new SpecialCharactersService(),
-    new BlockQuoteService(),
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),

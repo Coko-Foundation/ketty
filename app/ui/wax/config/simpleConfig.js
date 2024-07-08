@@ -36,7 +36,7 @@ export default {
         },
         {
           name: 'Lists',
-          exclude: ['JoinUp', 'Lift'],
+          exclude: ['JoinUp', 'Lift', 'BlockQuote'],
         },
       ],
     },
