@@ -81,6 +81,7 @@ const FilesHeading = styled.div`
 const StyledUpload = styled(Upload)`
   background-color: ${th('colorBackgroundHue')};
   display: block;
+  flex-grow: 1;
   overflow-y: auto;
 
   ul {

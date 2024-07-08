@@ -33,14 +33,8 @@ const fileIcons = {
 }
 
 const Wrapper = styled.div`
-  /* display: grid;
-  grid-template:
-    'header sidebar' 70px 'main sidebar' 1fr /
-    1fr minmax(25%, 250px); */
   display: block;
-
-  height: 100%;
-  overflow: hidden;
+  height: calc(100% - 50px);
   position: relative;
 
   * {
@@ -68,7 +62,10 @@ const Wrapper = styled.div`
 `
 
 const FileList = styled(FilesList)`
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  overflow: hidden;
 `
 
 const Header = styled.div`

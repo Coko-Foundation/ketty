@@ -16,7 +16,7 @@ const StyledDragger = styled(Dragger)`
     cursor: unset !important;
     display: flex !important;
     flex-direction: column !important;
-    height: calc(100% - 15px) !important;
+    height: 100%;
     margin: 0;
     outline: none !important;
     width: 100% !important;
