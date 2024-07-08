@@ -109,13 +109,16 @@ Cypress.Commands.add('createUntitledChapter', () => {
 
 Cypress.Commands.add('createChapter', chapterTitle => {
   cy.get('.anticon-plus').click()
-  // cy.get('[title="Change to Title"]').click()
+  cy.contains('Untitled Chapter')
+    .parent()
+    .should('have.attr', 'data-selected', 'true')
+  cy.get('.ProseMirror').click()
+  cy.get('.ProseMirror').type(chapterTitle)
   cy.get('[aria-controls="block-level-options"]').click()
   cy.get(`#block-level-options > :nth-child(${1})`).contains('Title').click({
     timeout: 5000,
     force: true,
   })
-  cy.get('h1').type(chapterTitle)
 })
 
 Cypress.Commands.add('addMember', (collaborator, access) => {

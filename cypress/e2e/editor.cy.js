@@ -1,4 +1,5 @@
 /* eslint-disable jest/expect-expect */
+/* eslint-disable cypress/no-unnecessary-waiting */
 const { admin } = require('../support/credentials')
 
 describe('Book editor', () => {
@@ -23,6 +24,11 @@ describe('Book editor', () => {
           element: 'u',
           content: bookContent.underline,
         },
+        {
+          button: "[title='Change to Block Quote']",
+          element: 'blockquote',
+          content: bookContent['block-quote'],
+        },
       ]
       listItems = ['item1', 'item2', 'item3']
       levels = [
@@ -46,11 +52,6 @@ describe('Book editor', () => {
           element: '.paragraph',
           content: bookContent.paragraph,
         },
-        {
-          title: 'Block Quote',
-          element: 'blockquote',
-          content: bookContent['block-quote'],
-        },
       ]
     })
     cy.login(admin)
@@ -63,13 +64,17 @@ describe('Book editor', () => {
   })
 
   it('Adding content', () => {
-    // cy.get('.anticon-plus').click()
-    // cy.contains('Untitled Chapter', { timeout: 8000 }).click()
+    cy.contains('Untitled Chapter', { timeout: 6000 })
+
+    cy.get('.ProseMirror').click()
 
     let i = 1
     levels.forEach(option => {
-      cy.get('[aria-controls="block-level-options"]').click() // Click the Dropdown-control at the current index
+      cy.get('[aria-controls="block-level-options"]')
+        .should('be.visible')
+        .click() // Click the Dropdown-control at the current index
       cy.get(`#block-level-options > :nth-child(${i})`)
+        .should('be.visible')
         .contains(option.title)
         .click({
           timeout: 5000,
@@ -87,21 +92,7 @@ describe('Book editor', () => {
       })
       cy.get('.ProseMirror').type(`${option.content}{enter}`)
     })
-
-    // // Adding ordered list
-    // cy.get("[title='Wrap in ordered list']").click()
-    // listItems.forEach(li => {
-    //   cy.get('.ProseMirror').type(`${li}{enter}`)
-    // })
-    // cy.get('.ProseMirror').type('{enter}')
-
-    // // Adding Bullet list
-    // cy.get("[title='Wrap in bullet list']").click()
-
-    // listItems.forEach(li => {
-    //   cy.get('.ProseMirror').type(`${li}{enter}`)
-    // })
-    // cy.get('.ProseMirror').type('{enter}')
+    cy.get('.ProseMirror').type(`{enter}`)
     // Add ordered list
     cy.addList('ordered', listItems)
 
@@ -110,7 +101,7 @@ describe('Book editor', () => {
   })
 
   it('Verifying content', () => {
-    // cy.contains('Test Chapter').click()
+    cy.get('.ProseMirror').should('be.visible')
 
     display.forEach(option => {
       cy.contains(option.element, option.content, { timeout: 8000 })
@@ -131,8 +122,10 @@ describe('Book editor', () => {
   })
 
   it('Checking redo and undo', () => {
-    // cy.contains('Test Chapter').click()
+    cy.get('.ProseMirror').should('be.visible')
+
     const addedText = 'I added this text.'
+    cy.get('.ProseMirror').should('be.visible')
     cy.get('.ProseMirror').type(`${addedText}{enter}`)
     cy.contains(addedText).should('exist')
     cy.get('button[title="Undo"]').click()
@@ -143,6 +136,7 @@ describe('Book editor', () => {
 
   it('Checking adding links', () => {
     cy.createUntitledChapter()
+    cy.wait(6000)
     cy.get('button[title="Add or remove link"]').should('be.disabled')
     cy.get('.ProseMirror').type('Some link{selectall}')
 
@@ -160,28 +154,21 @@ describe('Book editor', () => {
   })
 
   it('Checking lifting out of enclosing blocks', () => {
-    // cy.contains('Test Chapter').click()
-
     // adding a code block
-    cy.get('.ProseMirror').type(`This is an enclosed block`)
-    cy.get('[aria-controls="block-level-options"]').click()
-    cy.get(`#block-level-options > :nth-child(5)`)
-      .contains(levels[4].title)
-      .click({
-        force: true,
-      })
+    cy.get('.ProseMirror').should('be.visible')
+    cy.get('.ProseMirror').type(`This is an enclosed block`, { delay: 100 })
+    cy.get("[title='Change to Block Quote']").click()
 
-    cy.contains(levels[4].element, 'This is an enclosed block')
+    cy.contains(display[3].element, 'This is an enclosed block')
 
     cy.get('button[title="Lift out of enclosing block"]').click()
-    cy.contains(levels[4].element, 'This is an enclosed block').should(
+    cy.contains(display[3].element, 'This is an enclosed block').should(
       'not.exist',
     )
   })
 
   it('Checking adding special characters', () => {
-    // cy.contains('Test Chapter').click()
-
+    cy.get('.ProseMirror').should('be.visible')
     cy.get('.ProseMirror').type(
       '{Enter}The following are some special characters:{enter}',
     )
@@ -203,7 +190,7 @@ describe('Book editor', () => {
       .click({ force: true })
 
     cy.get('.ProseMirror').contains('∑')
-
+    cy.get('button[title="Special Characters"]').click()
     cy.clickSpecialCharacterSection()
     cy.get('input[placeholder="Search"]').clear()
     cy.get('input[placeholder="Search"]').type('copyright')
@@ -217,6 +204,7 @@ describe('Book editor', () => {
 
   it('Checking find and replace', () => {
     cy.contains('Untitled Chapter').click()
+    cy.wait(6000)
     cy.get('.ProseMirror').clear()
     cy.get('.ProseMirror').type(
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac mi nibh. Morbi metus tortor, tincidunt nec finibus ac, posuere varius libero. Maecenas vitae dignissim diam. Proin bibendum leo sit amet sem mollis, ut maximus tortor dignissim.',
@@ -281,7 +269,7 @@ describe('Book editor', () => {
   })
 
   it('Checking uploading images', () => {
-    // cy.contains('Test Chapter').click()
+    cy.get('.ProseMirror').should('be.visible')
 
     cy.get('.ProseMirror').type('{enter}Next an image will be added. {enter}')
     cy.get('input[id="file-upload"]').selectFile(
@@ -299,11 +287,12 @@ describe('Book editor', () => {
   })
 
   it('Checking fullscreen', () => {
-    // cy.contains('Test Chapter').click()
+    cy.get('.ProseMirror').should('be.visible')
     cy.get('button[title="Full screen"]').click()
     cy.contains('Book Metadata').should('not.exist')
 
-    cy.get('button[title="Exit full screen"]').click()
+    cy.contains('The heading 2 text', { timeout: 10000 }).should('exist')
+    cy.get('[data-name="FullScreen"]').click()
     cy.contains('Book Metadata').should('exist')
   })
 })

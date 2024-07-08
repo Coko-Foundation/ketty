@@ -19,11 +19,12 @@ describe('Start writing', () => {
   })
 
   it('creating a book by clicking "Start writing" button', () => {
-    cy.contains('h2', 'Write from scratch')
+    cy.contains('h2', 'Write from scratch').should('exist')
     cy.contains(
       'p',
-      'Start your book with a blank slate using the build-in Editor.',
-    )
+      'Start your book with a blank slate using the built-in Editor.',
+    ).should('exist')
+    cy.contains('button', 'Start writing').should('exist')
     cy.contains('button', 'Start writing').click()
 
     cy.location('pathname').should('contain', '/rename')
@@ -48,13 +49,13 @@ describe('Start writing', () => {
 
     cy.get('form').find('button').should('have.text', 'Continue').click()
     cy.contains('Book One').click()
-    cy.contains('Book Metadata')
-    cy.contains('Book One')
+    cy.contains('Book Metadata').should('exist')
+    cy.contains('Book One').should('exist')
+    cy.contains('Untitled Chapter').should('exist')
 
-    // Adding a chapter
-    cy.get('.anticon-plus').click()
-    cy.contains('Untitled Chapter').click()
-    // cy.get('[title="Change to Title"]').click()
+    cy.get('.ProseMirror').should('be.visible')
+    cy.get('.ProseMirror').click()
+
     cy.get('[aria-controls="block-level-options"]').click()
     cy.get(`#block-level-options > :nth-child(${1})`).contains('Title').click({
       timeout: 5000,
@@ -151,10 +152,16 @@ describe('Start writing', () => {
     cy.contains('Book Two')
 
     // cy.getByData('book-chapters-list').wait(10000)
-    cy.get('ul:nth(0)').contains('Processing')
-    cy.get('ul:nth(0)').contains('chapter1_test', { timeout: 8000 })
-    cy.get('ul:nth(0)').contains('chapter2_test', { timeout: 8000 })
-    cy.get('ul:nth(0)').contains('chapter3_test', { timeout: 8000 })
+    cy.get('[role="menuitem"]:nth(0)').contains('Processing')
+    cy.contains('TEST CHAPTER 1', {
+      timeout: 8000,
+    }).should('exist')
+    cy.get('[role="menuitem"]:nth(19)').contains('chapter2_test', {
+      timeout: 8000,
+    })
+    cy.get('[role="menuitem"]:nth(20)').contains('chapter3_test', {
+      timeout: 8000,
+    })
 
     cy.get("a[href='/dashboard']").last().click()
     cy.location('pathname').should('equal', '/dashboard')

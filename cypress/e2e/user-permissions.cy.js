@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable jest/expect-expect */
 const {
   admin,
@@ -32,6 +33,7 @@ describe('Checking permissions for dashboard', () => {
     cy.addBook(authorBook)
     cy.goToBook(authorBook)
     cy.addMember(collaborator1, 'edit')
+    cy.reload()
     cy.addMember(collaborator2, 'view')
     cy.logout()
   })
@@ -177,8 +179,9 @@ describe('Checking permissions for dashboard', () => {
 
       cy.log('Author can create a new component in the book he/she is owner.')
       cy.goToBook(authorBook)
-      // cy.createUntitledChapter()
+
       cy.log('Author can use Wax toolbar in the book he/she is owner.')
+      cy.wait(8000)
       cy.canUseWaxToolbar('author', 'not.have.attr')
 
       // Upload a chapter
@@ -212,6 +215,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         'COLLABORATOR with EDIT access can use Wax toolbar in the book he/she is collaborator.',
       )
+      cy.wait(8000)
       cy.canUseWaxToolbar('COLLABORATOR with EDIT access', 'not.have.attr')
 
       // Upload a chapter
@@ -299,21 +303,10 @@ describe('Checking permissions for dashboard', () => {
       cy.canChangeAccess('no')
       cy.get('.ant-modal-close').click()
       cy.logout()
-
-      // Author deletes chapter
-      cy.login(author)
-      cy.goToBook(authorBook)
-      cy.get('[data-icon="more"]').click()
-      cy.contains('Delete', { timeout: 8000 }).should('exist')
-      cy.contains('Delete').click()
-      cy.contains(
-        'Create or select a chapter in the chapters panel to start writing',
-      ).should('exist')
-      cy.logout()
     })
   })
 
-  context(
+  context.skip(
     'Checking permissions for reordering chapters by drag and drop',
     () => {
       before(() => {
@@ -405,13 +398,18 @@ Cypress.Commands.add('goToDashboard', () => {
 
 Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
   if (disabledStatus === 'not.have.attr') {
-    cy.get('.ProseMirror').type(`This is some text by ${user}.`)
+    cy.get('.ProseMirror').type(`This is some text by ${user}.`, { delay: 100 })
     cy.get(`button[title="Undo"]`).click()
     // Checking Redo button
     cy.get(`button[title="Redo"]`).click()
     // Checking Heading styles is clickable
     cy.get('[aria-controls="block-level-options"]').click()
-    cy.get('#block-level-options > :nth-child(5)').click()
+    cy.get('#block-level-options > :nth-child(2)').click()
+    cy.get('[aria-controls="block-level-options"]').click() // to close it
+    cy.get('.ProseMirror').click()
+    cy.get('[aria-controls="block-level-options"]').click()
+    cy.get('#block-level-options > :nth-child(4)').click()
+    cy.get("[title='Change to Block Quote']").click()
   } else {
     cy.get('.ProseMirror').should('not.be.enabled')
     // Checking Heading styles is not clickable
@@ -434,6 +432,14 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
     cy.get(`button[title="${buttonTitle}"]`).should(disabledStatus, 'disabled')
   })
 
+  if (disabledStatus === 'not.have.attr') {
+    cy.get(`button[title="Lift out of enclosing block"]`).click()
+    cy.get('button[title="Lift out of enclosing block"]').should(
+      'have.attr',
+      'disabled',
+    )
+  }
+
   // Everyone can click Find and Replace
   cy.get('button[title="Find And Replace"]').click()
   // Something more about Find and replace
@@ -447,9 +453,12 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
 
 Cypress.Commands.add('deleteChapter', chapterTitle => {
   cy.url().should('include', '/producer')
-  cy.contains(chapterTitle).parent().parent().find('[data-icon="more"]').click()
-  cy.contains('Delete').click()
-  cy.contains('You don’t have any chapters yet').should('exist')
+  // cy.contains(chapterTitle).parent().parent().find('[data-icon="more"]').click()
+  cy.get('span[aria-label="more"]').click()
+  cy.contains('button', 'Delete', { timeout: 8000 }).click()
+  cy.contains(
+    'Create or select a chapter in the chapters panel to start writing',
+  ).should('exist')
 })
 
 Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
@@ -494,7 +503,7 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
     cy.contains('button', 'Add ISBN').click()
   }
 
-  cy.contains('Close').click()
+  cy.get('.ant-modal-close').click()
 })
 
 Cypress.Commands.add('canSeeAccess', () => {

@@ -1,3 +1,6 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+/* eslint-disable-line cypress/unsafe-to-chain-command */
+
 const {
   admin,
   collaborator1,
@@ -111,12 +114,6 @@ describe('Checking default state in Book Settings modal', () => {
 })
 
 describe('AI writing prompt is enabled', () => {
-  // before(() => {
-  //   cy.login(admin)
-  //   cy.goToBook(testBook)
-  // cy.createUntitledChapter()
-  //   cy.logout()
-  // })
   context('Default options', () => {
     before(() => {
       cy.login(admin)
@@ -173,7 +170,7 @@ describe('AI writing prompt is enabled', () => {
         cy.verifyAIPen(true)
 
         cy.contains('Untitled Chapter')
-        cy.get('.ProseMirror').clear()
+        cy.get('.ProseMirror', { timeout: 10000 }).clear()
         cy.usingAIPrompt()
       })
 
@@ -190,6 +187,10 @@ describe('AI writing prompt is enabled', () => {
     it('checking customized prompts field and delete button', () => {
       cy.login(admin)
       cy.goToBook(testBook)
+      cy.contains('Untitled Chapter').click()
+      cy.contains(
+        'Create or select a chapter in the chapters panel to start writing',
+      ).should('exist')
       cy.openBookSettings()
 
       // Enabling customized prompts
@@ -221,6 +222,10 @@ describe('AI writing prompt is enabled', () => {
       before(() => {
         cy.login(admin)
         cy.goToBook(testBook)
+        cy.contains('Untitled Chapter').click()
+        cy.contains(
+          'Create or select a chapter in the chapters panel to start writing',
+        ).should('exist')
         cy.openBookSettings()
 
         // Enabling customized prompts
@@ -232,12 +237,19 @@ describe('AI writing prompt is enabled', () => {
         cy.addPrompt('Translate to French')
         cy.addPrompt('Capitalize each word')
         cy.contains('button', 'Save').click()
+        cy.contains(
+          'Create or select a chapter in the chapters panel to start writing',
+          { timeout: 10000 },
+        ).should('be.visible')
         cy.logout()
       })
       it('Book owner can use AI customized prompts', () => {
         cy.login(admin)
         cy.goToBook(testBook)
         cy.contains('Untitled Chapter')
+        cy.contains(
+          'Create or select a chapter in the chapters panel to start writing',
+        ).should('not.exist')
         cy.useCustomizedPrompt()
       })
 
@@ -384,13 +396,18 @@ Cypress.Commands.add('verifyAIPen', shouldBeVisible => {
 })
 
 Cypress.Commands.add('addPrompt', customPrompt => {
-  cy.get('#prompt').type(`${customPrompt}`)
-  cy.contains('button', 'Add Prompt').click()
-  cy.contains(`${customPrompt}`).should('exist')
+  cy.get('.ant-modal-confirm-body').within(() => {
+    cy.get('input[id="prompt"]', { timeout: 8000 }).type(`${customPrompt}`, {
+      delay: 100,
+    })
+    cy.contains('button', 'Add Prompt').click()
+    cy.contains(`${customPrompt}`).should('exist')
+  })
 })
 
 Cypress.Commands.add('usingAIPrompt', () => {
-  cy.get('.ProseMirror').type('Add a paragraph{selectall}')
+  cy.wait(6000)
+  cy.get('.ProseMirror', { timeout: 10000 }).type('Add a paragraph{selectall}')
   cy.get('button[title="Toggle Ai"]').should('not.be.disabled')
   cy.get('button[title="Toggle Ai"]').click({ force: true })
 
@@ -430,16 +447,17 @@ Cypress.Commands.add('usingAIPrompt', () => {
 })
 
 Cypress.Commands.add('useCustomizedPrompt', () => {
-  cy.get('.ProseMirror').clear()
-  cy.get('.ProseMirror').type('Chapter 1')
+  cy.wait(6000)
+  cy.get('.ProseMirror', { timeout: 10000 }).clear()
+  cy.get('.ProseMirror').type('Chapter 1', { delay: 100 })
   cy.get('.ProseMirror').type('{selectall}')
   cy.get('button[title="Toggle Ai"]').click({ force: true })
+  cy.contains('button', 'Custom Prompts').click()
   cy.contains('Capitalize each word').should('exist')
   cy.contains('Translate to French').should('exist').click()
-  cy.get('#askAiInput')
-    .should('have.value', 'Translate to French', { timeout: 6000 })
-    .siblings()
-    .click()
+  cy.get('#askAiInput').should('have.value', 'Translate to French', {
+    timeout: 6000,
+  })
   cy.contains('Chapitre 1', { timeout: 10000 }).should('be.visible')
   cy.contains('Replace selected text', { timeout: 10000 })
     .should('be.visible')

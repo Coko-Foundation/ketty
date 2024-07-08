@@ -250,6 +250,7 @@ describe('Checking permissions in the Preview page', () => {
     cy.addBook(authorBook)
     cy.goToBook(authorBook)
     cy.addMember(collaborator1, 'edit')
+    cy.reload()
     cy.addMember(collaborator2, 'view')
     cy.logout()
   })
