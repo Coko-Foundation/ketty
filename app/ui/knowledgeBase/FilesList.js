@@ -189,10 +189,9 @@ const Actions = styled.div`
 /* eslint-disable react/prop-types */
 const FilesToUploadMap = ({
   filesToUpload,
-  fileBeingUploaded,
+  filesBeingUploaded,
   handleUpload,
   setFilesToUpload,
-  bulkUploading,
 }) => {
   return (
     <ul>
@@ -202,28 +201,26 @@ const FilesToUploadMap = ({
           <FileMapRoot data-uploaded="false">
             <div>
               <Checkbox disabled />
-              {fileBeingUploaded.indexOf(file.name) !== -1 ? (
+              {filesBeingUploaded.indexOf(file.uid) !== -1 ? (
                 <Spinner />
               ) : (
                 <FileOutlined />
               )}
               <p>
-                {fileBeingUploaded === file.name
-                  ? `${file.name || fileBeingUploaded}`
-                  : `${file.name || fileBeingUploaded} (pending)`}
+                {filesBeingUploaded[0] === file.uid
+                  ? `${file.name}`
+                  : `${file.name} (pending)`}
               </p>
             </div>
-            {fileBeingUploaded !== file.name ? (
+            {filesBeingUploaded.indexOf(file.uid) === -1 ? (
               <span>
-                {!bulkUploading && (
-                  <Button
-                    aria-label="Upload"
-                    icon={<UploadOutlined />}
-                    onClick={async () => handleUpload(file)}
-                    title="Upload"
-                    type="text"
-                  />
-                )}
+                <Button
+                  aria-label="Upload"
+                  icon={<UploadOutlined />}
+                  onClick={async () => handleUpload(file)}
+                  title="Upload"
+                  type="text"
+                />
                 <Button
                   aria-label="Remove"
                   icon={<CloseOutlined />}
@@ -272,7 +269,7 @@ const FilesMap = ({
       temp.splice(selectedFiles.indexOf(id), 1)
       return temp
     })
-    remove({ variables: { id } })
+    remove(id)
   }
 
   return (
@@ -326,10 +323,9 @@ const FilesList = props => {
     xlFileExtensions,
     fileIcons,
     className,
-    bulkUploading,
   } = props
 
-  const { filesToUpload, setFilesToUpload, fileBeingUploaded } =
+  const { filesToUpload, setFilesToUpload, filesBeingUploaded } =
     useContext(GlobalContext)
 
   return (
@@ -358,7 +354,9 @@ const FilesList = props => {
         <Actions>
           <StyledButton
             aria-label="Upload pending files"
-            disabled={filesToUpload.length === 0 || bulkUploading}
+            disabled={
+              filesToUpload.length === 0 || filesBeingUploaded.length > 0
+            }
             onClick={bulkActions.upload}
           >
             Upload All
@@ -386,8 +384,7 @@ const FilesList = props => {
           </NoFiles>
         )}
         <FilesToUploadMap
-          bulkUploading={bulkUploading}
-          fileBeingUploaded={fileBeingUploaded}
+          filesBeingUploaded={filesBeingUploaded}
           filesToUpload={filesToUpload}
           handleUpload={handleUpload}
           setFilesToUpload={setFilesToUpload}
@@ -407,7 +404,6 @@ const FilesList = props => {
 
 FilesList.propTypes = {
   bulkActions: PropTypes.shape(),
-  bulkUploading: PropTypes.bool,
   deleteDocument: PropTypes.func,
   docs: PropTypes.instanceOf(Array),
   fileIcons: PropTypes.shape(),
@@ -422,7 +418,6 @@ FilesList.propTypes = {
 
 FilesList.defaultProps = {
   bulkActions: null,
-  bulkUploading: false,
   deleteDocument: null,
   docs: [],
   fileIcons: null,
