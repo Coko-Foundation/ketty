@@ -290,7 +290,10 @@ const ProducerPage = () => {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
     onData: async () => {
-      await refetchBookComponent()
+      if (selectedChapterId) {
+        await refetchBookComponent()
+      }
+
       setKey(uuid())
     },
   })
