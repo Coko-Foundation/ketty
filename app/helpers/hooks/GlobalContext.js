@@ -4,16 +4,16 @@ export const GlobalContext = createContext()
 
 export const GlobalContextProvider = ({ children }) => {
   const [filesToUpload, setFilesToUpload] = useState([])
-  const [fileBeingUploaded, setFileBeingUploaded] = useState('')
+  const [filesBeingUploaded, setFilesBeingUploaded] = useState([])
 
   const value = useMemo(
     () => ({
       filesToUpload,
       setFilesToUpload,
-      fileBeingUploaded,
-      setFileBeingUploaded,
+      filesBeingUploaded,
+      setFilesBeingUploaded,
     }),
-    [filesToUpload, fileBeingUploaded],
+    [filesToUpload, filesBeingUploaded],
   )
 
   return (
