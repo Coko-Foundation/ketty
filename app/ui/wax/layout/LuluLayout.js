@@ -84,7 +84,8 @@ const EditorContainer = styled.div`
   .ProseMirror {
     background: ${({ selectedChapterId }) =>
       selectedChapterId ? '#fff' : '#e8e8e8'};
-    min-height: 100%;
+    /* min-height: 100%; */
+    min-height: calc(100vh - 104px);
     padding: ${grid(20)} ${grid(24)};
     width: 100%;
 
