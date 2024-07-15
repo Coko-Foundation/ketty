@@ -45,6 +45,12 @@ describe('Checking default state in Book Settings modal', () => {
     ).should('exist')
     cy.verifySwitch(1, 'disabled')
 
+    cy.contains('Knowledge Base').should('exist')
+    cy.contains(
+      'Users with edit access to this book can create and query a knowledge base. Requires AI writing prompts and free text prompts to be on.',
+    ).should('exist')
+    cy.verifySwitch(2, 'disabled')
+
     cy.contains('button', 'Save').should('have.attr', 'type', 'submit')
     cy.contains('button', 'Cancel').should('have.attr', 'type', 'reset')
 
@@ -70,6 +76,7 @@ describe('Checking default state in Book Settings modal', () => {
     cy.toogleSwitch(0)
     cy.verifySwitch(0, 'enabled')
     cy.contains('button', 'Save').click()
+    cy.contains('Book settings').should('not.exist', { timeout: 6000 })
 
     cy.openBookSettings()
     cy.verifySwitch(0, 'enabled')
@@ -104,11 +111,6 @@ describe('Checking default state in Book Settings modal', () => {
       cy.login(collaborator2)
       cy.goToBook(testBook)
       cy.get('[aria-label="Book settings"]').should('not.exist')
-      // cy.openBookSettings()
-      // cy.get('[role="switch"]:nth(0)').should('have.attr', 'disabled')
-      // cy.get('[role="switch"]:nth(1)').should('have.attr', 'disabled')
-      // cy.contains('button', 'Save').should('have.attr', 'disabled')
-      // cy.contains('Cancel').click()
     })
   })
 })
@@ -310,7 +312,7 @@ describe('AI writing prompt is enabled', () => {
 })
 
 describe('AI Book Designer (Beta)', () => {
-  it('Checking the AI Book Designer page', () => {
+  before(() => {
     cy.login(admin)
     cy.goToBook(testBook)
 
@@ -320,46 +322,29 @@ describe('AI Book Designer (Beta)', () => {
     cy.toogleSwitch(3)
     cy.verifySwitch(3, 'enabled')
     cy.contains('button', 'Save').click()
+    cy.contains('Book settings').should('not.exist', { timeout: 6000 })
 
-    cy.contains('AI Book Designer (Beta)').should('exist')
-    cy.contains('AI Book Designer (Beta)').click()
-    cy.location('pathname').should('include', '/ai-pdf', { timeout: 10000 })
+    cy.logout()
+  })
 
-    // Checking the chat bubble
-    cy.contains('strong', 'Coko AI Book Designer:').should('exist')
-    cy.contains('span', 'Hello there!').should('exist')
-    cy.contains('span', "I'm here to help with your book's design").should(
-      'exist',
-    )
-    cy.contains(
-      'span',
-      'You can also ask for the current property values',
-    ).should('exist')
-    cy.contains(
-      'span',
-      'for example: What is the page size of the book?',
-    ).should('exist')
-    cy.contains('span', 'Here are some suggestions to get started:').should(
-      'exist',
-    )
-    cy.contains('button', 'Change the page size 5 x 8 inches').should('exist')
-    cy.contains('button', 'Change the title font to sans serif').should('exist')
-    cy.contains('button', 'Make all the headings blue').should('exist')
+  it('BOOK OWNER can access AI Book Designer page', () => {
+    cy.login(admin)
+    cy.goToBook(testBook)
 
-    // Checking Checkbox container
-    cy.get('input[id="showContent"]').should('have.attr', 'checked')
-    cy.get('input[id="showPreview"]').should('have.attr', 'checked')
-    cy.get('input[id="showChatHistory"]').should('not.have.attr', 'checked')
+    cy.canUseAiPdfDes()
+  })
 
-    // Checking input field
-    cy.get('textarea')
-      .should('have.attr', 'placeholder')
-      .and('eq', 'Type your book design instruction or question here ...')
-    cy.get('textarea').type('Make text content blue {enter}')
-    cy.contains('Just give me a few seconds').should('exist')
-    // cy.contains('The text content has been changed to blue.').should('exist', {
-    //   timeout: 250000,
-    // })
+  it('COLLABORATOR with EDIT access can access AI Book Designer page', () => {
+    cy.login(collaborator1)
+    cy.goToBook(testBook)
+
+    cy.canUseAiPdfDes()
+  })
+
+  it('COLLABORATOR with VIEW access can NOT access AI Book Designer page', () => {
+    cy.login(collaborator2)
+    cy.goToBook(testBook)
+    cy.contains('AI Book Designer (Beta)').should('not.exist')
   })
 })
 
@@ -463,4 +448,45 @@ Cypress.Commands.add('useCustomizedPrompt', () => {
     .should('be.visible')
     .click()
   cy.contains('.ProseMirror', 'Chapitre 1')
+})
+
+Cypress.Commands.add('canUseAiPdfDes', () => {
+  cy.contains('AI Book Designer (Beta)').should('exist')
+  cy.contains('AI Book Designer (Beta)').click()
+  cy.location('pathname').should('include', '/ai-pdf', { timeout: 10000 })
+
+  // Checking the chat bubble
+  cy.contains('strong', 'Coko AI Book Designer:').should('exist')
+  cy.contains('span', 'Hello there!').should('exist')
+  cy.contains('span', "I'm here to help with your book's design").should(
+    'exist',
+  )
+  cy.contains(
+    'span',
+    'You can also ask for the current property values',
+  ).should('exist')
+  cy.contains('span', 'for example: What is the page size of the book?').should(
+    'exist',
+  )
+  cy.contains('span', 'Here are some suggestions to get started:').should(
+    'exist',
+  )
+  cy.contains('button', 'Change the page size 5 x 8 inches').should('exist')
+  cy.contains('button', 'Change the title font to sans serif').should('exist')
+  cy.contains('button', 'Make all the headings blue').should('exist')
+
+  // Checking Checkbox container
+  cy.get('input[id="showContent"]').should('have.attr', 'checked')
+  cy.get('input[id="showPreview"]').should('have.attr', 'checked')
+  cy.get('input[id="showChatHistory"]').should('not.have.attr', 'checked')
+
+  // Checking input field
+  cy.get('textarea')
+    .should('have.attr', 'placeholder')
+    .and('eq', 'Type your book design instruction or question here ...')
+  cy.get('textarea').type('Make text content blue {enter}')
+  cy.contains('Just give me a few seconds').should('exist')
+  // cy.contains('The text content has been changed to blue.').should('exist', {
+  //   timeout: 250000,
+  // })
 })
