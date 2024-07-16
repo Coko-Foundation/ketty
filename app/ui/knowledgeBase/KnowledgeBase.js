@@ -146,7 +146,7 @@ const KnowledgeBase = props => {
 
   const filesToAccept = keys(fileIcons)
     .map(k => `.${k}`)
-    .concat(xlFileExtensions)
+    .concat(xlFileExtensions.map(l => `.${l}`))
     .join(',')
 
   const noFilesNotUploads =
