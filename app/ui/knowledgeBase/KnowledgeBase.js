@@ -14,15 +14,7 @@ import FilesList from './FilesList'
 // import KBHeader from './KBHeader'
 import { GlobalContext } from '../../helpers/hooks/GlobalContext'
 
-const xlFileExtensions = [
-  '.xls',
-  '.xlsb',
-  '.xlsm',
-  '.xlsx',
-  '.xlt',
-  '.xltm',
-  '.xltx',
-]
+const xlFileExtensions = ['xls', 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx']
 
 const fileIcons = {
   md: { icon: FileMarkdownOutlined, color: '#625286' },
