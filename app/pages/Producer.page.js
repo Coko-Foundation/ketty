@@ -496,14 +496,20 @@ const ProducerPage = () => {
       return
     }
 
-    createBookComponent({
-      variables: {
-        input: {
-          bookId,
-          divisionId,
-          componentType: 'chapter',
-        },
+    const variables = {
+      input: {
+        bookId,
+        divisionId,
+        componentType: 'chapter',
       },
+    }
+
+    if (selectedChapterId) {
+      variables.input.afterId = selectedChapterId
+    }
+
+    createBookComponent({
+      variables,
     }).then(({ data }) => {
       setSelectedChapterId(data?.podAddBookComponent?.id)
     })

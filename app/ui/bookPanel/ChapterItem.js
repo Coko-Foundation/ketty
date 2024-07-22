@@ -113,7 +113,7 @@ const Chapter = styled.div`
         margin-inline-start: 33px;
         place-content: center;
         position: absolute;
-        width: calc(100% - 33px);
+        width: calc(100% - 36px);
       }
     }
   }
