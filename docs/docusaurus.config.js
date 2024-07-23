@@ -8,12 +8,12 @@ import { themes as prismThemes } from 'prism-react-renderer'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Ketty',
-  tagline: 'The single source book production software',
+  title: 'Ketty Docs',
+  tagline: 'documentation',
   favicon: 'img/ketty.ico',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://devdocs.ketty.community',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -58,10 +58,16 @@ const config = {
       navbar: {
         title: 'Ketty',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'Ketty - the single source book production software',
           src: 'img/ketty.png',
         },
         items: [
+          {
+            type: 'docSidebar',
+            sidebarId: 'userSidebar',
+            position: 'left',
+            label: 'User guide',
+          },
           {
             type: 'docSidebar',
             sidebarId: 'developerSidebar',
@@ -101,8 +107,16 @@ const config = {
             title: 'Docs',
             items: [
               {
+                label: 'User guide',
+                to: '/docs/userGuide/01',
+              },
+              {
                 label: 'Developer guide',
                 to: '/docs/developerGuide/Repositories & Setup',
+              },
+              {
+                label: 'Deployment guide',
+                to: '/docs/deploy/Deploy Ketty in production',
               },
             ],
           },
