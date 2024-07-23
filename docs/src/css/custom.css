@@ -4,9 +4,12 @@
  * work well for content-centric websites.
  */
 
+ @import url(https://fonts.bunny.net/css?family=dosis:300,400,700);
+
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
+  /* --ifm-color-primary: #2e8555; */
+  --ifm-color-primary: #3f85c6;
   --ifm-color-primary-dark: #29784c;
   --ifm-color-primary-darker: #277148;
   --ifm-color-primary-darkest: #205d3b;
@@ -15,6 +18,16 @@
   --ifm-color-primary-lightest: #3cad6e;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-font-color-base: #000;
+  --ifm-footer-link-hover-color: inherit;
+
+  --ifm-container-width-xl: 900px;
+/* ketty colors */
+  --ketty-blue: #3f85c6;
+  --ketty-yellow: #e8e61a;
+  --ketty-green: #80af43;
+
+  --fluid-10-30: clamp(10px, 3.0435px + 2.1739vw, 30px);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -27,4 +40,61 @@
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-font-color-base: #eee;
+  --ifm-pagination-nav-color-hover: var(--ketty-blue);
+}
+
+body {
+  font-family: 'Dosis', sans-serif;
+}
+
+body p {
+  font-size: 20px;
+  /* color: #000; */
+}
+
+body a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+body a:hover {
+  color: inherit;
+  text-decoration-color: var(--ketty-blue);
+  text-decoration-thickness: 2px;
+}
+
+#homepage-header {
+
+  margin: auto;
+  text-align: center;
+}
+
+.main-wrapper {
+  border-inline-end: var(--fluid-10-30) solid var(--ketty-green);
+  border-inline-start: var(--fluid-10-30) solid var(--ketty-yellow);
+}
+
+h1, h2, h3, h4 {
+  color: var(--ketty-blue);
+}
+
+#homepage-header h2 {
+  color: var(--ketty-blue);
+  font-weight: 700;
+  font-size: 2.3em;
+  margin-top: 0.5em;
+}
+
+.footer {
+  --ifm-spacing-horizontal: clamp(2rem, 0.9565rem + 5.2174vw, 5rem);
+  background-color: var(--ketty-blue);
+}
+
+@media (max-width: 1000px) {
+  #homepage-header h2 {
+    font-size: clamp(1.5rem, 1.2391rem + 1.3043vw, 2.25rem);
+    padding-bottom: 100px;
+  }
 }
