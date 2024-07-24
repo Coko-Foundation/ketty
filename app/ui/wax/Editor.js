@@ -72,22 +72,12 @@ const EditorWrapper = ({
     }
   }, 50)
 
-  const getComments = debounce(comments => {
-    addComments(comments)
-  }, 2000)
-
   useEffect(() => {
     return () => {
       onPeriodicBookComponentContentChange.cancel()
       periodicTitleChanges.cancel()
     }
   }, [])
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     selectedConfig.CommentsService.setComments(savedComments)
-  //   }, 500)
-  // }, [savedComments])
 
   if (aiEnabled) {
     selectedConfig.AskAiContentService = {
@@ -107,7 +97,7 @@ const EditorWrapper = ({
   if (savedComments) {
     selectedConfig.CommentsService = {
       showTitle: true,
-      getComments,
+      getComments: addComments,
       setComments: () => {
         return savedComments
       },

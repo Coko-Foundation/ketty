@@ -944,20 +944,25 @@ const ProducerPage = () => {
   }
 
   const handleAddingComments = content => {
+    // update local copy of comments to show comment box
+    setSavedComments(JSON.stringify(content))
+
     if (JSON.stringify(content) !== savedComments) {
-      addComments({
-        variables: {
-          commentData: {
-            bookId,
-            chapterId: selectedChapterId,
-            content: JSON.stringify(content),
-          },
+      debouncedSaveComments({
+        commentData: {
+          bookId,
+          chapterId: selectedChapterId,
+          content: JSON.stringify(content),
         },
-      }).then(() => {
-        setSavedComments(JSON.stringify(content))
       })
     }
   }
+
+  const debouncedSaveComments = debounce(variables => {
+    addComments({
+      variables,
+    })
+  }, 2000)
 
   // HANDLERS SECTION END
 
