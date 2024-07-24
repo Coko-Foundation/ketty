@@ -39,6 +39,8 @@ const EditorWrapper = ({
   editorLoading,
   kbOn,
   editorKey,
+  comments: savedComments,
+  addComments,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -59,6 +61,7 @@ const EditorWrapper = ({
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
+    savedComments,
   })
 
   const selectedConfig = aiEnabled ? configWithAi : defaultConfig
@@ -69,12 +72,22 @@ const EditorWrapper = ({
     }
   }, 50)
 
+  const getComments = debounce(comments => {
+    addComments(comments)
+  }, 2000)
+
   useEffect(() => {
     return () => {
       onPeriodicBookComponentContentChange.cancel()
       periodicTitleChanges.cancel()
     }
   }, [])
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     selectedConfig.CommentsService.setComments(savedComments)
+  //   }, 500)
+  // }, [savedComments])
 
   if (aiEnabled) {
     selectedConfig.AskAiContentService = {
@@ -89,6 +102,16 @@ const EditorWrapper = ({
 
   selectedConfig.TitleService = {
     updateTitle: periodicTitleChanges,
+  }
+
+  if (savedComments) {
+    selectedConfig.CommentsService = {
+      showTitle: true,
+      getComments,
+      setComments: () => {
+        return savedComments
+      },
+    }
   }
 
   selectedConfig.ImageService = { showAlt: true }
@@ -124,6 +147,7 @@ const EditorWrapper = ({
       onBookComponentParentIdChange,
       editorLoading,
       editorKey,
+      savedComments,
     })
   }, [
     title,
@@ -136,6 +160,7 @@ const EditorWrapper = ({
     metadataModalOpen,
     editorLoading,
     editorKey,
+    savedComments,
   ])
 
   if (!selectedConfig) return null
@@ -153,6 +178,10 @@ const EditorWrapper = ({
       value={bookComponentContent || ''}
     />
   )
+}
+
+EditorWrapper.defaultProps = {
+  comments: null,
 }
 
 export default EditorWrapper

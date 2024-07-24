@@ -71,11 +71,37 @@ const WaxSurfaceScroll = styled.div`
   width: 100%;
 `
 
+const CommentsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  width: 300px;
+
+  > div {
+    margin-inline-start: 1em;
+  }
+`
+
 const EditorContainer = styled.div`
   height: 100%;
   margin: 0 auto;
+
+  &[data-comments='false'] {
+    width: 816px;
+
+    ${CommentsContainer} {
+      display: none;
+    }
+  }
+
+  &[data-comments='true'] {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    width: 1016px;
+  }
+
   position: relative;
-  width: 816px;
 
   & > div {
     width: 100%;
@@ -128,6 +154,7 @@ const NoSelectedChapterWrapper = styled.div`
 `
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
+const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
@@ -167,6 +194,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
+    savedComments,
   } = customProps
 
   return (
@@ -203,7 +231,10 @@ const LuluLayout = ({ customProps, ...rest }) => {
               id="wax-surface-scroll"
               style={{ position: 'relative' }}
             >
-              <EditorContainer selectedChapterId={selectedChapterId}>
+              <EditorContainer
+                data-comments={savedComments?.length > 0}
+                selectedChapterId={selectedChapterId}
+              >
                 {selectedChapterId ? (
                   <WaxView {...rest} />
                 ) : (
@@ -212,6 +243,9 @@ const LuluLayout = ({ customProps, ...rest }) => {
                     writing
                   </NoSelectedChapterWrapper>
                 )}
+                <CommentsContainer>
+                  <RightArea area="main" />
+                </CommentsContainer>
               </EditorContainer>
               {editorLoading && <StyledSpin spinning={editorLoading} />}
             </WaxSurfaceScroll>
