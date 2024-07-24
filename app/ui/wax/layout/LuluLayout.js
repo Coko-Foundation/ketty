@@ -73,6 +73,7 @@ const WaxSurfaceScroll = styled.div`
 
 const CommentsContainer = styled.div`
   display: flex;
+  flex-basis: 200px;
   flex-direction: column;
   height: 100%;
   position: relative;
@@ -81,30 +82,22 @@ const CommentsContainer = styled.div`
   > div {
     margin-inline-start: 1em;
   }
+
+  &:empty {
+    display: none;
+  }
 `
 
 const EditorContainer = styled.div`
+  display: flex;
   height: 100%;
+  justify-content: center;
   margin: 0 auto;
-
-  &[data-comments='false'] {
-    width: 816px;
-
-    ${CommentsContainer} {
-      display: none;
-    }
-  }
-
-  &[data-comments='true'] {
-    display: grid;
-    grid-template-columns: 1fr 200px;
-    width: 1016px;
-  }
-
   position: relative;
+  width: 1016px;
 
-  & > div {
-    width: 100%;
+  > div:first-child {
+    width: 816px;
   }
 
   .ProseMirror {
@@ -131,7 +124,6 @@ const StyledSpin = styled(Spin)`
   height: 100vh;
   inset: 0;
   justify-content: center;
-  margin-inline: auto;
   padding-block-start: 20%;
   position: absolute;
   width: 816px;
@@ -194,7 +186,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
-    savedComments,
   } = customProps
 
   return (
@@ -231,10 +222,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
               id="wax-surface-scroll"
               style={{ position: 'relative' }}
             >
-              <EditorContainer
-                data-comments={savedComments?.length > 0}
-                selectedChapterId={selectedChapterId}
-              >
+              <EditorContainer selectedChapterId={selectedChapterId}>
                 {selectedChapterId ? (
                   <WaxView {...rest} />
                 ) : (
@@ -246,8 +234,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 <CommentsContainer>
                   <RightArea area="main" />
                 </CommentsContainer>
+                {editorLoading && <StyledSpin spinning={editorLoading} />}
               </EditorContainer>
-              {editorLoading && <StyledSpin spinning={editorLoading} />}
             </WaxSurfaceScroll>
           </EditorArea>
         </Main>
