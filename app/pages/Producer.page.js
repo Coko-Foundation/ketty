@@ -36,6 +36,8 @@ import {
   SET_BOOK_COMPONENT_STATUS,
   UPDATE_BOOK_COMPONENT_PARENT_ID,
   RAG_SEARCH,
+  GET_COMMENTS,
+  ADD_COMMENTS,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
@@ -111,6 +113,7 @@ const ProducerPage = () => {
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
   const [editorLoading, setEditorLoading] = useState(false)
+  const [savedComments, setSavedComments] = useState()
   const [key, setKey] = useState()
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
@@ -180,8 +183,27 @@ const ProducerPage = () => {
       },
       onCompleted: data => {
         setCurrentBookComponentContent(data.getBookComponent.content)
+        getComments({
+          variables: {
+            bookId,
+            chapterId: selectedChapterId,
+          },
+        })
       },
     })
+
+  const [getComments] = useLazyQuery(GET_COMMENTS, {
+    skip: !bookId || !selectedChapterId,
+    variables: {
+      bookId,
+      chapterId: selectedChapterId,
+    },
+    onCompleted: data => {
+      if (data && data.getChapterComments) {
+        setSavedComments(data.getChapterComments.content)
+      }
+    },
+  })
 
   const [chatGPT] = useLazyQuery(USE_CHATGPT, {
     fetchPolicy: 'network-only',
@@ -266,6 +288,8 @@ const ProducerPage = () => {
     } else {
       localStorage.setItem(`${bookId}-selected-chapter`, selectedChapterId)
     }
+
+    setSavedComments(null)
   }, [selectedChapterId])
 
   useEffect(() => {
@@ -316,6 +340,19 @@ const ProducerPage = () => {
         showUnauthorizedActionModal(false)
       } else if (!reconnecting) showGenericErrorModal()
     },
+  })
+
+  const [addComments] = useMutation(ADD_COMMENTS, {
+    refetchQueries: [
+      {
+        query: GET_COMMENTS,
+        variables: {
+          bookId,
+          chapterId: selectedChapterId,
+        },
+        nextFetchPolicy: 'network-only',
+      },
+    ],
   })
 
   const [updateBookComponentType, { loading: componentTypeInProgress }] =
@@ -906,6 +943,22 @@ const ProducerPage = () => {
     })
   }
 
+  const handleAddingComments = content => {
+    if (JSON.stringify(content) !== savedComments) {
+      addComments({
+        variables: {
+          commentData: {
+            bookId,
+            chapterId: selectedChapterId,
+            content: JSON.stringify(content),
+          },
+        },
+      }).then(() => {
+        setSavedComments(JSON.stringify(content))
+      })
+    }
+  }
+
   // HANDLERS SECTION END
 
   // WEBSOCKET SECTION START
@@ -998,6 +1051,7 @@ const ProducerPage = () => {
 
   return (
     <Editor
+      addComments={handleAddingComments}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bookComponentContent={currentBookComponentContent}
@@ -1005,6 +1059,7 @@ const ProducerPage = () => {
       canEdit={canModify}
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
+      comments={savedComments ? JSON.parse(savedComments) : null}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       editorKey={key}

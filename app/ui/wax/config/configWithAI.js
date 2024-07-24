@@ -14,6 +14,7 @@ import {
   FullScreenService,
   disallowPasteImagesPlugin,
   AskAiContentService,
+  CommentsService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing } from 'wax-table-service'
@@ -22,7 +23,7 @@ import charactersList from './charactersList'
 
 import { onInfoModal } from '../../../helpers/commonModals'
 
-export default {
+const config = {
   MenuService: [
     {
       templateArea: 'mainMenuToolBar',
@@ -62,6 +63,14 @@ export default {
     ),
   ],
 
+  // CommentsService: {
+  //   showTitle: true,
+  //   // getComments,
+  //   setComments: () => {
+  //     return comments
+  //   },
+  // },
+
   services: [
     new InlineAnnotationsService(),
     new AskAiContentService(),
@@ -76,5 +85,8 @@ export default {
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),
+    new CommentsService(),
   ],
 }
+
+export default config
