@@ -94,14 +94,11 @@ const EditorWrapper = ({
     updateTitle: periodicTitleChanges,
   }
 
-  if (savedComments) {
-    selectedConfig.CommentsService = {
-      showTitle: true,
-      getComments: addComments,
-      setComments: () => {
-        return savedComments
-      },
-    }
+  selectedConfig.CommentsService = {
+    getComments: addComments,
+    setComments: () => {
+      return savedComments || []
+    },
   }
 
   selectedConfig.ImageService = { showAlt: true }
@@ -171,7 +168,7 @@ const EditorWrapper = ({
 }
 
 EditorWrapper.defaultProps = {
-  comments: null,
+  comments: [],
 }
 
 export default EditorWrapper

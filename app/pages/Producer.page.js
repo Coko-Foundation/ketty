@@ -114,6 +114,7 @@ const ProducerPage = () => {
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
   const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
+  const [commentsReady, setCommentsReady] = useState(false)
   const [key, setKey] = useState()
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
@@ -201,6 +202,12 @@ const ProducerPage = () => {
     onCompleted: data => {
       if (data && data.getChapterComments) {
         setSavedComments(data.getChapterComments.content)
+      }
+
+      if (!commentsReady) {
+        setTimeout(() => {
+          setCommentsReady(true)
+        }, 1000)
       }
     },
   })
@@ -944,17 +951,19 @@ const ProducerPage = () => {
   }
 
   const handleAddingComments = content => {
-    // update local copy of comments to show comment box
-    setSavedComments(JSON.stringify(content))
+    if (commentsReady) {
+      // update local copy of comments to show comment box
+      setSavedComments(JSON.stringify(content))
 
-    if (JSON.stringify(content) !== savedComments) {
-      debouncedSaveComments({
-        commentData: {
-          bookId,
-          chapterId: selectedChapterId,
-          content: JSON.stringify(content),
-        },
-      })
+      if (JSON.stringify(content) !== savedComments) {
+        debouncedSaveComments({
+          commentData: {
+            bookId,
+            chapterId: selectedChapterId,
+            content: JSON.stringify(content),
+          },
+        })
+      }
     }
   }
 
@@ -1064,7 +1073,7 @@ const ProducerPage = () => {
       canEdit={canModify}
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
-      comments={savedComments ? JSON.parse(savedComments) : null}
+      comments={savedComments ? JSON.parse(savedComments) : []}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       editorKey={key}
