@@ -194,6 +194,7 @@ const ProducerPage = () => {
 
   const [getComments] = useLazyQuery(GET_COMMENTS, {
     skip: !bookId || !selectedChapterId,
+    fetchPolicy: 'network-only',
     variables: {
       bookId,
       chapterId: selectedChapterId,
@@ -342,18 +343,7 @@ const ProducerPage = () => {
     },
   })
 
-  const [addComments] = useMutation(ADD_COMMENTS, {
-    refetchQueries: [
-      {
-        query: GET_COMMENTS,
-        variables: {
-          bookId,
-          chapterId: selectedChapterId,
-        },
-        nextFetchPolicy: 'network-only',
-      },
-    ],
-  })
+  const [addComments] = useMutation(ADD_COMMENTS)
 
   const [updateBookComponentType, { loading: componentTypeInProgress }] =
     useMutation(UPDATE_BOOK_COMPONENT_TYPE, {
