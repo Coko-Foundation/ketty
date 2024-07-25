@@ -41,6 +41,7 @@ const EditorWrapper = ({
   editorKey,
   comments: savedComments,
   addComments,
+  user,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -150,6 +151,15 @@ const EditorWrapper = ({
     savedComments,
   ])
 
+  const userObject = {
+    userId: user.id,
+    userColor: {
+      addition: 'royalblue',
+      deletion: 'indianred',
+    },
+    username: user.displayName,
+  }
+
   if (!selectedConfig) return null
 
   return (
@@ -162,6 +172,7 @@ const EditorWrapper = ({
       onChange={onPeriodicBookComponentContentChange}
       readonly={isReadOnly}
       ref={editorRef}
+      user={userObject}
       value={bookComponentContent || ''}
     />
   )

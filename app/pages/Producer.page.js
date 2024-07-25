@@ -1088,6 +1088,7 @@ const ProducerPage = () => {
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
+      user={currentUser}
       selectedChapterId={selectedChapterId}
       setMetadataModalOpen={setMetadataModalOpen}
       subtitle={bookQueryData?.getBook.subtitle}
