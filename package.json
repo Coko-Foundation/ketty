@@ -26,9 +26,9 @@
     "prosemirror-view": "1.30.2",
     "prosemirror-state": "1.4.3",
     "antd": "5.6.1",
-    "wax-prosemirror-core": "0.9.52",
-    "wax-prosemirror-services": "0.9.52",
-    "wax-table-service": "0.9.52"
+    "wax-prosemirror-core": "0.9.53",
+    "wax-prosemirror-services": "0.9.53",
+    "wax-table-service": "0.9.53"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
@@ -48,9 +48,9 @@
     "react-router-dom": "^5.2.0",
     "react-use-websocket": "^4.3.1",
     "styled-components": "^5.3.0",
-    "wax-prosemirror-core": "0.9.52",
-    "wax-prosemirror-services": "0.9.52",
-    "wax-table-service": "0.9.52"
+    "wax-prosemirror-core": "0.9.53",
+    "wax-prosemirror-services": "0.9.53",
+    "wax-table-service": "0.9.53"
   },
   "devDependencies": {
     "@coko/lint": "^2.0.1",
