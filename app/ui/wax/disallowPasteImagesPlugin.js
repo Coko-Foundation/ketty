@@ -30,7 +30,7 @@ export default callback => {
         let imageFound = false
         // let src = null
         content.forEach(node => {
-          if (node.type.name === 'image') {
+          if (node.type.name === 'image' && node.attrs.src.startsWith('data')) {
             node.attrs.id = uuidv4()
             node.attrs.src = ''
             node.attrs.alt = ''
@@ -39,13 +39,21 @@ export default callback => {
           }
 
           if (node.type.name === 'figure') {
-            if (node.firstChild && node.firstChild.type.name === 'image') {
+            if (
+              node.firstChild &&
+              node.firstChild.type.name === 'image' &&
+              node.firstChild.attrs.src.startsWith('data')
+            ) {
               node.firstChild.attrs.id = uuidv4()
               node.firstChild.attrs.src = ''
               node.firstChild.attrs.alt = ''
               imageFound = true
               // src = node.firstChild.attrs.src
-            } else if (node.lastChild && node.lastChild.type.name === 'image') {
+            } else if (
+              node.lastChild &&
+              node.lastChild.type.name === 'image' &&
+              node.lastChild.attrs.src.startsWith('data')
+            ) {
               node.lastChild.attrs.id = uuidv4()
               node.lastChild.attrs.src = ''
               node.lastChild.attrs.alt = ''
