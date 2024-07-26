@@ -83,6 +83,14 @@ const CommentsContainer = styled.div`
     margin-inline-start: 1em;
   }
 
+  textarea {
+    border: 1px solid ${th('colorBorder')};
+  }
+
+  button {
+    border-radius: 3px;
+  }
+
   &:empty {
     display: none;
   }
