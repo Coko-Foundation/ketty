@@ -12,12 +12,14 @@ import {
   BlockDropDownToolGroupService,
   FindAndReplaceService,
   FullScreenService,
-  disallowPasteImagesPlugin,
+  // disallowPasteImagesPlugin,
   AskAiContentService,
   CommentsService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing } from 'wax-table-service'
+
+import disallowPasteImagesPlugin from '../disallowPasteImagesPlugin'
 
 import charactersList from './charactersList'
 
