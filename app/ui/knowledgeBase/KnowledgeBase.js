@@ -14,15 +14,7 @@ import FilesList from './FilesList'
 // import KBHeader from './KBHeader'
 import { GlobalContext } from '../../helpers/hooks/GlobalContext'
 
-const xlFileExtensions = [
-  '.xls',
-  '.xlsb',
-  '.xlsm',
-  '.xlsx',
-  '.xlt',
-  '.xltm',
-  '.xltx',
-]
+const xlFileExtensions = ['xls', 'xlsb', 'xlsm', 'xlsx', 'xlt', 'xltm', 'xltx']
 
 const fileIcons = {
   md: { icon: FileMarkdownOutlined, color: '#625286' },
@@ -89,12 +81,11 @@ const KnowledgeBase = props => {
   const {
     filesToUpload,
     setFilesToUpload,
-    fileBeingUploaded,
-    setFileBeingUploaded,
+    filesBeingUploaded,
+    setFilesBeingUploaded,
   } = useContext(GlobalContext)
 
   const [selectedFiles, setSelectedFiles] = useState([])
-  const [bulkUploading, setBulkUploading] = useState(false)
 
   const scrollToTopOfFilesList = () => {
     document
@@ -108,29 +99,26 @@ const KnowledgeBase = props => {
   }
 
   const handleUpload = async file => {
-    setFileBeingUploaded(file.name)
+    setFilesBeingUploaded(current => [...current, file.uid])
     await createDocument({ variables: { file, bookId } })
     setFilesToUpload(currentFiles =>
       currentFiles.filter(f => f.uid !== file.uid),
     )
-    setFileBeingUploaded('')
+    setFilesBeingUploaded(currentFiles =>
+      currentFiles.filter(f => f !== file.uid),
+    )
   }
 
   const bulkActions = {
     async upload() {
-      setBulkUploading(true)
+      setFilesBeingUploaded(filesToUpload.map(f => f.uid))
 
       try {
         // eslint-disable-next-line no-restricted-syntax
         for await (const file of filesToUpload) {
-          if (file.name !== fileBeingUploaded) {
-            await handleUpload(file)
-          }
+          await handleUpload(file)
         }
-
-        setBulkUploading(false)
       } catch (error) {
-        setBulkUploading(false)
         console.error(error)
       }
     },
@@ -140,7 +128,7 @@ const KnowledgeBase = props => {
       try {
         await Promise.all(
           selectedFiles.map(async id => {
-            deleteDocument({ variables: { id, bookId } })
+            deleteDocument(id)
           }),
         )
       } catch (error) {
@@ -158,11 +146,11 @@ const KnowledgeBase = props => {
 
   const filesToAccept = keys(fileIcons)
     .map(k => `.${k}`)
-    .concat(xlFileExtensions)
+    .concat(xlFileExtensions.map(l => `.${l}`))
     .join(',')
 
   const noFilesNotUploads =
-    fileBeingUploaded.length < 1 && docs.length < 1 && filesToUpload.length < 1
+    filesBeingUploaded.length < 1 && docs.length < 1 && filesToUpload.length < 1
 
   return (
     <Wrapper>
@@ -171,7 +159,6 @@ const KnowledgeBase = props => {
       </Header>
       <FileList
         bulkActions={bulkActions}
-        bulkUploading={bulkUploading}
         deleteDocument={deleteDocument}
         docs={docs}
         fileIcons={fileIcons}

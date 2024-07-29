@@ -51,13 +51,21 @@ export const getProjection = (
   const parentId = getParentId()
   const parent = items.find(i => i.id === parentId)
 
-  if (
-    parent &&
-    depth > 0 &&
+  if (parent && depth > 0) {
+    if (
+      parent.componentType === 'chapter' &&
+      parent.parentComponentId &&
+      activeItem.componentType === 'chapter'
+    ) {
+      return { depth, maxDepth, minDepth, parentId: parent.parentComponentId }
+    }
+
     // only allow nesting if parent is part and active item is chapter
-    (parent.componentType !== 'part' || activeItem.componentType !== 'chapter')
-  ) {
-    return null
+    if (
+      parent.componentType !== 'part' ||
+      activeItem.componentType !== 'chapter'
+    )
+      return null
   }
 
   return { depth, maxDepth, minDepth, parentId: getParentId() }

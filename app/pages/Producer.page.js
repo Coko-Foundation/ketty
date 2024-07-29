@@ -36,6 +36,8 @@ import {
   SET_BOOK_COMPONENT_STATUS,
   UPDATE_BOOK_COMPONENT_PARENT_ID,
   RAG_SEARCH,
+  GET_COMMENTS,
+  ADD_COMMENTS,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
@@ -111,6 +113,7 @@ const ProducerPage = () => {
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
   const [editorLoading, setEditorLoading] = useState(false)
+  const [savedComments, setSavedComments] = useState()
   const [key, setKey] = useState()
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
@@ -180,8 +183,28 @@ const ProducerPage = () => {
       },
       onCompleted: data => {
         setCurrentBookComponentContent(data.getBookComponent.content)
+        getComments({
+          variables: {
+            bookId,
+            chapterId: selectedChapterId,
+          },
+        })
       },
     })
+
+  const [getComments] = useLazyQuery(GET_COMMENTS, {
+    skip: !bookId || !selectedChapterId,
+    fetchPolicy: 'network-only',
+    variables: {
+      bookId,
+      chapterId: selectedChapterId,
+    },
+    onCompleted: data => {
+      if (data && data.getChapterComments) {
+        setSavedComments(data.getChapterComments.content)
+      }
+    },
+  })
 
   const [chatGPT] = useLazyQuery(USE_CHATGPT, {
     fetchPolicy: 'network-only',
@@ -266,6 +289,8 @@ const ProducerPage = () => {
     } else {
       localStorage.setItem(`${bookId}-selected-chapter`, selectedChapterId)
     }
+
+    setSavedComments(null)
   }, [selectedChapterId])
 
   useEffect(() => {
@@ -290,7 +315,10 @@ const ProducerPage = () => {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
     onData: async () => {
-      await refetchBookComponent()
+      if (selectedChapterId) {
+        await refetchBookComponent()
+      }
+
       setKey(uuid())
     },
   })
@@ -314,6 +342,8 @@ const ProducerPage = () => {
       } else if (!reconnecting) showGenericErrorModal()
     },
   })
+
+  const [addComments] = useMutation(ADD_COMMENTS)
 
   const [updateBookComponentType, { loading: componentTypeInProgress }] =
     useMutation(UPDATE_BOOK_COMPONENT_TYPE, {
@@ -493,14 +523,20 @@ const ProducerPage = () => {
       return
     }
 
-    createBookComponent({
-      variables: {
-        input: {
-          bookId,
-          divisionId,
-          componentType: 'chapter',
-        },
+    const variables = {
+      input: {
+        bookId,
+        divisionId,
+        componentType: 'chapter',
       },
+    }
+
+    if (selectedChapterId) {
+      variables.input.afterId = selectedChapterId
+    }
+
+    createBookComponent({
+      variables,
     }).then(({ data }) => {
       setSelectedChapterId(data?.podAddBookComponent?.id)
     })
@@ -897,6 +933,27 @@ const ProducerPage = () => {
     })
   }
 
+  const handleAddingComments = content => {
+    // update local copy of comments to show comment box
+    setSavedComments(JSON.stringify(content))
+
+    if (content.length && JSON.stringify(content) !== savedComments) {
+      debouncedSaveComments({
+        commentData: {
+          bookId,
+          chapterId: selectedChapterId,
+          content: JSON.stringify(content),
+        },
+      })
+    }
+  }
+
+  const debouncedSaveComments = debounce(variables => {
+    addComments({
+      variables,
+    })
+  }, 2000)
+
   // HANDLERS SECTION END
 
   // WEBSOCKET SECTION START
@@ -989,6 +1046,7 @@ const ProducerPage = () => {
 
   return (
     <Editor
+      addComments={handleAddingComments}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bookComponentContent={currentBookComponentContent}
@@ -996,6 +1054,7 @@ const ProducerPage = () => {
       canEdit={canModify}
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
+      comments={savedComments ? JSON.parse(savedComments) : []}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       editorKey={key}
@@ -1019,6 +1078,7 @@ const ProducerPage = () => {
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
+      user={currentUser}
       selectedChapterId={selectedChapterId}
       setMetadataModalOpen={setMetadataModalOpen}
       subtitle={bookQueryData?.getBook.subtitle}

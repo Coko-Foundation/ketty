@@ -71,20 +71,48 @@ const WaxSurfaceScroll = styled.div`
   width: 100%;
 `
 
-const EditorContainer = styled.div`
+const CommentsContainer = styled.div`
+  display: flex;
+  flex-basis: 200px;
+  flex-direction: column;
   height: 100%;
+  position: relative;
+  width: 300px;
+
+  > div {
+    margin-inline-start: 1em;
+  }
+
+  textarea {
+    border: 1px solid ${th('colorBorder')};
+  }
+
+  button {
+    border-radius: 3px;
+  }
+
+  &:empty {
+    display: none;
+  }
+`
+
+const EditorContainer = styled.div`
+  display: flex;
+  height: 100%;
+  justify-content: center;
   margin: 0 auto;
   position: relative;
-  width: 816px;
+  width: 1016px;
 
-  & > div {
-    width: 100%;
+  > div:first-child {
+    width: 816px;
   }
 
   .ProseMirror {
     background: ${({ selectedChapterId }) =>
       selectedChapterId ? '#fff' : '#e8e8e8'};
-    min-height: 100%;
+    /* min-height: 100%; */
+    min-height: calc(100vh - 104px);
     padding: ${grid(20)} ${grid(24)};
     width: 100%;
 
@@ -104,7 +132,6 @@ const StyledSpin = styled(Spin)`
   height: 100vh;
   inset: 0;
   justify-content: center;
-  margin-inline: auto;
   padding-block-start: 20%;
   position: absolute;
   width: 816px;
@@ -127,6 +154,7 @@ const NoSelectedChapterWrapper = styled.div`
 `
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
+const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
@@ -211,8 +239,11 @@ const LuluLayout = ({ customProps, ...rest }) => {
                     writing
                   </NoSelectedChapterWrapper>
                 )}
+                <CommentsContainer>
+                  <RightArea area="main" />
+                </CommentsContainer>
+                {editorLoading && <StyledSpin spinning={editorLoading} />}
               </EditorContainer>
-              {editorLoading && <StyledSpin spinning={editorLoading} />}
             </WaxSurfaceScroll>
           </EditorArea>
         </Main>

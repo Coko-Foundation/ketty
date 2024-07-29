@@ -31,6 +31,10 @@ export const KnowledgeBasePage = () => {
     refetchQueries: [GET_DOCUMENTS],
   })
 
+  const handleDelete = id => {
+    deleteDocument({ variables: { id, bookId } })
+  }
+
   useSubscription(KB_UPDATED_SUBSCRIPTION, {
     skip: !bookId,
     variables: { bookId },
@@ -46,7 +50,7 @@ export const KnowledgeBasePage = () => {
     <KnowledgeBase
       bookId={bookId}
       createDocument={createDocument}
-      deleteDocument={deleteDocument}
+      deleteDocument={handleDelete}
       docs={data?.getDocuments}
     />
   )

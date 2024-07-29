@@ -12,17 +12,20 @@ import {
   BlockDropDownToolGroupService,
   FindAndReplaceService,
   FullScreenService,
-  disallowPasteImagesPlugin,
+  // disallowPasteImagesPlugin,
   AskAiContentService,
+  CommentsService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing } from 'wax-table-service'
+
+import disallowPasteImagesPlugin from '../disallowPasteImagesPlugin'
 
 import charactersList from './charactersList'
 
 import { onInfoModal } from '../../../helpers/commonModals'
 
-export default {
+const config = {
   MenuService: [
     {
       templateArea: 'mainMenuToolBar',
@@ -55,12 +58,26 @@ export default {
   PmPlugins: [
     // columnResizing(),
     tableEditing(),
-    disallowPasteImagesPlugin(() =>
-      onInfoModal(
-        `Pasting external images is not supported. Please use platform's Asset Manager infrastructure`,
-      ),
-    ),
+    disallowPasteImagesPlugin(() => {
+      if (!window.showInfo) {
+        window.showInfo = true
+        onInfoModal(
+          `Pasting external images is not supported. Please upload an image file by selecting the image icon in the toolbar.`,
+        )
+        setTimeout(() => {
+          window.showInfo = false
+        }, 500)
+      }
+    }),
   ],
+
+  // CommentsService: {
+  //   showTitle: true,
+  //   // getComments,
+  //   setComments: () => {
+  //     return comments
+  //   },
+  // },
 
   services: [
     new InlineAnnotationsService(),
@@ -76,5 +93,8 @@ export default {
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),
+    new CommentsService(),
   ],
 }
+
+export default config
