@@ -30,7 +30,7 @@ export default callback => {
         let imageFound = false
         // let src = null
         content.forEach(node => {
-          if (node.type.name === 'image' && !node.attrs.fileId) {
+          if (node.type.name === 'image' && !node.attrs.fileid) {
             node.attrs.id = uuidv4()
             node.attrs.src = ''
             node.attrs.alt = ''
@@ -42,7 +42,7 @@ export default callback => {
             if (
               node.firstChild &&
               node.firstChild.type.name === 'image' &&
-              !node.firstChild.attrs.fileId
+              !node.firstChild.attrs.fileid
             ) {
               node.firstChild.attrs.id = uuidv4()
               node.firstChild.attrs.src = ''
@@ -52,7 +52,7 @@ export default callback => {
             } else if (
               node.lastChild &&
               node.lastChild.type.name === 'image' &&
-              !node.lastChild.attrs.fileId
+              !node.lastChild.attrs.fileid
             ) {
               node.lastChild.attrs.id = uuidv4()
               node.lastChild.attrs.src = ''
