@@ -55,11 +55,17 @@ const config = {
   SpecialCharactersService: charactersList,
   PmPlugins: [
     tableEditing(),
-    disallowPasteImagesPlugin(() =>
-      onInfoModal(
-        `Pasting external images is not supported. Please use platform's Asset Manager infrastructure`,
-      ),
-    ),
+    disallowPasteImagesPlugin(() => {
+      if (!window.showInfo) {
+        window.showInfo = true
+        onInfoModal(
+          `Pasting external images is not supported. Please upload an image file by selecting the image icon in the toolbar.`,
+        )
+        setTimeout(() => {
+          window.showInfo = false
+        }, 500)
+      }
+    }),
   ],
 
   // CommentsService: {
