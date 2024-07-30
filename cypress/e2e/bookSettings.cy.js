@@ -402,14 +402,34 @@ Cypress.Commands.add('usingAIPrompt', () => {
 
   cy.get('input[id="askAiInput"]').as('askAiInput')
 
+  // cy.get('@askAiInput')
+  //   .should('be.visible')
+  //   .then($input => {
+  //     // Explicitly focus on the input field
+  //     cy.wrap($input)
+  //       // .focus()
+  //       .type('Replace this with a similiar sentence {enter}', { delay: 100 })
+  //   })
+  cy.get('@askAiInput').should('be.visible')
+
   cy.get('@askAiInput')
-    .should('be.visible')
+    // .focus()
     .then($input => {
-      // Explicitly focus on the input field
-      cy.wrap($input)
-        // .focus()
-        .type('Replace this with a similiar sentence {enter}', { delay: 100 })
+      const text = 'Replace this with a similar sentence'
+      const delay = 50 // Adjust delay as needed
+
+      // Type each character with a delay
+      cy.wrap($input).then(() => {
+        for (let i = 0; i < text.length; i += 1) {
+          cy.wrap($input).type(text[i], { delay, force: true })
+        }
+      })
+
+      // Ensure the text is correctly entered
+      cy.wrap($input).should('have.value', text)
     })
+
+    .type('{enter}', { force: true })
 
   cy.contains('Try Again', { timeout: 10000 }).should('be.visible').click()
 

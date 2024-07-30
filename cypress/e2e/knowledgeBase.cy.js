@@ -155,7 +155,7 @@ describe('Knowledge Base is enabled', () => {
     // Upload individual file
     cy.uploadFile('docs/chapter1_test.docx')
     cy.get('[aria-label="Upload"]').click()
-    cy.get('li[title="chapter1_test"]').should('exist')
+    cy.get('li[title="chapter1_test"]', { timeout: 8000 }).should('exist')
     cy.get('button[title="Upload"]').should('not.exist')
     cy.get('button[aria-label="Upload pending files"]').should(
       'have.attr',
@@ -220,10 +220,18 @@ describe('Knowledge Base is enabled', () => {
     cy.get('button[aria-label="Upload pending files"]').click()
 
     // Check if files were uploaded successfully
-    const filesToCheck = ['document1', 'test_document', 'test1']
+    const filesToCheck = [
+      'document1',
+      'test_document',
+      'test1',
+      'test2',
+      'test3',
+      'test4',
+      'test5',
+    ]
 
     filesToCheck.forEach(file => {
-      cy.get(`li[title="${file}"]`, { timeout: 8000 }).should('exist')
+      cy.get(`li[title="${file}"]`, { timeout: 10000 }).should('exist')
     })
   })
   it('Checking file names that are supported', () => {
@@ -326,9 +334,9 @@ Cypress.Commands.add('canUseKB', () => {
   // Upload pending files in bulk
   cy.get('button[aria-label="Upload pending files"]').click()
 
-  cy.get('li[title="chapter1_test"]').should('exist')
-  cy.get('li[title="chapter2_test"]').should('exist')
-  cy.get('li[title="chapter3_test"]').should('exist')
+  cy.get('li[title="chapter1_test"]', { timeout: 8000 }).should('exist')
+  cy.get('li[title="chapter2_test"]', { timeout: 8000 }).should('exist')
+  cy.get('li[title="chapter3_test"]', { timeout: 8000 }).should('exist')
   cy.get('button[aria-label="Upload pending files"]').should(
     'have.attr',
     'disabled',

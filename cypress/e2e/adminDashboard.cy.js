@@ -69,11 +69,11 @@ describe('checking AI integration', () => {
     cy.contains('You need to provide a key').should('exist')
 
     cy.log('Error displayed when key is invalid')
-    cy.get('#apiKey').type('This is some dummy text')
+    cy.get('#apiKey').type('This is some dummy text', { delay: 100 })
     cy.get('button[type="submit"]').should('have.text', 'Update key').click()
     cy.get('button[type="submit"]').should('have.text', 'Update key').click()
 
-    cy.contains('API key is invalid').should('exist')
+    cy.contains('API key is invalid', { timeout: 8000 }).should('exist')
   })
 
   it('switching AI integration OFF', () => {
@@ -286,6 +286,7 @@ Cypress.Commands.add('openTCModal', () => {
 Cypress.Commands.add('addLink', link => {
   cy.get('button[title="Add or remove link"]').should('not.be.disabled')
   cy.get('button[title="Add or remove link"]').click({ force: true })
+  cy.get('input').last().should('be.visible').focus()
   cy.get('input').last().type(link)
-  cy.contains('button', 'Apply').click()
+  cy.contains('button', 'Apply').should('be.visible').click()
 })

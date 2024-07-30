@@ -65,6 +65,65 @@ describe('Checking Producer Page', () => {
       ).should('exist')
     })
 
+    it('adding and deleting a part', () => {
+      cy.url().should('include', '/producer')
+      cy.get('.ProseMirror').click()
+      cy.get('[aria-controls="block-level-options"]').click()
+      cy.get(`#block-level-options > :nth-child(${1})`)
+        .contains('Title')
+        .click({
+          timeout: 5000,
+          force: true,
+        })
+      cy.get('h1').type('Part 1', { delay: 100 })
+
+      // Converting chapter to a part
+      cy.contains('div', 'Part 1', { timeout: 6000 })
+        .parent()
+        .parent()
+        .find('[data-icon="more"]')
+        .click()
+      cy.contains('button', 'Convert to part').click()
+
+      cy.contains('Part 1').should('have.attr', 'data-status', '200')
+      cy.contains('Part 1').parent().parent().find('[data-icon="more"]').click()
+      cy.contains('button', 'Convert to chapter').should('exist')
+
+      // Add another chapter and try to dnd in part
+      cy.get('.anticon-plus').click()
+      cy.contains('Untitled Chapter')
+        .parent()
+        .should('have.attr', 'data-selected', 'true')
+      cy.get('.ProseMirror').click()
+      cy.get('.ProseMirror').type('Chapter 1')
+      cy.get('[aria-controls="block-level-options"]').click()
+      cy.get(`#block-level-options > :nth-child(${1})`)
+        .contains('Title')
+        .click({
+          timeout: 5000,
+          force: true,
+        })
+
+      cy.contains('Chapter 1').dragAndDrop(
+        ':nth-child(2) > .ChapterItem__Chapter-sc-qfks8y-2 > .ChapterItem__InnerWrapper-sc-qfks8y-1 > .anticon-holder',
+        '[style="display: flex; flex-direction: column;"] > :nth-child(1)',
+      )
+
+      // deleting a part
+      cy.contains('Part 1').parent().parent().find('[data-icon="more"]').click()
+      cy.contains('button', 'Delete').click()
+      cy.contains('Chapter 1')
+        .parent()
+        .parent()
+        .find('[data-icon="more"]')
+        .click()
+      cy.contains('button', 'Delete').click()
+      cy.contains(
+        'Create or select a chapter in the chapters panel to start writing',
+        { timeout: 8000 },
+      ).should('exist')
+    })
+
     it.skip('checking drag and drop', () => {
       const chapters = ['Chapter 1', 'Chapter 2', 'Chapter 3']
 
