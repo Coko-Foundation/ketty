@@ -9,7 +9,12 @@ AI assistance in books
 
 ### AI writing prompts
 
-The book owner can choose when book collaborators with edit access can use AI prompts to assist their writing. The book owner can change the AI use per book at any time, making the use of AI prompts flexible yet controlled. _Note:_ Your Ketty instance must be configured with an AI key on the Admin Dashboard before this functionality can be used.
+The book owner can choose when book collaborators with edit access can use AI prompts to assist their writing. The book owner can change the AI use per book at any time, making the use of AI prompts flexible yet controlled. 
+
+:::note
+
+Your Ketty instance must be configured with an AI key on the Admin Dashboard before this functionality can be used.
+:::
 
 Setting AI-use from the Producer page of the book:
 
@@ -20,7 +25,7 @@ Setting AI-use from the Producer page of the book:
 
 When AI writing prompts are enabled, the book owner can further customise their use by setting any number of custom prompts and optionally turning off free-text prompts.
 
-![Book settings showing a custom prompt being added](../../static/img/37e09968f3ab_medium.png)
+![Book settings showing a custom prompt being added](../../../static/img/37e09968f3ab_medium.png)
 
 ### AI Book Desginer
 

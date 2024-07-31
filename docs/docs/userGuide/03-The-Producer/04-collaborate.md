@@ -20,13 +20,13 @@ To add someone as a collaborator on your book:
 *   Choose the level of access that the person should have: _can edit_ or _can view_, then select ‘Share’. An email invitation will be sent to the person.
     
 
-![Share your book with an existing user or invite to join by email](../../static/img/1c984822987d_medium.png)
+![Share your book with an existing user or invite to join by email](../../../static/img/1c984822987d_medium.png)
 
-![Choose the relevant access level](../../static/img/e490be6e3ee9_medium.png)
+![Choose the relevant access level](../../../static/img/e490be6e3ee9_medium.png)
 
 The book owner can change the type of access or remove a book collaborator using the dropdown next to the person’s name.
 
-![Change a collaborator’s access level or remove their access to the book](../../static/img/419dc9c4d92a_medium.png)
+![Change a collaborator’s access level or remove their access to the book](../../../static/img/419dc9c4d92a_medium.png)
 
 Collaborate on books
 --------------------
@@ -37,6 +37,6 @@ Ketty currently supports **asynchronous editing** on the individual chapter leve
 
 Collaborators with _edit access_ can edit the book’s content and metadata, view export previews, and download PDF or Epub files, but they cannot save export profiles or connect to print-on-demand services. Collaborators with _view access_ cannot edit the book’s content and metadata, download PDF or Epub files, save export profiles, or connect to print-on-demand services, but they can view export previews.
 
-![The initials next to the first chapter title indicate the user who is currently editing the chapter.](../../static/img/06d9a56a741e_medium.png)
+![The initials next to the first chapter title indicate the user who is currently editing the chapter.](../../../static/img/06d9a56a741e_medium.png)
 
 Keep an eye on the [Ketty Roadmap](https://miro.com/app/board/uXjVP89vFkc=/?share_link_id=271170804884) as we’ll soon be introducing **synchronous (concurrent) editing** which means multiple collabrators with edit-access can edit the same chapter at the same time. Both asynchronous and synchronous editing will be supported in Ketty so that teams can choose the workflow that suits their book project.

@@ -1,8 +1,13 @@
 ---
-title: "Administration"
+title: "Instance configurations"
 ---
 
-An administrator user should be set when a Ketty instance is first deployed and more admins can be added at any time. Speak to your hosting provider about configuring admin access. To access the **Admin Dashboard**, select your initials in the top-right of the navigation bar, then select ‘Admin’.
+:::note
+
+An administrator user should be set when a Ketty instance is first deployed and more admins can be added at any time. Speak to your hosting provider about configuring admin access. 
+:::
+
+To access the **Admin Dashboard**, select your initials in the top-right of the navigation bar, then select ‘Admin’.
 
 Currently, the Admin Dashboard supports three instance configurations. Further administration features will be added in future releases of Ketty.
 

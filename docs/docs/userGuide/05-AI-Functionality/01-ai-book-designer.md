@@ -14,7 +14,7 @@ The book owner can choose when this beta feature can be used by going to the boo
 *   **Disable the AI Book Designer:** open Book Settings (cog icon) and turn off the ‘AI Book Designer (Beta)’ setting. This removes access to the page from the top navigation bar of your book.
     
 
-![Enable or disable the AI Book Designer in book settings](../../static/img/9a430f64b8bf_medium.png)
+![Enable or disable the AI Book Designer in book settings](../../../static/img/9a430f64b8bf_medium.png)
 
 Overview of the AI Book Designer
 --------------------------------
@@ -32,7 +32,7 @@ The AI Book Designer has four main parts:
 
 The content selector, book PDF preview, and chat history can be shown or hidden by using the checkboxes in the top right of the page.
 
-![The AI book designer with the content selector and book PDF preview in view](../../static/img/8b7426098145_medium.png)
+![The AI book designer with the content selector and book PDF preview in view](../../../static/img/8b7426098145_medium.png)
 
 Use the AI Book Designer
 ------------------------
@@ -41,7 +41,7 @@ Your design instructions or questions can relate to the entire book or specific 
 
 For example, in the image below, the user has selected the entire book and promoted the AI Book Designer to change the page size to 5 x 8 inches.
 
-![The AI Book Designer showing changes the page size to 5 x 8 inches](../../static/img/6b43609f13a4_medium.png)
+![The AI Book Designer showing changes the page size to 5 x 8 inches](../../../static/img/6b43609f13a4_medium.png)
 
 ### Design capabilities
 

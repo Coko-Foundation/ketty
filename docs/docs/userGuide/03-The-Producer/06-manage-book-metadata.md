@@ -13,7 +13,7 @@ Title page
 
 You can change the Title, Subtitle, and Authors.
 
-![](../../static/img/e39c161e459d_medium.png)
+![](../../../static/img/e39c161e459d_medium.png)
 
 Copyright page
 --------------
