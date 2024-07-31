@@ -235,6 +235,11 @@ const ProducerPage = () => {
 
   // QUERIES SECTION END
 
+  // only owner or collaborators with edit access can comment or see comments
+  const canInteractWithComments =
+    isOwner(bookId, currentUser) ||
+    (isCollaborator(bookId, currentUser) && hasEditAccess(bookId, currentUser))
+
   useEffect(() => {
     if (currentUser && !hasRendered.current) {
       hasRendered.current = true
@@ -1052,6 +1057,7 @@ const ProducerPage = () => {
       bookComponentContent={currentBookComponentContent}
       bookMetadataValues={bookMetadataValues}
       canEdit={canModify}
+      canInteractWithComments={canInteractWithComments}
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
       comments={savedComments ? JSON.parse(savedComments) : []}
@@ -1078,11 +1084,11 @@ const ProducerPage = () => {
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
-      user={currentUser}
       selectedChapterId={selectedChapterId}
       setMetadataModalOpen={setMetadataModalOpen}
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
+      user={currentUser}
       // bookComponentContent={bookComponentData?.getBookComponent?.content}
     />
   )
