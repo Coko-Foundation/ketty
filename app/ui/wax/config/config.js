@@ -68,13 +68,7 @@ const config = {
     }),
   ],
 
-  // CommentsService: {
-  //   showTitle: true,
-  //   // getComments,
-  //   // setComments: () => {
-  //   //   return comments
-  //   // },
-  // },
+  ImageService: { showAlt: true },
 
   services: [
     new CommentsService(),

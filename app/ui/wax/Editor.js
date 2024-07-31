@@ -39,6 +39,7 @@ const EditorWrapper = ({
   editorLoading,
   kbOn,
   editorKey,
+  canInteractWithComments,
   comments: savedComments,
   addComments,
   user,
@@ -91,6 +92,16 @@ const EditorWrapper = ({
     }
   }
 
+  if (canInteractWithComments === false) {
+    const commentsServiceIndex = selectedConfig.services.findIndex(service =>
+      Object.prototype.hasOwnProperty.call(service, 'allCommentsFromStates'),
+    )
+
+    if (commentsServiceIndex !== -1) {
+      selectedConfig.services.splice(commentsServiceIndex, 1)
+    }
+  }
+
   selectedConfig.TitleService = {
     updateTitle: periodicTitleChanges,
   }
@@ -101,8 +112,6 @@ const EditorWrapper = ({
       return savedComments || []
     },
   }
-
-  selectedConfig.ImageService = { showAlt: true }
 
   useEffect(() => {
     if (aiEnabled) {
@@ -160,7 +169,7 @@ const EditorWrapper = ({
     username: user.displayName,
   }
 
-  if (!selectedConfig) return null
+  if (!selectedConfig || canInteractWithComments === null) return null
 
   return (
     <Wax
@@ -180,6 +189,7 @@ const EditorWrapper = ({
 
 EditorWrapper.defaultProps = {
   comments: [],
+  canInteractWithComments: null,
 }
 
 export default EditorWrapper
