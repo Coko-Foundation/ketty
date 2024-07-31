@@ -19,4 +19,10 @@ const ADD_COMMENTS = gql`
   }
 `
 
-export { GET_COMMENTS, ADD_COMMENTS }
+const NOTIFY_MENTIONS = gql`
+  mutation NotifyMentions($mentionsData: MentionInput!) {
+    notifyMentions(mentionsData: $mentionsData)
+  }
+`
+
+export { GET_COMMENTS, ADD_COMMENTS, NOTIFY_MENTIONS }
