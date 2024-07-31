@@ -36,13 +36,7 @@ const config = {
         'Images',
         {
           name: 'Annotations',
-          exclude: [
-            'Code',
-            'SmallCaps',
-            'StrikeThrough',
-            'Subscript',
-            'Superscript',
-          ],
+          exclude: ['SmallCaps', 'StrikeThrough', 'Subscript', 'Superscript'],
         },
         // 'Tables',
         'SpecialCharacters',
