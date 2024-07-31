@@ -38,6 +38,8 @@ import {
   RAG_SEARCH,
   GET_COMMENTS,
   ADD_COMMENTS,
+  NOTIFY_MENTIONS,
+  GET_BOOK_TEAMS,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
@@ -231,6 +233,14 @@ const ProducerPage = () => {
     },
   })
 
+  const { data: { getObjectTeams: { result: bookMembers } = {} } = {} } =
+    useQuery(GET_BOOK_TEAMS, {
+      variables: {
+        objectId: bookId,
+        objectType: 'book',
+      },
+    })
+
   const editorRef = useRef(null)
 
   // QUERIES SECTION END
@@ -239,6 +249,15 @@ const ProducerPage = () => {
   const canInteractWithComments =
     isOwner(bookId, currentUser) ||
     (isCollaborator(bookId, currentUser) && hasEditAccess(bookId, currentUser))
+
+  useEffect(() => {
+    const chapterId = window.location.hash.substring(1)
+
+    if (chapterId) {
+      setSelectedChapterId(chapterId)
+      window.history.replaceState('', document.title, window.location.pathname)
+    }
+  }, [])
 
   useEffect(() => {
     if (currentUser && !hasRendered.current) {
@@ -462,6 +481,8 @@ const ProducerPage = () => {
   })
 
   const [upload] = useMutation(UPLOAD_FILES)
+
+  const [notifyMentions] = useMutation(NOTIFY_MENTIONS)
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
@@ -953,6 +974,19 @@ const ProducerPage = () => {
     }
   }
 
+  const handleMentions = (users, text) => {
+    notifyMentions({
+      variables: {
+        mentionsData: {
+          ids: users.map(u => u.id),
+          bookId,
+          chapterId: selectedChapterId,
+          text,
+        },
+      },
+    })
+  }
+
   const debouncedSaveComments = debounce(variables => {
     addComments({
       variables,
@@ -1049,12 +1083,27 @@ const ProducerPage = () => {
     { area: 'aiEnabled' },
   )
 
+  const members = bookMembers
+    ?.map(team => {
+      if (team.members.length > 0) {
+        return team.members.map(member => ({
+          id: member.user.id,
+          displayName: member.user.displayName,
+        }))
+      }
+
+      return false
+    })
+    .flat()
+    .filter(member => !!member)
+
   return (
     <Editor
       addComments={handleAddingComments}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bookComponentContent={currentBookComponentContent}
+      bookMembers={members}
       bookMetadataValues={bookMetadataValues}
       canEdit={canModify}
       canInteractWithComments={canInteractWithComments}
@@ -1077,6 +1126,7 @@ const ProducerPage = () => {
       onChapterClick={onChapterClick}
       onDeleteChapter={onDeleteChapter}
       onImageUpload={handleImageUpload}
+      onMention={handleMentions}
       onPeriodicBookComponentContentChange={
         onPeriodicBookComponentContentChange
       }

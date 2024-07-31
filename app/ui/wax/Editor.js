@@ -43,6 +43,8 @@ const EditorWrapper = ({
   comments: savedComments,
   addComments,
   user,
+  bookMembers,
+  onMention,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -111,6 +113,8 @@ const EditorWrapper = ({
     setComments: () => {
       return savedComments || []
     },
+    userList: bookMembers,
+    getMentionedUsers: onMention,
   }
 
   useEffect(() => {
@@ -189,7 +193,9 @@ const EditorWrapper = ({
 
 EditorWrapper.defaultProps = {
   comments: [],
+  bookMembers: [],
   canInteractWithComments: null,
+  onMention: null,
 }
 
 export default EditorWrapper
