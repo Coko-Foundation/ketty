@@ -957,7 +957,7 @@ const ProducerPage = () => {
     addComments({
       variables,
     })
-  }, 2000)
+  }, 1000)
 
   // HANDLERS SECTION END
 
