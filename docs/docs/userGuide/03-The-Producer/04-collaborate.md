@@ -7,8 +7,6 @@ Share your book
 
 In the top-right of the Producer page, you will find the ‘Share’ button, this will open the modal to add collaborators.
 
-![](../../static/img/cdbc3f9b6604_medium.png)
-
 Only the **Book Owner** can manage book collaborators, other book collaborators can only view book permissions.
 
 To add someone as a collaborator on your book:
