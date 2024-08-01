@@ -1,9 +1,8 @@
 ---
-title: "Share and collaborate on a book"
+title: 'Share and collaborate on a book'
 ---
 
-Share your book
----------------
+## Share your book
 
 In the top-right of the Producer page, you will find the ‘Share’ button, this will open the modal to add collaborators.
 
@@ -11,12 +10,9 @@ Only the **Book Owner** can manage book collaborators, other book collaborators 
 
 To add someone as a collaborator on your book:
 
-*   Enter the person’s email address.
-    
-*   if the person has already signed up, you’ll see their name to select; alternatively, select the invite option.
-    
-*   Choose the level of access that the person should have: _can edit_ or _can view_, then select ‘Share’. An email invitation will be sent to the person.
-    
+- Enter the person’s email address.
+- if the person has already signed up, you’ll see their name to select; alternatively, select the invite option.
+- Choose the level of access that the person should have: _can edit_ or _can view_, then select ‘Share’. An email invitation will be sent to the person.
 
 ![Share your book with an existing user or invite to join by email](../../../static/img/1c984822987d_medium.png)
 
@@ -26,8 +22,7 @@ The book owner can change the type of access or remove a book collaborator using
 
 ![Change a collaborator’s access level or remove their access to the book](../../../static/img/419dc9c4d92a_medium.png)
 
-Collaborate on books
---------------------
+## Collaborate on books
 
 Ketty currently supports **asynchronous editing** on the individual chapter level. This means that only one person can edit a specific chapter at a time. This workflow is well-suited to teams who want to control their content creation and production in a step-by-step manner. When someone is working on a chapter their initials will display next to the chapter name, indicating that they have locked that chapter. Others will be able to read the chapter, but won’t be able to make changes at the same time to avoid conflicting edits.
 

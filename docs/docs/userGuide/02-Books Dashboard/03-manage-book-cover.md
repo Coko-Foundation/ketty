@@ -10,9 +10,8 @@ To replace an existing dashboard image, repeat the same upload process.
 
 ![Add or replace an image for your book](../../../static/img/add-cover.png)
 
-
 :::note
 
-If you want to print your book with a print-on-demand supplier, the supplier will request a cover that is created seperately from the interior of the book. The PDF export from Ketty includes the interior of the book. 
+If you want to print your book with a print-on-demand supplier, the supplier will request a cover that is created seperately from the interior of the book. The PDF export from Ketty includes the interior of the book.
 
 :::

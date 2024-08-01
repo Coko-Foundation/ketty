@@ -1,5 +1,5 @@
 ---
-title: "Manage Book Metadata"
+title: 'Manage Book Metadata'
 ---
 
 From the Producer page, you can access book metadata by clicking ‘Book Metadata’ in the left sidebar under the title of your book.
@@ -8,15 +8,13 @@ From the Producer page, you can access book metadata by clicking ‘Book Metadat
 
 The information you provide in the Book Metadata modal will be used in auto-generated epub and PDF previews and exports.
 
-Title page
-----------
+## Title page
 
 You can change the Title, Subtitle, and Authors.
 
 ![](../../../static/img/e39c161e459d_medium.png)
 
-Copyright page
---------------
+## Copyright page
 
 You can add multiple ISBNs to appear on your copyright page, each with its own label. This is useful when creating multiple different exports of your book which may require unique ISBNs.
 

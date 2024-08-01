@@ -1,13 +1,12 @@
 ---
-title: "Introduction"
+title: 'Introduction'
 ---
 
 Ketty is a modern book production system. It enables authoring, collaboration, proofing, copy editing, styling, formatting, reviews, automated typesetting, and multi-format export—all within a web browser.
 
 P.S. Just a small update for clarity: we've embraced 'Ketty'—a friendly nickname our Coko team has always used for the platform. This shift comes after hearing that the original name 'Ketida' posed pronunciation challenges for some in our community. Feel free to use either 'Ketty' or 'Ketida'; we'll know exactly what you mean!
 
-Why use Ketty?
---------------
+## Why use Ketty?
 
 Collaboration is integral to publishing. Authors, researchers, editors, proofreaders, designers, typesetters and production staff all work together to deliver content to the world. Unfortunately, legacy publishing workflows constrain collaboration with linear workflows, each stage of the publishing process is gate-kept by whomever is actively working on the documents at that time.
 
@@ -21,7 +20,6 @@ Consequently, Ketty offers independence from expensive, upgrade-driven systems. 
 
 Ketty is built to help Publishers both large and small.
 
-Ketty is continously evolving
------------------------------
+## Ketty is continously evolving
 
 Our team is actively expanding the features available in Ketty. Keep up-to-date by joining the [Ketty Forum](https://forum.ketty.community/), reviewing our [roadmap](https://miro.com/app/board/uXjVP89vFkc=/?share_link_id=340765697607) and getting in touch via the [Ketty Mattermost channel](https://mattermost.coko.foundation/coko/channels/ketty) or by email at ketty@coko.foundation.

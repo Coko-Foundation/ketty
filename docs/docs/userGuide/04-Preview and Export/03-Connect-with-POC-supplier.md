@@ -1,9 +1,8 @@
 ---
-title: "Connect a book with a POD supplier"
+title: 'Connect a book with a POD supplier'
 ---
 
-Save a POD export configurations 
---------------------------------
+## Save a POD export configurations
 
 When you have made any changes to the default preview configuration, you will see a ‘You have unsaved changes’ message. You need to save if you want to store your chosen configuration or connect to print-on-demand services.
 
@@ -15,7 +14,7 @@ When you click ‘Save’ you will be able to type in a name for your export con
 
 ## Connect to POD supplier
 
-Once you have saved, you will be able to connect to a print-on-demand supplier (currently Lulu is supported) if this has been enabled in your instance of Ketty. 
+Once you have saved, you will be able to connect to a print-on-demand supplier (currently Lulu is supported) if this has been enabled in your instance of Ketty.
 
 ![](../../../static/img/cb2050c0ab0e_medium.png)
 

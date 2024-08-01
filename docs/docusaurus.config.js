@@ -54,7 +54,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/Ketty social card.png',
       navbar: {
         title: 'Ketty',
         logo: {
@@ -108,7 +108,7 @@ const config = {
             items: [
               {
                 label: 'User guide',
-                to: '/docs/userGuide/01',
+                to: '/docs/userGuide/Getting Started/intro',
               },
               {
                 label: 'Developer guide',
