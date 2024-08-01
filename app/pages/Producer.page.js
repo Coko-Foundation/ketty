@@ -1086,10 +1086,14 @@ const ProducerPage = () => {
   const members = bookMembers
     ?.map(team => {
       if (team.members.length > 0) {
-        return team.members.map(member => ({
-          id: member.user.id,
-          displayName: member.user.displayName,
-        }))
+        return team.members.map(
+          member =>
+            member.status !== 'read' &&
+            member.user.id !== currentUser.id && {
+              id: member.user.id,
+              displayName: member.user.displayName,
+            },
+        )
       }
 
       return false
