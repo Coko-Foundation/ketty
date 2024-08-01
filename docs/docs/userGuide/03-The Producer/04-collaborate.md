@@ -18,7 +18,7 @@ To add someone as a collaborator on your book:
 
 ![Choose the relevant access level](../../../static/img/e490be6e3ee9_medium.png)
 
-The book owner can change the type of access or remove a book collaborator using the dropdown next to the person’s name.
+The Book Owner can change the type of access or remove a book collaborator using the dropdown next to the person’s name.
 
 ![Change a collaborator’s access level or remove their access to the book](../../../static/img/419dc9c4d92a_medium.png)
 
