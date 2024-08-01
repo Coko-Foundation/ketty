@@ -36,13 +36,7 @@ const config = {
         'Images',
         {
           name: 'Annotations',
-          exclude: [
-            'Code',
-            'SmallCaps',
-            'StrikeThrough',
-            'Subscript',
-            'Superscript',
-          ],
+          exclude: ['SmallCaps', 'StrikeThrough', 'Subscript', 'Superscript'],
         },
         // 'Tables',
         'SpecialCharacters',
@@ -68,13 +62,7 @@ const config = {
     }),
   ],
 
-  // CommentsService: {
-  //   showTitle: true,
-  //   // getComments,
-  //   // setComments: () => {
-  //   //   return comments
-  //   // },
-  // },
+  ImageService: { showAlt: true },
 
   services: [
     new CommentsService(),

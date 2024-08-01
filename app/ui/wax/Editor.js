@@ -39,9 +39,12 @@ const EditorWrapper = ({
   editorLoading,
   kbOn,
   editorKey,
+  canInteractWithComments,
   comments: savedComments,
   addComments,
   user,
+  bookMembers,
+  onMention,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -91,6 +94,16 @@ const EditorWrapper = ({
     }
   }
 
+  if (canInteractWithComments === false) {
+    const commentsServiceIndex = selectedConfig.services.findIndex(service =>
+      Object.prototype.hasOwnProperty.call(service, 'allCommentsFromStates'),
+    )
+
+    if (commentsServiceIndex !== -1) {
+      selectedConfig.services.splice(commentsServiceIndex, 1)
+    }
+  }
+
   selectedConfig.TitleService = {
     updateTitle: periodicTitleChanges,
   }
@@ -100,9 +113,9 @@ const EditorWrapper = ({
     setComments: () => {
       return savedComments || []
     },
+    userList: bookMembers,
+    getMentionedUsers: onMention,
   }
-
-  selectedConfig.ImageService = { showAlt: true }
 
   useEffect(() => {
     if (aiEnabled) {
@@ -160,7 +173,7 @@ const EditorWrapper = ({
     username: user.displayName,
   }
 
-  if (!selectedConfig) return null
+  if (!selectedConfig || canInteractWithComments === null) return null
 
   return (
     <Wax
@@ -180,6 +193,9 @@ const EditorWrapper = ({
 
 EditorWrapper.defaultProps = {
   comments: [],
+  bookMembers: [],
+  canInteractWithComments: null,
+  onMention: null,
 }
 
 export default EditorWrapper
