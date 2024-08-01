@@ -38,7 +38,7 @@ Refer to the The Producer section of this guide for step-by-step guidance on the
 
 ## Administration
 
-The Administration page is avaiable to users who have an admin role on a Ketty instance.
+The Administration page is available to users who have an admin role on a Ketty instance.
 
 From the Administration page you can configure certain aspects of the instance.
 
