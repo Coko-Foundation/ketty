@@ -14,7 +14,7 @@ From the Books Dashboard you can:
 * Delete a book
 * Manage a book's cover.
 
-Refer to the [Books Dashboard]() section of this guide for step-by-step guidance on these actions. 
+Refer to the [Books Dashboard](/docs/userGuide/02) section of this guide for step-by-step guidance on these actions. 
 
 ![The Books Dashboard](../../../static/img/dashboard.png)
 
@@ -32,7 +32,7 @@ From the Producer page you can:
 * Set the AI-use for a book
 * Access additional pages to preview and publish a book.
 
-Refer to the [The Producer]() section of this guide for step-by-step guidance on these actions. 
+Refer to the [The Producer](/docs/userGuide/03) section of this guide for step-by-step guidance on these actions. 
 
 ![The Producer](../../../static/img/producer.png)
 
@@ -42,4 +42,4 @@ The Administration page is avaiable to users who have an admin role on a Ketty i
 
 From the Administration page you can configure certain aspects of the instance.
 
-Refer to the [Administration]() section of this guide for step-by-step guidance on these actions.
+Refer to the [Administration](/docs/userGuide/06) section of this guide for step-by-step guidance on these actions.
