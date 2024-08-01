@@ -43,3 +43,5 @@ The Administration page is avaiable to users who have an admin role on a Ketty i
 From the Administration page you can configure certain aspects of the instance.
 
 Refer to the Administration section of this guide for step-by-step guidance on these actions.
+
+![The admin page](../../../static/img/admin-page.png)
