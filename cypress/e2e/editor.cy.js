@@ -294,7 +294,7 @@ describe('Book editor', () => {
     cy.contains('Book Metadata').should('not.exist')
 
     cy.contains('The heading 2 text', { timeout: 10000 }).should('exist')
-    cy.get('[data-name="FullScreen"]').click()
+    cy.get('button[title="Exit full screen"]').click()
     cy.contains('Book Metadata').should('exist')
   })
 })
