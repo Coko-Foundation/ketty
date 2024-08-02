@@ -172,7 +172,8 @@ describe('AI writing prompt is enabled', () => {
         cy.verifyAIPen(true)
 
         cy.contains('Untitled Chapter')
-        cy.get('.ProseMirror', { timeout: 10000 }).clear()
+        cy.wait(5000)
+        cy.get('.ProseMirror').clear()
         cy.usingAIPrompt()
       })
 
@@ -448,6 +449,7 @@ Cypress.Commands.add('usingAIPrompt', () => {
     .should('be.visible')
     .click()
 
+  cy.wait(2000)
   cy.contains('Add a paragraph').should('not.exist')
 })
 
