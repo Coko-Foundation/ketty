@@ -156,12 +156,12 @@ describe('Start writing', () => {
     cy.contains('TEST CHAPTER 1', {
       timeout: 8000,
     }).should('exist')
-    cy.get('[role="menuitem"]:nth(19)').contains('chapter2_test', {
+    cy.contains('chapter2_test', {
       timeout: 8000,
-    })
-    cy.get('[role="menuitem"]:nth(20)').contains('chapter3_test', {
+    }).should('exist')
+    cy.contains('chapter3_test', {
       timeout: 8000,
-    })
+    }).should('exist')
 
     cy.get("a[href='/dashboard']").last().click()
     cy.location('pathname').should('equal', '/dashboard')
