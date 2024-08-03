@@ -2,6 +2,11 @@
 title: 'Connect a book with a POD supplier'
 ---
 
+:::note
+Only Book Owners can save export profiles or connect to print-on-demand services. 
+:::
+
+
 ## Save a POD export configurations
 
 When you have made any changes to the default preview configuration, you will see a ‘You have unsaved changes’ message. You need to save if you want to store your chosen configuration or connect to print-on-demand services.
@@ -25,6 +30,7 @@ Once you choose ‘Connect to Lulu’ and log in to the print-on-demand supplier
 Once uploaded, a message to indicate that the export has been synced successfully will appear. A button to open that export on the relevant supplier website will also appear.
 
 ![](../../../static/img/2ff66c8092a4_medium.png)
+
 
 ## Sync changes with a POD supplier
 

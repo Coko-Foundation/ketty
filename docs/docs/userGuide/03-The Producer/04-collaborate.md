@@ -1,8 +1,8 @@
 ---
-title: 'Share and collaborate on a book'
+title: 'Collaborate on a book'
 ---
 
-## Share your book
+## Share your book with collaborators
 
 In the top-right of the Producer page, you will find the ‘Share’ button, this will open the modal to add collaborators.
 
@@ -22,14 +22,34 @@ The Book Owner can change the type of access or remove a book collaborator using
 
 ![Change a collaborator’s access level or remove their access to the book](../../../static/img/419dc9c4d92a_medium.png)
 
-## Collaborate on books
+## Collaborators with edit access
 
-Ketty currently supports **asynchronous editing** on the individual chapter level. This means that only one person can edit a specific chapter at a time. This workflow is well-suited to teams who want to control their content creation and production in a step-by-step manner. When someone is working on a chapter their initials will display next to the chapter name, indicating that they have locked that chapter. Others will be able to read the chapter, but won’t be able to make changes at the same time to avoid conflicting edits.
+Collaborators with _edit access_ can: 
 
-### Collaborators with edit or view access
+* edit the book’s content and metadata
+* make respond to comments
+* view export previews
+* download PDF or Epub files. 
 
-Collaborators with _edit access_ can edit the book’s content and metadata, view export previews, and download PDF or Epub files, but they cannot save export profiles or connect to print-on-demand services. Collaborators with _view access_ cannot edit the book’s content and metadata, download PDF or Epub files, save export profiles, or connect to print-on-demand services, but they can view export previews.
+### Collaborating with asynchronous editing
+
+Ketty currently supports **asynchronous editing** on the individual chapter level. This means that only one person can edit a specific chapter at a time. This workflow is well-suited to teams who want to control their content creation and production in a step-by-step manner which still having open collaboration. 
+
+Asynchronous editing in Ketty functions as follows:  
+
+- One collaborator can edit a chapter at a time.
+- Other collaborators can view a chapter that is currently being edited by other collaborator. 
+- Other collaborators can make and respond to comments on a chapter that is currently being edited by other collaborator. 
+
+To make this collaboration process clear, the chapter list shows who has edit acccess on a chapter at any one time by showing initials next to the chapter name. 
 
 ![The initials next to the first chapter title indicate the user who is currently editing the chapter.](../../../static/img/06d9a56a741e_medium.png)
 
-Keep an eye on the [Ketty Roadmap](https://miro.com/app/board/uXjVP89vFkc=/?share_link_id=271170804884) as we’ll soon be introducing **synchronous (concurrent) editing** which means multiple collabrators with edit-access can edit the same chapter at the same time. Both asynchronous and synchronous editing will be supported in Ketty so that teams can choose the workflow that suits their book project.
+
+## Collaborators with view access
+
+Collaborators with _view access_ can: 
+
+* view the book’s content and metadata
+* view export previews.
+
