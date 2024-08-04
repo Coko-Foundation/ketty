@@ -1,5 +1,5 @@
 ---
-title: 'Mange Book Settings'
+title: 'Manage Book Settings'
 ---
 
 The **Book Owner** can control certain aspects of a book. Currently, the book settings are limited to managing AI use.
