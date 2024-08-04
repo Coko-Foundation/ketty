@@ -15,7 +15,6 @@ In the toolbar the following tools are available (from left to right):
 - **Undo (left arrow):** used to undo a change
 - **Redo (right arrow):** used to redo a change that was undone
 - **Text styles:** including heading levels (title, heading 2, heading 3) and paragraph text.
-
 - **Blockquote:** indent text to show quoted text.
 - **Ordered (numbered) list:** two levels of lists can be created. _Tip:_ to create a nested list, select the list item you want to nest, then click the ordered list button again.
 - **Unordered (bulleted) list:** two levels of lists can be created. _Tip:_ to create a nested list, select the list item you want to nest, then click the ordered list button again.
@@ -23,6 +22,7 @@ In the toolbar the following tools are available (from left to right):
 - **Upload image:** to upload an image, place your cursor in the position you want the image to appear, and click the upload image icon.
 - **Bold:** to apply bold to text
 - **Italic:** to apply emphasis to text
+- **Inline code** to apply style to lines of code so that it's differentiated from paragraph text. 
 - **Hyperlink:** enter your link in the input field and click Apply. _Tip:_ links should be valid and include ‘https://’ to produce valid epubs.
 - **Underline:** to apply underline to text
 - **Special characters:** to insert a special character, place your cursor in the position you want it inserted, then click the special characters icon. Browse or search in the menu to find the character, then select it. The selected character will be inserted by your cursor.

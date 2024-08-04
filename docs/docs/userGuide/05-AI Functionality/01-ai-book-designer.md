@@ -6,7 +6,7 @@ The Coko Foundation is leading the way in AI-assisted book design functionality 
 
 ## Access the AI Book Designer
 
-The book owner can choose when this beta feature can be used by going to the book’s settings.
+The Book Owner can choose when this beta feature can be used by going to the book’s settings.
 
 - **Enable the AI Book Designer:** open Book Settings (cog icon) and turn on the ‘AI Book Designer (Beta)’ setting. This provides access to the page from the top navigation bar of your book.
 - **Disable the AI Book Designer:** open Book Settings (cog icon) and turn off the ‘AI Book Designer (Beta)’ setting. This removes access to the page from the top navigation bar of your book.

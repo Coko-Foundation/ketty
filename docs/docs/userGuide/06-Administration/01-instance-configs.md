@@ -17,9 +17,9 @@ Ketty provides an AI writing assistant and AI Book Designer (Beta). To access an
 
 ## Print-On-Demand Integration
 
-Ketty can be integrated with Print-on-demand suppliers so that you can order your printed book directly from the application. Currently, Ketty integrates with [Lulu](https://www.lulu.com/), which enables book owners to publish, print, and sell their books internationally with Lulu’s Print-on-demand network. This feature can be enabled or disabled at any time.
+Ketty can be integrated with Print-on-demand suppliers so that you can order your printed book directly from the application. Currently, Ketty integrates with [Lulu](https://www.lulu.com/), which enables Book Owners to publish, print, and sell their books internationally with Lulu’s Print-on-demand network. This feature can be enabled or disabled at any time.
 
-When an Admin has turned on ‘Lulu’ this gives book owners the ability to sync their Ketty account with their Lulu account.
+When an Admin has turned on ‘Lulu’ this gives Book Owners the ability to sync their Ketty account with their Lulu account.
 
 ## Sign-up Terms and Conditions
 

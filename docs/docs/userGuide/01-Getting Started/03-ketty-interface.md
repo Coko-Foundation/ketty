@@ -2,7 +2,7 @@
 title: 'The Ketty Interface'
 ---
 
-There are three primary interfaces in Ketty.
+There are four primary interfaces in Ketty.
 
 ## Books Dashboard
 
@@ -14,7 +14,7 @@ From the Books Dashboard you can:
 - Delete a book
 - Manage a book's cover.
 
-Refer to the Books Dashboard section of this guide for step-by-step guidance on these actions.
+Refer to the 'Books Dashboard' section of this guide for step-by-step guidance on these actions.
 
 ![The Books Dashboard](../../../static/img/dashboard.png)
 
@@ -32,9 +32,25 @@ From the Producer page you can:
 - Set the AI-use for a book
 - Access additional pages to preview and publish a book.
 
-Refer to the The Producer section of this guide for step-by-step guidance on these actions.
+Refer to 'The Producer' section of this guide for step-by-step guidance on these actions.
 
 ![The Producer](../../../static/img/producer.png)
+
+
+## Preview and publish
+
+The preview page shows the rendered output of your book and provides the next step actions to: 
+
+- Change the layout template
+- Download a PDF
+- Download an epub
+- Connent with a print-on-demand supplier.
+
+Refer to the 'Preview and Publish' section of this guide for step-by-step guidance on these actions.
+
+![Preview with sidebar closed](../../../static/img/preview-sidebar-closed.png)
+
+![Preview with sidebar open](../../../static/img/preview-sidebar-open.png)
 
 ## Administration
 
@@ -42,6 +58,6 @@ The Administration page is available to users who have an admin role on a Ketty 
 
 From the Administration page you can configure certain aspects of the instance.
 
-Refer to the Administration section of this guide for step-by-step guidance on these actions.
+Refer to the 'Administration' section of this guide for step-by-step guidance on these actions.
 
 ![The admin page](../../../static/img/admin-page.png)
