@@ -41,9 +41,21 @@ Asynchronous editing in Ketty functions as follows:
 - Other collaborators can view a chapter that is currently being edited by other collaborator. 
 - Other collaborators can make and respond to comments on a chapter that is currently being edited by other collaborator. 
 
-To make this collaboration process clear, the chapter list shows who has edit acccess on a chapter at any one time by showing initials next to the chapter name. 
+To make this collaboration process clear, the chapter list shows who has edit access on a chapter at any one time by showing the user's initials next to the chapter name. We refer to this as a **chapter lock**. 
 
-![The initials next to the first chapter title indicate the user who is currently editing the chapter.](../../../static/img/06d9a56a741e_medium.png)
+![The initials next to the first chapter title indicate the user who is currently editing the chapter.](../../../static/img/06d9a56a741e_medium.png). 
+
+To release a chapter lock: 
+
+* Click on the chapter title that shows your initials. This will deselect the chapter and make it available for editing to all other collaborators with edit access.
+* Alternatively, close the browser tab which has the chapter open. 
+
+A chapter lock will automatically release if the chapter is open and inactive in a broswer tab for a 24 hour period. 
+
+:::note
+
+Refer to the [Locks](https://docs.ketty.community/docs/developerGuide/Locks) section of the Developer Guide for the techinical description.
+:::
 
 
 ## Collaborators with view access
