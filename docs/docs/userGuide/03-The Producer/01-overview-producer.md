@@ -26,6 +26,6 @@ The **editor** includes:
 - the space where you'll write your content
 - the toolbar that you'll use to format your content.
 
-Refer to the [Editing tools] section for futher details.
+Refer to the Editing tools section for futher details.
 
 ![The Producer page](../../../static/img/producer.png)

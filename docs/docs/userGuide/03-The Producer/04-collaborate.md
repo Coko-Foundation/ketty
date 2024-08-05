@@ -33,7 +33,7 @@ Collaborators with _edit access_ can:
 
 ### Collaborating with asynchronous editing
 
-Ketty currently supports **asynchronous editing** on the individual chapter level. This means that only one person can edit a specific chapter at a time. This workflow is well-suited to teams who want to control their content creation and production in a step-by-step manner which still having open collaboration. 
+Ketty currently supports **asynchronous editing** on the individual chapter level. This means that only one person can edit a specific chapter at a time. This workflow is well-suited to teams who want to control their content creation and production in a step-by-step manner while still supporting open collaboration. 
 
 Asynchronous editing in Ketty functions as follows:  
 
@@ -50,7 +50,7 @@ To release a chapter lock:
 * Click on the chapter title that shows your initials. This will deselect the chapter and make it available for editing to all other collaborators with edit access.
 * Alternatively, close the browser tab which has the chapter open. 
 
-A chapter lock will automatically release if the chapter is open and inactive in a broswer tab for a 24 hour period. 
+A chapter lock will automatically release if the chapter is open in a broswer tab and the tab is inactive for a 24-hour period. 
 
 :::note
 
