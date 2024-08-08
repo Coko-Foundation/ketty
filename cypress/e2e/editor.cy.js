@@ -29,6 +29,11 @@ describe('Book editor', () => {
           element: 'blockquote',
           content: bookContent['block-quote'],
         },
+        {
+          button: "[title='Toggle code']",
+          element: 'code',
+          content: bookContent['code-block'],
+        },
       ]
       listItems = ['item1', 'item2', 'item3']
       levels = [
@@ -157,6 +162,7 @@ describe('Book editor', () => {
   it('Checking lifting out of enclosing blocks', () => {
     // adding a code block
     cy.get('.ProseMirror').should('be.visible')
+    cy.wait(3000)
     cy.get('.ProseMirror').type(`This is an enclosed block`, { delay: 100 })
     cy.get("[title='Change to Block Quote']").click()
 
