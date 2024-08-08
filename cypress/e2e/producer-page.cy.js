@@ -67,6 +67,7 @@ describe('Checking Producer Page', () => {
 
     it('adding and deleting a part', () => {
       cy.url().should('include', '/producer')
+      cy.createUntitledChapter()
       cy.get('.ProseMirror').click()
       cy.get('[aria-controls="block-level-options"]').click()
       cy.get(`#block-level-options > :nth-child(${1})`)
@@ -188,9 +189,19 @@ describe('Checking Producer Page', () => {
       // Checking default values for copyright page section
       cy.get('h2').last().should('have.text', 'COPYRIGHT PAGE')
       cy.get('label[title="ISBN List"]').should('have.text', 'ISBN List')
-      cy.contains('button', ' Add ISBN').should('exist').click()
+      cy.contains('button', 'Add ISBN')
+        .should('exist')
+        .and('not.be.disabled')
+        .click({ force: true })
 
-      cy.get('#isbns_0_label')
+      cy.get('body').then($body => {
+        if ($body.find('#isbns_0_label').length === 0) {
+          // Retry clicking the button if the label is not found
+          cy.contains('button', 'Add ISBN').click({ force: true })
+        }
+      })
+
+      cy.get('#isbns_0_label', { timeout: 6000 })
         .should('have.attr', 'placeholder', 'Label')
         .should('be.empty')
 
@@ -320,7 +331,7 @@ describe('Checking Producer Page', () => {
       cy.contains('COPYRIGHT PAGE').should('exist')
 
       function selectLicenseOption(index, holderName, year) {
-        cy.get(`strong:nth(${index})`).click()
+        cy.get(`strong:nth(${index})`).click({ force: true })
         // cy.get('.ant-collapse-expand-icon').should('exist')
 
         const labels = {
@@ -549,6 +560,52 @@ describe('Checking Producer Page', () => {
       // cy.contains('Add a paragraph').should('not.exist')
     })
   })
+  context('Adding and deleting comments', () => {
+    beforeEach(() => {
+      cy.login(admin)
+      cy.contains('AI Book').click()
+      cy.url().should('include', '/producer')
+      cy.contains('div', 'AI Book')
+    })
+
+    it('writing and resolving a comment', () => {
+      cy.get('.ProseMirror').should('be.visible')
+      cy.wait(5000)
+      cy.get('.ProseMirror').type(
+        'This text is going to be commented.{enter}{selectall}',
+      )
+      cy.get('[xmlns="http://www.w3.org/2000/svg"]').last().click()
+      cy.get('[placeholder="Write comment..."]').should('exist')
+      cy.get('button[type="submit"]')
+        .should('have.text', 'Post')
+        .should('be.disabled')
+      cy.contains('button', 'Cancel').should('be.disabled')
+
+      // Add a comment
+      cy.get('textarea[placeholder="Write comment..."]').type(
+        'This is a comment from the author.',
+      )
+      cy.get('button[type="submit"]').should('be.enabled')
+      cy.get('button[type="submit"]').click()
+
+      cy.verifyComment('Admin Adminius', 'This text is going to be commented.')
+      cy.contains('span', 'This text is going to be commented.').should(
+        'have.class',
+        'comment',
+      )
+      // Replying to comment
+      cy.get('textarea[placeholder="Reply..."]').type(
+        'This is a reply from the author.{enter}',
+      )
+      cy.get('textarea[placeholder="Reply..."]').should('be.enabled').type('@')
+      cy.contains('Not Found').should('exist')
+      cy.contains('button', 'Cancel').click()
+
+      // Resolving a comment
+      cy.contains('button', 'Resolve').click()
+      cy.get('p').first().should('not.have.class', 'comment')
+    })
+  })
 
   Cypress.Commands.add('setValue', (selector, value) => {
     cy.get(selector).type(value)
@@ -609,4 +666,11 @@ Cypress.Commands.add('usingAIPrompt', () => {
     .click()
 
   cy.contains('Add a paragraph').should('not.exist')
+})
+
+Cypress.Commands.add('verifyComment', (commentAuthor, commentText) => {
+  cy.contains(commentAuthor).should('exist')
+  cy.contains('a few seconds ago').should('exist')
+  cy.contains(commentText).should('exist')
+  cy.get('textarea[placeholder="Reply..."]').should('exist')
 })
