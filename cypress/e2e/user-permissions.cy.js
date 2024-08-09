@@ -184,6 +184,9 @@ describe('Checking permissions for dashboard', () => {
       cy.wait(8000)
       cy.canUseWaxToolbar('author', 'not.have.attr')
 
+      cy.log('Author can comment, reply, mention someone and resolve comment.')
+      cy.canComment('author', 'Collaborator 1')
+
       // Upload a chapter
       // Reorder chapters
 
@@ -191,7 +194,7 @@ describe('Checking permissions for dashboard', () => {
       cy.deleteChapter('Untitled Chapter')
 
       cy.log('Author can access Metadata')
-      cy.contains('button', 'Book Metadata').click()
+      cy.contains('button', 'Book Metadata', { timeout: 6000 }).click()
 
       cy.log('Author can edit Metadata')
       cy.canEditMetadata('author', 'not.have.attr')
@@ -218,6 +221,11 @@ describe('Checking permissions for dashboard', () => {
       cy.wait(8000)
       cy.canUseWaxToolbar('COLLABORATOR with EDIT access', 'not.have.attr')
 
+      cy.log(
+        'COLLABORATOR with EDIT access can comment, reply, mention someone and resolve comment.',
+      )
+      cy.canComment('COLLABORATOR with EDIT access', 'Author 1')
+
       // Upload a chapter
       // Reorder chapters
 
@@ -229,7 +237,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         'COLLABORATOR with EDIT access can access Metadata in the book he/she is collaborator.',
       )
-      cy.contains('button', 'Book Metadata').click()
+      cy.contains('button', 'Book Metadata', { timeout: 6000 }).click()
 
       cy.log(
         'COLLABORATOR with EDIT access can edit Metadata in the book he/she is collaborator.',
@@ -268,6 +276,11 @@ describe('Checking permissions for dashboard', () => {
       )
       cy.canUseWaxToolbar('COLLABORATOR with VIEW access', 'have.attr')
 
+      cy.log(
+        'COLLABORATOR with VIEW access can NOT comment or read comments in the book he/she is collaborator.',
+      )
+      cy.get('[xmlns="http://www.w3.org/2000/svg"]:nth(16)').should('not.exist')
+
       // Upload a chapter
       // Reorder chapters
 
@@ -283,7 +296,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         'COLLABORATOR with VIEW access can access Metadata in the book he/she is collaborator.',
       )
-      cy.contains('button', 'Book Metadata').click()
+      cy.contains('button', 'Book Metadata', { timeout: 6000 }).click()
 
       cy.log(
         'COLLABORATOR with VIEW access can NOT edit Metadata in the book he/she is collaborator.',
@@ -441,11 +454,8 @@ Cypress.Commands.add('canUseWaxToolbar', (user, disabledStatus) => {
   }
 
   // Everyone can click Find and Replace
-  cy.get('button[title="Find And Replace"]').click()
-  // Something more about Find and replace
   cy.get('button[title="Find And Replace"]').should('have.not.attr', 'disabled')
-  cy.get('button[title="Find And Replace"]').click()
-  // Not everyone can click more though: check manually
+  // Not everyone can click "more" though: check manually
 
   // Everyone can click full screen
   cy.get('button[title="Full screen"]').should('have.not.attr', 'disabled')
@@ -470,6 +480,37 @@ Cypress.Commands.add('deleteChapter', chapterTitle => {
   // cy.contains(
   //   'Create or select a chapter in the chapters panel to start writing',
   // ).should('exist')
+})
+
+Cypress.Commands.add('canComment', (user, mentionUser) => {
+  // Adding a comment
+  cy.get('.ProseMirror').type(
+    '{enter}This text is going to be commented.{enter}{selectall}',
+  )
+  cy.get('[xmlns="http://www.w3.org/2000/svg"]').last().click()
+  cy.get('textarea[placeholder="Write comment..."]').should('exist')
+  // eslint-disable-next-line
+  cy.get('textarea[placeholder="Write comment..."]')
+    .focus()
+    .type(`This is a comment from the  ${user}.{enter}`)
+
+  cy.contains('span', 'This text is going to be commented.').should(
+    'have.class',
+    'comment',
+  )
+
+  // Replying to comments
+  cy.get('textarea[placeholder="Reply..."]').type(
+    `This is a reply from the ${user}.{enter}`,
+  )
+  // Mention someone in a comment
+  cy.get('textarea[placeholder="Reply..."]').should('be.enabled').type('@')
+  cy.contains(`${mentionUser}`).should('exist')
+  cy.contains('button', 'Cancel').click()
+
+  // Resolving a comment
+  cy.contains('button', 'Resolve').click()
+  cy.get('p').first().should('not.have.class', 'comment')
 })
 
 Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {

@@ -667,7 +667,6 @@ Cypress.Commands.add('usingAIPrompt', () => {
 
   cy.contains('Add a paragraph').should('not.exist')
 })
-
 Cypress.Commands.add('verifyComment', (commentAuthor, commentText) => {
   cy.contains(commentAuthor).should('exist')
   cy.contains('a few seconds ago').should('exist')

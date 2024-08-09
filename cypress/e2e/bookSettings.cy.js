@@ -445,12 +445,13 @@ Cypress.Commands.add('usingAIPrompt', () => {
     .should('be.visible')
     .type('Replace this with a similiar sentence {enter}')
 
+  cy.wait(6000)
   cy.contains('Replace selected text', { timeout: 10000 })
     .should('be.visible')
     .click()
 
-  cy.wait(2000)
-  cy.contains('Add a paragraph').should('not.exist')
+  // cy.wait(6000)
+  cy.contains('Add a paragraph', { timeout: 10000 }).should('not.exist')
 })
 
 Cypress.Commands.add('useCustomizedPrompt', () => {
