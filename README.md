@@ -20,4 +20,4 @@ If you're stuck or want to report a bug, you can reach out to us at the [Ketty H
 
 ## Install and deploy
 
-Refer to the [Ketty Developer Docs](https://devdocs.ketty.community/)
+Refer to the [Ketty Docs](https://docs.ketty.community/)
