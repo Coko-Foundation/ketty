@@ -1,7 +1,7 @@
 ## Setting up required services
 
 :::note
-This guide is for deploying Ketty (v2) in production. Refer to [Repositories & Setup](docs/docs/developerGuide/01-Repositories & Setup.md) to build Ketty (v2) or Editoria (v1) locally.
+This guide is for deploying Ketty (v2) in production. Refer to [Repositories & Setup](https://docs.ketty.community/docs/developerGuide/Repositories%20&%20Setup) to build Ketty (v2) or Editoria (v1) locally.
 :::
 
 There are a few things that need to be up and running before running the app:
