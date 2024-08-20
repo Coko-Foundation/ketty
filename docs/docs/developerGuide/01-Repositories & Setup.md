@@ -7,10 +7,7 @@ Link: https://gitlab.coko.foundation/ketty/server
 
 ### Ketty clients
 
-
 :::note
-#### Client versions
-
 Ketty client evolved from its predecessor, Editoria. We will continue to support Editoria until all the necessary features have been transferred to Ketty, however new features will only be merged for Ketty client. 
 :::
 
