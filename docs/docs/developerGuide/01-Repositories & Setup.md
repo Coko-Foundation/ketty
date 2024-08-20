@@ -7,15 +7,24 @@ Link: https://gitlab.coko.foundation/ketty/server
 
 ### Ketty clients
 
-**Editoria** (also mentioned as “v1” or “editoria”)  
+
+:::note
+#### Client versions
+
+Ketty client evolved from its predecessor, Editoria. We will continue to support Editoria until all the necessary features have been transferred to Ketty, however new features will only be merged for Ketty client. 
+:::
+
+**Ketty client** (also mentioned as "v2" or “Lulu” or “POD” - print on demand)  
+The current client — this is maintained and new features are released every month.
+Link: https://gitlab.coko.foundation/ketty/ketty  
+
+
+**Editoria** (also mentioned as “v1”) 
+The previous client — this is only maintained.
 Link https://gitlab.coko.foundation/ketty/editoria
 
 **OEN**  
-Essentially the same as Editoria, but with book structure enabled, and docx uploads disabled (both controlled via environment variables). The only feature that OEN introduces compared to v1 is the book wizard (and the corresponding book structure property in the book model). This is part of the same repo as Editoria.
-
-**Ketty client** (also mentioned as "v2" or “Lulu” or “POD” - print on demand)  
-Link: https://gitlab.coko.foundation/ketty/ketty  
-The current client
+Essentially the same as Editoria, but with book structure enabled, and docx uploads disabled (both controlled via [environment variables](docs/docs/developerGuide/04-Environment Variables.md)). The only feature that OEN introduces compared to v1 is the open textbook planner (and the corresponding book structure property in the book model). This is part of the same repo as Editoria.
 
 ## Microservices
 
@@ -71,7 +80,7 @@ Both the file server and the microservices are handled by the corresponding comp
 
 ## Published images
 
-The following images are published on dockerhub:
+The following images are published on [cokoapps dockerhub](https://hub.docker.com/u/cokoapps):
 
 - Ketty server
 - Ketty client
