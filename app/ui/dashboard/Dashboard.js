@@ -70,7 +70,7 @@ const Dashboard = props => {
     <Wrapper>
       <SectionHeader>
         <h1>Your books</h1>
-        <StyledLink to="/create-book">
+        <StyledLink to="/create-book" data-test="dashboard-newBook-button">
           <span>
             <EditOutlined />
           </span>

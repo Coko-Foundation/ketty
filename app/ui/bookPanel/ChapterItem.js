@@ -313,11 +313,12 @@ const ChapterItem = forwardRef(
             <ChapterTitle
               data-status={status}
               onClick={() => onChapterClick(id)}
+              data-test="producer-chapterTitle"
             >
               {!uploading ? title || 'Untitled Chapter' : 'Processing'}
             </ChapterTitle>
             {lock ? (
-              <UserAvatar>
+              <UserAvatar data-test="producer-userAvatar">
                 {getInitials(`${lock.givenNames} ${lock.surname}`)}
               </UserAvatar>
             ) : null}
@@ -329,6 +330,7 @@ const ChapterItem = forwardRef(
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   onKeyUp={e => e.key === 'Enter' && e.stopPropagation()}
                   tabIndex={focused ? 0 : -1}
+                  data-test="producer-more-btn"
                 >
                   <MoreOutlined />
                 </MoreActions>
@@ -352,6 +354,7 @@ const ChapterItem = forwardRef(
                 <Button
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
+                  data-test="producer-deleteChapter"
                 >
                   Delete
                 </Button>

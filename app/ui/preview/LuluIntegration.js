@@ -55,7 +55,11 @@ const LuluIntegration = props => {
     <Wrapper className={className}>
       {!isConnected && canUploadToProvider && (
         <div>
-          <Button onClick={onClickConnect} type="primary">
+          <Button
+            onClick={onClickConnect}
+            type="primary"
+            data-test="preview-connectLulu-btn"
+          >
             Connect to Lulu
           </Button>
         </div>

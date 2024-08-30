@@ -252,6 +252,7 @@ const SettingsModal = ({
           checked={isAiOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={toggleAiOn}
+          data-test="settings-toggleAI-switch"
         />
       </SettingsWrapper>
 
@@ -266,6 +267,7 @@ const SettingsModal = ({
                 checked={isFreeTextPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleFreePromptSwitch(e)}
+                data-test="settings-freeTextPrompt-switch"
               />
             </SettingsWrapper>
 
@@ -277,6 +279,7 @@ const SettingsModal = ({
                 checked={isCustomPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleCustomPromptsSwitch(e)}
+                data-test="settings-customPrompt-switch"
               />
 
               {isCustomPromptsOn && (
@@ -342,6 +345,7 @@ const SettingsModal = ({
           checked={isAiPdfOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => setIsAiPdfOn(e)}
+          data-test="settings-AIDesigner-switch"
         />
       </SettingsWrapper>
 
@@ -358,6 +362,7 @@ const SettingsModal = ({
           checked={isKnowledgeBaseOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleKnowledgeBase(e)}
+          data-test="settings-kb-switch"
         />
       </SettingsWrapper>
       <ButtonsContainer>
@@ -367,6 +372,7 @@ const SettingsModal = ({
           loading={updateLoading}
           onClick={handleUpdateBookSettings}
           type="primary"
+          data-test="settings-save-btn"
         >
           Save
         </StyledButton>
@@ -375,6 +381,7 @@ const SettingsModal = ({
           disabled={updateLoading}
           htmlType="reset"
           onClick={closeModal}
+          data-test="settings-cancel-btn"
         >
           Cancel
         </StyledButton>

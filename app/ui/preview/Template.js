@@ -104,7 +104,7 @@ const Template = props => {
       />
 
       <Name selected={isSelected}>
-        <span>{name}</span>
+        <span data-test="preview-templateName">{name}</span>
       </Name>
     </Wrapper>
   )
