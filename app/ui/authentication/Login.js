@@ -46,6 +46,7 @@ const Login = props => {
               placeholder="Please enter your email"
               prefix={<UserOutlined className="site-form-item-icon" />}
               type="email"
+              data-test="login-email-input"
             />
           </Form.Item>
 
@@ -59,6 +60,7 @@ const Login = props => {
               placeholder="Please enter your password"
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
+              data-test="login-password-input"
             />
           </Form.Item>
         </AuthenticationForm>

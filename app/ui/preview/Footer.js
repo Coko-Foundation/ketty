@@ -167,6 +167,7 @@ const Footer = props => {
             loading={updateLoading}
             onClick={handleClickSave}
             type="primary"
+            data-test="preview-save-btn"
           >
             Save
           </Button>
@@ -178,6 +179,7 @@ const Footer = props => {
           icon={<DownloadOutlined />}
           loading={downloadLoading}
           onClick={handleClickDownload}
+          data-test="preview-download-btn"
         >
           Download
         </Button>
@@ -190,6 +192,7 @@ const Footer = props => {
             loading={deleteLoading}
             onClick={handleClickDelete}
             status="danger"
+            data-test="preview-delete-btn"
           >
             Delete
           </Button>
@@ -208,6 +211,7 @@ const Footer = props => {
           onKeyDown={handleInputKeyDown}
           ref={inputRef}
           value={createInput}
+          data-test="preview-exportName-input"
         />
       </Modal>
     </Wrapper>

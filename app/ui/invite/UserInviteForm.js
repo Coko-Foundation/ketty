@@ -74,6 +74,7 @@ const UserInviteForm = ({ form, fetchOptions, onInvite, canChangeAccess }) => {
             disabled={noAvailableUsers || !canChangeAccess}
             htmlType="submit"
             type="primary"
+            data-test="modal-share-btn"
           >
             Share
           </Button>

@@ -130,6 +130,7 @@ const ExportOptionsSection = props => {
           onChange={handleExportFormatChange}
           options={exportFormatOptions}
           value={selectedFormat}
+          data-test="preview-format"
         />
       </ExportOption>
 
@@ -141,6 +142,7 @@ const ExportOptionsSection = props => {
             onChange={handleSizeChange}
             options={exportSizeOptions}
             value={selectedSize}
+            data-test="preview-size"
           />
         </ExportOption>
       )}
@@ -171,6 +173,7 @@ const ExportOptionsSection = props => {
           placeholder="Please select"
           showSearch={false}
           value={selectedContent}
+          data-test="preview-content"
         />
       </ExportOption>
 

@@ -145,6 +145,7 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                 disabled={!canChangeMetadata}
                 onClick={() => add()}
                 type="dashed"
+                data-test="metadata-addIsbn-btn"
               >
                 <PlusOutlined /> Add{fields.length < 1 ? '' : ' Another'} ISBN
               </Button>

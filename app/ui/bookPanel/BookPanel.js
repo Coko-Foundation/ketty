@@ -112,11 +112,14 @@ const BookPanel = props => {
 
   return (
     <LeftPanelWrapper className={className}>
-      <TitleArea>{title || 'Untitled Book'}</TitleArea>
+      <TitleArea data-test="producer-bookTitle">
+        {title || 'Untitled Book'}
+      </TitleArea>
       <MetadataArea>
         <StyledModalButton
           onClick={() => setMetadataModalOpen(true)}
           type="text"
+          data-test="producer-metadata-btn"
         >
           Book Metadata
         </StyledModalButton>
@@ -149,6 +152,7 @@ const BookPanel = props => {
               onClick={onAddChapter}
               title="Create a chapter"
               type="text"
+              data-test="producer-createChapter-btn"
             />
           </ChaptersActions>
         </ChaptersHeader>

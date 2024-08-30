@@ -137,6 +137,7 @@ const AdminDashboard = props => {
           checked={aiEnabled}
           loading={paramsLoading}
           onChange={aiToggleIntegration}
+          data-test="admindb-ai-switch"
         />
         <ChatGPTAPIKeyWrapper $hidden={!aiEnabled}>
           <Form
@@ -151,10 +152,14 @@ const AdminDashboard = props => {
               name="apiKey"
               rules={[{ required: true, message: 'You need to provide a key' }]}
             >
-              <Input placeholder="Insert key" />
+              <Input placeholder="Insert key" data-test="admindb-aikey-input" />
             </Form.Item>
             <div>
-              <Button htmlType="submit" loading={keyUpdateResult?.loading}>
+              <Button
+                htmlType="submit"
+                loading={keyUpdateResult?.loading}
+                data-test="admindb-updateKey-btn"
+              >
                 Update key
               </Button>
               <UpdateResult $success={keyUpdateResult?.success} role="status">
@@ -182,6 +187,7 @@ const AdminDashboard = props => {
           checked={luluConfigEnabled}
           loading={paramsLoading}
           onChange={luluToggleConfig}
+          data-test="admindb-lulu-switch"
         />
       </StyledControlWrapper>
       <Divider />
@@ -200,7 +206,10 @@ const AdminDashboard = props => {
           value={termsAndConditions}
         />
         <div>
-          <Button onClick={udpateTermsAndConditions}>
+          <Button
+            onClick={udpateTermsAndConditions}
+            data-test="admindb-updateT&C-btn"
+          >
             Update Terms and Conditions
           </Button>
           <UpdateResult $success={tcUpdateResult?.success} role="status">

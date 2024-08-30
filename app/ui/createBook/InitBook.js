@@ -155,6 +155,7 @@ const InitBook = props => {
                   onClick={handleCreateBook}
                   size="large"
                   type="primary"
+                  data-test="createBook-startWriting-button"
                 >
                   Start writing
                 </StyledButton>
@@ -173,6 +174,7 @@ const InitBook = props => {
                   onClick={handleImportBook}
                   size="large"
                   type="primary"
+                  data-test="createBook-selectFiles-button"
                 >
                   Select files
                 </StyledButton>
