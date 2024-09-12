@@ -19,11 +19,15 @@ When you click ‘Save’ you will be able to type in a name for your export con
 
 ## Connect to POD supplier
 
-Once you have saved, you will be able to connect to a print-on-demand supplier (currently Lulu is supported) if this has been enabled in your instance of Ketty.
+Once you have saved, you will be able to connect to a print-on-demand supplier (currently Lulu is supported) if this has been enabled in your instance of Ketty. 
 
 ![](../../../static/img/cb2050c0ab0e_medium.png)
 
 Once you choose ‘Connect to Lulu’ and log in to the print-on-demand supplier’s website, you are redirected back to Ketty to upload your export to that supplier.
+
+:::Note
+Lulu accepts PDF and ePub uploads. 
+:::
 
 ![](../../../static/img/08f797c812bc_medium.png)
 
