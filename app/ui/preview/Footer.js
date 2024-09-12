@@ -8,7 +8,9 @@ import { DownloadOutlined, DeleteOutlined } from '@ant-design/icons'
 
 import { Button, ButtonGroup, Input, Modal } from '../common'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  margin-block-start: auto;
+`
 
 const Footer = props => {
   const {
@@ -22,6 +24,7 @@ const Footer = props => {
     onClickDelete,
     onClickDownload,
     updateProfile,
+    selectedFormat,
   } = props
 
   const [deleteLoading, setDeleteLoading] = useState(false)
@@ -166,23 +169,35 @@ const Footer = props => {
             disabled={isSaveDisabled || updateLoading || !canModify}
             loading={updateLoading}
             onClick={handleClickSave}
-            type="primary"
             data-test="preview-save-btn"
           >
-            Save
+            {isNewProfileSelected
+              ? 'Save Publishing Profile'
+              : 'Update Profile'}
           </Button>
         )}
 
-        <Button
-          // disabled={isDownloadButtonDisabled || loadingPreview}
-          disabled={isDownloadButtonDisabled}
-          icon={<DownloadOutlined />}
-          loading={downloadLoading}
-          onClick={handleClickDownload}
-          data-test="preview-download-btn"
-        >
-          Download
-        </Button>
+        {/* <Button
+            // disabled={isDownloadButtonDisabled || loadingPreview}
+            disabled={isDownloadButtonDisabled}
+            loading={downloadLoading}
+            onClick={handleClickDownload}
+            type="primary"
+          >
+            Publish Online
+          </Button> */}
+        {selectedFormat !== 'web' && (
+          <Button
+            // disabled={isDownloadButtonDisabled || loadingPreview}
+            data-test="preview-download-btn"
+            disabled={isDownloadButtonDisabled}
+            icon={<DownloadOutlined />}
+            loading={downloadLoading}
+            onClick={handleClickDownload}
+          >
+            Download
+          </Button>
+        )}
 
         {!isNewProfileSelected && (
           <Button
@@ -228,8 +243,11 @@ Footer.propTypes = {
   onClickDelete: PropTypes.func.isRequired,
   onClickDownload: PropTypes.func.isRequired,
   updateProfile: PropTypes.func.isRequired,
+  selectedFormat: PropTypes.string,
 }
 
-Footer.defaultProps = {}
+Footer.defaultProps = {
+  selectedFormat: 'pdf',
+}
 
 export default Footer

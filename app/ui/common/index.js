@@ -33,8 +33,11 @@ export { default as TabsStyled } from './TabsStyled'
 export { default as TextArea } from './TextArea'
 export { default as Upload } from './Upload'
 export { default as VisuallyHiddenElement } from './VisuallyHiddenElement'
-export { default as TopicAndSubtopic } from './TopicAndSubtopic'
-export { default as VisionAndChangeMetadata } from './VisionAndChangeMetadata'
+// export { default as TopicAndSubtopic } from './TopicAndSubtopic'
+// export { default as VisionAndChangeMetadata } from './VisionAndChangeMetadata'
+
+export { default as Center } from './primitives/Center'
+export { default as Stack } from './primitives/Stack'
 
 export * from './Headings'
 export * from './Typography'
