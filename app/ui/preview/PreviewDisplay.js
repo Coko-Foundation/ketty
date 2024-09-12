@@ -71,6 +71,7 @@ const PreviewDisplay = props => {
   const {
     className,
     isEpub,
+    isPdf,
     loading,
     // noPreview,
     onOptionsChange,
@@ -132,14 +133,16 @@ const PreviewDisplay = props => {
             </IframeWrapper>
           </StyledSpin>
 
-          <Floating>
-            <PreviewDisplayOptions
-              disabled={loading}
-              onOptionsChange={onOptionsChange}
-              spread={spread}
-              zoom={zoom}
-            />
-          </Floating>
+          {isPdf && (
+            <Floating>
+              <PreviewDisplayOptions
+                disabled={loading}
+                onOptionsChange={onOptionsChange}
+                spread={spread}
+                zoom={zoom}
+              />
+            </Floating>
+          )}
         </PreviewWrapper>
       )}
     </Wrapper>
@@ -147,7 +150,8 @@ const PreviewDisplay = props => {
 }
 
 PreviewDisplay.propTypes = {
-  isEpub: PropTypes.bool.isRequired,
+  isEpub: PropTypes.bool,
+  isPdf: PropTypes.bool,
   loading: PropTypes.bool.isRequired,
   // noPreview: PropTypes.bool.isRequired,
   onOptionsChange: PropTypes.func.isRequired,
@@ -158,8 +162,10 @@ PreviewDisplay.propTypes = {
 
 PreviewDisplay.defaultProps = {
   previewLink: null,
-  spread: 'double',
+  spread: 'single',
   zoom: 1,
+  isEpub: false,
+  isPdf: true,
 }
 
 export default PreviewDisplay

@@ -4,7 +4,9 @@ import styled, { css } from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  max-width: 450px;
+`
 
 const Label = styled.div`
   color: ${th('colorTextLight')};
@@ -23,7 +25,9 @@ const Label = styled.div`
 `
 
 const ChildWrapper = styled.div`
-  display: ${props => (props.inline ? 'inline-block' : 'block')};
+  align-items: center;
+  display: ${props => (props.inline ? 'inline-flex' : 'block')};
+  gap: 4px;
 `
 
 const ExportOption = props => {

@@ -40,6 +40,8 @@ const GET_EXPORT_PROFILES = gql`
         templateId
         trimSize
         isbn
+        includePdf
+        includeEpub
       }
     }
   }
@@ -66,6 +68,8 @@ const CREATE_EXPORT_PROFILE = gql`
       templateId
       trimSize
       isbn
+      includePdf
+      includeEpub
     }
   }
 `

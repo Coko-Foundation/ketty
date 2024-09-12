@@ -5,21 +5,9 @@ import styled from 'styled-components'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import { Wax } from 'wax-prosemirror-core'
-import { Button, Divider, Switch, Input, Form } from '../common'
+import { Button, Divider, Switch, Input, Form, Center, Stack } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
-
-const Center = styled.div`
-  --max-width: 90ch;
-  --min-width: 0;
-  --padding: ${grid(4)};
-
-  box-sizing: content-box;
-  margin-inline: auto;
-  max-width: var(--max-width, 70ch);
-  min-width: var(--min-width, 0);
-  padding: var(--padding);
-`
 
 const StyledControlWrapper = styled.div`
   align-items: center;
@@ -27,7 +15,7 @@ const StyledControlWrapper = styled.div`
   flex-flow: row wrap;
   gap: ${grid(4)};
   justify-content: space-between;
-  max-width: 50%;
+  max-width: 400px;
 `
 
 const TCWrapper = styled.div`
@@ -74,6 +62,8 @@ const AdminDashboard = props => {
     termsAndConditions,
     onTCUpdate,
     onChatGPTKeyUpdate,
+    exportOptions,
+    exportConfigUpdate,
   } = props
 
   const waxRef = useRef()
@@ -127,7 +117,9 @@ const AdminDashboard = props => {
   }
 
   return (
-    <Center>
+    <Center
+      style={{ '--max-width': '90ch', '--s1': '16px', 'margin-bottom': '3rem' }}
+    >
       <h1>Admin dashboard</h1>
       <Divider />
       <h2>AI integration</h2>
@@ -179,6 +171,60 @@ const AdminDashboard = props => {
           </Form>
         </ChatGPTAPIKeyWrapper>
       </StyledControlWrapper>
+      <Divider />
+      <h2>Export options</h2>
+      <Stack style={{ '--space': '2rem' }}>
+        <StyledControlWrapper>
+          <span>Export PDF</span>
+          <Switch
+            checked={exportOptions?.pdfDownload?.enabled}
+            loading={paramsLoading}
+            onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+          />
+        </StyledControlWrapper>
+        <StyledControlWrapper>
+          <span>Export EPUB</span>
+          <Switch
+            checked={exportOptions?.epubDownload?.enabled}
+            loading={paramsLoading}
+            onChange={val => exportConfigUpdate(val, 'epubDownload')}
+          />
+        </StyledControlWrapper>
+        <StyledControlWrapper>
+          <span>Publish Online Book Website</span>
+          <Switch
+            checked={exportOptions?.webPublish?.enabled}
+            loading={paramsLoading}
+            onChange={val => exportConfigUpdate(val, 'webPublish')}
+          />
+          {exportOptions?.webPublish?.enabled && (
+            <>
+              <p>
+                <strong>
+                  Allow including the following downloads when publishing a book
+                  on the web:
+                </strong>
+              </p>
+              <StyledControlWrapper>
+                <span>PDF download</span>
+                <Switch
+                  checked={exportOptions?.webPdfDownload?.enabled}
+                  loading={paramsLoading}
+                  onChange={val => exportConfigUpdate(val, 'webPdfDownload')}
+                />
+              </StyledControlWrapper>
+              <StyledControlWrapper>
+                <span>EPUB download</span>
+                <Switch
+                  checked={exportOptions?.webEpubDownload?.enabled}
+                  loading={paramsLoading}
+                  onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
+                />
+              </StyledControlWrapper>
+            </>
+          )}
+        </StyledControlWrapper>
+      </Stack>
       <Divider />
       <h2>Print on demand supplier integration</h2>
       <StyledControlWrapper>
@@ -241,6 +287,8 @@ AdminDashboard.propTypes = {
   onTCUpdate: PropTypes.func,
   chatGptApiKey: PropTypes.string,
   onChatGPTKeyUpdate: PropTypes.func,
+  exportOptions: PropTypes.shape(),
+  exportConfigUpdate: PropTypes.func,
 }
 
 AdminDashboard.defaultProps = {
@@ -253,6 +301,8 @@ AdminDashboard.defaultProps = {
   onTCUpdate: null,
   chatGptApiKey: '',
   onChatGPTKeyUpdate: null,
+  exportOptions: {},
+  exportConfigUpdate: null,
 }
 
 export default AdminDashboard

@@ -27,6 +27,7 @@ import {
   RENAME_EXPORT_PROFILE,
   UPLOAD_TO_LULU,
   UPDATE_EXPORT_PROFILE_OPTIONS,
+  PUBLISH_ONLINE,
 } from '../graphql'
 
 import { isOwner, hasEditAccess, isAdmin } from '../helpers/permissions'
@@ -58,7 +59,7 @@ const sanitizeProfileData = input => {
   return res
 }
 
-const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : 'epub')
+const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : format)
 
 const sanitizeOptionData = data => {
   const d = { ...data }
@@ -66,7 +67,15 @@ const sanitizeOptionData = data => {
   return d
 }
 
-const optionKeys = ['format', 'size', 'content', 'template', 'isbn']
+const optionKeys = [
+  'format',
+  'size',
+  'content',
+  'template',
+  'isbn',
+  'includePdf',
+  'includeEpub',
+]
 
 const getProfileExportOptions = profile => {
   const p = pick(profile, optionKeys)
@@ -90,6 +99,7 @@ const PreviewerPage = () => {
   const [previewLink, setPreviewLink] = useState(null)
   const [creatingPreview, setCreatingPreview] = useState(true)
   const [selectedTemplate, setSelectedTemplate] = useState(null)
+  const [activeTabKey, setActiveTabKey] = useState('new')
 
   React.useEffect(() => {
     if (!localStorage.getItem('zoomPercentage')) {
@@ -97,7 +107,7 @@ const PreviewerPage = () => {
     }
 
     if (!localStorage.getItem('pageSpread')) {
-      localStorage.setItem('pageSpread', 'double')
+      localStorage.setItem('pageSpread', 'single')
     }
   }, [])
   // #endregion init
@@ -138,7 +148,19 @@ const PreviewerPage = () => {
   })
 
   const { data: { getApplicationParameters } = {}, loading: paramsLoading } =
-    useQuery(APPLICATION_PARAMETERS)
+    useQuery(APPLICATION_PARAMETERS, {
+      onCompleted: ({ getApplicationParameters: applicationParams }) => {
+        const exportsConfig = applicationParams?.find(
+          p => p.area === 'exportsConfig',
+        ).config
+
+        setNewProfileOptions({
+          ...newProfileOptions,
+          includePdf: exportsConfig.webPdfDownload?.enabled,
+          includeEpub: exportsConfig.webEpubDownload?.enabled,
+        })
+      },
+    })
 
   const [getPagedLink, { loading: previewIsLoading }] = useLazyQuery(
     GET_PAGED_PREVIEWER_LINK,
@@ -169,6 +191,12 @@ const PreviewerPage = () => {
             }),
         }
 
+        if (input.previewer === 'web') {
+          // preview the url returned by the server
+          setPreviewLink(path)
+          return true
+        }
+
         return getPagedLink({
           variables: {
             hash: hash[0],
@@ -190,6 +218,26 @@ const PreviewerPage = () => {
     onCompleted: res => {
       const created = res.createExportProfile
       setSelectedProfile(created.id)
+
+      setCurrentOptions({
+        content: Array.from(Object.keys(created.includedComponents))
+          .map(e => {
+            if (e === 'toc') return 'includeTOC'
+            if (e === 'copyright') return 'includeCopyrights'
+            if (e === 'titlePage') return 'includeTitlePage'
+            return false
+          })
+          .filter(e => !!e),
+
+        format: created.format,
+        isbn: created.isbn,
+        size: created.trimSize,
+        template: created.templateId,
+        includePdf: created.includePdf,
+        includeEpub: created.includeEpub,
+      })
+
+      setActiveTabKey('saved')
     },
   })
 
@@ -216,6 +264,14 @@ const PreviewerPage = () => {
     },
   })
 
+  const [publish] = useMutation(PUBLISH_ONLINE, {
+    onCompleted: ({ publishOnline }) => {
+      const { path } = publishOnline
+
+      return window.open(path, '_blank')
+    },
+  })
+
   const [uploadToLulu] = useMutation(UPLOAD_TO_LULU)
 
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
@@ -225,10 +281,6 @@ const PreviewerPage = () => {
       refetchProfiles({ id: bookId })
     },
   })
-
-  const luluConfig = getApplicationParameters?.find(
-    p => p.area === 'integrations',
-  ).config.lulu
   // #endregion queries
 
   // #region handlers
@@ -252,7 +304,7 @@ const PreviewerPage = () => {
     window.open(luluURL, null, 'width=600, height=600')
   }
 
-  const handleSendToLulu = e => {
+  const handleSendToLulu = () => {
     return uploadToLulu({
       variables: { id: selectedProfile },
     })
@@ -265,7 +317,9 @@ const PreviewerPage = () => {
       content,
       template: templateId,
       isbn,
-    } = currentOptions
+      includeEpub,
+      includePdf,
+    } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
       bookId,
@@ -279,6 +333,10 @@ const PreviewerPage = () => {
       templateId,
       trimSize,
       isbn,
+      ...(format === 'web' && {
+        includeEpub,
+        includePdf,
+      }),
     }
 
     return createProfile({
@@ -288,6 +346,7 @@ const PreviewerPage = () => {
     })
   }
 
+  // TODO: fix this, differentiate between currentOptions and newProfileOptions
   const handleDeleteProfile = () => {
     setSelectedProfile(defaultProfile.value)
 
@@ -326,7 +385,7 @@ const PreviewerPage = () => {
       content,
       template: templateId,
       isbn,
-    } = currentOptions
+    } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
       format,
@@ -349,7 +408,9 @@ const PreviewerPage = () => {
   }
 
   const handleDownload = () => {
-    const { format, template, content, isbn } = currentOptions
+    const { format, template, content, isbn } =
+      activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
     return download({
       variables: {
         input: {
@@ -361,6 +422,22 @@ const PreviewerPage = () => {
             includeCopyrights: content.includes('includeCopyrights'),
             includeTitlePage: content.includes('includeTitlePage'),
             isbn,
+          },
+        },
+      },
+    })
+  }
+
+  const handlePublish = () => {
+    const { template, includePdf, includeEpub } = currentOptions
+    return publish({
+      variables: {
+        input: {
+          bookId,
+          templateId: template,
+          additionalExportOptions: {
+            includePdf,
+            includeEpub,
           },
         },
       },
@@ -401,23 +478,40 @@ const PreviewerPage = () => {
 
     const previewData = {
       bookId,
-      previewer: 'pagedjs',
+      previewer: target,
       templateId: optionsToApply.template,
       additionalExportOptions: {
         includeTOC: options.content.includes('includeTOC'),
         includeCopyrights: options.content.includes('includeCopyrights'),
         includeTitlePage: options.content.includes('includeTitlePage'),
+        ...(target === 'web' && {
+          includePdf: options.includePdf,
+          includeEpub: options.includeEpub,
+        }),
       },
     }
 
-    setCurrentOptions({
-      ...currentOptions,
-      ...getProfileExportOptions(optionsToApply),
-      zoom: options.zoom,
-      spread: options.spread,
-    })
+    if (activeTabKey === 'saved') {
+      setCurrentOptions({
+        ...currentOptions,
+        ...getProfileExportOptions(optionsToApply),
+        zoom: options.zoom,
+        spread: options.spread,
+        includePdf: options.includePdf,
+        includeEpub: options.includeEpub,
+      })
+    } else {
+      setNewProfileOptions({
+        ...newProfileOptions,
+        ...getProfileExportOptions(optionsToApply),
+        zoom: options.zoom,
+        spread: options.spread,
+        includePdf: options.includePdf,
+        includeEpub: options.includeEpub,
+      })
+    }
 
-    if (target === 'pagedjs' && !previewIsLoading) {
+    if ((target === 'pagedjs' || target === 'web') && !previewIsLoading) {
       createPreview({
         variables: {
           input: previewData,
@@ -432,7 +526,7 @@ const PreviewerPage = () => {
 
   const handleRefetchTemplates = options => {
     const templateTarget = getFormatTarget(options.format)
-    const templateTrimSize = templateTarget === 'epub' ? null : options.size
+    const templateTrimSize = templateTarget === 'pagedjs' ? options.size : null
 
     setCreatingPreview(true)
 
@@ -451,7 +545,10 @@ const PreviewerPage = () => {
   }
 
   const handleOptionsChange = newOptions => {
-    const options = { ...currentOptions, ...newOptions }
+    const current =
+      activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
+    const options = { ...current, ...newOptions }
 
     if (options.format === 'pdf' && !options.size) {
       options.size = defaultProfile.size
@@ -461,23 +558,45 @@ const PreviewerPage = () => {
       options.size = null
     }
 
-    if (isEqual(currentOptions, options)) return
+    if (isEqual(current, options)) return
 
-    handleRefetchTemplates(options)
+    if (options.format === 'web' && current.format === 'web') {
+      setCreatingPreview(true)
+      handleCreatePreview(templatesData.getSpecificTemplates, options, 'web')
+    } else {
+      handleRefetchTemplates(options)
+    }
   }
 
   const handleProfileChange = profileId => {
     setSelectedProfile(profileId)
 
-    const newProfile = [defaultProfileWithTemplate, ...profiles].find(
-      p => p.value === profileId,
-    )
+    if (profileId) {
+      const newProfile = [defaultProfileWithTemplate, ...profiles].find(
+        p => p.value === profileId,
+      )
 
-    handleOptionsChange(getProfileExportOptions(newProfile))
+      handleOptionsChange(getProfileExportOptions(newProfile))
+    }
+  }
+
+  const handleTabChange = activeKey => {
+    if (activeKey) {
+      setActiveTabKey(activeKey)
+    }
   }
   // #endregion handlers
 
   // #region data wrangling
+
+  const luluConfig = getApplicationParameters?.find(
+    p => p.area === 'integrations',
+  ).config.lulu
+
+  const exportsConfig = getApplicationParameters?.find(
+    p => p.area === 'exportsConfig',
+  ).config
+
   const luluIdentity = currentUser?.identities?.find(
     id => id.provider === 'lulu',
   )
@@ -516,7 +635,13 @@ const PreviewerPage = () => {
     template: defaultTemplate?.id,
   }
 
-  const [selectedProfile, setSelectedProfile] = useState(defaultProfile.value)
+  const [selectedProfile, setSelectedProfile] = useState()
+
+  const [newProfileOptions, setNewProfileOptions] = useState({
+    ...getProfileExportOptions(defaultProfileWithTemplate),
+    zoom: initialZoom,
+    spread: initialSpread,
+  })
 
   const [currentOptions, setCurrentOptions] = useState({
     ...getProfileExportOptions(defaultProfileWithTemplate),
@@ -532,10 +657,13 @@ const PreviewerPage = () => {
       }
 
       if (templatesData && selectedTemplate && !createPreviewCalled) {
+        const options =
+          activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
         handleCreatePreview(
           templatesData.getSpecificTemplates,
-          currentOptions,
-          getFormatTarget(currentOptions.format),
+          options,
+          getFormatTarget(options.format),
         )
       }
     }
@@ -574,10 +702,12 @@ const PreviewerPage = () => {
         value: p.id,
         // Require that p.isbn is a valid option from podMetadata.isbns
         isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
+        includePdf: p.includePdf,
+        includeEpub: p.includeEpub,
       }
     })
 
-  const allProfiles = profiles && [defaultProfileWithTemplate, ...profiles]
+  const allProfiles = profiles // && [defaultProfileWithTemplate, ...profiles]
 
   const hasContent =
     book?.getBook.divisions.find(d => d?.label === 'Body').bookComponents
@@ -588,7 +718,10 @@ const PreviewerPage = () => {
 
   const isDownloadButtonDisabled =
     !hasEditAccess(bookId, currentUser) ||
-    (!hasContent && currentOptions.format === 'epub')
+    (!hasContent &&
+      (activeTabKey === 'saved'
+        ? currentOptions.format === 'epub'
+        : newProfileOptions === 'epub'))
   // #endregion data wrangling
 
   if (
@@ -611,6 +744,7 @@ const PreviewerPage = () => {
 
   return (
     <Preview
+      activeTabKey={activeTabKey}
       canModify={
         luluConfig && !luluConfig?.disabled && (userIsOwner || userIsAdmin)
       }
@@ -621,19 +755,23 @@ const PreviewerPage = () => {
       defaultProfile={defaultProfileWithTemplate}
       deleteProfile={handleDeleteProfile}
       download={handleDownload}
+      exportsConfig={exportsConfig}
       isbns={isbns}
       isDownloadButtonDisabled={isDownloadButtonDisabled}
       isUserConnectedToLulu={isUserConnectedToLulu}
       loadingExport={false}
       loadingPreview={creatingPreview}
       luluConfig={luluConfig && !luluConfig?.disabled}
+      newProfileOptions={newProfileOptions}
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
+      onPublish={handlePublish}
       previewLink={previewLink}
       profiles={allProfiles}
       renameProfile={handleRenameProfile}
       selectedProfile={selectedProfile}
       sendToLulu={handleSendToLulu}
+      setActiveTabKey={handleTabChange}
       templates={templates}
       updateProfileOptions={handleUpdateProfileOptions}
     />

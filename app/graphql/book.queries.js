@@ -295,6 +295,14 @@ const EXPORT_BOOK = gql`
   }
 `
 
+const PUBLISH_ONLINE = gql`
+  mutation PublishOnline($input: ExportBookInput!) {
+    publishOnline(input: $input) {
+      path
+    }
+  }
+`
+
 const LOCK_BOOK_COMPONENT_POD = gql`
   mutation LockBookComponentPOD($id: ID!, $tabId: ID!, $userAgent: String!) {
     podLockBookComponent(id: $id, tabId: $tabId, userAgent: $userAgent) {
@@ -400,4 +408,5 @@ export {
   BOOK_DELETED_SUBSCRIPTION,
   BOOK_RENAMED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  PUBLISH_ONLINE,
 }

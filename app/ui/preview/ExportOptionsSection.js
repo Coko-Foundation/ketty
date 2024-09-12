@@ -1,12 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
-import { grid } from '@coko/client'
-
+import PropTypes from 'prop-types'
 import ExportOption from './ExportOption'
 import TemplateList from './TemplateList'
-import { Select } from '../common'
+import { Select, CheckboxGroup } from '../common'
+import ProfileName from './ProfileName'
 
 // #region menu options
 const exportFormatOptions = [
@@ -17,6 +16,10 @@ const exportFormatOptions = [
   {
     value: 'epub',
     label: 'EPUB',
+  },
+  {
+    value: 'web',
+    label: 'Web',
   },
 ]
 
@@ -50,26 +53,27 @@ const makeContentOptions = isEpub => [
     disabled: isEpub,
   },
 ]
-// .filter(Boolean)
 // #endregion menu options
 
 // #region styled
-const Wrapper = styled.div`
-  > div:last-child {
-    margin-top: ${grid(6)};
-  }
-`
 
 const MultiSelect = styled(Select)`
   min-width: 150px;
 `
 // #endregion styled
 
+const webDownloadOptionsDefault = [
+  { label: 'Include PDF', value: 'pdf' },
+  { label: 'Include EPUB', value: 'epub' },
+]
+
 const ExportOptionsSection = props => {
   const {
-    className,
     disabled,
+    exportsConfig,
+    newProfile,
     onChange,
+    selectedProfile,
     selectedContent,
     selectedFormat,
     selectedSize,
@@ -77,6 +81,10 @@ const ExportOptionsSection = props => {
     selectedIsbn,
     templates,
     isbns,
+    includePdf,
+    includeEpub,
+    canModifyProfiles,
+    onProfileRename,
   } = props
 
   const isbnOptions = [
@@ -90,19 +98,23 @@ const ExportOptionsSection = props => {
     }),
   ]
 
+  const isPdf = selectedFormat === 'pdf'
   const isEpub = selectedFormat === 'epub'
+  const isWeb = selectedFormat === 'web'
   const contentOptions = makeContentOptions(isEpub)
   const contentValue = selectedContent
   if (isEpub && !contentValue.includes('includeTOC'))
     contentValue.push('includeTOC')
 
+  const webDownloadOptions = webDownloadOptionsDefault.filter(
+    option =>
+      (option.value === 'pdf' && exportsConfig.webPdfDownload?.enabled) ||
+      (option.value === 'epub' && exportsConfig.webEpubDownload?.enabled),
+  )
+
   const handleChange = newData => {
     if (disabled) return // handle here to prevent flashing
     onChange(newData)
-  }
-
-  const handleExportFormatChange = value => {
-    handleChange({ format: value })
   }
 
   const handleSizeChange = value => {
@@ -121,61 +133,93 @@ const ExportOptionsSection = props => {
     handleChange({ template: value })
   }
 
+  const handleDownloadOptionsChange = values => {
+    handleChange({
+      includePdf: values.indexOf('pdf') !== -1,
+      includeEpub: values.indexOf('epub') !== -1,
+    })
+  }
+
   return (
-    <Wrapper className={className}>
-      <ExportOption inline label="format">
-        <Select
-          bordered={false}
-          // disabled={disabled}
-          onChange={handleExportFormatChange}
-          options={exportFormatOptions}
-          value={selectedFormat}
-          data-test="preview-format"
-        />
-      </ExportOption>
+    <>
+      <div>
+        {!newProfile && (
+          <>
+            <ExportOption inline label="Name">
+              <ProfileName
+                canModifyProfiles={canModifyProfiles}
+                onProfileRename={onProfileRename}
+                selectedProfile={selectedProfile}
+              />
+            </ExportOption>
 
-      {!isEpub && (
-        <ExportOption inline label="size">
-          <Select
-            bordered={false}
-            // disabled={disabled}
-            onChange={handleSizeChange}
-            options={exportSizeOptions}
-            value={selectedSize}
-            data-test="preview-size"
-          />
-        </ExportOption>
-      )}
+            <ExportOption inline label="format">
+              <span>
+                {
+                  exportFormatOptions.find(f => f.value === selectedFormat)
+                    ?.label
+                }
+              </span>
+            </ExportOption>
+          </>
+        )}
 
-      {isEpub && (
-        <ExportOption inline label="ISBN">
-          <Select
-            allowClear
-            bordered={false}
-            // disabled={disabled}
-            onChange={handleIsbnChange}
-            options={isbnOptions}
-            placeholder="No selection"
-            style={{ minWidth: '230px' }}
-            value={selectedIsbn || null}
-          />
-        </ExportOption>
-      )}
+        {isPdf && (
+          <ExportOption inline label="size">
+            <Select
+              bordered={false}
+              onChange={handleSizeChange}
+              options={exportSizeOptions}
+              value={selectedSize}
+            />
+          </ExportOption>
+        )}
 
-      <ExportOption inline label="content">
-        <MultiSelect
-          allowClear
-          bordered={false}
-          // disabled={disabled}
-          mode="multiple"
-          onChange={handleContentChange}
-          options={contentOptions}
-          placeholder="Please select"
-          showSearch={false}
-          value={selectedContent}
-          data-test="preview-content"
-        />
-      </ExportOption>
+        {isEpub && (
+          <ExportOption inline label="ISBN">
+            <Select
+              allowClear
+              bordered={false}
+              onChange={handleIsbnChange}
+              options={isbnOptions}
+              placeholder="No selection"
+              style={{ minWidth: '230px' }}
+              value={selectedIsbn || null}
+            />
+          </ExportOption>
+        )}
+
+        {(isEpub || isPdf) && (
+          <ExportOption inline label="content">
+            <MultiSelect
+              allowClear
+              bordered={false}
+              data-test="preview-content"
+              mode="multiple"
+              onChange={handleContentChange}
+              options={contentOptions}
+              placeholder="Please select"
+              showSearch={false}
+              value={selectedContent}
+            />
+          </ExportOption>
+        )}
+
+        {isWeb && webDownloadOptions.length > 0 && (
+          <div>
+            <p>Include the following downloads in your website</p>
+            <CheckboxGroup
+              defaultValue={[
+                ...(includePdf ? ['pdf'] : []),
+                ...(includeEpub ? ['epub'] : []),
+              ]}
+              onChange={handleDownloadOptionsChange}
+              options={webDownloadOptions}
+              vertical
+            />
+          </div>
+        )}
+      </div>
 
       <ExportOption label="templates">
         <TemplateList
@@ -185,7 +229,7 @@ const ExportOptionsSection = props => {
           templates={templates}
         />
       </ExportOption>
-    </Wrapper>
+    </>
   )
 }
 
@@ -210,6 +254,11 @@ ExportOptionsSection.propTypes = {
       label: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  newProfile: PropTypes.bool,
+  exportsConfig: PropTypes.shape({
+    webEpubDownload: PropTypes.bool,
+    webPdfDownload: PropTypes.bool,
+  }),
 }
 
 ExportOptionsSection.defaultProps = {
@@ -217,6 +266,11 @@ ExportOptionsSection.defaultProps = {
   selectedIsbn: null,
   selectedTemplate: null,
   templates: [],
+  newProfile: false,
+  exportsConfig: {
+    webEpubDownload: true,
+    webPdfDownload: true,
+  },
 }
 
 export default ExportOptionsSection

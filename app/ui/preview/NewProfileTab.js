@@ -1,0 +1,89 @@
+/* eslint-disable react/prop-types */
+import React from 'react'
+import { Stack, Select, Ribbon } from '../common'
+import ExportOptionsSection from './ExportOptionsSection'
+import Footer from './Footer'
+
+const allExportOptions = [
+  { label: 'PDF', value: 'pdf' },
+  { label: 'EPUB', value: 'epub' },
+  { label: 'Web', value: 'web' },
+]
+
+const NewProfileTab = props => {
+  const {
+    newProfileOptions,
+    handleFormatChange,
+    canModify,
+    hasChanges,
+    optionsDisabled,
+    isbns,
+    handleOptionsChange,
+    templates,
+    createProfile,
+    isDownloadButtonDisabled,
+    isNewProfileSelected,
+    loadingPreview,
+    onClickDownload,
+    updateProfileOptions,
+    exportsConfig,
+  } = props
+
+  const exportOptions = allExportOptions.filter(option => {
+    const configEntry = Object.entries(exportsConfig).find(([k, v]) =>
+      k.startsWith(option.value),
+    )
+
+    return configEntry[1].enabled
+  })
+
+  return (
+    <>
+      <Stack style={{ '--space': '10px' }}>
+        <Select
+          onChange={handleFormatChange}
+          options={exportOptions}
+          value={newProfileOptions.format}
+        />
+
+        {canModify && hasChanges && (
+          <Ribbon hide={!hasChanges || !canModify}>
+            You have unsaved changes
+          </Ribbon>
+        )}
+      </Stack>
+
+      <ExportOptionsSection
+        disabled={optionsDisabled}
+        exportsConfig={exportsConfig}
+        includeEpub={newProfileOptions.includeEpub}
+        includePdf={newProfileOptions.includePdf}
+        isbns={isbns}
+        newProfile
+        onChange={handleOptionsChange}
+        selectedContent={newProfileOptions.content}
+        selectedFormat={newProfileOptions.format}
+        selectedIsbn={newProfileOptions.isbn}
+        selectedSize={newProfileOptions.size}
+        selectedTemplate={newProfileOptions.template}
+        templates={templates}
+      />
+
+      <Footer
+        canModify={canModify}
+        createProfile={createProfile}
+        isDownloadButtonDisabled={isDownloadButtonDisabled}
+        isNewProfileSelected
+        isSaveDisabled={
+          !canModify || loadingPreview || (!isNewProfileSelected && !hasChanges)
+        }
+        loadingPreview={loadingPreview}
+        onClickDownload={onClickDownload}
+        selectedFormat={newProfileOptions.format}
+        updateProfile={updateProfileOptions}
+      />
+    </>
+  )
+}
+
+export default NewProfileTab
