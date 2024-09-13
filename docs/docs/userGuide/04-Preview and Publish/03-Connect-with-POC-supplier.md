@@ -25,7 +25,7 @@ Once you have saved, you will be able to connect to a print-on-demand supplier (
 
 Once you choose ‘Connect to Lulu’ and log in to the print-on-demand supplier’s website, you are redirected back to Ketty to upload your export to that supplier.
 
-:::Note
+:::note
 Lulu accepts PDF and ePub uploads. 
 :::
 
