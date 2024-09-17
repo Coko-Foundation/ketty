@@ -38,9 +38,10 @@ describe('Checking "Share" modal', () => {
   })
 
   it('checking the defaults of the modal', () => {
-    cy.contains('button', 'Share')
+    cy.getByData('header-share-btn')
       .should('exist')
       .should('not.be.disabled')
+      .should('have.text', 'Share')
       .click()
 
     cy.get('[data-icon="question-circle"]')
@@ -58,7 +59,7 @@ describe('Checking "Share" modal', () => {
     cy.get('.ant-select-selection-item').click()
     cy.get('[role="option"]:nth(0)').should('contain', 'Can view').click()
     cy.get('[role="option"]:nth(1)').should('contain', 'Can edit')
-    cy.get('button[type="submit"]')
+    cy.getByData('modal-share-btn')
       .should('be.disabled')
       .should('contain', 'Share')
 
@@ -73,8 +74,8 @@ describe('Checking "Share" modal', () => {
   })
 
   it('checking "Share" button is disabled if user types in an incorrect email', () => {
-    cy.contains('button', 'Share').click()
-    cy.get('button[type="submit"]').should('contain', 'Share')
+    cy.getByData('header-share-btn').click()
+    cy.getByData('modal-share-btn').should('contain', 'Share')
     cy.get('button[type="submit"]').should('be.disabled')
 
     cy.log('author.10@example.com does not exist')
@@ -83,8 +84,7 @@ describe('Checking "Share" modal', () => {
       'author.10@example.com{enter}',
     )
     cy.get('div[role="option"]', { timeout: 8000 }).should('not.exist')
-    cy.get('button[type="submit"]').should('contain', 'Share')
-    cy.get('button[type="submit"]').should('be.disabled')
+    cy.getByData('modal-share-btn').should('be.disabled')
 
     cy.log('author.1@example.com exists')
     cy.get('.ant-select-selection-overflow').type(author.email)
@@ -99,11 +99,11 @@ describe('Checking "Share" modal', () => {
   })
 
   it('adding a single user and changing permissions', () => {
-    cy.contains('button', 'Share').click()
-    cy.get('button[type="submit"]').should('contain', 'Share', {
+    cy.getByData('header-share-btn').click()
+    cy.getByData('modal-share-btn').should('contain', 'Share', {
       timeout: 8000,
     })
-    cy.get('button[type="submit"]', { timeout: 8000 }).should('be.disabled')
+    cy.getByData('modal-share-btn', { timeout: 8000 }).should('be.disabled')
 
     cy.get('.ant-select-selection-overflow').click()
 
@@ -153,7 +153,7 @@ describe('Checking "Share" modal', () => {
   })
 
   it('removing a collaborator', () => {
-    cy.contains('button', 'Share').click()
+    cy.getByData('header-share-btn').click()
 
     cy.log('Adding a user with view permission')
 
@@ -188,7 +188,7 @@ describe('Checking "Share" modal', () => {
   })
 
   it('check that changes are saved when closing the modal', () => {
-    cy.contains('button', 'Share').click()
+    cy.getByData('header-share-btn').click()
 
     cy.log('Adding a user with view permission')
     cy.get('.ant-select-selection-overflow').click()
@@ -210,7 +210,7 @@ describe('Checking "Share" modal', () => {
     cy.get('.ant-modal-close').click()
 
     // reopening the modal
-    cy.contains('button', 'Share').click()
+    cy.getByData('header-share-btn').click()
     cy.get('.ant-list-item').should(
       'contain',
       'C1',
@@ -228,12 +228,12 @@ describe('Checking "Share" modal', () => {
     cy.get('.ant-modal-close').click()
 
     // reopening the modal
-    cy.contains('button', 'Share').click()
+    cy.getByData('header-share-btn').click()
     cy.contains(collaborator1.name, collaborator1.surname).should('not.exist')
   })
 
   it('adding multiple members at once', () => {
-    cy.contains('button', 'Share').click()
+    cy.getByData('header-share-btn').click()
 
     cy.get('.ant-select-selection-overflow').click()
 

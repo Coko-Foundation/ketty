@@ -7,14 +7,17 @@ describe('Start writing', () => {
     cy.login(admin)
     cy.location('pathname').should('equal', '/dashboard')
     cy.contains('You don’t have any books yet').should('exist')
-    cy.contains('[href="/create-book"]', 'New book').should('exist')
+    cy.getByData('dashboard-newBook-button')
+      .should('have.attr', 'href', '/create-book')
+      .should('contain', 'New book')
+      .should('exist')
     cy.logout()
   })
 
   beforeEach(() => {
     cy.login(admin)
     cy.location('pathname').should('equal', '/dashboard')
-    cy.contains('[href="/create-book"]', 'New book').click()
+    cy.getByData('dashboard-newBook-button').click()
     cy.location('pathname').should('equal', '/create-book')
   })
 
@@ -24,12 +27,15 @@ describe('Start writing', () => {
       'p',
       'Start your book with a blank slate using the built-in Editor.',
     ).should('exist')
-    cy.contains('button', 'Start writing').should('exist')
-    cy.contains('button', 'Start writing').click()
+    cy.getByData('createBook-startWriting-button')
+      .should('contain', 'Start writing')
+      .should('exist')
+    cy.getByData('createBook-startWriting-button').click()
 
     cy.location('pathname').should('contain', '/rename')
-    // cy.getByData('book-title-input')
-    cy.get('#bookTitle')
+
+    cy.getByData('rename-bookTitle')
+      .find('input')
       .invoke('attr', 'placeholder')
       .should('contain', 'Book title')
 
@@ -45,9 +51,9 @@ describe('Start writing', () => {
       .should('have.text', 'Continue')
       .should('be.disabled')
 
-    cy.get('#bookTitle').type('Book One')
+    cy.getByData('rename-bookTitle').find('input').type('Book One')
 
-    cy.get('form').find('button').should('have.text', 'Continue').click()
+    cy.getByData('rename-continue-button').click()
     cy.contains('Book One').click()
     cy.contains('Book Metadata').should('exist')
     cy.contains('Book One').should('exist')
@@ -71,10 +77,10 @@ describe('Start writing', () => {
   })
 
   it('verifying enter key is working correctly in title page', () => {
-    cy.contains('button', 'Start writing').click()
+    cy.getByData('createBook-startWriting-button').click()
 
     cy.location('pathname').should('contain', '/rename')
-    cy.get('#bookTitle').type('00 Test Book{enter}')
+    cy.getByData('rename-bookTitle').find('input').type('00 Test Book{enter}')
     cy.contains('Book Metadata')
     cy.contains('00 Test Book')
 
@@ -87,7 +93,10 @@ describe('Start writing', () => {
   it('creating a book by importing files', () => {
     cy.contains('h2', 'Upload your files')
     cy.contains('p', 'Start your book with .docx files.')
-    cy.contains('button', 'Select files').click()
+    cy.getByData('createBook-selectFiles-button')
+      .should('contain', 'Select files')
+      .should('exist')
+    cy.getByData('createBook-selectFiles-button').click()
 
     cy.location('pathname').should('contain', '/import')
     cy.get('h1').should('have.text', 'Import')
@@ -105,13 +114,9 @@ describe('Start writing', () => {
       'Drag and drop files, or Browse',
     )
 
-    // cy.getByData('continue-btn')
-    cy.get('button:nth(2)')
-      .should('have.text', 'Continue')
-      .should('be.disabled')
+    cy.getByData('import-continue-button').should('be.disabled')
 
-    // cy.getByData('upload-files-btn')
-    cy.get('input[type="file"]').selectFile(
+    cy.getByData('import-upload-button').selectFile(
       'cypress/fixtures/docs/test_document.docx',
       { force: true },
     )
@@ -127,8 +132,8 @@ describe('Start writing', () => {
 
     cy.contains('Continue').click()
 
-    // cy.getByData('book-title-input')
-    cy.get('#bookTitle')
+    cy.getByData('rename-bookTitle')
+      .find('input')
       .invoke('attr', 'placeholder')
       .should('contain', 'Book title')
 
@@ -139,14 +144,11 @@ describe('Start writing', () => {
         "Don't overthink it, you can change your title at any time",
       )
 
-    cy.get('form')
-      .find('button')
-      .should('have.text', 'Continue')
-      .should('be.disabled')
+    cy.getByData('rename-continue-button').should('be.disabled')
 
-    cy.get('#bookTitle').type('Book Two')
+    cy.getByData('rename-bookTitle').find('input').type('Book Two')
 
-    cy.get('form').find('button').should('have.text', 'Continue').click()
+    cy.getByData('rename-continue-button').click()
 
     cy.contains('Book Metadata')
     cy.contains('Book Two')
@@ -172,7 +174,7 @@ describe('Start writing', () => {
 
 Cypress.Commands.add('uploadMultipleFiles', filePaths => {
   filePaths.forEach(filePath => {
-    cy.get('input[type="file"]').selectFile(
+    cy.getByData('import-upload-button').selectFile(
       `cypress/fixtures/docs/${filePath}`,
       { force: true },
     )

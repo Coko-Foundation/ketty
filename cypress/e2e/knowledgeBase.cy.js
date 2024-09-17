@@ -34,19 +34,19 @@ describe('Checking default state in Book Settings modal', () => {
     cy.openBookSettings()
 
     cy.contains('AI writing prompt use').should('exist')
-    cy.verifySwitch(0, 'disabled')
+    cy.verifySwitch('toggleAI', 'disabled')
 
     cy.contains('AI Book Designer (Beta)').should('exist')
-    cy.verifySwitch(1, 'disabled')
+    cy.verifySwitch('AIDesigner', 'disabled')
 
     cy.contains('Knowledge Base').should('exist')
     cy.contains(
       'Users with edit access to this book can create and query a knowledge base. Requires AI writing prompts and free text prompts to be on.',
     ).should('exist')
-    cy.verifySwitch(2, 'disabled')
+    cy.verifySwitch('kb', 'disabled')
 
-    cy.contains('button', 'Save').should('have.attr', 'type', 'submit')
-    cy.contains('button', 'Cancel').should('have.attr', 'type', 'reset')
+    cy.getByData('settings-save-btn').should('have.attr', 'type', 'submit')
+    cy.getByData('settings-cancel-btn').should('have.attr', 'type', 'reset')
   })
 
   it('checking that KB requires AI writing prompt use to be enabled too', () => {
@@ -55,21 +55,19 @@ describe('Checking default state in Book Settings modal', () => {
     cy.openBookSettings()
 
     // Enabling KB
-    cy.verifySwitch(0, 'disabled')
+    cy.verifySwitch('toggleAI', 'disabled')
     cy.contains('Free-text writing prompts').should('not.exist')
-    cy.toogleSwitch(2) // Knowledge Base
-    cy.verifySwitch(4, 'enabled') // Knowledge Base
+    cy.toogleSwitch('kb')
+    cy.verifySwitch('kb', 'enabled')
 
     // AI writing prompt is enabled
-    cy.verifySwitch(0, 'enabled') // AI writing prompt use
-    cy.verifySwitch(1, 'enabled') // Free-text writing prompts
+    cy.verifySwitch('toggleAI', 'enabled')
+    cy.verifySwitch('freeTextPrompt', 'enabled')
 
-    // Disabling Free-text writing prompts
-    cy.toogleSwitch(1)
-    cy.verifySwitch(1, 'disabled') // Free-text writing prompts
-
-    // KB gets disabled automatically
-    cy.verifySwitch(4, 'disabled') // Free-text writing prompts
+    // Disabling Free-text writing prompts, gets KB disabled automatically
+    cy.toogleSwitch('freeTextPrompt')
+    cy.verifySwitch('freeTextPrompt', 'disabled')
+    cy.verifySwitch('kb', 'disabled')
   })
 })
 
@@ -80,10 +78,10 @@ describe('Knowledge Base is enabled', () => {
 
     // Enabling Knowledge Base
     cy.openBookSettings()
-    cy.verifySwitch(2, 'disabled')
-    cy.toogleSwitch(2)
-    cy.verifySwitch(4, 'enabled')
-    cy.contains('button', 'Save').click()
+    cy.verifySwitch('kb', 'disabled')
+    cy.toogleSwitch('kb')
+    cy.verifySwitch('kb', 'enabled')
+    cy.getByData('settings-save-btn').click()
     cy.contains('Book settings').should('not.exist', { timeout: 6000 })
 
     cy.logout()
@@ -294,25 +292,8 @@ describe('Knowledge Base is enabled', () => {
   })
 })
 
-Cypress.Commands.add('openBookSettings', () => {
-  cy.get('[aria-label="Book settings"]').click()
-  cy.contains('Book settings').should('exist')
-})
-
-Cypress.Commands.add('verifySwitch', (switchIndex, status) => {
-  const expectedValue = status === 'enabled' ? 'true' : 'false'
-
-  cy.get('[role="switch"]')
-    .eq(switchIndex)
-    .should('have.attr', 'aria-checked', expectedValue)
-})
-
-Cypress.Commands.add('toogleSwitch', switchIndex => {
-  cy.get(`[role="switch"]:nth(${switchIndex})`).click()
-})
-
 Cypress.Commands.add('navigateToKnowledgeBase', () => {
-  cy.contains('Knowledge base').click()
+  cy.getByData('header-kb-link').click()
   cy.location('pathname').should('include', '/knowledge-base', {
     timeout: 10000,
   })

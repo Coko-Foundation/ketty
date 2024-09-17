@@ -1,3 +1,5 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+
 const {
   admin,
   author,
@@ -21,51 +23,59 @@ describe('Checking the Preview section', () => {
     cy.contains('You have unsaved changes').should('not.exist')
   })
 
-  it.skip('checking preview section', () => {
-    // seems difficult to check the preview section ???
+  it('checking preview section', () => {
     // the preview is shown as 1 single element and I cannot interact with the components of it
+    // so this section checks only the buttons
 
     // By default, when you log in "Show double page" option is selected
-    cy.get('input[value="single"]').should('exist').should('not.be.checked')
-    cy.get('input[value="double"]').should('exist').should('be.checked')
+    cy.getByData('preview-singlePage-btn')
+      .should('exist')
+      .should('not.be.checked')
+    cy.getByData('preview-doublePage-btn').should('exist').should('be.checked')
 
-    // CANNOT CLICK ANY BUTTONS
-    // cy.get('input[value="single"]').parent().parent().click({ force: true })
-    // cy.wait(5000)
-    // cy.get('input[value="single"]').should('be.checked')
+    cy.wait(4000)
+    cy.getByData('preview-singlePage-btn')
+      .parent()
+      .siblings()
+      .click({ force: true })
+    cy.getByData('preview-singlePage-btn').should('be.checked')
+    cy.getByData('preview-doublePage-btn').should('not.be.checked')
 
     cy.contains('div', '100 %').should('exist')
-    cy.get('span[aria-label="zoom-out"]')
-      .parent()
-      .parent()
-      .should('not.be.disabled')
-    cy.get('span[aria-label="zoom-in"]').parent().parent().should('be.disabled')
+    cy.getByData('preview-zoomOut-btn').should('not.be.disabled')
+    cy.getByData('preview-zoomIn-btn').should('be.disabled')
 
-    // why can I not click buttons
-    cy.get('button:nth(1)').click()
-    cy.contains('div', '90 %').should('exist')
+    cy.wait(4000)
+    cy.getByData('preview-zoomOut-btn').click()
+    cy.contains('div', '90 %', { timeout: 3000 }).should('exist')
+    cy.getByData('preview-zoomOut-btn').should('not.be.disabled')
+    cy.getByData('preview-zoomIn-btn').should('not.be.disabled')
   })
 
   it('checking default values for export sidebar', () => {
-    cy.verifyDefault('format:', 'PDF')
-    cy.verifyDefault('size:', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
+    cy.verifyDefault('format', 'PDF')
+    cy.verifyDefault('size', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
 
     const contentOptions = ['Copyright page', 'Table of contents', 'Title page']
 
     contentOptions.forEach(option => {
-      cy.verifyDefault('content:', `${option}`)
+      cy.verifyDefault('content', `${option}`)
     })
 
     cy.contains('templates:').should('exist').parent().find('[alt="vanilla"]')
 
     cy.contains('You have unsaved changes').should('not.exist')
 
-    cy.get('button').contains('Save').parent().should('be.enabled')
-    cy.get('button').contains('Download').parent().should('be.enabled')
+    cy.getByData('preview-save-btn')
+      .should('have.text', 'Save')
+      .should('be.enabled')
+    cy.getByData('preview-download-btn')
+      .should('have.text', 'Download')
+      .should('be.enabled')
 
     // In order to check the carousel for templates is working,
     // checking that the Tenberg template can be selected
-    cy.contains('templates:').parent().find('[alt="tenberg"]').click()
+    cy.contains('span[data-test="preview-templateName"]', 'tenberg').click()
     cy.contains('You have unsaved changes').should('be.visible')
   })
 
@@ -105,10 +115,7 @@ describe('Checking the Preview section', () => {
 
     cy.checkTemplates()
 
-    cy.get('span[aria-label="download"]')
-      .parent()
-      .parent()
-      .should('not.be.disabled')
+    cy.getByData('preview-download-btn').should('not.be.disabled')
 
     // Go back to the book and return back here. Verifying that default values are shown.
     cy.contains('Back to book').click()
@@ -117,11 +124,11 @@ describe('Checking the Preview section', () => {
     cy.goToPreview()
 
     cy.contains('You have unsaved changes').should('not.exist')
-    cy.verifyDefault('format:', 'PDF')
-    cy.verifyDefault('size:', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
+    cy.verifyDefault('format', 'PDF')
+    cy.verifyDefault('size', 'Digest: 5.5 × 8.5 in | 140 × 216 mm')
 
     contentOptions.forEach(option => {
-      cy.verifyDefault('content:', `${option}`)
+      cy.verifyDefault('content', `${option}`)
     })
 
     cy.contains('templates:').should('exist').parent().find('[alt="vanilla"]')
@@ -157,7 +164,7 @@ describe('Checking the Preview section', () => {
 
     cy.checkTemplates()
 
-    cy.get('span[aria-label="download"]').parent().parent().should('be.enabled')
+    cy.getByData('preview-download-btn').should('be.enabled')
   })
 
   it('saving a new export profile', () => {
@@ -166,22 +173,26 @@ describe('Checking the Preview section', () => {
     cy.contains('US Letter: 8.5 × 11 in | 216 × 279 mm').click()
     cy.contains('You have unsaved changes').should('be.visible').click()
     cy.contains('eclypse').click()
-    cy.contains('Save').click()
+    cy.getByData('preview-save-btn').click()
 
     // Checking Save export modal
     cy.get('.ant-modal-header').should('have.text', 'Save export')
     cy.get('.ant-modal-close-x').click()
 
-    cy.contains('Save').click()
+    // cy.contains('Save').click()
+    cy.getByData('preview-save-btn').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
 
-    cy.get('input[type="text"]').type('PDF Eclypse US')
+    cy.getByData('preview-exportName-input').type('PDF Eclypse US')
     cy.contains('button', 'OK').click()
     cy.contains('Profile created').should('exist')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
     cy.get('span[aria-label="edit"]').should('exist')
-    cy.contains('Connect to Lulu').should('exist').should('be.enabled')
+    cy.getByData('preview-connectLulu-btn')
+      .should('have.text', 'Connect to Lulu')
+      .should('exist')
+      .should('be.enabled')
   })
 
   it('deleting an export profile', () => {
@@ -190,21 +201,21 @@ describe('Checking the Preview section', () => {
     cy.contains('EPUB').click()
     cy.contains('You have unsaved changes').should('be.visible').click()
     cy.contains('atosh').click()
-    cy.contains('Save').click()
+    cy.getByData('preview-save-btn').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
 
-    cy.get('input[type="text"]').type('EPUB atosh')
+    cy.getByData('preview-exportName-input').type('EPUB atosh')
     cy.contains('button', 'OK').click()
     cy.contains('Profile created').should('exist')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
-    cy.contains('Delete').should('exist')
+    cy.getByData('preview-delete-btn').should('exist')
 
     cy.contains('EPUB atosh').should('exist').click()
     cy.get('#rc_select_0_list_0').should('have.text', 'New export')
     cy.get('[role="listbox"]').contains('EPUB atosh').click()
 
-    cy.contains('Delete').click()
+    cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
     cy.contains('Profile has been deleted').should('exist')
   })
@@ -214,10 +225,10 @@ describe('Checking the Preview section', () => {
     cy.get('.ant-select-clear').click()
     cy.contains('atosh').click()
     cy.contains('You have unsaved changes').should('be.visible').click()
-    cy.contains('Save').click()
+    cy.getByData('preview-save-btn').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
 
-    cy.get('input[type="text"]').type('atosh no content')
+    cy.getByData('preview-exportName-input').type('atosh no content')
     cy.contains('button', 'OK').click()
     cy.contains('Profile created').should('exist')
 
@@ -314,10 +325,12 @@ describe('Checking permissions in the Preview page', () => {
     cy.canRename('author')
 
     cy.log('AUTHOR can connect to Lulu')
-    cy.contains('Connect to Lulu').should('exist')
+    cy.getByData('preview-connectLulu-btn')
+      .should('have.text', 'Connect to Lulu')
+      .should('exist')
 
     cy.log('AUTHOR can delete an export')
-    cy.contains('Delete').click()
+    cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
     cy.contains('Profile has been deleted').should('exist')
   })
@@ -346,10 +359,10 @@ describe('Checking permissions in the Preview page', () => {
     cy.canRename('collaborator')
 
     cy.log('Collaborators can NOT connect to Lulu')
-    cy.contains('Connect to Lulu').should('not.exist')
+    cy.getByData('preview-connectLulu-btn').should('not.exist')
 
     cy.log('Collaborators can NOT delete an export')
-    cy.contains('Delete').should('not.exist')
+    cy.getByData('preview-delete-btn').should('not.exist')
   })
 
   it('checking COLLABORATOR with VIEW access permissions', () => {
@@ -376,10 +389,10 @@ describe('Checking permissions in the Preview page', () => {
     cy.canRename('collaborator')
 
     cy.log('Collaborators can NOT connect to Lulu')
-    cy.contains('Connect to Lulu').should('not.exist')
+    cy.getByData('preview-connectLulu-btn').should('not.exist')
 
     cy.log('Collaborators can NOT delete an export')
-    cy.contains('Delete').should('not.exist')
+    cy.getByData('preview-delete-btn').should('not.exist')
   })
 })
 
@@ -394,9 +407,8 @@ Cypress.Commands.add('collapseSidebar', () => {
 })
 
 Cypress.Commands.add('verifyDefault', (label, title) => {
-  cy.contains(label)
+  cy.getByData(`preview-${label}`)
     .should('exist')
-    .parent()
     .find(`[title="${title}"]`)
     .should('have.text', title)
 })
@@ -414,7 +426,7 @@ Cypress.Commands.add('checkTemplates', () => {
   ]
 
   templates.forEach(title => {
-    cy.contains('templates:').parent().find(`[alt="${title}"]`).click()
+    cy.contains('span[data-test="preview-templateName"]', `${title}`).click()
     cy.contains('You have unsaved changes').should('be.visible')
   })
 })
@@ -433,29 +445,23 @@ Cypress.Commands.add('chooseFormat', user => {
 
 Cypress.Commands.add('saveExport', user => {
   if (user === 'author') {
-    cy.contains('Save').click()
+    cy.getByData('preview-save-btn').click()
     cy.get('.ant-modal-header').should('have.text', 'Save export')
-    cy.get('input[type="text"]').type(`${user}'s export`)
+    cy.getByData('preview-exportName-input').type(`${user}'s export`)
     cy.contains('button', 'OK').click()
     cy.contains('Profile created').should('exist')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
   } else {
-    cy.contains('Save').should('not.exist')
+    cy.getByData('preview-save-btn').should('not.exist')
   }
 })
 
 Cypress.Commands.add('canDownload', status => {
   if (status === 'disabled') {
-    cy.get('span[aria-label="download"]')
-      .parent()
-      .parent()
-      .should('be.disabled')
+    cy.getByData('preview-download-btn').should('be.disabled')
   } else {
-    cy.get('span[aria-label="download"]')
-      .parent()
-      .parent()
-      .should('not.be.disabled')
+    cy.getByData('preview-download-btn').should('not.be.disabled')
   }
 })
 

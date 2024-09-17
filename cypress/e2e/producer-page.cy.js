@@ -16,11 +16,11 @@ describe('Checking Producer Page', () => {
       cy.login(admin)
       cy.contains('Test Book').click()
       cy.url().should('include', '/producer')
-      cy.contains('div', 'Test Book')
+      cy.getByData('producer-bookTitle').should('contain', 'Test Book')
     })
 
     it('checking content in left side panel', () => {
-      cy.contains('button', 'Book Metadata')
+      cy.getByData('producer-metadata-btn')
         .should('be.visible')
         .should('not.be.disabled')
         .click()
@@ -53,12 +53,12 @@ describe('Checking Producer Page', () => {
       cy.get('h1').type('Title of chapter 1', { delay: 100 })
 
       // deleting a chapter
-      cy.contains('Title of chapter 1')
+      cy.contains('[data-test="producer-chapterTitle"]', 'Title of chapter 1')
         .parent()
         .parent()
-        .find('[data-icon="more"]')
+        .find('[data-test="producer-more-btn"]')
         .click()
-      cy.contains('button', 'Delete').click()
+      cy.getByData('producer-deleteChapter').click({ force: true })
       cy.contains(
         'Create or select a chapter in the chapters panel to start writing',
         { timeout: 8000 },
@@ -82,12 +82,16 @@ describe('Checking Producer Page', () => {
       cy.contains('div', 'Part 1', { timeout: 6000 })
         .parent()
         .parent()
-        .find('[data-icon="more"]')
+        .find('[data-test="producer-more-btn"]')
         .click()
-      cy.contains('button', 'Convert to part').click()
+      cy.contains('button', 'Convert to part').click({ force: true })
 
       cy.contains('Part 1').should('have.attr', 'data-status', '200')
-      cy.contains('Part 1').parent().parent().find('[data-icon="more"]').click()
+      cy.contains('Part 1')
+        .parent()
+        .parent()
+        .find('[data-test="producer-more-btn"]')
+        .click({ force: true })
       cy.contains('button', 'Convert to chapter').should('exist')
 
       // Add another chapter and try to dnd in part
@@ -111,14 +115,18 @@ describe('Checking Producer Page', () => {
       )
 
       // deleting a part
-      cy.contains('Part 1').parent().parent().find('[data-icon="more"]').click()
-      cy.contains('button', 'Delete').click()
+      cy.contains('Part 1')
+        .parent()
+        .parent()
+        .find('[data-test="producer-more-btn"]')
+        .click({ force: true })
+      cy.getByData('producer-deleteChapter').first().click({ force: true })
       cy.contains('Chapter 1')
         .parent()
         .parent()
-        .find('[data-icon="more"]')
-        .click()
-      cy.contains('button', 'Delete').click()
+        .find('[data-test="producer-more-btn"]')
+        .click({ force: true })
+      cy.getByData('producer-deleteChapter').last().click({ force: true })
       cy.contains(
         'Create or select a chapter in the chapters panel to start writing',
         { timeout: 8000 },
@@ -156,8 +164,8 @@ describe('Checking Producer Page', () => {
       cy.login(admin)
       cy.contains('Test Book').click()
       cy.url().should('include', '/producer')
-      cy.contains('div', 'Test Book')
-      cy.contains('button', 'Book Metadata').click()
+      cy.getByData('producer-bookTitle').should('contain', 'Test Book')
+      cy.getByData('producer-metadata-btn').click()
       cy.get('.ant-modal-title').should('have.text', 'Book Metadata')
     })
 
@@ -189,7 +197,7 @@ describe('Checking Producer Page', () => {
       // Checking default values for copyright page section
       cy.get('h2').last().should('have.text', 'COPYRIGHT PAGE')
       cy.get('label[title="ISBN List"]').should('have.text', 'ISBN List')
-      cy.contains('button', 'Add ISBN')
+      cy.getByData('metadata-addIsbn-btn')
         .should('exist')
         .and('not.be.disabled')
         .click({ force: true })
@@ -197,7 +205,7 @@ describe('Checking Producer Page', () => {
       cy.get('body').then($body => {
         if ($body.find('#isbns_0_label').length === 0) {
           // Retry clicking the button if the label is not found
-          cy.contains('button', 'Add ISBN').click({ force: true })
+          cy.getByData('metadata-addIsbn-btn').click({ force: true })
         }
       })
 
@@ -266,7 +274,15 @@ describe('Checking Producer Page', () => {
     it('checking multiple ISBNs', () => {
       cy.contains('COPYRIGHT PAGE').should('exist')
       // Adding the first ISBN
-      cy.contains('button', 'Add ISBN').click()
+      cy.getByData('metadata-addIsbn-btn').click()
+
+      cy.get('body').then($body => {
+        if ($body.find('#isbns_0_label').length === 0) {
+          // Retry clicking the button if the label is not found
+          cy.getByData('metadata-addIsbn-btn').click({ force: true })
+        }
+      })
+
       cy.setValue('#isbns_0_label', 'Paperback')
       cy.setValue('#isbns_0_isbn', '978-3-16-148410-0')
 
@@ -313,7 +329,7 @@ describe('Checking Producer Page', () => {
       cy.get('.ant-modal-footer').contains('Save').click()
 
       // Removing ISBNs
-      cy.contains('button', 'Book Metadata').click()
+      cy.getByData('producer-metadata-btn').click()
       cy.get('.ant-modal-title').should('have.text', 'Book Metadata')
       cy.get('[aria-label="minus-circle"]:nth(0)').should('exist')
       cy.get('[aria-label="minus-circle"]:nth(1)').should('exist')
@@ -321,10 +337,10 @@ describe('Checking Producer Page', () => {
       cy.get('[aria-label="minus-circle"]:nth(0)').click()
       cy.get('.ant-modal-footer').contains('Save').click()
 
-      cy.contains('button', 'Book Metadata').click()
+      cy.getByData('producer-metadata-btn').click()
       cy.contains('Hardcover').should('not.exist')
       cy.contains('Paperback').should('not.exist')
-      cy.contains('button', ' Add ISBN').should('exist')
+      cy.getByData('metadata-addIsbn-btn').should('exist')
     })
 
     it('checking copyright licenses options', () => {
@@ -339,6 +355,12 @@ describe('Checking Producer Page', () => {
           year: 'Copyright year (optional)',
         }
 
+        cy.get('body').then($body => {
+          if ($body.find(`label[title="${labels.holder}"]`).length === 0) {
+            // Retry clicking the radio button if the holder field is not found
+            cy.get(`strong:nth(${index})`).click({ force: true })
+          }
+        })
         cy.get(`label[title="${labels.holder}"]`).should(
           'have.text',
           labels.holder,
@@ -460,7 +482,7 @@ describe('Checking Producer Page', () => {
       cy.setValue('#subtitle', 'New subtitle')
       cy.setValue('#authors', 'Test Author')
 
-      cy.contains('button', ' Add ISBN').click()
+      cy.getByData('metadata-addIsbn-btn').click()
       cy.setValue('#isbns_0_label', 'Paperback')
       cy.setValue('#isbns_0_isbn', '978-3-16-148410-0')
       cy.setValue(
@@ -470,7 +492,7 @@ describe('Checking Producer Page', () => {
       cy.setValue('#bottomPage', 'www.author-website.com')
 
       cy.get('.ant-modal-footer').contains('Save').click()
-      cy.contains('button', 'Book Metadata').click()
+      cy.getByData('producer-metadata-btn').click()
 
       // Verify values using the custom 'verifyValue' command
       cy.verifyValue('#title', 'New title')
@@ -493,20 +515,19 @@ describe('Checking Producer Page', () => {
       cy.login(admin)
       cy.contains('AI Book').click()
       cy.url().should('include', '/producer')
-      cy.contains('div', 'AI Book')
+      cy.getByData('producer-bookTitle').should('contain', 'AI Book')
     })
 
     it('checking editor toolbar and book settings when AI is off', () => {
       cy.get('button[title="Toggle Ai"]').should('not.exist')
 
       // Confirm default values for Book Settings
-      cy.get('[aria-label="Book settings"]').click()
-      cy.contains('Book settings').should('exist')
+      cy.openBookSettings()
       cy.contains('AI writing prompt use').should('exist')
       cy.contains(
         'Users with edit access to this book can use AI writing prompts',
       ).should('exist')
-      cy.get('[role="switch"]:nth(0)')
+      cy.getByData('settings-toggleAI-switch')
         .should('have.attr', 'aria-checked')
         .and('equal', 'false')
       cy.get('[data-icon="close"]').click()
@@ -514,12 +535,12 @@ describe('Checking Producer Page', () => {
 
     it('switching AI to on', () => {
       //   Enable AI
-      cy.get('[aria-label="Book settings"]').click()
-      cy.get('[role="switch"]:nth(0)').click()
-      cy.get('[role="switch"]:nth(0)')
+      cy.openBookSettings()
+      cy.getByData('settings-toggleAI-switch').click()
+      cy.getByData('settings-toggleAI-switch')
         .should('have.attr', 'aria-checked')
         .and('equal', 'true')
-      cy.contains('Save').click()
+      cy.getByData('settings-save-btn').click()
       cy.get('button[title="Toggle Ai"]')
         .should('exist')
         .should('have.attr', 'aria-pressed')
@@ -530,6 +551,7 @@ describe('Checking Producer Page', () => {
       cy.get('button[title="Toggle Ai"]').should('not.be.disabled')
 
       cy.get('button[title="Toggle Ai"]').click({ force: true })
+
       // cy.usingAIPrompt()
 
       // cy.get('input[id="askAiInput"]')
@@ -565,12 +587,13 @@ describe('Checking Producer Page', () => {
       cy.login(admin)
       cy.contains('AI Book').click()
       cy.url().should('include', '/producer')
-      cy.contains('div', 'AI Book')
+      cy.getByData('producer-bookTitle').should('contain', 'AI Book')
     })
 
     it('writing and resolving a comment', () => {
       cy.get('.ProseMirror').should('be.visible')
       cy.wait(5000)
+      cy.get('.ProseMirror').type('{selectall}{backspace}')
       cy.get('.ProseMirror').type(
         'This text is going to be commented.{enter}{selectall}',
       )
@@ -582,9 +605,15 @@ describe('Checking Producer Page', () => {
       cy.contains('button', 'Cancel').should('be.disabled')
 
       // Add a comment
-      cy.get('textarea[placeholder="Write comment..."]').type(
-        'This is a comment from the author.',
-      )
+      // cy.get('textarea[placeholder="Write comment..."]').type(
+      //   'This is a comment from the author.',
+      // )
+      cy.get('[placeholder="Write comment..."]')
+        .should('exist')
+        .and('be.visible')
+        .focused()
+        .type('This is a comment from the author.')
+
       cy.get('button[type="submit"]').should('be.enabled')
       cy.get('button[type="submit"]').click()
 

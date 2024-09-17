@@ -37,22 +37,22 @@ describe('Checking default state in Book Settings modal', () => {
     cy.contains(
       'Users with edit access to this book can use AI writing prompts',
     ).should('exist')
-    cy.verifySwitch(0, 'disabled')
+    cy.verifySwitch('toggleAI', 'disabled')
 
     cy.contains('AI Book Designer (Beta)').should('exist')
     cy.contains(
       'Users with edit access to this book can use the AI Book Designer',
     ).should('exist')
-    cy.verifySwitch(1, 'disabled')
+    cy.verifySwitch('AIDesigner', 'disabled')
 
     cy.contains('Knowledge Base').should('exist')
     cy.contains(
       'Users with edit access to this book can create and query a knowledge base. Requires AI writing prompts and free text prompts to be on.',
     ).should('exist')
-    cy.verifySwitch(2, 'disabled')
+    cy.verifySwitch('kb', 'disabled')
 
-    cy.contains('button', 'Save').should('have.attr', 'type', 'submit')
-    cy.contains('button', 'Cancel').should('have.attr', 'type', 'reset')
+    cy.getByData('settings-save-btn').should('have.attr', 'type', 'submit')
+    cy.getByData('settings-cancel-btn').should('have.attr', 'type', 'reset')
 
     // Checking that AI pen does not exist in the toolbar
     cy.get('span[aria-label="close"]').click()
@@ -65,26 +65,26 @@ describe('Checking default state in Book Settings modal', () => {
     cy.openBookSettings()
 
     // Enabling AI writing prompt use but not saving by book owner
-    cy.toogleSwitch(0)
-    cy.verifySwitch(0, 'enabled')
+    cy.toogleSwitch('toggleAI')
+    cy.verifySwitch('toggleAI', 'enabled')
     cy.get('span[aria-label="close"]').click()
 
     cy.openBookSettings()
-    cy.verifySwitch(0, 'disabled')
+    cy.verifySwitch('toggleAI', 'disabled')
 
     // Enabling AI writing prompt use and saving by book owner
-    cy.toogleSwitch(0)
-    cy.verifySwitch(0, 'enabled')
-    cy.contains('button', 'Save').click()
+    cy.toogleSwitch('toggleAI')
+    cy.verifySwitch('toggleAI', 'enabled')
+    cy.getByData('settings-save-btn').click()
     cy.contains('Book settings').should('not.exist', { timeout: 6000 })
 
     cy.openBookSettings()
-    cy.verifySwitch(0, 'enabled')
+    cy.verifySwitch('toggleAI', 'enabled')
 
     // Disabling AI writing prompt by book owner
-    cy.toogleSwitch(0)
-    cy.verifySwitch(0, 'disabled')
-    cy.contains('button', 'Save').click()
+    cy.toogleSwitch('toggleAI')
+    cy.verifySwitch('toggleAI', 'disabled')
+    cy.getByData('settings-save-btn').click()
   })
 
   context("checking users' permissions in the modal", () => {
@@ -93,7 +93,7 @@ describe('Checking default state in Book Settings modal', () => {
       cy.goToBook(testBook)
 
       cy.openBookSettings()
-      cy.contains('button', 'Save').should('not.have.attr', 'disabled')
+      cy.getByData('settings-save-btn').should('not.have.attr', 'disabled')
     })
 
     it('COLLABORATOR with EDIT access can NOT change settings', () => {
@@ -101,10 +101,10 @@ describe('Checking default state in Book Settings modal', () => {
       cy.goToBook(testBook)
 
       cy.openBookSettings()
-      cy.get('[role="switch"]:nth(0)').should('have.attr', 'disabled')
-      cy.get('[role="switch"]:nth(1)').should('have.attr', 'disabled')
-      cy.contains('button', 'Save').should('have.attr', 'disabled')
-      cy.contains('Cancel').click()
+      cy.getByData('settings-toggleAI-switch').should('have.attr', 'disabled')
+      cy.getByData('settings-AIDesigner-switch').should('have.attr', 'disabled')
+      cy.getByData('settings-save-btn').should('have.attr', 'disabled')
+      cy.getByData('settings-cancel-btn').click()
     })
 
     it('COLLABORATOR with VIEW access can NOT access book settings', () => {
@@ -123,8 +123,8 @@ describe('AI writing prompt is enabled', () => {
 
       // Switching AI writing prompt on
       cy.openBookSettings()
-      cy.toogleSwitch(0)
-      cy.contains('button', 'Save').click()
+      cy.toogleSwitch('toggleAI')
+      cy.getByData('settings-save-btn').click()
       cy.logout()
     })
 
@@ -137,21 +137,22 @@ describe('AI writing prompt is enabled', () => {
     it('checking default options', () => {
       // Checking the two options for AI writing prompt
       cy.contains('Free-text writing prompts').should('exist')
-      cy.verifySwitch(1, 'enabled')
+      // cy.verifySwitch(1, 'enabled')
+      cy.verifySwitch('freeTextPrompt', 'enabled')
       cy.contains('Customize AI writing prompts').should('exist')
-      cy.verifySwitch(2, 'disabled')
+      cy.verifySwitch('customPrompt', 'disabled')
     })
 
     it('checking that both options cannot be disabled simultaneously.', () => {
       // Disabling 'Free-text writing prompts' automatically enables 'Customize AI writing prompts'
-      cy.toogleSwitch(1) // disabling free text prompts
-      cy.verifySwitch(1, 'disabled')
-      cy.verifySwitch(2, 'enabled') // customized prompts gets enabled automatically
+      cy.toogleSwitch('freeTextPrompt') // disabling free text prompts
+      cy.verifySwitch('freeTextPrompt', 'disabled')
+      cy.verifySwitch('customPrompt', 'enabled') // customized prompts gets enabled automatically
 
       // Disabling 'Customize AI writing prompts' automatically enables 'Free-text writing prompts'
-      cy.toogleSwitch(2) // disabling customized prompts
-      cy.verifySwitch(2, 'disabled')
-      cy.verifySwitch(1, 'enabled') // free-text prompts gets enabled automatically
+      cy.toogleSwitch('customPrompt') // disabling customized prompts
+      cy.verifySwitch('customPrompt', 'disabled')
+      cy.verifySwitch('freeTextPrompt', 'enabled') // free-text prompts gets enabled automatically
     })
   })
 
@@ -197,8 +198,8 @@ describe('AI writing prompt is enabled', () => {
       cy.openBookSettings()
 
       // Enabling customized prompts
-      cy.toogleSwitch(2)
-      cy.verifySwitch(2, 'enabled')
+      cy.toogleSwitch('customPrompt')
+      cy.verifySwitch('customPrompt', 'enabled')
 
       cy.get('#prompt')
         .should('exist')
@@ -232,14 +233,14 @@ describe('AI writing prompt is enabled', () => {
         cy.openBookSettings()
 
         // Enabling customized prompts
-        cy.toogleSwitch(1)
-        cy.verifySwitch(1, 'disabled')
-        cy.verifySwitch(2, 'enabled')
+        cy.toogleSwitch('freeTextPrompt')
+        cy.verifySwitch('freeTextPrompt', 'disabled')
+        cy.verifySwitch('customPrompt', 'enabled')
 
         // Add a couple of prompts
         cy.addPrompt('Translate to French')
         cy.addPrompt('Capitalize each word')
-        cy.contains('button', 'Save').click()
+        cy.getByData('settings-save-btn').click()
         cy.contains(
           'Create or select a chapter in the chapters panel to start writing',
           { timeout: 10000 },
@@ -280,10 +281,10 @@ describe('AI writing prompt is enabled', () => {
         cy.openBookSettings()
 
         // Enabling customized prompts
-        cy.toogleSwitch(1)
-        cy.verifySwitch(1, 'enabled')
-        cy.verifySwitch(2, 'enabled')
-        cy.contains('button', 'Save').click()
+        cy.toogleSwitch('freeTextPrompt')
+        cy.verifySwitch('freeTextPrompt', 'enabled')
+        cy.verifySwitch('customPrompt', 'enabled')
+        cy.getByData('settings-save-btn').click()
         cy.logout()
       })
       it('Book owner can use both AI customized prompts and free-writing text prompts', () => {
@@ -319,10 +320,10 @@ describe('AI Book Designer (Beta)', () => {
 
     // Enabling AI Book Designer page
     cy.openBookSettings()
-    cy.verifySwitch(3, 'disabled')
-    cy.toogleSwitch(3)
-    cy.verifySwitch(3, 'enabled')
-    cy.contains('button', 'Save').click()
+    cy.verifySwitch('AIDesigner', 'disabled')
+    cy.toogleSwitch('AIDesigner')
+    cy.verifySwitch('AIDesigner', 'enabled')
+    cy.getByData('settings-save-btn').click()
     cy.contains('Book settings').should('not.exist', { timeout: 6000 })
 
     cy.logout()
@@ -349,26 +350,9 @@ describe('AI Book Designer (Beta)', () => {
   })
 })
 
-Cypress.Commands.add('openBookSettings', () => {
-  cy.get('[aria-label="Book settings"]').click()
-  cy.contains('Book settings').should('exist')
-})
-
 Cypress.Commands.add('canNotEdit', () => {
   cy.get('.ProseMirror').click()
   cy.get('button[title="Toggle Ai"]').should('be.disabled')
-})
-
-Cypress.Commands.add('verifySwitch', (switchIndex, status) => {
-  const expectedValue = status === 'enabled' ? 'true' : 'false'
-
-  cy.get('[role="switch"]')
-    .eq(switchIndex)
-    .should('have.attr', 'aria-checked', expectedValue)
-})
-
-Cypress.Commands.add('toogleSwitch', switchIndex => {
-  cy.get(`[role="switch"]:nth(${switchIndex})`).click()
 })
 
 Cypress.Commands.add('verifyAIPen', shouldBeVisible => {

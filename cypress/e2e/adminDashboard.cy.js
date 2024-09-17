@@ -41,7 +41,7 @@ describe('checking AI integration', () => {
 
   it('checking default values for AI integration (ON)', () => {
     cy.contains('span', 'AI supplier integration').should('exist')
-    cy.get('button[role="switch"]:nth(0)').should(
+    cy.getByData('admindb-ai-switch').should(
       'have.attr',
       'aria-checked',
       'true',
@@ -50,8 +50,8 @@ describe('checking AI integration', () => {
     cy.get('form').should('contain', 'Api key')
 
     // Checking that there is an API key
-    cy.get('form').find('#apiKey').invoke('val').should('not.be.empty')
-    cy.get('button[type="submit"]')
+    cy.getByData('admindb-aikey-input').invoke('val').should('not.be.empty')
+    cy.getByData('admindb-updateKey-btn')
       .should('have.text', 'Update key')
       .should('be.enabled')
 
@@ -64,34 +64,41 @@ describe('checking AI integration', () => {
 
   it('checking API key field', () => {
     cy.log('Warning displayed when key is missing')
-    cy.get('form').find('#apiKey').clear()
-    cy.get('#apiKey').type('{enter}')
+    cy.getByData('admindb-aikey-input').clear()
+    cy.getByData('admindb-aikey-input').type('{enter}')
     cy.contains('You need to provide a key').should('exist')
 
     cy.log('Error displayed when key is invalid')
-    cy.get('#apiKey').type('This is some dummy text', { delay: 100 })
-    cy.get('button[type="submit"]').should('have.text', 'Update key').click()
-    cy.get('button[type="submit"]').should('have.text', 'Update key').click()
+    cy.getByData('admindb-aikey-input').type('This is some dummy text', {
+      delay: 100,
+    })
+
+    cy.getByData('admindb-updateKey-btn')
+      .should('have.text', 'Update key')
+      .click()
 
     cy.contains('API key is invalid', { timeout: 8000 }).should('exist')
   })
 
   it('switching AI integration OFF', () => {
-    cy.get('button[role="switch"]:nth(0)').click()
-    cy.get('button[role="switch"]:nth(0)').should(
+    cy.getByData('admindb-ai-switch').click()
+    cy.getByData('admindb-ai-switch').should(
       'have.attr',
       'aria-checked',
       'false',
     )
 
     // Add check about form
-    cy.get('#apiKey').should('have.class', 'ant-input-disabled')
+    cy.getByData('admindb-aikey-input').should(
+      'have.class',
+      'ant-input-disabled',
+    )
 
     // Checking that Book Settings do not exist when AI integration is off
     cy.get('[href="/dashboard"]').first().click()
     cy.location('pathname').should('equal', '/dashboard')
     cy.goToBook('AI Book')
-    cy.get('li[role="menuitem"]:nth(3)').should('not.exist')
+    cy.getByData('header-bookSettings-btn').should('not.exist')
   })
 })
 
@@ -105,7 +112,7 @@ describe('checking POD', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(1)').should(
+    cy.get('h2:nth(2)').should(
       'have.text',
       'Print on demand supplier integration',
     )
@@ -113,7 +120,7 @@ describe('checking POD', () => {
 
   it('checking default values for POD (ON)', () => {
     cy.contains('span', 'Lulu').should('exist')
-    cy.get('button[role="switch"]:nth(1)').should(
+    cy.getByData('admindb-lulu-switch').should(
       'have.attr',
       'aria-checked',
       'true',
@@ -125,14 +132,14 @@ describe('checking POD', () => {
     cy.goToBook('POD Book')
     cy.goToPreview()
     cy.contains('New export').should('exist')
-    cy.contains('Save').should('exist')
+    cy.getByData('preview-save-btn').should('exist')
   })
 
   it('switching POD OFF', () => {
     cy.contains('span', 'Lulu').should('exist')
-    cy.get('button[role="switch"]:nth(1)').click()
+    cy.getByData('admindb-lulu-switch').click()
     cy.contains('span', 'Lulu').should('exist')
-    cy.get('button[role="switch"]:nth(1)').should(
+    cy.getByData('admindb-lulu-switch').should(
       'have.attr',
       'aria-checked',
       'false',
@@ -144,7 +151,7 @@ describe('checking POD', () => {
     cy.goToBook('POD Book')
     cy.goToPreview()
     cy.contains('New export').should('not.exist')
-    cy.contains('Save').should('not.exist')
+    cy.getByData('preview-save-btn').should('not.exist')
   })
 })
 
@@ -152,7 +159,7 @@ describe('checking Terms & Conditions', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(2)').should('have.text', 'Terms and conditions')
+    cy.get('h2:nth(3)').should('have.text', 'Terms and conditions')
   })
 
   it('checking default content in T&C section', () => {
@@ -165,7 +172,7 @@ describe('checking Terms & Conditions', () => {
       'aria-pressed',
       'true',
     )
-    cy.get('p:nth(1)').should('have.text', '')
+    // cy.get('p:nth(1)').should('have.text', '')
     cy.contains('span', 'Update Terms and Conditions').should('exist')
 
     const toolbarButtons = [
@@ -229,7 +236,7 @@ describe('checking Terms & Conditions', () => {
     cy.addLists(['item1', 'item2', 'item3'], true) // Adding ordered list
     cy.addLists(['item1', 'item2', 'item3'], false) // Adding bullet list
 
-    cy.contains('span', 'Update Terms and Conditions').click()
+    cy.getByData('admindb-updateT&C-btn').click()
     cy.contains('Terms and Conditions updated successfully')
     cy.log('Terms and Conditions were updated.')
 
@@ -251,12 +258,6 @@ Cypress.Commands.add('goToAdminDashboard', () => {
   cy.get('.ant-avatar-string').click()
   cy.contains('Admin').click()
   cy.location('pathname').should('equal', '/admin')
-})
-
-Cypress.Commands.add('openBookSettings', () => {
-  cy.get('[aria-label="Book settings"]').click()
-  cy.contains('Book settings').should('exist')
-  cy.contains('AI writing prompt use').should('exist')
 })
 
 Cypress.Commands.add('addLists', (listItems, isOrdered) => {

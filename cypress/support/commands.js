@@ -32,19 +32,19 @@ Cypress.Commands.add('getByData', selector => {
 Cypress.Commands.add('login', user => {
   cy.visit('http://localhost:4000/login')
   cy.contains('Login').should('exist')
-  cy.get('#email').type(user.email)
-  cy.get('#password').type(user.password)
+  cy.getByData('login-email-input').type(user.email)
+  cy.getByData('login-password-input').type(user.password)
   cy.get("button[type='submit']").contains('Log in').click()
   cy.location('pathname').should('equal', '/dashboard')
 })
 
 Cypress.Commands.add('addBook', title => {
   cy.visit('http://localhost:4000/dashboard/')
-  cy.contains('[href="/create-book"]', 'New book').should('exist')
-  cy.contains('[href="/create-book"]', 'New book').click()
-  cy.contains('button', 'Start writing').click()
-  cy.get('#bookTitle').type(title)
-  cy.contains('Continue').click()
+  cy.getByData('dashboard-newBook-button').should('exist')
+  cy.getByData('dashboard-newBook-button').click()
+  cy.getByData('createBook-startWriting-button').click()
+  cy.getByData('rename-bookTitle').find('input').type(title)
+  cy.getByData('rename-continue-button').click()
   cy.contains(title)
   cy.get('a[href="/dashboard"]').last().click()
   cy.location('pathname').should('equal', '/dashboard')
@@ -103,7 +103,7 @@ Cypress.Commands.add('signup', user => {
 
 Cypress.Commands.add('createUntitledChapter', () => {
   cy.url().should('include', '/producer')
-  cy.get('.anticon-plus').click()
+  cy.getByData('producer-createChapter-btn').click()
   cy.contains('Untitled Chapter', { timeout: 8000 })
 })
 
@@ -159,8 +159,28 @@ Cypress.Commands.add('addMember', (collaborator, access) => {
 })
 
 Cypress.Commands.add('goToPreview', () => {
-  cy.contains('a', 'Preview').click()
+  cy.getByData('header-preview-link').click()
   cy.url().should('include', '/exporter')
+})
+
+Cypress.Commands.add('openBookSettings', () => {
+  cy.getByData('header-bookSettings-btn').click()
+  cy.contains('Book settings').should('exist')
+  cy.contains('AI writing prompt use').should('exist')
+})
+
+Cypress.Commands.add('verifySwitch', (switchName, status) => {
+  const expectedValue = status === 'enabled' ? 'true' : 'false'
+
+  cy.getByData(`settings-${switchName}-switch`).should(
+    'have.attr',
+    'aria-checked',
+    expectedValue,
+  )
+})
+
+Cypress.Commands.add('toogleSwitch', switchName => {
+  cy.getByData(`settings-${switchName}-switch`).click()
 })
 
 Cypress.Commands.add('dragAndDrop', (subject, target) => {
