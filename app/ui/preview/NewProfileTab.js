@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { Stack, Select, Ribbon } from '../common'
+import { Stack, Select } from '../common'
 import ExportOptionsSection from './ExportOptionsSection'
 import Footer from './Footer'
 
@@ -27,6 +27,7 @@ const NewProfileTab = props => {
     onClickDownload,
     updateProfileOptions,
     exportsConfig,
+    profiles,
   } = props
 
   const exportOptions = allExportOptions.filter(option => {
@@ -45,12 +46,6 @@ const NewProfileTab = props => {
           options={exportOptions}
           value={newProfileOptions.format}
         />
-
-        {canModify && hasChanges && (
-          <Ribbon hide={!hasChanges || !canModify}>
-            You have unsaved changes
-          </Ribbon>
-        )}
       </Stack>
 
       <ExportOptionsSection
@@ -61,6 +56,7 @@ const NewProfileTab = props => {
         isbns={isbns}
         newProfile
         onChange={handleOptionsChange}
+        profiles={profiles}
         selectedContent={newProfileOptions.content}
         selectedFormat={newProfileOptions.format}
         selectedIsbn={newProfileOptions.isbn}

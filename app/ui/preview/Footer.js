@@ -222,11 +222,11 @@ const Footer = props => {
         title="Save export"
       >
         <Input
+          data-test="preview-exportName-input"
           onChange={handleCreateInputChange}
           onKeyDown={handleInputKeyDown}
           ref={inputRef}
           value={createInput}
-          data-test="preview-exportName-input"
         />
       </Modal>
     </Wrapper>
@@ -240,13 +240,14 @@ Footer.propTypes = {
   isNewProfileSelected: PropTypes.bool.isRequired,
   isSaveDisabled: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,
-  onClickDelete: PropTypes.func.isRequired,
+  onClickDelete: PropTypes.func,
   onClickDownload: PropTypes.func.isRequired,
   updateProfile: PropTypes.func.isRequired,
   selectedFormat: PropTypes.string,
 }
 
 Footer.defaultProps = {
+  onClickDelete: null,
   selectedFormat: 'pdf',
 }
 

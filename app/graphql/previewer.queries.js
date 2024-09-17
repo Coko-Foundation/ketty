@@ -40,8 +40,12 @@ const GET_EXPORT_PROFILES = gql`
         templateId
         trimSize
         isbn
-        includePdf
-        includeEpub
+        downloadableAssets {
+          pdf
+          epub
+          pdfProfileId
+          epubProfileId
+        }
       }
     }
   }
@@ -68,8 +72,12 @@ const CREATE_EXPORT_PROFILE = gql`
       templateId
       trimSize
       isbn
-      includePdf
-      includeEpub
+      downloadableAssets {
+        pdf
+        epub
+        pdfProfileId
+        epubProfileId
+      }
     }
   }
 `

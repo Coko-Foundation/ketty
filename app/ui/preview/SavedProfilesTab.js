@@ -6,6 +6,7 @@ import ExportOptionsSection from './ExportOptionsSection'
 import Footer from './Footer'
 import LuluIntegration from './LuluIntegration'
 import FlaxIntegration from './FlaxIntegration'
+import { Ribbon } from '../common'
 
 const SavedProfilesTab = props => {
   const {
@@ -39,23 +40,35 @@ const SavedProfilesTab = props => {
     lastSynced,
     onClickConnectToLulu,
     sendToLulu,
+    // end lulu integration
+    publishing,
+    webPublishInfo,
+    onUnpublish,
   } = props
 
   const profileSelected = selectedProfile && selectedProfile !== 'new-export'
 
   return (
     <>
-      <ProfileRow
-        canModifyProfiles={canModify}
-        onProfileChange={handleProfileChange}
-        profiles={profiles.map(p => ({ label: p.label, value: p.value }))}
-        selectedProfile={profileSelected ? selectedProfileSelectOption : {}}
-      />
+      <div>
+        <ProfileRow
+          canModifyProfiles={canModify}
+          onProfileChange={handleProfileChange}
+          profiles={profiles.map(p => ({ label: p.label, value: p.value }))}
+          selectedProfile={profileSelected ? selectedProfileSelectOption : {}}
+        />
+        {profileSelected && canModify && hasChanges && (
+          <Ribbon hide={!hasChanges || !canModify}>
+            You have unsaved changes
+          </Ribbon>
+        )}
+      </div>
       {profileSelected && (
         <>
           <ExportOptionsSection
             canModifyProfiles={canModify}
             disabled={optionsDisabled}
+            epubProfileId={currentOptions.epubProfileId}
             exportsConfig={exportsConfig}
             includeEpub={currentOptions.includeEpub}
             includePdf={currentOptions.includePdf}
@@ -63,6 +76,8 @@ const SavedProfilesTab = props => {
             newProfile={!selectedProfile}
             onChange={handleOptionsChange}
             onProfileRename={renameProfile}
+            pdfProfileId={currentOptions.pdfProfileId}
+            profiles={currentOptions.format === 'web' ? profiles : null}
             selectedContent={currentOptions.content}
             selectedFormat={currentOptions.format}
             selectedIsbn={currentOptions.isbn}
@@ -72,7 +87,7 @@ const SavedProfilesTab = props => {
             templates={templates}
           />
           <Divider />
-          {luluConfig &&
+          {!!luluConfig &&
           (currentOptions.format === 'pdf' ||
             currentOptions.format === 'epub') ? (
             <LuluIntegration
@@ -90,14 +105,19 @@ const SavedProfilesTab = props => {
           ) : null}
           {currentOptions.format === 'web' ? (
             <FlaxIntegration
+              epubProfile={currentOptions.epubProfileId}
               includeEpub={currentOptions.includeEpub}
               includePdf={currentOptions.includePdf}
               onPublish={onPublish}
+              onUnpublish={onUnpublish}
+              pdfProfile={currentOptions.pdfProfileId}
               profiles={profiles}
-              type="primary"
-            >
-              Publish Online
-            </FlaxIntegration>
+              publishing={publishing}
+              selectedTemplate={templates.find(
+                template => template.id === currentOptions.template,
+              )}
+              webPublishInfo={webPublishInfo}
+            />
           ) : null}
 
           <Footer

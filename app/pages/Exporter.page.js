@@ -28,6 +28,7 @@ import {
   UPLOAD_TO_LULU,
   UPDATE_EXPORT_PROFILE_OPTIONS,
   PUBLISH_ONLINE,
+  GET_BOOK_WEB_PUBLISH_INFO,
 } from '../graphql'
 
 import { isOwner, hasEditAccess, isAdmin } from '../helpers/permissions'
@@ -75,6 +76,8 @@ const optionKeys = [
   'isbn',
   'includePdf',
   'includeEpub',
+  'pdfProfileId',
+  'epubProfileId',
 ]
 
 const getProfileExportOptions = profile => {
@@ -114,19 +117,6 @@ const PreviewerPage = () => {
 
   // #region queries
   const {
-    data: templatesData,
-    loading: templatesLoading,
-    refetch: refetchTemplates,
-  } = useQuery(GET_SPECIFIC_TEMPLATES, {
-    variables: {
-      where: {
-        target: getFormatTarget(defaultProfile.format),
-        trimSize: defaultProfile.size,
-      },
-    },
-  })
-
-  const {
     data: profilesData,
     loading: profilesLoading,
     refetch: refetchProfiles,
@@ -147,12 +137,33 @@ const PreviewerPage = () => {
     },
   })
 
+  const { data: { getBook: { webPublishInfo } = {} } = {} } = useQuery(
+    GET_BOOK_WEB_PUBLISH_INFO,
+    {
+      variables: {
+        id: bookId,
+      },
+    },
+  )
+
   const { data: { getApplicationParameters } = {}, loading: paramsLoading } =
     useQuery(APPLICATION_PARAMETERS, {
       onCompleted: ({ getApplicationParameters: applicationParams }) => {
         const exportsConfig = applicationParams?.find(
           p => p.area === 'exportsConfig',
         ).config
+
+        if (!exportsConfig.pdfDownload.enabled) {
+          if (exportsConfig.epubDownload.enabled) {
+            defaultProfile.format = 'epub'
+            defaultProfile.size = null
+          } else if (exportsConfig.webPublish.enabled) {
+            defaultProfile.format = 'web'
+            defaultProfile.size = null
+          } else {
+            defaultProfile.format = 'Preview disabled'
+          }
+        }
 
         setNewProfileOptions({
           ...newProfileOptions,
@@ -161,6 +172,20 @@ const PreviewerPage = () => {
         })
       },
     })
+
+  const {
+    data: templatesData,
+    loading: templatesLoading,
+    refetch: refetchTemplates,
+  } = useQuery(GET_SPECIFIC_TEMPLATES, {
+    skip: !getApplicationParameters,
+    variables: {
+      where: {
+        target: getFormatTarget(defaultProfile.format),
+        trimSize: defaultProfile.size,
+      },
+    },
+  })
 
   const [getPagedLink, { loading: previewIsLoading }] = useLazyQuery(
     GET_PAGED_PREVIEWER_LINK,
@@ -233,8 +258,10 @@ const PreviewerPage = () => {
         isbn: created.isbn,
         size: created.trimSize,
         template: created.templateId,
-        includePdf: created.includePdf,
-        includeEpub: created.includeEpub,
+        includePdf: created.downloadableAssets.pdf,
+        includeEpub: created.downloadableAssets.epub,
+        pdfProfileId: created.downloadableAssets.pdfProfileId,
+        epubProfileId: created.downloadableAssets.epubProfileId,
       })
 
       setActiveTabKey('saved')
@@ -243,7 +270,14 @@ const PreviewerPage = () => {
 
   const [renameProfile] = useMutation(RENAME_EXPORT_PROFILE)
 
-  const [updateProfileOptions] = useMutation(UPDATE_EXPORT_PROFILE_OPTIONS)
+  const [updateProfileOptions] = useMutation(UPDATE_EXPORT_PROFILE_OPTIONS, {
+    refetchQueries: [
+      {
+        query: GET_EXPORT_PROFILES,
+        variables: { bookId },
+      },
+    ],
+  })
 
   const [deleteProfile] = useMutation(DELETE_EXPORT_PROFILE, {
     refetchQueries: [
@@ -260,16 +294,22 @@ const PreviewerPage = () => {
       const { path } = exportBook
 
       if (fileExtension === 'epub') return window.location.replace(path)
-      return window.open(path, '_blank')
+      return window.open(path, '_blank', 'noreferrer')
     },
   })
 
-  const [publish] = useMutation(PUBLISH_ONLINE, {
+  const [publish, { loading: publishing }] = useMutation(PUBLISH_ONLINE, {
     onCompleted: ({ publishOnline }) => {
       const { path } = publishOnline
 
-      return window.open(path, '_blank')
+      return window.open(path, '_blank', 'noreferrer')
     },
+    refetchQueries: [
+      {
+        query: GET_BOOK_WEB_PUBLISH_INFO,
+        variables: { id: bookId },
+      },
+    ],
   })
 
   const [uploadToLulu] = useMutation(UPLOAD_TO_LULU)
@@ -319,7 +359,10 @@ const PreviewerPage = () => {
       isbn,
       includeEpub,
       includePdf,
-    } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
+      pdfProfileId,
+      epubProfileId,
+    } = newProfileOptions
+    // } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
       bookId,
@@ -333,10 +376,12 @@ const PreviewerPage = () => {
       templateId,
       trimSize,
       isbn,
-      ...(format === 'web' && {
-        includeEpub,
-        includePdf,
-      }),
+      downloadableAssets: {
+        epub: includeEpub,
+        pdf: includePdf,
+        pdfProfileId,
+        epubProfileId,
+      },
     }
 
     return createProfile({
@@ -385,6 +430,10 @@ const PreviewerPage = () => {
       content,
       template: templateId,
       isbn,
+      includePdf,
+      includeEpub,
+      pdfProfileId,
+      epubProfileId,
     } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
@@ -397,6 +446,12 @@ const PreviewerPage = () => {
       templateId,
       trimSize,
       isbn,
+      downloadableAssets: {
+        pdf: includePdf,
+        epub: includeEpub,
+        pdfProfileId: includePdf ? pdfProfileId : null,
+        epubProfileId: includeEpub ? epubProfileId : null,
+      },
     }
 
     return updateProfileOptions({
@@ -429,7 +484,9 @@ const PreviewerPage = () => {
   }
 
   const handlePublish = () => {
-    const { template, includePdf, includeEpub } = currentOptions
+    const { template, includePdf, includeEpub, pdfProfileId, epubProfileId } =
+      currentOptions
+
     return publish({
       variables: {
         input: {
@@ -438,10 +495,18 @@ const PreviewerPage = () => {
           additionalExportOptions: {
             includePdf,
             includeEpub,
+            pdfProfileId,
+            epubProfileId,
           },
         },
       },
     })
+  }
+
+  const handleUnpulbish = () => {
+    // return unpublish({
+    //   bookId,
+    // })
   }
 
   const handleCreatePreview = (templates, options, target) => {
@@ -499,6 +564,8 @@ const PreviewerPage = () => {
         spread: options.spread,
         includePdf: options.includePdf,
         includeEpub: options.includeEpub,
+        pdfProfileId: options.pdfProfileId,
+        epubProfileId: options.epubProfileId,
       })
     } else {
       setNewProfileOptions({
@@ -508,6 +575,8 @@ const PreviewerPage = () => {
         spread: options.spread,
         includePdf: options.includePdf,
         includeEpub: options.includeEpub,
+        pdfProfileId: options.pdfProfileId,
+        epubProfileId: options.epubProfileId,
       })
     }
 
@@ -554,7 +623,7 @@ const PreviewerPage = () => {
       options.size = defaultProfile.size
     }
 
-    if (options.format === 'epub') {
+    if (options.format === 'epub' || options.format === 'web') {
       options.size = null
     }
 
@@ -657,8 +726,14 @@ const PreviewerPage = () => {
       }
 
       if (templatesData && selectedTemplate && !createPreviewCalled) {
-        const options =
-          activeTabKey === 'saved' ? currentOptions : newProfileOptions
+        // const options =
+        //   activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
+        const options = {
+          ...getProfileExportOptions(defaultProfileWithTemplate),
+          zoom: initialZoom,
+          spread: initialSpread,
+        }
 
         handleCreatePreview(
           templatesData.getSpecificTemplates,
@@ -675,37 +750,53 @@ const PreviewerPage = () => {
 
   const profiles =
     getApplicationParameters &&
-    profilesData?.getBookExportProfiles.result.map(p => {
-      const luluProfile = p.providerInfo.find(x => x.providerLabel === 'lulu')
-      const projectId = luluProfile ? luluProfile.externalProjectId : null
+    exportsConfig &&
+    profilesData?.getBookExportProfiles.result
+      .map(p => {
+        const luluProfile = p.providerInfo.find(x => x.providerLabel === 'lulu')
+        const projectId = luluProfile ? luluProfile.externalProjectId : null
 
-      const luluProjectUrl = projectId
-        ? `${getLuluConfigValue('projectBaseUrl')}/${projectId}`
-        : null
+        const luluProjectUrl = projectId
+          ? `${getLuluConfigValue('projectBaseUrl')}/${projectId}`
+          : null
 
-      const content = []
+        const content = []
 
-      if (p.includedComponents.copyright) content.push('includeCopyrights')
-      if (p.includedComponents.titlePage) content.push('includeTitlePage')
-      if (p.includedComponents.toc) content.push('includeTOC')
+        if (p.includedComponents.copyright) content.push('includeCopyrights')
+        if (p.includedComponents.titlePage) content.push('includeTitlePage')
+        if (p.includedComponents.toc) content.push('includeTOC')
 
-      return {
-        format: p.format,
-        content,
-        label: p.displayName,
-        lastSynced: luluProfile ? luluProfile.lastSync : null,
-        projectId,
-        projectUrl: luluProjectUrl,
-        size: p.trimSize,
-        synced: luluProfile ? luluProfile.inSync : null,
-        template: p.templateId,
-        value: p.id,
-        // Require that p.isbn is a valid option from podMetadata.isbns
-        isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
-        includePdf: p.includePdf,
-        includeEpub: p.includeEpub,
-      }
-    })
+        return {
+          format: p.format,
+          content,
+          label: p.displayName,
+          lastSynced: luluProfile ? luluProfile.lastSync : null,
+          projectId,
+          projectUrl: luluProjectUrl,
+          size: p.trimSize,
+          synced: luluProfile ? luluProfile.inSync : null,
+          template: p.templateId,
+          value: p.id,
+          // Require that p.isbn is a valid option from podMetadata.isbns
+          isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
+          includePdf: p.downloadableAssets?.pdf,
+          includeEpub: p.downloadableAssets?.epub,
+          pdfProfileId: p.downloadableAssets?.pdfProfileId,
+          epubProfileId: p.downloadableAssets?.epubProfileId,
+        }
+      })
+      .filter(p => {
+        switch (p.format) {
+          case 'pdf':
+            return exportsConfig.pdfDownload.enabled
+          case 'epub':
+            return exportsConfig.epubDownload.enabled
+          case 'web':
+            return exportsConfig.webPublish.enabled
+          default:
+            return false
+        }
+      })
 
   const allProfiles = profiles // && [defaultProfileWithTemplate, ...profiles]
 
@@ -761,19 +852,22 @@ const PreviewerPage = () => {
       isUserConnectedToLulu={isUserConnectedToLulu}
       loadingExport={false}
       loadingPreview={creatingPreview}
-      luluConfig={luluConfig && !luluConfig?.disabled}
+      luluConfig={luluConfig}
       newProfileOptions={newProfileOptions}
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
       onPublish={handlePublish}
+      onUnpulbish={handleUnpulbish}
       previewLink={previewLink}
       profiles={allProfiles}
+      publishing={publishing}
       renameProfile={handleRenameProfile}
       selectedProfile={selectedProfile}
       sendToLulu={handleSendToLulu}
       setActiveTabKey={handleTabChange}
       templates={templates}
       updateProfileOptions={handleUpdateProfileOptions}
+      webPublishInfo={webPublishInfo}
     />
   )
 }

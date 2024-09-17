@@ -46,6 +46,7 @@ const StyledTabs = styled(Tabs)`
 `
 
 const StyledStack = styled(Stack)`
+  --space: 2em;
   height: 100%;
 `
 
@@ -67,6 +68,8 @@ const optionKeys = [
   'isbn',
   'includePdf',
   'includeEpub',
+  'pdfProfileId',
+  'epubProfileId',
 ]
 
 const getProfileSelectOptions = profile => pick(profile, selectKeys)
@@ -113,6 +116,9 @@ const PreviewSettings = props => {
     setActiveTabKey,
     exportsConfig,
     onPublish,
+    publishing,
+    onUnpublish,
+    webPublishInfo,
   } = props
 
   // #region functions
@@ -184,6 +190,7 @@ const PreviewSettings = props => {
                   newProfileOptions={newOptions}
                   onClickDownload={download}
                   optionsDisabled={optionsDisabled}
+                  profiles={profiles}
                   templates={templates}
                   updateProfileOptions={updateProfileOptions}
                   // updateLoading={updateLoading}
@@ -217,16 +224,19 @@ const PreviewSettings = props => {
                   onClickDelete={deleteProfile}
                   onClickDownload={download}
                   onPublish={onPublish}
+                  onUnpublish={onUnpublish}
                   optionsDisabled={optionsDisabled}
                   profiles={profiles}
                   projectId={projectId}
                   projectUrl={projectUrl}
+                  publishing={publishing}
                   renameProfile={renameProfile}
                   selectedProfile={selectedProfile}
                   selectedProfileSelectOption={selectedProfileSelectOption}
                   sendToLulu={sendToLulu}
                   templates={templates}
                   updateProfileOptions={updateProfileOptions}
+                  webPublishInfo={webPublishInfo}
                 />
               </StyledStack>
             ),
@@ -248,7 +258,18 @@ const PreviewSettings = props => {
 PreviewSettings.propTypes = {
   createProfile: PropTypes.func.isRequired,
   currentOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
+    size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
+    content: PropTypes.arrayOf(
+      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+    ),
+    template: PropTypes.string,
+    isbn: PropTypes.string,
+    spread: PropTypes.oneOf(['single', 'double']),
+    zoom: PropTypes.number,
+  }).isRequired,
+  newOptions: PropTypes.shape({
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -262,7 +283,7 @@ PreviewSettings.propTypes = {
   defaultProfile: PropTypes.shape({
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -298,7 +319,7 @@ PreviewSettings.propTypes = {
     }),
   ).isRequired,
   // renameProfile: PropTypes.func.isRequired,
-  selectedProfile: PropTypes.string.isRequired,
+  selectedProfile: PropTypes.string,
   sendToLulu: PropTypes.func.isRequired,
   templates: PropTypes.arrayOf(
     PropTypes.shape({
@@ -315,11 +336,18 @@ PreviewSettings.propTypes = {
   ).isRequired,
   updateProfileOptions: PropTypes.func.isRequired,
   onPublish: PropTypes.func,
+  publishing: PropTypes.bool,
+  webPublishInfo: PropTypes.shape(),
+  onUnpublish: PropTypes.func,
 }
 
 PreviewSettings.defaultProps = {
+  selectedProfile: null,
   luluConfig: null,
   onPublish: null,
+  publishing: false,
+  onUnpublish: null,
+  webPublishInfo: null,
 }
 
 export default PreviewSettings

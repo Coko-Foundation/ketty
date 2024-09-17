@@ -103,6 +103,19 @@ const GET_BOOK_SETTINGS = gql`
   }
 `
 
+const GET_BOOK_WEB_PUBLISH_INFO = gql`
+  query GetBook($id: ID!) {
+    getBook(id: $id) {
+      webPublishInfo {
+        published
+        firstPublished
+        lastUpdated
+        publicUrl
+      }
+    }
+  }
+`
+
 const CREATE_BOOK = gql`
   mutation CreateBook($input: CreateBookInput!) {
     createBook(input: $input) {
@@ -409,4 +422,5 @@ export {
   BOOK_RENAMED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   PUBLISH_ONLINE,
+  GET_BOOK_WEB_PUBLISH_INFO,
 }

@@ -4,8 +4,9 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import ExportOption from './ExportOption'
 import TemplateList from './TemplateList'
-import { Select, CheckboxGroup } from '../common'
+import { Select } from '../common'
 import ProfileName from './ProfileName'
+import WebDownloadsSelection from './WebDownloadsSelection'
 
 // #region menu options
 const exportFormatOptions = [
@@ -83,8 +84,11 @@ const ExportOptionsSection = props => {
     isbns,
     includePdf,
     includeEpub,
+    pdfProfileId,
+    epubProfileId,
     canModifyProfiles,
     onProfileRename,
+    profiles,
   } = props
 
   const isbnOptions = [
@@ -138,6 +142,10 @@ const ExportOptionsSection = props => {
       includePdf: values.indexOf('pdf') !== -1,
       includeEpub: values.indexOf('epub') !== -1,
     })
+  }
+
+  const handleDownloadableAssetProfileChange = values => {
+    handleChange(values)
   }
 
   return (
@@ -207,15 +215,17 @@ const ExportOptionsSection = props => {
 
         {isWeb && webDownloadOptions.length > 0 && (
           <div>
-            <p>Include the following downloads in your website</p>
-            <CheckboxGroup
-              defaultValue={[
-                ...(includePdf ? ['pdf'] : []),
-                ...(includeEpub ? ['epub'] : []),
-              ]}
-              onChange={handleDownloadOptionsChange}
-              options={webDownloadOptions}
-              vertical
+            <WebDownloadsSelection
+              includeEpub={includeEpub}
+              includePdf={includePdf}
+              onDownloadableAssetProfileChange={
+                handleDownloadableAssetProfileChange
+              }
+              onDownloadOptionsChange={handleDownloadOptionsChange}
+              profiles={profiles}
+              selectedEpubProfileId={epubProfileId}
+              selectedPdfProfileId={pdfProfileId}
+              webDownloadOptions={webDownloadOptions}
             />
           </div>
         )}
@@ -256,8 +266,12 @@ ExportOptionsSection.propTypes = {
   ).isRequired,
   newProfile: PropTypes.bool,
   exportsConfig: PropTypes.shape({
-    webEpubDownload: PropTypes.bool,
-    webPdfDownload: PropTypes.bool,
+    webEpubDownload: PropTypes.shape({
+      enabled: PropTypes.bool,
+    }),
+    webPdfDownload: PropTypes.shape({
+      enabled: PropTypes.bool,
+    }),
   }),
 }
 
@@ -268,8 +282,8 @@ ExportOptionsSection.defaultProps = {
   templates: [],
   newProfile: false,
   exportsConfig: {
-    webEpubDownload: true,
-    webPdfDownload: true,
+    webEpubDownload: { enabled: true },
+    webPdfDownload: { enabled: true },
   },
 }
 
