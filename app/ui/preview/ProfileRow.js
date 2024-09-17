@@ -51,19 +51,22 @@ ProfileRow.propTypes = {
   // canModifyProfiles: PropTypes.bool.isRequired,
   profiles: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
+      label: PropTypes.string,
+      value: PropTypes.string,
     }),
-  ).isRequired,
+  ),
   selectedProfile: PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-  }).isRequired,
+    label: PropTypes.string,
+    value: PropTypes.string,
+  }),
   // isNewProfileSelected: PropTypes.bool.isRequired,
   onProfileChange: PropTypes.func.isRequired,
   // onProfileRename: PropTypes.func.isRequired,
 }
 
-ProfileRow.defaultProps = {}
+ProfileRow.defaultProps = {
+  profiles: [],
+  selectedProfile: null,
+}
 
 export default ProfileRow

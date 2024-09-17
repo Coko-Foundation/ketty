@@ -58,6 +58,9 @@ const Preview = props => {
     updateProfileOptions,
     exportsConfig,
     onPublish,
+    publishing,
+    onUnpublish,
+    webPublishInfo,
   } = props
 
   const [showSettings, setShowSettings] = useState(true)
@@ -110,14 +113,17 @@ const Preview = props => {
           onOptionsChange={handleOptionsChange}
           onProfileChange={onProfileChange}
           onPublish={onPublish}
+          onUnpublish={onUnpublish}
           optionsDisabled={loadingExport || loadingPreview}
           profiles={profiles}
+          publishing={publishing}
           renameProfile={renameProfile}
           selectedProfile={selectedProfile}
           sendToLulu={sendToLulu}
           setActiveTabKey={setActiveTabKey}
           templates={templates}
           updateProfileOptions={updateProfileOptions}
+          webPublishInfo={webPublishInfo}
         />
       </Wrapper>
     </Page>
@@ -130,7 +136,7 @@ Preview.propTypes = {
   connectToLulu: PropTypes.func.isRequired,
   createProfile: PropTypes.func.isRequired,
   currentOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -140,7 +146,7 @@ Preview.propTypes = {
     zoom: PropTypes.number,
   }).isRequired,
   newProfileOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -152,7 +158,7 @@ Preview.propTypes = {
   defaultProfile: PropTypes.shape({
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -186,7 +192,7 @@ Preview.propTypes = {
     }),
   ).isRequired,
   renameProfile: PropTypes.func.isRequired,
-  selectedProfile: PropTypes.string.isRequired,
+  selectedProfile: PropTypes.string,
   sendToLulu: PropTypes.func.isRequired,
   templates: PropTypes.arrayOf(
     PropTypes.shape({
@@ -203,14 +209,21 @@ Preview.propTypes = {
   ).isRequired,
   updateProfileOptions: PropTypes.func.isRequired,
   exportsConfig: PropTypes.shape(),
+  webPublishInfo: PropTypes.shape(),
   onPublish: PropTypes.func,
+  onUnpublish: PropTypes.func,
+  publishing: PropTypes.bool,
 }
 
 Preview.defaultProps = {
+  selectedProfile: null,
   luluConfig: null,
   previewLink: null,
   exportsConfig: null,
   onPublish: null,
+  onUnpublish: null,
+  publishing: false,
+  webPublishInfo: null,
 }
 
 export default Preview
