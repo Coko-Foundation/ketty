@@ -40,6 +40,8 @@ import {
   ADD_COMMENTS,
   NOTIFY_MENTIONS,
   GET_BOOK_TEAMS,
+  UPLOAD_BOOK_COVER,
+  UPDATE_COVER_ALT,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
@@ -87,10 +89,12 @@ const calculateEditorMode = (lock, canModify, currentUser, tabId) => {
     : 'preview'
 }
 
-const constructMetadataValues = (title, subtitle, podMetadata) => {
+const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
   return {
     title,
     subtitle,
+    coverUrl: cover?.length ? cover[0].coverUrl : '',
+    coverAlt: cover?.length ? cover[0].altText : '',
     ...podMetadata,
   }
 }
@@ -109,7 +113,6 @@ const ProducerPage = () => {
   )
 
   const [reconnecting, setReconnecting] = useState(false)
-  const [metadataModalOpen, setMetadataModalOpen] = useState(false)
   const [aiOn, setAiOn] = useState(false)
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
@@ -117,6 +120,7 @@ const ProducerPage = () => {
   const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
   const [key, setKey] = useState()
+  const [viewMetadata, setViewMetadata] = useState(false)
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
@@ -251,10 +255,16 @@ const ProducerPage = () => {
     (isCollaborator(bookId, currentUser) && hasEditAccess(bookId, currentUser))
 
   useEffect(() => {
-    const chapterId = window.location.hash.substring(1)
+    const hash = window.location.hash.substring(1)
 
-    if (chapterId) {
-      setSelectedChapterId(chapterId)
+    if (hash) {
+      if (hash === 'metadata') {
+        setViewMetadata(true)
+        setSelectedChapterId(null)
+      } else {
+        setSelectedChapterId(hash)
+      }
+
       window.history.replaceState('', document.title, window.location.pathname)
     }
   }, [])
@@ -293,6 +303,7 @@ const ProducerPage = () => {
     bookQueryData?.getBook.title,
     bookQueryData?.getBook.subtitle,
     bookQueryData?.getBook?.podMetadata,
+    bookQueryData?.getBook?.cover,
   )
 
   useEffect(() => {
@@ -415,6 +426,14 @@ const ProducerPage = () => {
     },
   })
 
+  const [updateCoverAlt] = useMutation(UPDATE_COVER_ALT, {
+    onError: err => {
+      if (err.toString().includes('Not Authorised')) {
+        showUnauthorizedActionModal(false)
+      } else if (!reconnecting) showGenericErrorModal()
+    },
+  })
+
   const [createBookComponent, { loading: addBookComponentInProgress }] =
     useMutation(CREATE_BOOK_COMPONENT, {
       refetchQueries: [GET_ENTIRE_BOOK],
@@ -483,9 +502,25 @@ const ProducerPage = () => {
   const [upload] = useMutation(UPLOAD_FILES)
 
   const [notifyMentions] = useMutation(NOTIFY_MENTIONS)
+
+  const [uploadBookCover] = useMutation(UPLOAD_BOOK_COVER)
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
+
+  const handleUploadBookCover = file => {
+    if (!canModify) {
+      return showUnauthorizedActionModal(false)
+    }
+
+    return uploadBookCover({
+      variables: {
+        id: bookId,
+        file,
+      },
+    })
+  }
+
   const getBodyDivisionId = () => {
     if (bookQueryData) {
       const { getBook } = bookQueryData
@@ -630,8 +665,8 @@ const ProducerPage = () => {
     })
   }
 
-  const onSubmitBookMetadata = data => {
-    const { title, subtitle, ...rest } = data
+  const onSubmitBookMetadata = debounce(data => {
+    const { title, subtitle, coverAlt, ...rest } = data
 
     if (!canModify) {
       showUnauthorizedActionModal(false)
@@ -646,8 +681,12 @@ const ProducerPage = () => {
       updateSubtitle({ variables: { id: bookId, subtitle } })
     }
 
+    if (coverAlt) {
+      updateCoverAlt({ variables: { id: bookId, coverAlt } })
+    }
+
     updatePODMetadata({ variables: { bookId, metadata: rest } })
-  }
+  }, 1000)
 
   const showOfflineModal = () => {
     const warningModal = Modal.error()
@@ -1122,7 +1161,6 @@ const ProducerPage = () => {
       freeTextPromptsOn={freeTextPromptsOn}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
-      metadataModalOpen={metadataModalOpen}
       onAddChapter={onAddChapter}
       onBookComponentParentIdChange={onBookComponentParentIdChange}
       onBookComponentTitleChange={onBookComponentTitleChange}
@@ -1136,13 +1174,15 @@ const ProducerPage = () => {
       }
       onReorderChapter={onReorderChapter}
       onSubmitBookMetadata={onSubmitBookMetadata}
+      onUploadBookCover={handleUploadBookCover}
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}
-      setMetadataModalOpen={setMetadataModalOpen}
+      setViewMetadata={setViewMetadata}
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
       user={currentUser}
+      viewMetadata={viewMetadata}
       // bookComponentContent={bookComponentData?.getBookComponent?.content}
     />
   )

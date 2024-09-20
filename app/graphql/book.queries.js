@@ -68,6 +68,10 @@ const GET_ENTIRE_BOOK = gql`
         customPromptsOn
         knowledgeBaseOn
       }
+      cover {
+        coverUrl
+        altText
+      }
     }
   }
 `
@@ -79,7 +83,10 @@ const GET_BOOKS = gql`
         id
         archived
         title
-        thumbnailURL
+        cover {
+          coverUrl
+        }
+        # thumbnailURL
       }
       totalCount
     }
@@ -290,11 +297,34 @@ const UPDATE_BOOK_POD_METADATA = gql`
 `
 
 const UPLOAD_BOOK_THUMBNAIL = gql`
-  mutation UploadBookThumbnail($id: ID!, $file: Upload!) {
+  mutation UploadBookThumbnail($id: ID!, $file: Upload) {
     uploadBookThumbnail(bookId: $id, file: $file) {
       id
       thumbnailId
       thumbnailURL
+    }
+  }
+`
+
+const UPLOAD_BOOK_COVER = gql`
+  mutation UploadBookCover($id: ID!, $file: Upload) {
+    uploadBookCover(bookId: $id, file: $file) {
+      id
+      cover {
+        fileId
+        coverUrl
+      }
+    }
+  }
+`
+
+const UPDATE_COVER_ALT = gql`
+  mutation UpdateCoverAlt($id: ID!, $coverAlt: String) {
+    updateCoverAlt(bookId: $id, coverAlt: $coverAlt) {
+      id
+      cover {
+        altText
+      }
     }
   }
 `
@@ -423,4 +453,6 @@ export {
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   PUBLISH_ONLINE,
   GET_BOOK_WEB_PUBLISH_INFO,
+  UPLOAD_BOOK_COVER,
+  UPDATE_COVER_ALT,
 }

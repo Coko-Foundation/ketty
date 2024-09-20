@@ -5,7 +5,6 @@ import { useCurrentUser } from '@coko/client'
 import {
   GET_BOOKS,
   DELETE_BOOK,
-  UPLOAD_BOOK_THUMBNAIL,
   BOOK_DELETED_SUBSCRIPTION,
   BOOK_RENAMED_SUBSCRIPTION,
 } from '../graphql'
@@ -166,26 +165,6 @@ const DashboardPage = () => {
     },
   })
 
-  const [uploadBookThumbnail] = useMutation(UPLOAD_BOOK_THUMBNAIL, {
-    refetchQueries: [
-      {
-        query: GET_BOOKS,
-        variables: {
-          options: {
-            archived: false,
-            orderBy: {
-              column: 'title',
-              order: 'asc',
-            },
-            page: currentPage - 1,
-            pageSize: booksPerPage,
-          },
-        },
-      },
-    ],
-    awaitRefetchQueries: true,
-  })
-
   const onPageChange = arg => {
     setPaginationParams({
       currentPage: arg,
@@ -206,23 +185,6 @@ const DashboardPage = () => {
     )
   }
 
-  const onUploadBookThumbnail = (bookId, file) => {
-    if (!canTakeActionOnBook(bookId)) {
-      return showUnauthorizedActionModal(false)
-    }
-
-    if (!file) {
-      return false
-    }
-
-    return uploadBookThumbnail({
-      variables: {
-        id: bookId,
-        file,
-      },
-    })
-  }
-
   return (
     <Dashboard
       books={books.result}
@@ -233,7 +195,6 @@ const DashboardPage = () => {
       loading={loading || actionInProgress}
       onClickDelete={onClickDelete}
       onPageChange={onPageChange}
-      onUploadBookThumbnail={onUploadBookThumbnail}
       totalCount={books.totalCount}
     />
   )

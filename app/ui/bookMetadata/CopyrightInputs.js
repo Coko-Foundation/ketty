@@ -15,9 +15,12 @@ const CopyrightInputs = props => {
     <Row gutter={[12, 0]}>
       <Col span={18}>
         <Form.Item
-          label="Copyright holder name (optional)"
+          label="Copyright holder name"
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightHolder`}
+          rules={[
+            { required: true, message: 'Copyright holder name is required' },
+          ]}
         >
           <Input disabled={!canChangeMetadata} />
         </Form.Item>
@@ -25,9 +28,10 @@ const CopyrightInputs = props => {
 
       <Col span={6}>
         <Form.Item
-          label="Copyright year (optional)"
+          label="Copyright year"
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightYear`}
+          rules={[{ required: true, message: 'Copyright year is required' }]}
         >
           <StyledDatePicker disabled={!canChangeMetadata} picker="year" />
         </Form.Item>

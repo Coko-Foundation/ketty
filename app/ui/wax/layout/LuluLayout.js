@@ -1,11 +1,13 @@
 /* stylelint-disable string-quotes */
 /* eslint-disable react/prop-types */
-import React, { useContext } from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import React, { useContext, useState } from 'react'
+import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
 import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import { Button } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
+import BookMetadataForm from '../../bookMetadata/BookMetadataForm'
 import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
@@ -27,6 +29,11 @@ const Main = styled.div`
   display: flex;
   height: calc(100% - 48px);
   width: 100%;
+
+  > :nth-child(2) {
+    overflow: auto;
+    width: 100%;
+  }
 `
 
 const TopMenu = styled.div`
@@ -36,6 +43,16 @@ const TopMenu = styled.div`
   display: flex;
   height: 48px;
   justify-content: center;
+
+  ${({ isHidden }) =>
+    isHidden &&
+    css`
+      > * {
+        opacity: 0;
+        visibility: hidden;
+      }
+    `};
+
   user-select: none;
 
   [aria-controls='block-level-options'] {
@@ -137,12 +154,48 @@ const StyledSpin = styled(Spin)`
   width: 816px;
 `
 
-const StyledBookPanel = styled(BookPanel)`
+const LeftPanelWrapper = styled.div`
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: ${grid(3)};
   width: 32%;
 
   @media (min-width: 1200px) {
     flex: 0 0 49ch;
+  }
+`
+
+const TitleArea = styled.div`
+  flex-shrink: 0;
+  font-size: 26px;
+  margin-bottom: ${grid(4)};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+`
+
+const MetadataArea = styled.div`
+  border-bottom: 1px solid ${th('colorBorder')};
+  border-top: 1px solid ${th('colorBorder')};
+  flex-shrink: 0;
+  margin-bottom: ${grid(4)};
+  padding: ${grid(2)} 0;
+  width: 100%;
+
+  > button[aria-pressed] {
+    border-radius: 0;
+    padding-inline-start: 10px;
+    text-align: left;
+    width: 100%;
+
+    &[aria-pressed='true'] {
+      background-color: rgb(63 133 198 / 33%);
+      border-inline-start: 2px solid rgb(63 133 198);
+    }
   }
 `
 
@@ -194,58 +247,112 @@ const LuluLayout = ({ customProps, ...rest }) => {
     metadataModalOpen,
     setMetadataModalOpen,
     editorLoading,
+    onUploadBookCover,
+    viewMetadata,
+    setViewMetadata,
   } = customProps
+
+  const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
+
+  const toggleMetadata = () => {
+    if (viewMetadata) {
+      setViewMetadata(false)
+
+      if (lastSelectedChapter) {
+        onChapterClick(lastSelectedChapter)
+        setLastSelectedChapter(null)
+      }
+    } else {
+      if (selectedChapterId) {
+        setLastSelectedChapter(selectedChapterId)
+        onChapterClick(selectedChapterId)
+      }
+
+      setViewMetadata(true)
+    }
+  }
+
+  const handleChapterClick = chapterId => {
+    if (viewMetadata) setViewMetadata(false)
+    onChapterClick(chapterId)
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
-        <TopMenu data-loading={editorLoading}>
+        <TopMenu data-loading={editorLoading} isHidden={viewMetadata}>
           <MainMenuToolBar />
         </TopMenu>
         <Main>
           {!options.fullScreen && (
-            <StyledBookPanel
-              bookMetadataValues={bookMetadataValues}
-              canEdit={canEdit}
-              chapters={chapters}
-              chaptersActionInProgress={chaptersActionInProgress}
-              metadataModalOpen={metadataModalOpen}
-              onAddChapter={onAddChapter}
-              onBookComponentParentIdChange={onBookComponentParentIdChange}
-              onBookComponentTypeChange={onBookComponentTypeChange}
-              onChapterClick={onChapterClick}
-              onDeleteChapter={onDeleteChapter}
-              onReorderChapter={onReorderChapter}
-              onSubmitBookMetadata={onSubmitBookMetadata}
-              onUploadChapter={onUploadChapter}
-              selectedChapterId={selectedChapterId}
-              setMetadataModalOpen={setMetadataModalOpen}
-              subtitle={subtitle}
-              title={title}
-            />
+            <LeftPanelWrapper>
+              <TitleArea data-test="producer-bookTitle">
+                {title || 'Untitled Book'}
+              </TitleArea>
+              <MetadataArea>
+                <Button
+                  aria-pressed={viewMetadata}
+                  data-test="producer-metadata-btn"
+                  onClick={toggleMetadata}
+                  type="text"
+                >
+                  Book Metadata
+                </Button>
+              </MetadataArea>
+              <BookPanel
+                bookMetadataValues={bookMetadataValues}
+                canEdit={canEdit}
+                chapters={chapters}
+                chaptersActionInProgress={chaptersActionInProgress}
+                metadataModalOpen={metadataModalOpen}
+                onAddChapter={onAddChapter}
+                onBookComponentParentIdChange={onBookComponentParentIdChange}
+                onBookComponentTypeChange={onBookComponentTypeChange}
+                onChapterClick={handleChapterClick}
+                onDeleteChapter={onDeleteChapter}
+                onReorderChapter={onReorderChapter}
+                onSubmitBookMetadata={onSubmitBookMetadata}
+                onUploadChapter={onUploadChapter}
+                selectedChapterId={selectedChapterId}
+                setMetadataModalOpen={setMetadataModalOpen}
+                setViewMetadata={setViewMetadata}
+                subtitle={subtitle}
+                title={title}
+                viewMetadata={viewMetadata}
+              />
+            </LeftPanelWrapper>
           )}
 
-          <EditorArea isFullscreen={options.fullScreen}>
-            <WaxSurfaceScroll
-              id="wax-surface-scroll"
-              style={{ position: 'relative' }}
-            >
-              <EditorContainer selectedChapterId={selectedChapterId}>
-                {selectedChapterId ? (
-                  <WaxView {...rest} />
-                ) : (
-                  <NoSelectedChapterWrapper>
-                    Create or select a chapter in the chapters panel to start
-                    writing
-                  </NoSelectedChapterWrapper>
-                )}
-                <CommentsContainer>
-                  <RightArea area="main" />
-                </CommentsContainer>
-                {editorLoading && <StyledSpin spinning={editorLoading} />}
-              </EditorContainer>
-            </WaxSurfaceScroll>
-          </EditorArea>
+          {viewMetadata ? (
+            <BookMetadataForm
+              canChangeMetadata={canEdit}
+              initialValues={bookMetadataValues}
+              onSubmitBookMetadata={onSubmitBookMetadata}
+              onUploadBookCover={onUploadBookCover}
+            />
+          ) : (
+            <EditorArea isFullscreen={options.fullScreen}>
+              <WaxSurfaceScroll
+                id="wax-surface-scroll"
+                style={{ position: 'relative' }}
+              >
+                <EditorContainer selectedChapterId={selectedChapterId}>
+                  {selectedChapterId ? (
+                    <WaxView {...rest} />
+                  ) : (
+                    <NoSelectedChapterWrapper>
+                      Create or select a chapter in the chapters panel to start
+                      writing
+                    </NoSelectedChapterWrapper>
+                  )}
+                  <CommentsContainer>
+                    <RightArea area="main" />
+                  </CommentsContainer>
+                  {editorLoading && <StyledSpin spinning={editorLoading} />}
+                </EditorContainer>
+              </WaxSurfaceScroll>
+            </EditorArea>
+          )}
         </Main>
       </Wrapper>
     </ThemeProvider>
