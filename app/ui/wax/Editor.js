@@ -45,6 +45,9 @@ const EditorWrapper = ({
   user,
   bookMembers,
   onMention,
+  onUploadBookCover,
+  viewMetadata,
+  setViewMetadata,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -66,6 +69,9 @@ const EditorWrapper = ({
     setMetadataModalOpen,
     editorLoading,
     savedComments,
+    onUploadBookCover,
+    viewMetadata,
+    setViewMetadata,
   })
 
   const selectedConfig = aiEnabled ? configWithAi : defaultConfig
@@ -149,6 +155,9 @@ const EditorWrapper = ({
       editorLoading,
       editorKey,
       savedComments,
+      onUploadBookCover,
+      viewMetadata,
+      setViewMetadata,
     })
   }, [
     title,
@@ -162,6 +171,7 @@ const EditorWrapper = ({
     editorLoading,
     editorKey,
     savedComments,
+    viewMetadata,
   ])
 
   const userObject = {

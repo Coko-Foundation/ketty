@@ -36,7 +36,9 @@ export { default as VisuallyHiddenElement } from './VisuallyHiddenElement'
 // export { default as TopicAndSubtopic } from './TopicAndSubtopic'
 // export { default as VisionAndChangeMetadata } from './VisionAndChangeMetadata'
 
+export { default as Box } from './primitives/Box'
 export { default as Center } from './primitives/Center'
+export { default as Cluster } from './primitives/Cluster'
 export { default as Stack } from './primitives/Stack'
 
 export * from './Headings'

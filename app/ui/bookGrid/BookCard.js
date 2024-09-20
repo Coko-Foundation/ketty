@@ -11,7 +11,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import Popup from '@coko/client/dist/ui/common/Popup'
-import { Button, LinkWithoutStyles, SimpleUpload } from '../common'
+import { Button, LinkWithoutStyles } from '../common'
 import BookCover from './BookCover'
 
 const { Meta } = Card
@@ -22,6 +22,7 @@ const StyledDeleteOutlined = styled(DeleteOutlined)`
 
 const StyledLink = styled(LinkWithoutStyles)`
   overflow: hidden;
+  white-space: nowrap;
 
   &::before {
     content: '';
@@ -117,20 +118,25 @@ const StyledPopup = styled(Popup)`
   padding: 5px;
 `
 
+const DisabledPlaceholder = styled.span`
+  color: rgb(85 85 85 / 25%);
+  cursor: not-allowed;
+  white-space: nowrap;
+`
+
 const BookCard = ({
-  thumbnailURL,
+  cover,
   id,
   onClickDelete,
   showActions,
   title,
-  onUploadBookThumbnail,
   canDeleteBook,
   canUploadBookThumbnail,
   gridView,
 }) => {
   return (
     <StyledCard
-      cover={<BookCover src={thumbnailURL} title={title} />}
+      cover={<BookCover src={cover && cover[0]?.coverUrl} title={title} />}
       data-gridview={gridView}
       hoverable
       size="small"
@@ -151,12 +157,18 @@ const BookCard = ({
               <PopupContentWrapper>
                 <div>
                   <FileImageOutlined data-disabled={!canDeleteBook(id)} />
-                  <SimpleUpload
-                    acceptedTypes="image/*"
-                    disabled={!canUploadBookThumbnail(id)}
-                    handleFileChange={file => onUploadBookThumbnail(id, file)}
-                    label="Upload book placeholder image"
-                  />
+                  {canUploadBookThumbnail(id) ? (
+                    <StyledLink
+                      style={{}}
+                      to={`/books/${id}/producer#metadata`}
+                    >
+                      Upload book placeholder image
+                    </StyledLink>
+                  ) : (
+                    <DisabledPlaceholder>
+                      Upload book placeholder image
+                    </DisabledPlaceholder>
+                  )}
                 </div>
                 <div>
                   <StyledDeleteOutlined data-disabled={!canDeleteBook(id)} />
@@ -186,10 +198,11 @@ const BookCard = ({
 BookCard.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string,
-  thumbnailURL: PropTypes.string,
+  cover: PropTypes.shape({
+    coverUrl: PropTypes.string,
+  }),
   showActions: PropTypes.bool,
   onClickDelete: PropTypes.func,
-  onUploadBookThumbnail: PropTypes.func,
   canDeleteBook: PropTypes.func.isRequired,
   canUploadBookThumbnail: PropTypes.func.isRequired,
   gridView: PropTypes.bool,
@@ -197,10 +210,9 @@ BookCard.propTypes = {
 
 BookCard.defaultProps = {
   title: 'Untitled',
-  thumbnailURL: null,
+  cover: null,
   showActions: false,
   onClickDelete: () => {},
-  onUploadBookThumbnail: () => {},
   gridView: true,
 }
 
