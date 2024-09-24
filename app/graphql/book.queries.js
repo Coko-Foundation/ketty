@@ -115,7 +115,7 @@ const GET_BOOK_WEB_PUBLISH_INFO = gql`
     getBook(id: $id) {
       webPublishInfo {
         published
-        firstPublished
+        # firstPublished
         lastUpdated
         publicUrl
       }

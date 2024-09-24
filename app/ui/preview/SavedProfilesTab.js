@@ -53,6 +53,7 @@ const SavedProfilesTab = props => {
       <div>
         <ProfileRow
           canModifyProfiles={canModify}
+          loadingPreview={loadingPreview}
           onProfileChange={handleProfileChange}
           profiles={profiles.map(p => ({ label: p.label, value: p.value }))}
           selectedProfile={profileSelected ? selectedProfileSelectOption : {}}
@@ -77,6 +78,7 @@ const SavedProfilesTab = props => {
             onChange={handleOptionsChange}
             onProfileRename={renameProfile}
             pdfProfileId={currentOptions.pdfProfileId}
+            previewLoading={loadingPreview}
             profiles={currentOptions.format === 'web' ? profiles : null}
             selectedContent={currentOptions.content}
             selectedFormat={currentOptions.format}
@@ -111,6 +113,7 @@ const SavedProfilesTab = props => {
               onPublish={onPublish}
               onUnpublish={onUnpublish}
               pdfProfile={currentOptions.pdfProfileId}
+              previewLoading={loadingPreview}
               profiles={profiles}
               publishing={publishing}
               selectedTemplate={templates.find(

@@ -42,6 +42,7 @@ const NewProfileTab = props => {
     <>
       <Stack style={{ '--space': '10px' }}>
         <Select
+          disabled={loadingPreview}
           onChange={handleFormatChange}
           options={exportOptions}
           value={newProfileOptions.format}
@@ -56,6 +57,7 @@ const NewProfileTab = props => {
         isbns={isbns}
         newProfile
         onChange={handleOptionsChange}
+        previewLoading={loadingPreview}
         profiles={profiles}
         selectedContent={newProfileOptions.content}
         selectedFormat={newProfileOptions.format}

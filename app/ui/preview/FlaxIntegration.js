@@ -15,6 +15,7 @@ const FlaxIntegration = props => {
     onPublish,
     onUnpublish,
     webPublishInfo,
+    previewLoading,
   } = props
 
   const [isPublishModalOpen, setPublishModalOpen] = useState(false)
@@ -101,12 +102,17 @@ const FlaxIntegration = props => {
               Open published book
             </Button>
 
-            <Button onClick={() => setPublishModalOpen(true)} type="primary">
+            <Button
+              disabled={previewLoading}
+              onClick={() => setPublishModalOpen(true)}
+              type="primary"
+            >
               Publish again
             </Button>
 
             {onUnpublish ? (
               <Button
+                disabled={previewLoading}
                 onClick={() => setUnPublishModalOpen(true)}
                 status="danger"
               >
@@ -121,7 +127,7 @@ const FlaxIntegration = props => {
         </>
       ) : (
         <Button
-          disabled={publishing}
+          disabled={publishing || previewLoading}
           onClick={() => setPublishModalOpen(true)}
           type="primary"
         >
@@ -164,6 +170,7 @@ FlaxIntegration.propTypes = {
   includeEpub: PropTypes.bool,
   selectedTemplate: PropTypes.shape(),
   webPublishInfo: PropTypes.shape(),
+  previewLoading: PropTypes.bool,
 }
 
 FlaxIntegration.defaultProps = {
@@ -173,6 +180,7 @@ FlaxIntegration.defaultProps = {
   includeEpub: false,
   selectedTemplate: null,
   webPublishInfo: null,
+  previewLoading: false,
 }
 
 export default FlaxIntegration

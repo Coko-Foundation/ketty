@@ -198,9 +198,11 @@ const BookCard = ({
 BookCard.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string,
-  cover: PropTypes.shape({
-    coverUrl: PropTypes.string,
-  }),
+  cover: PropTypes.arrayOf(
+    PropTypes.shape({
+      coverUrl: PropTypes.string,
+    }),
+  ),
   showActions: PropTypes.bool,
   onClickDelete: PropTypes.func,
   canDeleteBook: PropTypes.func.isRequired,

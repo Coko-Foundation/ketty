@@ -112,6 +112,11 @@ const PreviewerPage = () => {
     if (!localStorage.getItem('pageSpread')) {
       localStorage.setItem('pageSpread', 'single')
     }
+
+    // if (localStorage.getItem(`exportProfileId-${bookId}`)) {
+    //   setActiveTabKey('saved')
+    //   setSelectedProfile(localStorage.getItem(`exportProfileId-${bookId}`))
+    // }
   }, [])
   // #endregion init
 
@@ -242,21 +247,34 @@ const PreviewerPage = () => {
     awaitRefetchQueries: true,
     onCompleted: res => {
       const created = res.createExportProfile
-      setSelectedProfile(created.id)
+      const { id, includedComponents } = created
+      setSelectedProfile(id)
 
       setCurrentOptions({
-        content: Array.from(Object.keys(created.includedComponents))
+        format: created.format,
+        size: created.trimSize,
+        content: Array.from(Object.keys(includedComponents))
           .map(e => {
-            if (e === 'toc') return 'includeTOC'
-            if (e === 'copyright') return 'includeCopyrights'
-            if (e === 'titlePage') return 'includeTitlePage'
+            if (includedComponents[e]) {
+              switch (e) {
+                case 'copyright':
+                  return 'includeCopyrights'
+                case 'toc':
+                  return 'includeTOC'
+                case 'titlePage':
+                  return 'includeTitlePage'
+                case 'cover':
+                  return 'includeCoverPage'
+                default:
+                  return false
+              }
+            }
+
             return false
           })
-          .filter(e => !!e),
-
-        format: created.format,
+          .filter(e => !!e)
+          .sort(),
         isbn: created.isbn,
-        size: created.trimSize,
         template: created.templateId,
         includePdf: created.downloadableAssets.pdf,
         includeEpub: created.downloadableAssets.epub,
@@ -372,6 +390,7 @@ const PreviewerPage = () => {
         toc: content.includes('includeTOC'),
         copyright: content.includes('includeCopyrights'),
         titlePage: content.includes('includeTitlePage'),
+        cover: content.includes('includeCoverPage'),
       },
       templateId,
       trimSize,
@@ -442,6 +461,7 @@ const PreviewerPage = () => {
         toc: content.includes('includeTOC'),
         copyright: content.includes('includeCopyrights'),
         titlePage: content.includes('includeTitlePage'),
+        cover: content.includes('includeCoverPage'),
       },
       templateId,
       trimSize,
@@ -476,6 +496,7 @@ const PreviewerPage = () => {
             includeTOC: content.includes('includeTOC'),
             includeCopyrights: content.includes('includeCopyrights'),
             includeTitlePage: content.includes('includeTitlePage'),
+            includeCoverPage: content.includes('includeCoverPage'),
             isbn,
           },
         },
@@ -549,6 +570,7 @@ const PreviewerPage = () => {
         includeTOC: options.content.includes('includeTOC'),
         includeCopyrights: options.content.includes('includeCopyrights'),
         includeTitlePage: options.content.includes('includeTitlePage'),
+        includeCoverPage: options.content.includes('includeCoverPage'),
         ...(target === 'web' && {
           includePdf: options.includePdf,
           includeEpub: options.includeEpub,
@@ -639,6 +661,7 @@ const PreviewerPage = () => {
 
   const handleProfileChange = profileId => {
     setSelectedProfile(profileId)
+    // localStorage.setItem(`exportProfileId-${bookId}`, profileId)
 
     if (profileId) {
       const newProfile = [defaultProfileWithTemplate, ...profiles].find(
@@ -765,6 +788,7 @@ const PreviewerPage = () => {
         if (p.includedComponents.copyright) content.push('includeCopyrights')
         if (p.includedComponents.titlePage) content.push('includeTitlePage')
         if (p.includedComponents.toc) content.push('includeTOC')
+        if (p.includedComponents.cover) content.push('includeCoverPage')
 
         return {
           format: p.format,
