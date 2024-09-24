@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 
   > div:last-child {
     min-width: 50px;
-    width: ${props => (props.$showSettings ? '500px' : '2%')};
+    width: ${props => (props.$showSettings ? '550px' : '2%')};
   }
 `
 // #endregion styled
@@ -161,7 +161,12 @@ Preview.propTypes = {
     format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
-      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCover',
+      ]),
     ),
     template: PropTypes.string,
   }).isRequired,

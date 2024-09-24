@@ -104,9 +104,11 @@ BookGrid.propTypes = {
   books: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      cover: PropTypes.shape({
-        coverUrl: PropTypes.string,
-      }),
+      cover: PropTypes.arrayOf(
+        PropTypes.shape({
+          coverUrl: PropTypes.string,
+        }),
+      ),
       title: PropTypes.string,
     }),
   ),

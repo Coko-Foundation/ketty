@@ -39,7 +39,12 @@ const exportSizeOptions = [
   },
 ]
 
-const makeContentOptions = isEpub => [
+const makeContentOptions = (isPdf, isEpub) => [
+  {
+    value: 'includeCoverPage',
+    label: 'Cover',
+    disabled: isPdf,
+  },
   {
     value: 'includeTitlePage',
     label: 'Title page',
@@ -89,6 +94,7 @@ const ExportOptionsSection = props => {
     canModifyProfiles,
     onProfileRename,
     profiles,
+    previewLoading,
   } = props
 
   const isbnOptions = [
@@ -105,7 +111,7 @@ const ExportOptionsSection = props => {
   const isPdf = selectedFormat === 'pdf'
   const isEpub = selectedFormat === 'epub'
   const isWeb = selectedFormat === 'web'
-  const contentOptions = makeContentOptions(isEpub)
+  const contentOptions = makeContentOptions(isPdf, isEpub)
   const contentValue = selectedContent
   if (isEpub && !contentValue.includes('includeTOC'))
     contentValue.push('includeTOC')
@@ -222,6 +228,7 @@ const ExportOptionsSection = props => {
                 handleDownloadableAssetProfileChange
               }
               onDownloadOptionsChange={handleDownloadOptionsChange}
+              previewLoading={previewLoading}
               profiles={profiles}
               selectedEpubProfileId={epubProfileId}
               selectedPdfProfileId={pdfProfileId}
@@ -231,9 +238,9 @@ const ExportOptionsSection = props => {
         )}
       </div>
 
-      <ExportOption label="templates">
+      <ExportOption label="templates" labelId="templates">
         <TemplateList
-          // disabled={disabled}
+          disabled={previewLoading}
           onTemplateClick={handleTemplateClick}
           selectedTemplate={selectedTemplate}
           templates={templates}

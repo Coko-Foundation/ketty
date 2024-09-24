@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 
 const Wrapper = styled.div`
-  max-width: 450px;
+  max-width: 500px;
 `
 
 const Label = styled.div`
@@ -28,13 +28,17 @@ const ChildWrapper = styled.div`
   align-items: center;
   display: ${props => (props.inline ? 'inline-flex' : 'block')};
   gap: 4px;
+
+  > &:focus-within {
+    outline: 1px solid ${th('colorOutline')};
+  }
 `
 
 const ExportOption = props => {
-  const { className, children, label, inline } = props
+  const { className, children, label, inline, labelId } = props
 
   return (
-    <Wrapper className={className}>
+    <Wrapper {...(labelId ? { id: labelId } : {})} className={className}>
       <Label inline={inline}>{label}:</Label>
       <ChildWrapper inline={inline}>{children}</ChildWrapper>
     </Wrapper>
@@ -43,11 +47,13 @@ const ExportOption = props => {
 
 ExportOption.propTypes = {
   label: PropTypes.string.isRequired,
+  labelId: PropTypes.string,
   inline: PropTypes.bool,
 }
 
 ExportOption.defaultProps = {
   inline: false,
+  labelId: null,
 }
 
 export default ExportOption

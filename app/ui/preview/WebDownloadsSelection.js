@@ -19,6 +19,7 @@ const WebDownloadsSelection = props => {
     webDownloadOptions,
     selectedPdfProfileId,
     selectedEpubProfileId,
+    previewLoading,
   } = props
 
   const handleDownloadableAssetProfileChange = (field, value) => {
@@ -36,6 +37,7 @@ const WebDownloadsSelection = props => {
             ...(includePdf ? ['pdf'] : []),
             ...(includeEpub ? ['epub'] : []),
           ]}
+          disabled={previewLoading}
           onChange={onDownloadOptionsChange}
           options={webDownloadOptions}
           vertical
@@ -50,6 +52,7 @@ const WebDownloadsSelection = props => {
                 Choose a saved PDF profile for the PDF you want to include:
               </label>
               <StyledSelect
+                disabled={previewLoading}
                 id="pdf-profile"
                 onChange={val =>
                   handleDownloadableAssetProfileChange('pdfProfileId', val)
@@ -78,6 +81,7 @@ const WebDownloadsSelection = props => {
                 Choose a saved EPUB profile for the EPUB you want to include
               </label>
               <StyledSelect
+                disabled={previewLoading}
                 id="epub-profile"
                 onChange={val =>
                   handleDownloadableAssetProfileChange('epubProfileId', val)

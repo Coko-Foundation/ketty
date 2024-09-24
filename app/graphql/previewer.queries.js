@@ -30,6 +30,7 @@ const GET_EXPORT_PROFILES = gql`
           copyright
           titlePage
           toc
+          cover
         }
         providerInfo {
           providerLabel
@@ -62,6 +63,7 @@ const CREATE_EXPORT_PROFILE = gql`
         copyright
         titlePage
         toc
+        cover
       }
       providerInfo {
         providerLabel
@@ -109,6 +111,7 @@ const UPDATE_EXPORT_PROFILE_OPTIONS = gql`
         copyright
         titlePage
         toc
+        cover
       }
       providerInfo {
         providerLabel

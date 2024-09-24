@@ -63,7 +63,6 @@ const Dashboard = props => {
     canDeleteBook,
     canUploadBookThumbnail,
     loading,
-    onUploadBookThumbnail,
   } = props
 
   return (
@@ -87,7 +86,6 @@ const Dashboard = props => {
         loading={loading}
         onClickDelete={onClickDelete}
         onPageChange={onPageChange}
-        onUploadBookThumbnail={onUploadBookThumbnail}
         totalCount={totalCount}
       />
     </Wrapper>
@@ -105,7 +103,6 @@ Dashboard.propTypes = {
   ).isRequired,
   booksPerPage: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
-  onUploadBookThumbnail: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,
   totalCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,

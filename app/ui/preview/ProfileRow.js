@@ -25,6 +25,7 @@ const ProfileRow = props => {
     // onProfileRename,
     profiles,
     selectedProfile,
+    loadingPreview,
   } = props
 
   const handleSelectProfile = (_, option) => {
@@ -36,6 +37,7 @@ const ProfileRow = props => {
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor="select-profile">Choose a saved profile</label>
       <Select
+        disabled={loadingPreview}
         id="select-profile"
         onChange={handleSelectProfile}
         optionLabelProp="label"
@@ -61,12 +63,14 @@ ProfileRow.propTypes = {
   }),
   // isNewProfileSelected: PropTypes.bool.isRequired,
   onProfileChange: PropTypes.func.isRequired,
+  loadingPreview: PropTypes.bool,
   // onProfileRename: PropTypes.func.isRequired,
 }
 
 ProfileRow.defaultProps = {
   profiles: [],
   selectedProfile: null,
+  loadingPreview: false,
 }
 
 export default ProfileRow

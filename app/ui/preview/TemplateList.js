@@ -6,11 +6,12 @@ import { grid, th } from '@coko/client'
 
 import Template from './Template'
 
-const Wrapper = styled.div`
+const Wrapper = styled.ul`
   align-items: start;
   border: 1px solid ${th('colorBorder')};
   border-radius: ${th('borderRadius')};
   display: flex;
+  gap: ${grid(1)};
   min-height: 100px;
   overflow-x: auto;
   padding: ${grid(2)};
@@ -37,24 +38,91 @@ const TemplateList = props => {
   const { className, onTemplateClick, templates, selectedTemplate, disabled } =
     props
 
+  const handleKeydown = event => {
+    var flag = false
+
+    if (disabled || !templates.length) {
+      return
+    }
+
+    switch (event.key) {
+      case ' ':
+        onTemplateClick(selectedTemplate)
+        flag = true
+        break
+
+      case 'Up':
+      case 'ArrowUp':
+      case 'Left':
+      case 'ArrowLeft':
+        onTemplateClick(
+          templates[
+            (templates.findIndex(t => t.id === selectedTemplate) -
+              1 +
+              templates.length) %
+              templates.length
+          ].id,
+        )
+        flag = true
+        break
+
+      case 'Down':
+      case 'ArrowDown':
+      case 'Right':
+      case 'ArrowRight':
+        onTemplateClick(
+          templates[
+            (templates.findIndex(t => t.id === selectedTemplate) +
+              1 +
+              templates.length) %
+              templates.length
+          ].id,
+        )
+        flag = true
+        break
+
+      default:
+        break
+    }
+
+    if (flag) {
+      event.stopPropagation()
+      event.preventDefault()
+    }
+  }
+
   return (
-    <Wrapper className={className} disabled={disabled}>
+    <>
+      <Wrapper
+        aria-activedescendant={selectedTemplate}
+        aria-labelledby="templates"
+        className={className}
+        disabled={disabled}
+        onFocus={() => {
+          document
+            .getElementById(selectedTemplate)
+            .scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }}
+        onKeyDown={handleKeydown}
+        role="radiogroup"
+        tabIndex="0"
+      >
+        {templates.length > 0 &&
+          templates.map(template => (
+            <Template
+              id={template.id}
+              imageUrl={template.imageUrl}
+              isSelected={selectedTemplate === template.id}
+              key={template.id}
+              name={template.name}
+              onClick={onTemplateClick}
+            />
+          ))}
+      </Wrapper>{' '}
       {templates.length === 0 && (
         <EmptyMessage>No templates available</EmptyMessage>
       )}
-
-      {templates.length > 0 &&
-        templates.map(template => (
-          <Template
-            id={template.id}
-            imageUrl={template.imageUrl}
-            isSelected={selectedTemplate === template.id}
-            key={template.id}
-            name={template.name}
-            onClick={onTemplateClick}
-          />
-        ))}
-    </Wrapper>
+    </>
   )
 }
 
