@@ -99,14 +99,18 @@ const BookMetadataForm = ({
   }
 
   const handleFormUpdate = () => {
-    form
-      .validateFields()
-      .then(values => {
-        onSubmitBookMetadata(values)
-      })
-      .catch(info => {
-        console.error('Validate Failed:', info)
-      })
+    setTimeout(() => {
+      form
+        .validateFields()
+        .then(values => {
+          onSubmitBookMetadata(values)
+        })
+        .catch(info => {
+          console.error(info)
+
+          console.error('Validate Failed:', info)
+        })
+    })
   }
 
   if (!initialValues.title) {
