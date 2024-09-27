@@ -16,6 +16,7 @@ const NewProfileTab = props => {
     handleFormatChange,
     canModify,
     hasChanges,
+    hasCover,
     optionsDisabled,
     isbns,
     handleOptionsChange,
@@ -52,6 +53,7 @@ const NewProfileTab = props => {
       <ExportOptionsSection
         disabled={optionsDisabled}
         exportsConfig={exportsConfig}
+        hasCover={hasCover}
         includeEpub={newProfileOptions.includeEpub}
         includePdf={newProfileOptions.includePdf}
         isbns={isbns}

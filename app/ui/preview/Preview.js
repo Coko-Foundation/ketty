@@ -61,6 +61,7 @@ const Preview = props => {
     publishing,
     onUnpublish,
     webPublishInfo,
+    hasCover,
   } = props
 
   const [showSettings, setShowSettings] = useState(true)
@@ -101,6 +102,7 @@ const Preview = props => {
           deleteProfile={deleteProfile}
           download={download}
           exportsConfig={exportsConfig}
+          hasCover={hasCover}
           isbns={isbns}
           isCollapsed={!showSettings}
           isDownloadButtonDisabled={isDownloadButtonDisabled}
@@ -218,6 +220,7 @@ Preview.propTypes = {
   onPublish: PropTypes.func,
   onUnpublish: PropTypes.func,
   publishing: PropTypes.bool,
+  hasCover: PropTypes.bool,
 }
 
 Preview.defaultProps = {
@@ -229,6 +232,7 @@ Preview.defaultProps = {
   onUnpublish: null,
   publishing: false,
   webPublishInfo: null,
+  hasCover: false,
 }
 
 export default Preview

@@ -162,11 +162,11 @@ const BookCard = ({
                       style={{}}
                       to={`/books/${id}/producer#metadata`}
                     >
-                      Upload book placeholder image
+                      Manage cover and metadata
                     </StyledLink>
                   ) : (
                     <DisabledPlaceholder>
-                      Upload book placeholder image
+                      Manage cover and metadata
                     </DisabledPlaceholder>
                   )}
                 </div>

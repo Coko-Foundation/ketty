@@ -39,11 +39,11 @@ const exportSizeOptions = [
   },
 ]
 
-const makeContentOptions = (isPdf, isEpub) => [
+const makeContentOptions = (isPdf, isEpub, hasCover) => [
   {
     value: 'includeCoverPage',
     label: 'Cover',
-    disabled: isPdf,
+    disabled: isPdf || !hasCover,
   },
   {
     value: 'includeTitlePage',
@@ -95,6 +95,7 @@ const ExportOptionsSection = props => {
     onProfileRename,
     profiles,
     previewLoading,
+    hasCover,
   } = props
 
   const isbnOptions = [
@@ -111,7 +112,7 @@ const ExportOptionsSection = props => {
   const isPdf = selectedFormat === 'pdf'
   const isEpub = selectedFormat === 'epub'
   const isWeb = selectedFormat === 'web'
-  const contentOptions = makeContentOptions(isPdf, isEpub)
+  const contentOptions = makeContentOptions(isPdf, isEpub, hasCover)
   const contentValue = selectedContent
   if (isEpub && !contentValue.includes('includeTOC'))
     contentValue.push('includeTOC')

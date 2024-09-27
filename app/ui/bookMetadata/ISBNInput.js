@@ -8,23 +8,28 @@ const ISBNInput = ({
   name,
   placeholder,
   style,
+  label,
   ...props
 }) => {
   return (
     <Form.Item
       {...props}
-      fieldKey={field.fieldKey}
       isListField
       name={[field.name, name]}
       style={{ ...style, display: 'inline-block' }}
     >
-      <Input disabled={!canChangeMetadata} placeholder={placeholder} />
+      <Input
+        aria-label={label}
+        disabled={!canChangeMetadata}
+        placeholder={placeholder}
+      />
     </Form.Item>
   )
 }
 
 ISBNInput.defaultProps = {
   style: {},
+  label: '',
 }
 
 ISBNInput.propTypes = {
@@ -37,6 +42,7 @@ ISBNInput.propTypes = {
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   style: PropTypes.shape({}),
+  label: PropTypes.string,
 }
 
 export default ISBNInput

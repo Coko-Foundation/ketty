@@ -296,7 +296,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   onClick={toggleMetadata}
                   type="text"
                 >
-                  Manage cover and metadata
+                  Book metadata
                 </Button>
               </MetadataArea>
               <BookPanel
