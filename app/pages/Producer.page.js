@@ -677,11 +677,11 @@ const ProducerPage = () => {
       renameBook({ variables: { id: bookId, title } })
     }
 
-    if (subtitle) {
+    if (typeof subtitle === 'string') {
       updateSubtitle({ variables: { id: bookId, subtitle } })
     }
 
-    if (coverAlt) {
+    if (typeof coverAlt === 'string') {
       updateCoverAlt({ variables: { id: bookId, coverAlt } })
     }
 

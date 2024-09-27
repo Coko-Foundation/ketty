@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import isEqual from 'lodash/isEqual'
 import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { th } from '@coko/client'
@@ -32,20 +31,16 @@ const BookMetadataForm = ({
       : value
   })
 
-  const [initialFormValues, setInitialFormValues] = useState(
-    transformedInitialValues,
-  )
-
   if (isEmpty(transformedInitialValues.isbns)) {
     transformedInitialValues.isbns = []
   }
 
-  useEffect(() => {
-    if (!isEqual(initialFormValues, transformedInitialValues)) {
-      form.setFieldsValue(transformedInitialValues)
-      setInitialFormValues(transformedInitialValues)
-    }
-  }, [form, rest])
+  // useEffect(() => {
+  //   if (!isEqual(initialFormValues, transformedInitialValues)) {
+  //     form.setFieldsValue(transformedInitialValues)
+  //     setInitialFormValues(transformedInitialValues)
+  //   }
+  // }, [initialValues])
 
   useEffect(() => {
     if (coverUrl) {
@@ -104,6 +99,16 @@ const BookMetadataForm = ({
         .validateFields()
         .then(values => {
           onSubmitBookMetadata(values)
+          // TODO: improvement - post only the fields that have changes
+          // const diff = reduce(
+          //   values,
+          //   function (result, value, key) {
+          //     return _.isEqual(value, transformedInitialValues[key])
+          //     ? result
+          //     : result.concat(key)
+          //   },
+          //   [],
+          // )
         })
         .catch(info => {
           console.error(info)
@@ -114,9 +119,7 @@ const BookMetadataForm = ({
   }
 
   if (!initialValues.title) {
-    return (
-      <Spin style={{ display: ' grid', placeContent: 'center' }} spinning />
-    )
+    return <Spin spinning style={{ display: 'grid', placeContent: 'center' }} />
   }
 
   return (
@@ -128,13 +131,14 @@ const BookMetadataForm = ({
           onValuesChange={handleFormUpdate}
           preserve={false}
         >
+          <h1>Book Metadata</h1>
           <p>
             This information will be used for additional book pages that are
             optional, go to Preview to see the pages and decide which ones you
             want to include in your book
           </p>
           <FormSection>
-            <h2>COVER PAGE</h2>
+            <h2>Cover page</h2>
             <Form.Item
               label="Upload cover image"
               labelCol={{ span: 24 }}
@@ -184,7 +188,7 @@ const BookMetadataForm = ({
             ) : null}
           </FormSection>
           <FormSection>
-            <h2>TITLE PAGE</h2>
+            <h2>Title page</h2>
             <Form.Item
               label="Title"
               labelCol={{ span: 24 }}
@@ -217,7 +221,7 @@ const BookMetadataForm = ({
           </FormSection>
 
           <FormSection>
-            <h2>COPYRIGHT PAGE</h2>
+            <h2>Copyright page</h2>
             <Form.Item
               label="ISBN List"
               labelCol={{ span: 24 }}

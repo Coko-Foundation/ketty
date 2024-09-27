@@ -25,6 +25,7 @@ const SavedProfilesTab = props => {
     isDownloadButtonDisabled,
     loadingPreview,
     hasChanges,
+    hasCover,
     onClickDownload,
     updateProfileOptions,
     onClickDelete,
@@ -71,6 +72,7 @@ const SavedProfilesTab = props => {
             disabled={optionsDisabled}
             epubProfileId={currentOptions.epubProfileId}
             exportsConfig={exportsConfig}
+            hasCover={hasCover}
             includeEpub={currentOptions.includeEpub}
             includePdf={currentOptions.includePdf}
             isbns={isbns}

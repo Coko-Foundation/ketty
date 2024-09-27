@@ -143,6 +143,9 @@ const GET_BOOK_COMPONENT_IDS = gql`
           label
         }
       }
+      cover {
+        coverUrl
+      }
     }
   }
 `

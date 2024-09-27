@@ -119,6 +119,7 @@ const PreviewSettings = props => {
     publishing,
     onUnpublish,
     webPublishInfo,
+    hasCover,
   } = props
 
   // #region functions
@@ -182,6 +183,7 @@ const PreviewSettings = props => {
                   handleFormatChange={handleFormatChange}
                   handleOptionsChange={handleOptionsChange}
                   hasChanges={hasChanges}
+                  hasCover={hasCover}
                   isbns={isbns}
                   isCollapsed={isCollapsed}
                   isDownloadButtonDisabled={isDownloadButtonDisabled}
@@ -213,6 +215,7 @@ const PreviewSettings = props => {
                   handleOptionsChange={handleOptionsChange}
                   handleProfileChange={handleProfileChange}
                   hasChanges={hasChanges}
+                  hasCover={hasCover}
                   isbns={isbns}
                   isCollapsed={isCollapsed}
                   isDownloadButtonDisabled={isDownloadButtonDisabled}

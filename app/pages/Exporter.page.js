@@ -54,6 +54,13 @@ export const defaultProfile = {
   isbn: null,
 }
 
+const contentOrder = [
+  'includeCoverPage',
+  'includeTitlePage',
+  'includeCopyrights',
+  'includeTOC',
+]
+
 const sanitizeProfileData = input => {
   const res = { ...input }
   if (res.format === 'epub') res.trimSize = null
@@ -64,7 +71,9 @@ const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : format)
 
 const sanitizeOptionData = data => {
   const d = { ...data }
-  d.content = d.content.sort()
+  d.content = d.content.sort(
+    (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+  )
   return d
 }
 
@@ -273,7 +282,7 @@ const PreviewerPage = () => {
             return false
           })
           .filter(e => !!e)
-          .sort(),
+          .sort((a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b)),
         isbn: created.isbn,
         template: created.templateId,
         includePdf: created.downloadableAssets.pdf,
@@ -649,6 +658,16 @@ const PreviewerPage = () => {
       options.size = null
     }
 
+    if (activeTabKey === 'new') {
+      const coverOptionIndex = options.content.indexOf('includeCoverPage')
+
+      if (options.format === 'epub' && coverOptionIndex === -1) {
+        options.content.push('includeCoverPage')
+      } else if (options.format === 'pdf' && coverOptionIndex !== -1) {
+        options.content.splice(coverOptionIndex, 1)
+      }
+    }
+
     if (isEqual(current, options)) return
 
     if (options.format === 'web' && current.format === 'web') {
@@ -771,6 +790,8 @@ const PreviewerPage = () => {
     return { isbn: item?.isbn, label: item?.label }
   })
 
+  const hasCover = book?.getBook?.cover && book.getBook.cover[0].coverUrl
+
   const profiles =
     getApplicationParameters &&
     exportsConfig &&
@@ -871,6 +892,7 @@ const PreviewerPage = () => {
       deleteProfile={handleDeleteProfile}
       download={handleDownload}
       exportsConfig={exportsConfig}
+      hasCover={hasCover}
       isbns={isbns}
       isDownloadButtonDisabled={isDownloadButtonDisabled}
       isUserConnectedToLulu={isUserConnectedToLulu}

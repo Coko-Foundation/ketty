@@ -69,6 +69,7 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                   canChangeMetadata={canChangeMetadata}
                   field={field}
                   initialValue=""
+                  label="ISBN label"
                   name="label"
                   placeholder="Label"
                   rules={[
@@ -98,6 +99,7 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                 <ISBNInput
                   canChangeMetadata={canChangeMetadata}
                   field={field}
+                  label="ISBN value"
                   name="isbn"
                   placeholder="ISBN: update this value before exporting versions requiring unique identifier"
                   rules={[
@@ -142,10 +144,10 @@ const ISBNList = ({ canChangeMetadata, name }) => {
               wrapperCol={{ span: 24 }}
             >
               <Button
+                data-test="metadata-addIsbn-btn"
                 disabled={!canChangeMetadata}
                 onClick={() => add()}
                 type="dashed"
-                data-test="metadata-addIsbn-btn"
               >
                 <PlusOutlined /> Add{fields.length < 1 ? '' : ' Another'} ISBN
               </Button>
