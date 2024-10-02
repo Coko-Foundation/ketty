@@ -71,9 +71,15 @@ const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : format)
 
 const sanitizeOptionData = data => {
   const d = { ...data }
-  d.content = d.content.sort(
-    (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
-  )
+  d.content =
+    d.format !== 'web'
+      ? d.content.sort(
+          (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+        )
+      : null
+
+  d.includePdf = !!d.includePdf
+  d.includeEpub = !!d.includeEpub
   return d
 }
 
@@ -262,27 +268,32 @@ const PreviewerPage = () => {
       setCurrentOptions({
         format: created.format,
         size: created.trimSize,
-        content: Array.from(Object.keys(includedComponents))
-          .map(e => {
-            if (includedComponents[e]) {
-              switch (e) {
-                case 'copyright':
-                  return 'includeCopyrights'
-                case 'toc':
-                  return 'includeTOC'
-                case 'titlePage':
-                  return 'includeTitlePage'
-                case 'cover':
-                  return 'includeCoverPage'
-                default:
-                  return false
-              }
-            }
+        content:
+          created.format !== 'web'
+            ? Array.from(Object.keys(includedComponents))
+                .map(e => {
+                  if (includedComponents[e]) {
+                    switch (e) {
+                      case 'copyright':
+                        return 'includeCopyrights'
+                      case 'toc':
+                        return 'includeTOC'
+                      case 'titlePage':
+                        return 'includeTitlePage'
+                      case 'cover':
+                        return 'includeCoverPage'
+                      default:
+                        return false
+                    }
+                  }
 
-            return false
-          })
-          .filter(e => !!e)
-          .sort((a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b)),
+                  return false
+                })
+                .filter(e => !!e)
+                .sort(
+                  (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+                )
+            : null,
         isbn: created.isbn,
         template: created.templateId,
         includePdf: created.downloadableAssets.pdf,
@@ -396,10 +407,10 @@ const PreviewerPage = () => {
       displayName,
       format,
       includedComponents: {
-        toc: content.includes('includeTOC'),
-        copyright: content.includes('includeCopyrights'),
-        titlePage: content.includes('includeTitlePage'),
-        cover: content.includes('includeCoverPage'),
+        toc: content?.includes('includeTOC') || false,
+        copyright: content?.includes('includeCopyrights') || false,
+        titlePage: content?.includes('includeTitlePage') || false,
+        cover: content?.includes('includeCoverPage') || false,
       },
       templateId,
       trimSize,
@@ -576,14 +587,17 @@ const PreviewerPage = () => {
       previewer: target,
       templateId: optionsToApply.template,
       additionalExportOptions: {
-        includeTOC: options.content.includes('includeTOC'),
-        includeCopyrights: options.content.includes('includeCopyrights'),
-        includeTitlePage: options.content.includes('includeTitlePage'),
-        includeCoverPage: options.content.includes('includeCoverPage'),
-        ...(target === 'web' && {
-          includePdf: options.includePdf,
-          includeEpub: options.includeEpub,
-        }),
+        ...(target === 'web'
+          ? {
+              includePdf: options.includePdf,
+              includeEpub: options.includeEpub,
+            }
+          : {
+              includeTOC: options.content.includes('includeTOC'),
+              includeCopyrights: options.content.includes('includeCopyrights'),
+              includeTitlePage: options.content.includes('includeTitlePage'),
+              includeCoverPage: options.content.includes('includeCoverPage'),
+            }),
       },
     }
 
@@ -658,8 +672,14 @@ const PreviewerPage = () => {
       options.size = null
     }
 
+    if (options.format === 'web') {
+      options.content = null
+    }
+
     if (activeTabKey === 'new') {
-      const coverOptionIndex = options.content.indexOf('includeCoverPage')
+      const coverOptionIndex = options.content
+        ? options.content.indexOf('includeCoverPage')
+        : -1
 
       if (options.format === 'epub' && coverOptionIndex === -1) {
         options.content.push('includeCoverPage')
@@ -813,19 +833,19 @@ const PreviewerPage = () => {
 
         return {
           format: p.format,
-          content,
+          content: p.format !== 'web' ? content : null,
           label: p.displayName,
           lastSynced: luluProfile ? luluProfile.lastSync : null,
           projectId,
           projectUrl: luluProjectUrl,
-          size: p.trimSize,
+          size: p.format === 'pdf' ? p.trimSize : null,
           synced: luluProfile ? luluProfile.inSync : null,
           template: p.templateId,
           value: p.id,
           // Require that p.isbn is a valid option from podMetadata.isbns
           isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
-          includePdf: p.downloadableAssets?.pdf,
-          includeEpub: p.downloadableAssets?.epub,
+          includePdf: !!p.downloadableAssets?.pdf,
+          includeEpub: !!p.downloadableAssets?.epub,
           pdfProfileId: p.downloadableAssets?.pdfProfileId,
           epubProfileId: p.downloadableAssets?.epubProfileId,
         }
