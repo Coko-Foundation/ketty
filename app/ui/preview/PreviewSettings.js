@@ -72,16 +72,28 @@ const optionKeys = [
   'epubProfileId',
 ]
 
+const contentOrder = [
+  'includeCoverPage',
+  'includeTitlePage',
+  'includeCopyrights',
+  'includeTOC',
+]
+
 const getProfileSelectOptions = profile => pick(profile, selectKeys)
 
 const sanitizeOptionData = data => {
   const d = { ...data }
-  d.content = d.content?.sort()
+  d.content =
+    d.content?.sort(
+      (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+    ) || null
+
   return d
 }
 
 const getProfileExportOptions = profile => {
   const p = pick(profile, optionKeys)
+  if (p.content === undefined) p.content = null
   return sanitizeOptionData(p)
 }
 // #endregion helpers
