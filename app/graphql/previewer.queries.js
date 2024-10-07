@@ -24,6 +24,7 @@ const GET_EXPORT_PROFILES = gql`
     getBookExportProfiles(bookId: $bookId) {
       result {
         id
+        updated
         displayName
         format
         includedComponents {

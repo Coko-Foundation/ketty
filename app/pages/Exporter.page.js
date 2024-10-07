@@ -127,11 +127,6 @@ const PreviewerPage = () => {
     if (!localStorage.getItem('pageSpread')) {
       localStorage.setItem('pageSpread', 'single')
     }
-
-    // if (localStorage.getItem(`exportProfileId-${bookId}`)) {
-    //   setActiveTabKey('saved')
-    //   setSelectedProfile(localStorage.getItem(`exportProfileId-${bookId}`))
-    // }
   }, [])
   // #endregion init
 
@@ -239,15 +234,14 @@ const PreviewerPage = () => {
         if (input.previewer === 'web') {
           // preview the url returned by the server
           setPreviewLink(path)
-          return true
+        } else {
+          getPagedLink({
+            variables: {
+              hash: hash[0],
+              previewerOptions,
+            },
+          })
         }
-
-        return getPagedLink({
-          variables: {
-            hash: hash[0],
-            previewerOptions,
-          },
-        })
       },
     },
   )
@@ -478,10 +472,10 @@ const PreviewerPage = () => {
     const data = {
       format,
       includedComponents: {
-        toc: content.includes('includeTOC'),
-        copyright: content.includes('includeCopyrights'),
-        titlePage: content.includes('includeTitlePage'),
-        cover: content.includes('includeCoverPage'),
+        toc: !!content?.includes('includeTOC'),
+        copyright: !!content?.includes('includeCopyrights'),
+        titlePage: !!content?.includes('includeTitlePage'),
+        cover: !!content?.includes('includeCoverPage'),
       },
       templateId,
       trimSize,
@@ -540,6 +534,7 @@ const PreviewerPage = () => {
             epubProfileId,
           },
         },
+        profileId: selectedProfile,
       },
     })
   }
@@ -676,15 +671,11 @@ const PreviewerPage = () => {
       options.content = null
     }
 
-    if (activeTabKey === 'new') {
-      const coverOptionIndex = options.content
-        ? options.content.indexOf('includeCoverPage')
-        : -1
-
-      if (options.format === 'epub' && coverOptionIndex === -1) {
-        options.content.push('includeCoverPage')
-      } else if (options.format === 'pdf' && coverOptionIndex !== -1) {
-        options.content.splice(coverOptionIndex, 1)
+    if (activeTabKey === 'new' && newProfileOptions.format !== options.format) {
+      if (options.format === 'epub') {
+        options.content = [...contentOrder]
+      } else if (options.format === 'pdf') {
+        options.content = [...contentOrder].splice(1, 3)
       }
     }
 
@@ -832,6 +823,7 @@ const PreviewerPage = () => {
         if (p.includedComponents.cover) content.push('includeCoverPage')
 
         return {
+          updated: p.updated,
           format: p.format,
           content: p.format !== 'web' ? content : null,
           label: p.displayName,
@@ -912,7 +904,7 @@ const PreviewerPage = () => {
       deleteProfile={handleDeleteProfile}
       download={handleDownload}
       exportsConfig={exportsConfig}
-      hasCover={hasCover}
+      hasCover={!!hasCover}
       isbns={isbns}
       isDownloadButtonDisabled={isDownloadButtonDisabled}
       isUserConnectedToLulu={isUserConnectedToLulu}

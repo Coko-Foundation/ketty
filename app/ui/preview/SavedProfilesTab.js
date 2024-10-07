@@ -44,22 +44,28 @@ const SavedProfilesTab = props => {
     // end lulu integration
     publishing,
     webPublishInfo,
-    onUnpublish,
+    selectedProfileLastUpdated,
   } = props
 
   const profileSelected = selectedProfile && selectedProfile !== 'new-export'
+
+  const { includePdf, includeEpub, pdfProfileId, epubProfileId } =
+    currentOptions
 
   return (
     <>
       <div>
         <ProfileRow
           canModifyProfiles={canModify}
+          hasChanges={hasChanges}
           loadingPreview={loadingPreview}
+          onClickDelete={onClickDelete}
           onProfileChange={handleProfileChange}
           profiles={profiles.map(p => ({ label: p.label, value: p.value }))}
           selectedProfile={profileSelected ? selectedProfileSelectOption : {}}
+          updateProfile={updateProfileOptions}
         />
-        {profileSelected && canModify && hasChanges && (
+        {profileSelected && canModify && hasChanges && !loadingPreview && (
           <Ribbon hide={!hasChanges || !canModify}>
             You have unsaved changes
           </Ribbon>
@@ -67,6 +73,29 @@ const SavedProfilesTab = props => {
       </div>
       {profileSelected && (
         <>
+          {currentOptions.format === 'web' ? (
+            <FlaxIntegration
+              profiles={profiles}
+              webPublishInfo={webPublishInfo}
+            />
+          ) : null}
+          {!!luluConfig &&
+          (currentOptions.format === 'pdf' ||
+            currentOptions.format === 'epub') ? (
+            <LuluIntegration
+              canUploadToProvider={canUploadToProvider}
+              isConnected={isUserConnectedToLulu}
+              isInLulu={!!projectId}
+              isSynced={isProfileSyncedWithLulu}
+              lastSynced={lastSynced}
+              luluConfig={luluConfig}
+              onClickConnect={onClickConnectToLulu}
+              projectId={projectId}
+              projectUrl={projectUrl}
+            />
+          ) : null}
+
+          <Divider />
           <ExportOptionsSection
             canModifyProfiles={canModify}
             disabled={optionsDisabled}
@@ -76,6 +105,10 @@ const SavedProfilesTab = props => {
             includeEpub={currentOptions.includeEpub}
             includePdf={currentOptions.includePdf}
             isbns={isbns}
+            lastUpdated={new Intl.DateTimeFormat('en-GB', {
+              dateStyle: 'medium',
+              timeStyle: 'long',
+            }).format(new Date(selectedProfileLastUpdated))}
             newProfile={!selectedProfile}
             onChange={handleOptionsChange}
             onProfileRename={renameProfile}
@@ -91,39 +124,6 @@ const SavedProfilesTab = props => {
             templates={templates}
           />
           <Divider />
-          {!!luluConfig &&
-          (currentOptions.format === 'pdf' ||
-            currentOptions.format === 'epub') ? (
-            <LuluIntegration
-              canUploadToProvider={canUploadToProvider}
-              isConnected={isUserConnectedToLulu}
-              isInLulu={!!projectId}
-              isSynced={isProfileSyncedWithLulu}
-              lastSynced={lastSynced}
-              luluConfig={luluConfig}
-              onClickConnect={onClickConnectToLulu}
-              onClickSendToLulu={sendToLulu}
-              projectId={projectId}
-              projectUrl={projectUrl}
-            />
-          ) : null}
-          {currentOptions.format === 'web' ? (
-            <FlaxIntegration
-              epubProfile={currentOptions.epubProfileId}
-              includeEpub={currentOptions.includeEpub}
-              includePdf={currentOptions.includePdf}
-              onPublish={onPublish}
-              onUnpublish={onUnpublish}
-              pdfProfile={currentOptions.pdfProfileId}
-              previewLoading={loadingPreview}
-              profiles={profiles}
-              publishing={publishing}
-              selectedTemplate={templates.find(
-                template => template.id === currentOptions.template,
-              )}
-              webPublishInfo={webPublishInfo}
-            />
-          ) : null}
 
           <Footer
             canModify={canModify}
@@ -136,10 +136,27 @@ const SavedProfilesTab = props => {
               (!!selectedProfileSelectOption && !hasChanges)
             }
             loadingPreview={loadingPreview}
-            onClickDelete={onClickDelete}
+            luluInformation={{
+              canUploadToProvider,
+              isConnected: isUserConnectedToLulu,
+              isInLulu: !!projectId,
+              isSynced: isProfileSyncedWithLulu,
+              onClickSendToLulu: sendToLulu,
+            }}
             onClickDownload={onClickDownload}
+            onPublish={onPublish}
+            publishing={publishing}
+            publishingAssets={{
+              missingPdfProfile: includePdf && !pdfProfileId,
+              missingEpubProfile: includeEpub && !epubProfileId,
+              includePdf,
+              includeEpub,
+              publishedBefore: webPublishInfo?.published,
+            }}
             selectedFormat={currentOptions.format}
-            updateProfile={updateProfileOptions}
+            selectedTemplate={templates.find(
+              template => template.id === currentOptions.template,
+            )}
           />
         </>
       )}

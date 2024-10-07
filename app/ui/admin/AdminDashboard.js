@@ -120,7 +120,7 @@ const AdminDashboard = props => {
     <Center
       style={{ '--max-width': '90ch', '--s1': '16px', 'margin-bottom': '3rem' }}
     >
-      <h1>Admin dashboard</h1>
+      <h1>Admin</h1>
       <Divider />
       <h2>AI integration</h2>
       <StyledControlWrapper>
@@ -140,7 +140,7 @@ const AdminDashboard = props => {
             requiredMark={false}
           >
             <Form.Item
-              label="Api key"
+              label="API Key"
               name="apiKey"
               rules={[{ required: true, message: 'You need to provide a key' }]}
             >
@@ -152,7 +152,7 @@ const AdminDashboard = props => {
                 loading={keyUpdateResult?.loading}
                 data-test="admindb-updateKey-btn"
               >
-                Update key
+                Update Key
               </Button>
               <UpdateResult $success={keyUpdateResult?.success} role="status">
                 {keyUpdateResult?.message && (
@@ -172,41 +172,48 @@ const AdminDashboard = props => {
         </ChatGPTAPIKeyWrapper>
       </StyledControlWrapper>
       <Divider />
-      <h2>Export options</h2>
+      <h2>Publishing, downloads and integration</h2>
       <Stack style={{ '--space': '2rem' }}>
+        <h3>Downloads</h3>
+        <Stack style={{ '--space': '1rem' }}>
+          <StyledControlWrapper>
+            <span>PDF</span>
+            <Switch
+              checked={exportOptions?.pdfDownload?.enabled}
+              loading={paramsLoading}
+              onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+            />
+          </StyledControlWrapper>
+          <StyledControlWrapper>
+            <span>EPUB</span>
+            <Switch
+              checked={exportOptions?.epubDownload?.enabled}
+              loading={paramsLoading}
+              onChange={val => exportConfigUpdate(val, 'epubDownload')}
+            />
+          </StyledControlWrapper>
+        </Stack>
+        <h3>Publishing integrations</h3>
         <StyledControlWrapper>
-          <span>Export PDF</span>
-          <Switch
-            checked={exportOptions?.pdfDownload?.enabled}
-            loading={paramsLoading}
-            onChange={val => exportConfigUpdate(val, 'pdfDownload')}
-          />
-        </StyledControlWrapper>
-        <StyledControlWrapper>
-          <span>Export EPUB</span>
-          <Switch
-            checked={exportOptions?.epubDownload?.enabled}
-            loading={paramsLoading}
-            onChange={val => exportConfigUpdate(val, 'epubDownload')}
-          />
-        </StyledControlWrapper>
-        <StyledControlWrapper>
-          <span>Publish Online Book Website</span>
+          <span>Publish online with Flax</span>
           <Switch
             checked={exportOptions?.webPublish?.enabled}
             loading={paramsLoading}
             onChange={val => exportConfigUpdate(val, 'webPublish')}
           />
           {exportOptions?.webPublish?.enabled && (
-            <>
-              <p>
-                <strong>
-                  Allow including the following downloads when publishing a book
-                  on the web:
-                </strong>
+            <Stack
+              style={{
+                '--space': '1em',
+                paddingInlineStart: '3ch',
+              }}
+            >
+              <p style={{ 'grid-column': 'span 2' }}>
+                Allow book owners to include the following downloads when
+                publishing online:
               </p>
               <StyledControlWrapper>
-                <span>PDF download</span>
+                <span>PDF</span>
                 <Switch
                   checked={exportOptions?.webPdfDownload?.enabled}
                   loading={paramsLoading}
@@ -214,32 +221,32 @@ const AdminDashboard = props => {
                 />
               </StyledControlWrapper>
               <StyledControlWrapper>
-                <span>EPUB download</span>
+                <span>EPUB</span>
                 <Switch
                   checked={exportOptions?.webEpubDownload?.enabled}
                   loading={paramsLoading}
                   onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
                 />
               </StyledControlWrapper>
-            </>
+            </Stack>
           )}
         </StyledControlWrapper>
+        <StyledControlWrapper>
+          <span>Print-on-demand with Lulu</span>
+          <Switch
+            checked={luluConfigEnabled}
+            loading={paramsLoading}
+            onChange={luluToggleConfig}
+            data-test="admindb-lulu-switch"
+          />
+        </StyledControlWrapper>
       </Stack>
-      <Divider />
-      <h2>Print on demand supplier integration</h2>
-      <StyledControlWrapper>
-        <span>Lulu</span>
-        <Switch
-          checked={luluConfigEnabled}
-          loading={paramsLoading}
-          onChange={luluToggleConfig}
-          data-test="admindb-lulu-switch"
-        />
-      </StyledControlWrapper>
+      {/* <h2>Print on demand supplier integration</h2> */}
+
       <Divider />
       <h2>Terms and conditions</h2>
       <p>
-        Provide the terms and conditions that users must agree to on sign up
+        Provide the terms and conditions that users must agree to on sign up.
       </p>
       <TCWrapper>
         <Wax

@@ -5,12 +5,17 @@ import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 
 const Wrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   max-width: 500px;
+  min-block-size: 32px;
 `
 
 const Label = styled.div`
   color: ${th('colorTextLight')};
   text-transform: capitalize;
+  white-space: nowrap;
 
   /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${props =>

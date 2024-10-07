@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -36,47 +36,25 @@ const LuluIntegration = props => {
     isSynced,
     lastSynced,
     onClickConnect,
-    onClickSendToLulu,
     projectId,
     projectUrl,
   } = props
 
-  const [isUploading, setUploading] = useState(false)
-
-  const handleClickSendToLulu = () => {
-    setUploading(true)
-
-    onClickSendToLulu().finally(() => {
-      setUploading(false)
-    })
-  }
-
   return (
     <Wrapper className={className}>
+      <h3 style={{ marginBlockStart: 0 }}>Lulu integration:</h3>
       {!isConnected && canUploadToProvider && (
         <div>
           <Button
+            data-test="preview-connectLulu-btn"
             onClick={onClickConnect}
             type="primary"
-            data-test="preview-connectLulu-btn"
           >
             Connect to Lulu
           </Button>
         </div>
       )}
-
-      {isConnected && !isInLulu && canUploadToProvider && (
-        <div>
-          <Button
-            disabled={isUploading}
-            loading={isUploading}
-            onClick={handleClickSendToLulu}
-            type="primary"
-          >
-            Upload to Lulu
-          </Button>
-        </div>
-      )}
+      {isConnected && !isInLulu && <p>Not uploaded to Lulu</p>}
 
       {isConnected && isInLulu && (
         <ConnectedWrapper>
@@ -92,17 +70,6 @@ const LuluIntegration = props => {
                 Open lulu project
               </a>
             </Button>
-
-            {!isSynced && (
-              <Button
-                disabled={isUploading}
-                loading={isUploading}
-                onClick={handleClickSendToLulu}
-                type="primary"
-              >
-                Sync with lulu
-              </Button>
-            )}
           </StyledButtonGroup>
         </ConnectedWrapper>
       )}
@@ -120,7 +87,6 @@ LuluIntegration.propTypes = {
   isSynced: PropTypes.bool,
   lastSynced: PropTypes.string,
   onClickConnect: PropTypes.func.isRequired,
-  onClickSendToLulu: PropTypes.func.isRequired,
   projectId: PropTypes.string,
   projectUrl: PropTypes.string,
 }
