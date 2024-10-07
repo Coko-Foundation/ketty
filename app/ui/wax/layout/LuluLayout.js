@@ -296,7 +296,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   onClick={toggleMetadata}
                   type="text"
                 >
-                  Book metadata
+                  Book Metadata
                 </Button>
               </MetadataArea>
               <BookPanel
@@ -341,8 +341,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                     <WaxView {...rest} />
                   ) : (
                     <NoSelectedChapterWrapper>
-                      Create or select a chapter in the chapters panel to start
-                      writing
+                      Create or select a chapter on the left to start writing.
                     </NoSelectedChapterWrapper>
                   )}
                   <CommentsContainer>

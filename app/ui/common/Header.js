@@ -152,9 +152,9 @@ const Header = props => {
   if (showDashboard) {
     navItemsLeft.push(
       <UnstyledLink
+        data-test="header-dashboard-link"
         key="dashboard"
         to="/dashboard"
-        data-test="header-dashboard-link"
       >
         Dashboard
       </UnstyledLink>,
@@ -164,9 +164,9 @@ const Header = props => {
   if (showBackToBook) {
     navItemsLeft.push(
       <UnstyledLink
+        data-test="header-back-link"
         key="back"
         to={`/books/${bookId}/producer`}
-        data-test="header-back-link"
       >
         Back to book
       </UnstyledLink>,
@@ -176,11 +176,11 @@ const Header = props => {
   if (showPreview) {
     navItemsRight.push(
       <UnstyledLink
+        data-test="header-preview-link"
         key="preiew"
         to={`/books/${bookId}/exporter`}
-        data-test="header-preview-link"
       >
-        Preview
+        Preview and Publish
       </UnstyledLink>,
     )
   }
@@ -188,10 +188,10 @@ const Header = props => {
   if (showInvite) {
     navItemsRight.push(
       <Button
+        data-test="header-share-btn"
         key="share"
         onClick={onInvite}
         type="text"
-        data-test="header-share-btn"
       >
         Share
       </Button>,
@@ -201,11 +201,11 @@ const Header = props => {
   if (showKnowledgeBaseLink) {
     navItemsRight.push(
       <UnstyledLink
+        data-test="header-kb-link"
         key="kb"
         to={`/books/${bookId}/knowledge-base`}
-        data-test="header-kb-link"
       >
-        Knowledge base
+        Knowledge Base
       </UnstyledLink>,
     )
   }
@@ -225,12 +225,12 @@ const Header = props => {
   if (showSettings) {
     navItemsRight.push(
       <Button
+        data-test="header-bookSettings-btn"
         aria-label="Book settings"
         key="settings"
         onClick={onSettings}
-        title="Book settings"
+        title="Book Settings"
         type="text"
-        data-test="header-bookSettings-btn"
       >
         <SettingOutlined />
       </Button>,
@@ -240,7 +240,7 @@ const Header = props => {
   return (
     <StyledHeader role="banner" {...rest}>
       <BrandingContainer>
-        <UnstyledLink to={homeURL} data-test="header-logo-link">
+        <UnstyledLink data-test="header-logo-link" to={homeURL}>
           {brandLogoURL ? (
             <BrandLogo alt={brandLabel} src={brandLogoURL} />
           ) : (
@@ -268,16 +268,16 @@ const Header = props => {
             <PopupContentWrapper>
               {canAccessAdminPage && (
                 <UnstyledLink
+                  data-test="header-admin-link"
                   onClick={() => {
                     document.querySelector('#main-content').focus()
                   }}
                   to="/admin"
-                  data-test="header-admin-link"
                 >
                   Admin
                 </UnstyledLink>
               )}
-              <Button onClick={onLogout} data-test="logout-button">
+              <Button data-test="logout-button" onClick={onLogout}>
                 Logout
               </Button>
             </PopupContentWrapper>

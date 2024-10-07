@@ -68,12 +68,12 @@ const Dashboard = props => {
   return (
     <Wrapper>
       <SectionHeader>
-        <h1>Your books</h1>
-        <StyledLink to="/create-book" data-test="dashboard-newBook-button">
+        <h1>Your Books</h1>
+        <StyledLink data-test="dashboard-newBook-button" to="/create-book">
           <span>
             <EditOutlined />
           </span>
-          <span>New book</span>
+          <span>New Book</span>
         </StyledLink>
       </SectionHeader>
 

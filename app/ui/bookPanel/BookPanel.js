@@ -32,7 +32,8 @@ const ChaptersHeader = styled.div`
 const ChaptersActions = styled(Space)``
 
 const StyledHeading = styled.div`
-  text-transform: uppercase;
+  font-weight: bold;
+  text-transform: capitalize;
   width: 85%;
 `
 
@@ -61,7 +62,7 @@ const BookPanel = props => {
   return (
     <ChaptersArea className={className}>
       <ChaptersHeader>
-        <StyledHeading>Chapters</StyledHeading>
+        <StyledHeading>Book Body</StyledHeading>
         <ChaptersActions>
           <IconWrapper
             aria-label="Upload a chapter"

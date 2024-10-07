@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { Stack, Select } from '../common'
 import ExportOptionsSection from './ExportOptionsSection'
 import Footer from './Footer'
 
@@ -41,18 +40,11 @@ const NewProfileTab = props => {
 
   return (
     <>
-      <Stack style={{ '--space': '10px' }}>
-        <Select
-          disabled={loadingPreview}
-          onChange={handleFormatChange}
-          options={exportOptions}
-          value={newProfileOptions.format}
-        />
-      </Stack>
-
       <ExportOptionsSection
         disabled={optionsDisabled}
+        exportOptions={exportOptions}
         exportsConfig={exportsConfig}
+        handleFormatChange={handleFormatChange}
         hasCover={hasCover}
         includeEpub={newProfileOptions.includeEpub}
         includePdf={newProfileOptions.includePdf}

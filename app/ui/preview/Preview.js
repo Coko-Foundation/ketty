@@ -11,6 +11,7 @@ import PreviewSettings from './PreviewSettings'
 const Wrapper = styled.div`
   display: flex;
   height: 100%;
+  overflow-y: hidden;
 
   > div {
     transition: width 0.3s;
@@ -190,7 +191,7 @@ Preview.propTypes = {
       value: PropTypes.string.isRequired,
       format: PropTypes.string.isRequired,
       size: PropTypes.string,
-      content: PropTypes.arrayOf(PropTypes.string).isRequired,
+      content: PropTypes.arrayOf(PropTypes.string),
       template: PropTypes.string,
       synced: PropTypes.bool,
       lastSynced: PropTypes.string,

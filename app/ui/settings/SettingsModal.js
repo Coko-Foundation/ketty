@@ -249,10 +249,10 @@ const SettingsModal = ({
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-toggleAI-switch"
           checked={isAiOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={toggleAiOn}
-          data-test="settings-toggleAI-switch"
         />
       </SettingsWrapper>
 
@@ -264,10 +264,10 @@ const SettingsModal = ({
                 <SettingTitle>Free-text writing prompts</SettingTitle>
               </SettingInfo>
               <Switch
+                data-test="settings-freeTextPrompt-switch"
                 checked={isFreeTextPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleFreePromptSwitch(e)}
-                data-test="settings-freeTextPrompt-switch"
               />
             </SettingsWrapper>
 
@@ -276,10 +276,10 @@ const SettingsModal = ({
                 <SettingTitle>Customize AI writing prompts</SettingTitle>
               </SettingInfo>
               <Switch
+                data-test="settings-customPrompt-switch"
                 checked={isCustomPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleCustomPromptsSwitch(e)}
-                data-test="settings-customPrompt-switch"
               />
 
               {isCustomPromptsOn && (
@@ -342,10 +342,10 @@ const SettingsModal = ({
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-AIDesigner-switch"
           checked={isAiPdfOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => setIsAiPdfOn(e)}
-          data-test="settings-AIDesigner-switch"
         />
       </SettingsWrapper>
 
@@ -359,31 +359,31 @@ const SettingsModal = ({
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-kb-switch"
           checked={isKnowledgeBaseOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleKnowledgeBase(e)}
-          data-test="settings-kb-switch"
         />
       </SettingsWrapper>
       <ButtonsContainer>
         <StyledButton
+          data-test="settings-cancel-btn"
+          disabled={updateLoading}
+          htmlType="reset"
+          onClick={closeModal}
+        >
+          Cancel
+        </StyledButton>
+
+        <StyledButton
+          data-test="settings-save-btn"
           disabled={!canChangeSettings}
           htmlType="submit"
           loading={updateLoading}
           onClick={handleUpdateBookSettings}
           type="primary"
-          data-test="settings-save-btn"
         >
           Save
-        </StyledButton>
-
-        <StyledButton
-          disabled={updateLoading}
-          htmlType="reset"
-          onClick={closeModal}
-          data-test="settings-cancel-btn"
-        >
-          Cancel
         </StyledButton>
       </ButtonsContainer>
     </Stack>

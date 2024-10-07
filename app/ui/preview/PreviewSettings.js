@@ -5,7 +5,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import pick from 'lodash/pick'
-import isEqual from 'lodash/isEqual'
+import { isEqualWith, isNil } from 'lodash'
 import { VerticalAlignTopOutlined } from '@ant-design/icons'
 import { grid } from '@coko/client'
 import { Button, Stack, TabsStyled as Tabs } from '../common'
@@ -17,7 +17,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   height: 100%;
-  padding: 0 ${grid(4)} ${grid(4)};
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 ${grid(4)};
 
   > * + * {
     margin-block-start: ${grid(2)};
@@ -39,6 +41,10 @@ const StyledTabs = styled(Tabs)`
     }
   }
 
+  .ant-tabs-content {
+    position: unset;
+  }
+
   .ant-tabs-content,
   [role='tabpanel'] {
     height: 100%;
@@ -46,7 +52,7 @@ const StyledTabs = styled(Tabs)`
 `
 
 const StyledStack = styled(Stack)`
-  --space: 2em;
+  --space: 1em;
   height: 100%;
 `
 
@@ -173,7 +179,18 @@ const PreviewSettings = props => {
 
   const { lastSynced, projectId, projectUrl, synced } = fullSelectedProfile
   const isProfileSyncedWithLulu = synced
-  const hasChanges = !isEqual(selectedProfileExportOptions, currentOptions)
+
+  const hasChanges = !isEqualWith(
+    selectedProfileExportOptions,
+    currentOptions,
+    (a, b) => {
+      if (isNil(a) && isNil(b)) {
+        return true
+      }
+
+      return undefined
+    },
+  )
   // #endregion data wrangling
 
   return (
@@ -214,7 +231,7 @@ const PreviewSettings = props => {
             ),
           },
           {
-            label: 'Saved profiles',
+            label: 'Publishing profiles',
             key: 'saved',
             children: (
               <StyledStack>
@@ -248,6 +265,7 @@ const PreviewSettings = props => {
                   publishing={publishing}
                   renameProfile={renameProfile}
                   selectedProfile={selectedProfile}
+                  selectedProfileLastUpdated={fullSelectedProfile.updated}
                   selectedProfileSelectOption={selectedProfileSelectOption}
                   sendToLulu={sendToLulu}
                   templates={templates}
@@ -331,7 +349,7 @@ PreviewSettings.propTypes = {
       value: PropTypes.string.isRequired,
       format: PropTypes.string.isRequired,
       size: PropTypes.string,
-      content: PropTypes.arrayOf(PropTypes.string).isRequired,
+      content: PropTypes.arrayOf(PropTypes.string),
       template: PropTypes.string,
       synced: PropTypes.bool,
       lastSynced: PropTypes.string,

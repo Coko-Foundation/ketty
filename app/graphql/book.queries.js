@@ -118,6 +118,7 @@ const GET_BOOK_WEB_PUBLISH_INFO = gql`
         # firstPublished
         lastUpdated
         publicUrl
+        profileId
       }
     }
   }
@@ -339,8 +340,8 @@ const EXPORT_BOOK = gql`
 `
 
 const PUBLISH_ONLINE = gql`
-  mutation PublishOnline($input: ExportBookInput!) {
-    publishOnline(input: $input) {
+  mutation PublishOnline($input: ExportBookInput!, $profileId: ID!) {
+    publishOnline(input: $input, profileId: $profileId) {
       path
     }
   }

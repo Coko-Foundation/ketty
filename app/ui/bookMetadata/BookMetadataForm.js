@@ -133,9 +133,8 @@ const BookMetadataForm = ({
         >
           <h1>Book Metadata</h1>
           <p>
-            This information will be used for additional book pages that are
-            optional, go to Preview to see the pages and decide which ones you
-            want to include in your book
+            This information will be used for optional front matter pages. View
+            these pages in the book&apos;s preview.
           </p>
           <FormSection>
             <h2>Cover page</h2>

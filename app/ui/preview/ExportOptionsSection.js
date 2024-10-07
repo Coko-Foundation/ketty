@@ -66,6 +66,11 @@ const makeContentOptions = (isPdf, isEpub, hasCover) => [
 const MultiSelect = styled(Select)`
   min-width: 150px;
 `
+
+const FrontmatterOption = styled(ExportOption)`
+  align-items: baseline;
+  flex-wrap: nowrap;
+`
 // #endregion styled
 
 const webDownloadOptionsDefault = [
@@ -96,10 +101,13 @@ const ExportOptionsSection = props => {
     profiles,
     previewLoading,
     hasCover,
+    lastUpdated,
+    exportOptions,
+    handleFormatChange,
   } = props
 
   const isbnOptions = [
-    ...isbns.map((isbnItem, index) => {
+    ...isbns.map(isbnItem => {
       return {
         value: isbnItem.isbn,
         label: isbnItem.label
@@ -158,14 +166,30 @@ const ExportOptionsSection = props => {
   return (
     <>
       <div>
-        {!newProfile && (
+        {newProfile ? (
+          <ExportOption inline label="Format">
+            <Select
+              bordered={false}
+              disabled={previewLoading}
+              onChange={handleFormatChange}
+              options={exportOptions}
+              popupMatchSelectWidth={120}
+              value={selectedFormat}
+            />
+          </ExportOption>
+        ) : (
           <>
+            <h3 style={{ marginBlock: 0 }}>Profile information:</h3>
             <ExportOption inline label="Name">
               <ProfileName
                 canModifyProfiles={canModifyProfiles}
                 onProfileRename={onProfileRename}
                 selectedProfile={selectedProfile}
               />
+            </ExportOption>
+
+            <ExportOption inline label="Last updated">
+              <span>{lastUpdated}</span>
             </ExportOption>
 
             <ExportOption inline label="format">
@@ -205,7 +229,7 @@ const ExportOptionsSection = props => {
         )}
 
         {(isEpub || isPdf) && (
-          <ExportOption inline label="content">
+          <FrontmatterOption inline label="Front matter">
             <MultiSelect
               allowClear
               bordered={false}
@@ -217,7 +241,7 @@ const ExportOptionsSection = props => {
               showSearch={false}
               value={selectedContent}
             />
-          </ExportOption>
+          </FrontmatterOption>
         )}
 
         {isWeb && webDownloadOptions.length > 0 && (
@@ -254,7 +278,7 @@ const ExportOptionsSection = props => {
 ExportOptionsSection.propTypes = {
   disabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  selectedContent: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedContent: PropTypes.arrayOf(PropTypes.string),
   selectedFormat: PropTypes.string.isRequired,
   selectedSize: PropTypes.string,
   selectedIsbn: PropTypes.string,
@@ -281,11 +305,13 @@ ExportOptionsSection.propTypes = {
       enabled: PropTypes.bool,
     }),
   }),
+  lastUpdated: PropTypes.string,
 }
 
 ExportOptionsSection.defaultProps = {
   selectedSize: null,
   selectedIsbn: null,
+  selectedContent: null,
   selectedTemplate: null,
   templates: [],
   newProfile: false,
@@ -293,6 +319,7 @@ ExportOptionsSection.defaultProps = {
     webEpubDownload: { enabled: true },
     webPdfDownload: { enabled: true },
   },
+  lastUpdated: null,
 }
 
 export default ExportOptionsSection
