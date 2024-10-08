@@ -31,7 +31,7 @@ import {
   GET_BOOK_WEB_PUBLISH_INFO,
 } from '../graphql'
 
-import { isOwner, hasEditAccess, isAdmin } from '../helpers/permissions'
+import { isOwner, hasEditAccess } from '../helpers/permissions'
 import { showErrorModal, showDeletedBookModal } from '../helpers/commonModals'
 import { Preview, Spin } from '../ui'
 // #endregion import
@@ -857,19 +857,8 @@ const PreviewerPage = () => {
 
   const allProfiles = profiles // && [defaultProfileWithTemplate, ...profiles]
 
-  const hasContent =
-    book?.getBook.divisions.find(d => d?.label === 'Body').bookComponents
-      .length > 0
-
   const userIsOwner = isOwner(bookId, currentUser)
-  const userIsAdmin = isAdmin(currentUser)
-
-  const isDownloadButtonDisabled =
-    !hasEditAccess(bookId, currentUser) ||
-    (!hasContent &&
-      (activeTabKey === 'saved'
-        ? currentOptions.format === 'epub'
-        : newProfileOptions === 'epub'))
+  const canEdit = hasEditAccess(bookId, currentUser)
   // #endregion data wrangling
 
   if (
@@ -893,10 +882,8 @@ const PreviewerPage = () => {
   return (
     <Preview
       activeTabKey={activeTabKey}
-      canModify={
-        luluConfig && !luluConfig?.disabled && (userIsOwner || userIsAdmin)
-      }
-      canUploadToProvider={userIsOwner}
+      canModify={userIsOwner || canEdit}
+      canUploadToProvider={luluConfig && !luluConfig?.disabled && userIsOwner}
       connectToLulu={handleConnectToLulu}
       createProfile={handleCreateProfile}
       currentOptions={currentOptions}
@@ -906,7 +893,6 @@ const PreviewerPage = () => {
       exportsConfig={exportsConfig}
       hasCover={!!hasCover}
       isbns={isbns}
-      isDownloadButtonDisabled={isDownloadButtonDisabled}
       isUserConnectedToLulu={isUserConnectedToLulu}
       loadingExport={false}
       loadingPreview={creatingPreview}
@@ -914,7 +900,7 @@ const PreviewerPage = () => {
       newProfileOptions={newProfileOptions}
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
-      onPublish={handlePublish}
+      onPublish={userIsOwner ? handlePublish : null}
       onUnpulbish={handleUnpulbish}
       previewLink={previewLink}
       profiles={allProfiles}

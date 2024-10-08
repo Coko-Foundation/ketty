@@ -22,7 +22,6 @@ const SavedProfilesTab = props => {
     currentOptions,
     templates,
     createProfile,
-    isDownloadButtonDisabled,
     loadingPreview,
     hasChanges,
     hasCover,
@@ -123,18 +122,11 @@ const SavedProfilesTab = props => {
             selectedTemplate={currentOptions.template}
             templates={templates}
           />
-          <Divider />
 
           <Footer
             canModify={canModify}
             createProfile={createProfile}
-            isDownloadButtonDisabled={isDownloadButtonDisabled}
             isNewProfileSelected={false}
-            isSaveDisabled={
-              !canModify ||
-              loadingPreview ||
-              (!!selectedProfileSelectOption && !hasChanges)
-            }
             loadingPreview={loadingPreview}
             luluInformation={{
               canUploadToProvider,

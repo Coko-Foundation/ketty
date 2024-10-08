@@ -42,7 +42,6 @@ const Preview = props => {
     download,
     canModify,
     canUploadToProvider,
-    isDownloadButtonDisabled,
     isUserConnectedToLulu,
     loadingExport,
     loadingPreview,
@@ -106,7 +105,6 @@ const Preview = props => {
           hasCover={hasCover}
           isbns={isbns}
           isCollapsed={!showSettings}
-          isDownloadButtonDisabled={isDownloadButtonDisabled}
           isUserConnectedToLulu={isUserConnectedToLulu}
           loadingPreview={loadingPreview}
           luluConfig={luluConfig}
@@ -177,7 +175,6 @@ Preview.propTypes = {
   download: PropTypes.func.isRequired,
   canModify: PropTypes.bool.isRequired,
   canUploadToProvider: PropTypes.bool.isRequired,
-  isDownloadButtonDisabled: PropTypes.bool.isRequired,
   isUserConnectedToLulu: PropTypes.bool.isRequired,
   loadingExport: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,

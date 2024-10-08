@@ -14,15 +14,12 @@ const NewProfileTab = props => {
     newProfileOptions,
     handleFormatChange,
     canModify,
-    hasChanges,
     hasCover,
     optionsDisabled,
     isbns,
     handleOptionsChange,
     templates,
     createProfile,
-    isDownloadButtonDisabled,
-    isNewProfileSelected,
     loadingPreview,
     onClickDownload,
     updateProfileOptions,
@@ -64,11 +61,7 @@ const NewProfileTab = props => {
       <Footer
         canModify={canModify}
         createProfile={createProfile}
-        isDownloadButtonDisabled={isDownloadButtonDisabled}
         isNewProfileSelected
-        isSaveDisabled={
-          !canModify || loadingPreview || (!isNewProfileSelected && !hasChanges)
-        }
         loadingPreview={loadingPreview}
         onClickDownload={onClickDownload}
         selectedFormat={newProfileOptions.format}

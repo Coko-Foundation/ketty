@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export default styled.div`
-  --justify: center;
+  --justify: start;
   --align: center;
   /* ↓ Choose your alignment (center is default) */
   align-items: var(--align);

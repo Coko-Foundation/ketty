@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { grid } from '@coko/client'
 
-import { Button, ButtonGroup } from '../common'
+import { Button } from '../common'
 import Synced from './Synced'
 import ExportOption from './ExportOption'
 
@@ -18,13 +18,14 @@ const ConnectedWrapper = styled.div`
     margin-bottom: ${grid(2)};
   }
 
-  > div:not(:first-child) {
+  > :not(:first-child) {
     margin-left: 26px;
   }
 `
 
-const StyledButtonGroup = styled(ButtonGroup)`
+const StyledButton = styled(Button)`
   margin-top: ${grid(5)};
+  width: fit-content;
 `
 
 const LuluIntegration = props => {
@@ -64,13 +65,12 @@ const LuluIntegration = props => {
             {projectId}
           </ExportOption>
 
-          <StyledButtonGroup>
-            <Button disabled={!projectUrl}>
-              <a href={projectUrl} rel="noreferrer" target="_blank">
-                Open lulu project
-              </a>
-            </Button>
-          </StyledButtonGroup>
+          <StyledButton
+            onClick={() => window.open(projectUrl, '_blank', 'noreferrer')}
+            disabled={!projectUrl}
+          >
+            Open Lulu Project
+          </StyledButton>
         </ConnectedWrapper>
       )}
     </Wrapper>

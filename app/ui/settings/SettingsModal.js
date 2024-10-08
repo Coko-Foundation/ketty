@@ -245,7 +245,7 @@ const SettingsModal = ({
         <div>
           <SettingTitle>AI writing prompt use</SettingTitle>
           <SettingInfo>
-            Users with edit access to this book can use AI writing prompts
+            Users with edit access to this book can use AI writing prompts.
           </SettingInfo>
         </div>
         <Switch
@@ -302,7 +302,7 @@ const SettingsModal = ({
                           },
                         ]}
                       >
-                        <Input placeholder="Add Prompt" />
+                        <Input placeholder="Add prompt" />
                       </StyledFormItem>
                       <StyledFormButton
                         disabled={updateLoading || !canChangeSettings}
@@ -338,7 +338,7 @@ const SettingsModal = ({
         <div>
           <SettingTitle>AI Book Designer (Beta)</SettingTitle>
           <SettingInfo>
-            Users with edit access to this book can use the AI Book Designer
+            Users with edit access to this book can use the AI Book Designer.
           </SettingInfo>
         </div>
         <Switch
@@ -354,7 +354,7 @@ const SettingsModal = ({
           <SettingTitle>Knowledge Base</SettingTitle>
           <SettingInfo>
             Users with edit access to this book can create and query a knowledge
-            base. <br /> Requires AI writing prompts and free text prompts to be
+            base. <br /> Requires AI writing prompts and free-text prompts to be
             on.
           </SettingInfo>
         </div>

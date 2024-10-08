@@ -11,7 +11,7 @@ module.exports = {
   colorWarning: '#ffc300',
 
   colorText: '#555',
-  colorTextLight: '#9c9c9c',
+  colorTextLight: '#757777',
   colorTextReverse: 'white',
   colorOutline: '#3f85c6',
 
