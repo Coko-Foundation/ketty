@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 const { admin, author } = require('../support/credentials')
 
 describe('accessing admin dashboard', () => {
@@ -40,12 +41,7 @@ describe('checking AI integration', () => {
   })
 
   it('checking default values for AI integration (ON)', () => {
-    cy.contains('span', 'AI supplier integration').should('exist')
-    cy.getByData('admindb-ai-switch').should(
-      'have.attr',
-      'aria-checked',
-      'true',
-    )
+    cy.checkSwitchStatus('span', 'AI supplier integration', 'ai', 'true')
 
     cy.get('form').should('contain', 'Api key')
 
@@ -82,11 +78,7 @@ describe('checking AI integration', () => {
 
   it('switching AI integration OFF', () => {
     cy.getByData('admindb-ai-switch').click()
-    cy.getByData('admindb-ai-switch').should(
-      'have.attr',
-      'aria-checked',
-      'false',
-    )
+    cy.checkSwitchStatus('span', 'AI supplier integration', 'ai', 'false')
 
     // Add check about form
     cy.getByData('admindb-aikey-input').should(
@@ -99,6 +91,93 @@ describe('checking AI integration', () => {
     cy.location('pathname').should('equal', '/dashboard')
     cy.goToBook('AI Book')
     cy.getByData('header-bookSettings-btn').should('not.exist')
+  })
+})
+
+describe('checking Export options', () => {
+  before(() => {
+    cy.login(admin)
+    cy.addBook('Export Book')
+    cy.logout()
+  })
+  beforeEach(() => {
+    cy.login(admin)
+    cy.goToAdminDashboard()
+  })
+
+  it('Checking that all options are ON by default', () => {
+    // By default, all switches are ON
+    cy.contains('h2', 'Export options').should('exist')
+    cy.checkSwitchStatus('span', 'Export PDF', 'expPDF', 'true')
+    cy.checkSwitchStatus('span', 'Export EPUB', 'expEPUB', 'true')
+    cy.checkSwitchStatus('span', 'Publish Online Book Website', 'web', 'true')
+    cy.contains(
+      'strong',
+      'Allow including the following downloads when publishing a book on the web:',
+    ).should('exist')
+    cy.checkSwitchStatus('span', 'PDF download', 'downloadPDF', 'true')
+    cy.checkSwitchStatus('span', 'EPUB download', 'downloadEPUB', 'true')
+
+    // Verifying all options are available to choose in Preview
+    cy.goToNewPreview()
+
+    cy.get('span[title="PDF"]').should('exist')
+    cy.wait(5000)
+
+    cy.contains('PDF').click()
+    cy.get('div[title="EPUB"]').should('exist').click()
+    cy.wait(5000)
+
+    cy.get('span[title="EPUB"]').should('exist').click()
+    cy.get('div[title="Web"]').should('exist').click()
+    cy.get('span[title="Web"]').should('exist')
+
+    cy.contains('p', 'Include the following downloads in your website').should(
+      'exist',
+    )
+    cy.contains('span', 'Include PDF').should('exist')
+    cy.get('[value = "pdf"]').should('have.attr', 'type', 'checkbox')
+    cy.contains('span', 'Include EPUB').should('exist')
+    cy.get('[value = "epub"]').should('have.attr', 'type', 'checkbox')
+  })
+
+  it('Disabling PDF option', () => {
+    cy.getByData(`admindb-expPDF-switch`).click()
+    cy.checkSwitchStatus('span', 'Export PDF', 'expPDF', 'false')
+    cy.goToNewPreview()
+    cy.get('span[title="PDF"]').should('not.exist')
+  })
+
+  it('Disabling EPUB option', () => {
+    cy.getByData(`admindb-expEPUB-switch`).click()
+    cy.checkSwitchStatus('span', 'Export EPUB', 'expEPUB', 'false')
+    cy.goToNewPreview()
+    cy.get('span[title="EPUB"]').should('not.exist')
+  })
+
+  it('Disabling Web option', () => {
+    // // Disabling PDF download option
+    // cy.getByData(`admindb-downloadPDF-switch`).click()
+    // cy.checkSwitchStatus('span', 'PDF download', 'downloadPDF', 'false')
+    // cy.goToNewPreview()
+    // cy.contains('span', 'Include PDF').should('not.exist')
+    // cy.get('[value = "pdf"]').should('not.exist')
+    // cy.wait(5000)
+
+    // // Disabling EPUB download option
+    // cy.goToAdminDashboard()
+    // cy.getByData(`admindb-downloadEPUB-switch`).click()
+    // cy.checkSwitchStatus('span', 'EPUB download', 'downloadEPUB', 'false')
+    // cy.goToNewPreview()
+    // cy.contains('span', 'Include EPUB').should('not.exist')
+    // cy.get('[value = "EPUB"]').should('not.exist')
+
+    // Disabling Web option
+    // cy.goToAdminDashboard()
+    cy.getByData(`admindb-web-switch`).click()
+    cy.checkSwitchStatus('span', 'Publish Online Book Website', 'web', 'false')
+    cy.goToNewPreview()
+    cy.get('span[title="Web"]').should('not.exist')
   })
 })
 
@@ -119,31 +198,26 @@ describe('checking POD', () => {
   })
 
   it('checking default values for POD (ON)', () => {
+    cy.checkSwitchStatus('span', 'Lulu', 'lulu', 'true')
     cy.contains('span', 'Lulu').should('exist')
-    cy.getByData('admindb-lulu-switch').should(
-      'have.attr',
-      'aria-checked',
-      'true',
-    )
+
+    // Enabling PDF export so user can save exports
+    cy.getByData(`admindb-expPDF-switch`).click()
 
     // Checking Preview page when POD is on
     cy.get('[href="/dashboard"]').first().click()
     cy.location('pathname').should('equal', '/dashboard')
     cy.goToBook('POD Book')
     cy.goToPreview()
-    cy.contains('New export').should('exist')
+    cy.get('#rc-tabs-0-tab-new').should('have.attr', 'aria-selected', 'true')
+    cy.get('#rc-tabs-0-tab-saved').should('have.attr', 'aria-selected', 'false')
     cy.getByData('preview-save-btn').should('exist')
   })
 
   it('switching POD OFF', () => {
     cy.contains('span', 'Lulu').should('exist')
     cy.getByData('admindb-lulu-switch').click()
-    cy.contains('span', 'Lulu').should('exist')
-    cy.getByData('admindb-lulu-switch').should(
-      'have.attr',
-      'aria-checked',
-      'false',
-    )
+    cy.checkSwitchStatus('span', 'Lulu', 'lulu', 'false')
 
     // Checking Preview page when POD is off
     cy.get('[href="/dashboard"]').first().click()
@@ -290,4 +364,22 @@ Cypress.Commands.add('addLink', link => {
   cy.get('input').last().should('be.visible').focus()
   cy.get('input').last().type(link)
   cy.contains('button', 'Apply').should('be.visible').click()
+})
+
+Cypress.Commands.add('checkSwitchStatus', (element, content, name, status) => {
+  cy.contains(`${element}`, `${content}`).should('exist')
+  cy.getByData(`admindb-${name}-switch`).should(
+    'have.attr',
+    'aria-checked',
+    `${status}`,
+  )
+})
+
+Cypress.Commands.add('goToNewPreview', () => {
+  cy.get('[href="/dashboard"]').first().click()
+  cy.location('pathname').should('equal', '/dashboard')
+  cy.goToBook('Export Book')
+  cy.goToPreview()
+  cy.get('#rc-tabs-0-tab-new').should('have.attr', 'aria-selected', 'true')
+  cy.get('#rc-tabs-0-tab-saved').should('have.attr', 'aria-selected', 'false')
 })
