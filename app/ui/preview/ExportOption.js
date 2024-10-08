@@ -14,7 +14,6 @@ const Wrapper = styled.div`
 
 const Label = styled.div`
   color: ${th('colorTextLight')};
-  text-transform: capitalize;
   white-space: nowrap;
 
   /* stylelint-disable-next-line order/properties-alphabetical-order */
@@ -30,9 +29,7 @@ const Label = styled.div`
 `
 
 const ChildWrapper = styled.div`
-  align-items: center;
-  display: ${props => (props.inline ? 'inline-flex' : 'block')};
-  gap: 4px;
+  overflow: auto;
 
   > &:focus-within {
     outline: 1px solid ${th('colorOutline')};
@@ -40,10 +37,10 @@ const ChildWrapper = styled.div`
 `
 
 const ExportOption = props => {
-  const { className, children, label, inline, labelId } = props
+  const { className, children, label, inline, id } = props
 
   return (
-    <Wrapper {...(labelId ? { id: labelId } : {})} className={className}>
+    <Wrapper className={className} {...(id ? { id } : {})}>
       <Label inline={inline}>{label}:</Label>
       <ChildWrapper inline={inline}>{children}</ChildWrapper>
     </Wrapper>
@@ -52,13 +49,13 @@ const ExportOption = props => {
 
 ExportOption.propTypes = {
   label: PropTypes.string.isRequired,
-  labelId: PropTypes.string,
+  id: PropTypes.string,
   inline: PropTypes.bool,
 }
 
 ExportOption.defaultProps = {
   inline: false,
-  labelId: null,
+  id: null,
 }
 
 export default ExportOption

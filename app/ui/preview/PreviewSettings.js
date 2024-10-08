@@ -114,7 +114,6 @@ const PreviewSettings = props => {
     isCollapsed,
     canModify,
     canUploadToProvider,
-    isDownloadButtonDisabled,
     isUserConnectedToLulu,
     loadingPreview,
     luluConfig,
@@ -211,13 +210,10 @@ const PreviewSettings = props => {
                   exportsConfig={exportsConfig}
                   handleFormatChange={handleFormatChange}
                   handleOptionsChange={handleOptionsChange}
-                  hasChanges={hasChanges}
                   hasCover={hasCover}
                   isbns={isbns}
                   isCollapsed={isCollapsed}
-                  isDownloadButtonDisabled={isDownloadButtonDisabled}
                   isNewProfileSelected
-                  isSaveDisabled={!canModify || loadingPreview || !hasChanges}
                   loadingPreview={loadingPreview}
                   newProfileOptions={newOptions}
                   onClickDownload={download}
@@ -247,7 +243,6 @@ const PreviewSettings = props => {
                   hasCover={hasCover}
                   isbns={isbns}
                   isCollapsed={isCollapsed}
-                  isDownloadButtonDisabled={isDownloadButtonDisabled}
                   isProfileSyncedWithLulu={isProfileSyncedWithLulu}
                   isUserConnectedToLulu={isUserConnectedToLulu}
                   lastSynced={lastSynced}
@@ -334,7 +329,6 @@ PreviewSettings.propTypes = {
   isCollapsed: PropTypes.bool.isRequired,
   canModify: PropTypes.bool.isRequired,
   canUploadToProvider: PropTypes.bool.isRequired,
-  isDownloadButtonDisabled: PropTypes.bool.isRequired,
   isUserConnectedToLulu: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,
   luluConfig: PropTypes.shape(),

@@ -29,7 +29,7 @@ const FlaxIntegration = props => {
                 window.open(webPublishInfo?.publicUrl, '_blank', 'noreferrer')
               }
             >
-              Open published book
+              Open Published Book
             </Button>
           </div>
         </>

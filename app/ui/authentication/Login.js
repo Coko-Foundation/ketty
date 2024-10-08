@@ -24,7 +24,7 @@ const Login = props => {
           loading={loading}
           onSubmit={onSubmit}
           showForgotPassword
-          submitButtonLabel="Log in"
+          submitButtonLabel="Log In"
           title="Login"
         >
           <Form.Item

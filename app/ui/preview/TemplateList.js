@@ -101,7 +101,7 @@ const TemplateList = props => {
         onFocus={() => {
           document
             .getElementById(selectedTemplate)
-            .scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
         }}
         onKeyDown={handleKeydown}
         role="radiogroup"

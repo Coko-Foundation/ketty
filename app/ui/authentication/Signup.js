@@ -71,7 +71,7 @@ const Signup = props => {
   return (
     <Page maxWidth={600}>
       <AuthenticationWrapper className={className}>
-        <AuthenticationHeader>Sign up</AuthenticationHeader>
+        <AuthenticationHeader>Signup</AuthenticationHeader>
 
         {hasSuccess && (
           <div role="alert">
@@ -84,7 +84,7 @@ const Signup = props => {
                   the email to activate your account.
                 </Paragraph>
               }
-              title="Sign up successful!"
+              title="Signup successful!"
             />
           </div>
         )}
@@ -99,11 +99,11 @@ const Signup = props => {
             loading={loading}
             onSubmit={onSubmit}
             showForgotPassword={false}
-            submitButtonLabel="Sign up"
-            title="Sign up"
+            submitButtonLabel="Sign Up"
+            title="Signup"
           >
             <Form.Item
-              label="Given Name"
+              label="Given name"
               name="givenNames"
               rules={[{ required: true, message: 'Given name is required' }]}
             >
@@ -174,7 +174,7 @@ const Signup = props => {
 
             <Form.Item
               dependencies={['password']}
-              label="Confirm Password"
+              label="Confirm password"
               name="confirmPassword"
               rules={[
                 {

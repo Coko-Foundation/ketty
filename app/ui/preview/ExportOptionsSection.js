@@ -71,6 +71,14 @@ const FrontmatterOption = styled(ExportOption)`
   align-items: baseline;
   flex-wrap: nowrap;
 `
+
+const TemplateOption = styled(ExportOption)`
+  &::after {
+    content: '';
+    inline-size: 100%;
+    min-block-size: 64px;
+  }
+`
 // #endregion styled
 
 const webDownloadOptionsDefault = [
@@ -169,6 +177,7 @@ const ExportOptionsSection = props => {
         {newProfile ? (
           <ExportOption inline label="Format">
             <Select
+              aria-label="Format"
               bordered={false}
               disabled={previewLoading}
               onChange={handleFormatChange}
@@ -192,7 +201,7 @@ const ExportOptionsSection = props => {
               <span>{lastUpdated}</span>
             </ExportOption>
 
-            <ExportOption inline label="format">
+            <ExportOption inline label="Format">
               <span>
                 {
                   exportFormatOptions.find(f => f.value === selectedFormat)
@@ -204,8 +213,9 @@ const ExportOptionsSection = props => {
         )}
 
         {isPdf && (
-          <ExportOption inline label="size">
+          <ExportOption inline label="Size">
             <Select
+              aria-label="Paper size"
               bordered={false}
               onChange={handleSizeChange}
               options={exportSizeOptions}
@@ -217,6 +227,7 @@ const ExportOptionsSection = props => {
         {isEpub && (
           <ExportOption inline label="ISBN">
             <Select
+              aria-label="ISBN"
               allowClear
               bordered={false}
               onChange={handleIsbnChange}
@@ -231,6 +242,7 @@ const ExportOptionsSection = props => {
         {(isEpub || isPdf) && (
           <FrontmatterOption inline label="Front matter">
             <MultiSelect
+              aria-label="Front matter pages to include"
               allowClear
               bordered={false}
               data-test="preview-content"
@@ -262,15 +274,14 @@ const ExportOptionsSection = props => {
           </div>
         )}
       </div>
-
-      <ExportOption label="templates" labelId="templates">
+      <TemplateOption id="templates" label="Templates">
         <TemplateList
           disabled={previewLoading}
           onTemplateClick={handleTemplateClick}
           selectedTemplate={selectedTemplate}
           templates={templates}
         />
-      </ExportOption>
+      </TemplateOption>
     </>
   )
 }

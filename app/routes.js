@@ -154,7 +154,7 @@ const SiteHeader = () => {
     return inviteModal.update({
       title: (
         <StyledMembersHeader>
-          <StyledMembersHeaderTitle>Share book</StyledMembersHeaderTitle>
+          <StyledMembersHeaderTitle>Share</StyledMembersHeaderTitle>
           <Tooltip
             arrow={false}
             color="black"

@@ -10,7 +10,7 @@ import {
 
 import { grid, th } from '@coko/client'
 
-import { Button, ButtonGroup, Input, Modal, Spin } from '../common'
+import { Button, Cluster, Input, Modal, Spin } from '../common'
 
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   margin-block-start: auto;
   padding-block: ${grid(4)};
   position: absolute;
-  width: 100%;
+  width: 500px;
   z-index: 9;
 `
 
@@ -27,9 +27,7 @@ const Footer = props => {
     className,
     createProfile,
     canModify,
-    isDownloadButtonDisabled,
     isNewProfileSelected,
-    isSaveDisabled,
     loadingPreview,
     onClickDownload,
     selectedFormat,
@@ -180,6 +178,15 @@ const Footer = props => {
     ) : (
       <>
         <p>
+          Your book will be published at a unique URL. You can update and
+          republish it anytime.
+        </p>
+
+        <p>
+          Publishing may take a few minutes. Once complete, the book will open
+          in a new browser tab.
+        </p>
+        <p>
           Selected template:{' '}
           <span style={{ textTransform: 'capitalize' }}>
             {selectedTemplate?.name}
@@ -212,7 +219,8 @@ const Footer = props => {
       actions.push(
         <Button
           data-test="preview-save-btn"
-          disabled={loadingPreview || isSaveDisabled || !canModify}
+          disabled={loadingPreview || !canModify}
+          key="save-profile"
           onClick={handleClickSave}
         >
           Save Publishing Profile
@@ -221,17 +229,19 @@ const Footer = props => {
     } else if (selectedFormat === 'web') {
       actions.push(
         <Button
-          disabled={loadingPreview}
+          disabled={loadingPreview || !onPublish}
+          key="publish-online"
           onClick={() => setPublishModalOpen(true)}
           type="primary"
         >
-          {publishedBefore ? 'Publish again' : 'Publish'}
+          {publishedBefore ? 'Publish Again' : 'Publish'}
         </Button>,
       )
     } else if (isConnected && !isInLulu && canUploadToProvider) {
       actions.push(
         <Button
           disabled={isUploading}
+          key="upload-to-lulu"
           loading={isUploading}
           onClick={handleClickSendToLulu}
           type="primary"
@@ -243,11 +253,12 @@ const Footer = props => {
       actions.push(
         <Button
           disabled={isUploading}
+          key="lulu-sync"
           loading={isUploading}
           onClick={handleClickSendToLulu}
           type="primary"
         >
-          Sync with lulu
+          Sync With Lulu
         </Button>,
       )
     }
@@ -256,8 +267,8 @@ const Footer = props => {
       actions.push(
         <Button
           data-test="preview-download-btn"
-          disabled={isDownloadButtonDisabled}
           icon={<DownloadOutlined />}
+          key="download"
           loading={downloadLoading}
           onClick={handleClickDownload}
         >
@@ -273,7 +284,7 @@ const Footer = props => {
     <Wrapper className={className}>
       {notificationContextHolder}
 
-      <ButtonGroup>{renderFooterActions().map(action => action)}</ButtonGroup>
+      <Cluster>{renderFooterActions().map(action => action)}</Cluster>
 
       <Modal
         confirmLoading={createLoading}
@@ -315,9 +326,7 @@ const Footer = props => {
 Footer.propTypes = {
   createProfile: PropTypes.func.isRequired,
   canModify: PropTypes.bool.isRequired,
-  isDownloadButtonDisabled: PropTypes.bool.isRequired,
   isNewProfileSelected: PropTypes.bool.isRequired,
-  isSaveDisabled: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,
   onClickDownload: PropTypes.func.isRequired,
   onPublish: PropTypes.func,
