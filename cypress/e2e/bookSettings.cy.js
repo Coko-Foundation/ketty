@@ -47,7 +47,7 @@ describe('Checking default state in Book Settings modal', () => {
 
     cy.contains('Knowledge Base').should('exist')
     cy.contains(
-      'Users with edit access to this book can create and query a knowledge base. Requires AI writing prompts and free text prompts to be on.',
+      'Users with edit access to this book can create and query a knowledge base.',
     ).should('exist')
     cy.verifySwitch('kb', 'disabled')
 

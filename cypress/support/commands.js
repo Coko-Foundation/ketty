@@ -34,7 +34,7 @@ Cypress.Commands.add('login', user => {
   cy.contains('Login').should('exist')
   cy.getByData('login-email-input').type(user.email)
   cy.getByData('login-password-input').type(user.password)
-  cy.get("button[type='submit']").contains('Log in').click()
+  cy.get("button[type='submit']").contains('Log In').click()
   cy.location('pathname').should('equal', '/dashboard')
 })
 
@@ -124,10 +124,9 @@ Cypress.Commands.add('createChapter', chapterTitle => {
 Cypress.Commands.add('addMember', (collaborator, access) => {
   cy.contains('Untitled Chapter', { timeout: 8000 }).should('exist')
   cy.contains('Untitled Chapter').click()
-  cy.contains(
-    'Create or select a chapter in the chapters panel to start writing',
-    { timeout: 6000 },
-  )
+  cy.contains('Create or select a chapter on the left to start writing.', {
+    timeout: 6000,
+  })
   cy.contains('button', 'Share').click()
   cy.get('.ant-select-selection-overflow', { timeout: 8000 }).click()
   cy.get('.ant-select-selection-overflow input', { timeout: 8000 })
@@ -165,7 +164,7 @@ Cypress.Commands.add('goToPreview', () => {
 
 Cypress.Commands.add('openBookSettings', () => {
   cy.getByData('header-bookSettings-btn').click()
-  cy.contains('Book settings').should('exist')
+  cy.contains('Book Settings').should('exist')
   cy.contains('AI writing prompt use').should('exist')
 })
 

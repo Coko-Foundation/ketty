@@ -31,10 +31,9 @@ describe('Checking "Share" modal', () => {
     cy.reload()
     cy.contains('Untitled Chapter', { timeout: 8000 })
     cy.contains('Untitled Chapter').click()
-    cy.contains(
-      'Create or select a chapter in the chapters panel to start writing',
-      { timeout: 6000 },
-    )
+    cy.contains('Create or select a chapter on the left to start writing.', {
+      timeout: 6000,
+    })
   })
 
   it('checking the defaults of the modal', () => {
@@ -47,7 +46,7 @@ describe('Checking "Share" modal', () => {
     cy.get('[data-icon="question-circle"]')
       .parent()
       .siblings()
-      .should('contain', 'Share book')
+      .should('contain', 'Share')
 
     cy.contains('Enter email addresses, separated by commas').should('exist')
     cy.get('.ant-select-selection-item').should(
@@ -69,7 +68,7 @@ describe('Checking "Share" modal', () => {
       .should('exist')
       .trigger('mouseover')
     cy.get('.ant-tooltip-inner').contains(
-      "Only the book owner can share the book. Collaborators with 'edit access' can edit the book and its metadata, view the preview, and download PDF and Epub files. Collaborators with 'view access' can view the book, its metadata, and the preview.",
+      'The book owner has full access. Collaborators with edit access can edit content and create publishing profiles. Collaborators with view access can view content and publishing profiles.',
     )
   })
 
