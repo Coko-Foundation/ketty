@@ -269,6 +269,7 @@ const Footer = props => {
       actions.push(
         <Button
           data-test="preview-download-btn"
+          disabled={loadingPreview || !canModify}
           icon={<DownloadOutlined />}
           key="download"
           loading={downloadLoading}
