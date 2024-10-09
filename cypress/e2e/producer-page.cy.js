@@ -23,10 +23,15 @@ describe('Checking Producer Page', () => {
       cy.getByData('producer-metadata-btn')
         .should('be.visible')
         .should('not.be.disabled')
-        .click()
-      cy.get('[data-icon="close"]').click()
 
-      cy.contains('div', 'Chapters')
+      cy.contains('div', 'Book Body')
+
+      cy.get('button[title="Upload a chapter"]').should('exist')
+      cy.get('button[title="Create a chapter"]').should('exist')
+      cy.getByData('producer-chapterTitle').should(
+        'have.text',
+        'Untitled Chapter',
+      )
     })
 
     // eslint-disable-next-line jest/no-commented-out-tests
@@ -59,10 +64,9 @@ describe('Checking Producer Page', () => {
         .find('[data-test="producer-more-btn"]')
         .click()
       cy.getByData('producer-deleteChapter').click({ force: true })
-      cy.contains(
-        'Create or select a chapter in the chapters panel to start writing',
-        { timeout: 8000 },
-      ).should('exist')
+      cy.contains('Create or select a chapter on the left to start writing.', {
+        timeout: 8000,
+      }).should('exist')
     })
 
     it('adding and deleting a part', () => {
@@ -127,10 +131,9 @@ describe('Checking Producer Page', () => {
         .find('[data-test="producer-more-btn"]')
         .click({ force: true })
       cy.getByData('producer-deleteChapter').last().click({ force: true })
-      cy.contains(
-        'Create or select a chapter in the chapters panel to start writing',
-        { timeout: 8000 },
-      ).should('exist')
+      cy.contains('Create or select a chapter on the left to start writing.', {
+        timeout: 8000,
+      }).should('exist')
     })
 
     it.skip('checking drag and drop', () => {
@@ -166,16 +169,27 @@ describe('Checking Producer Page', () => {
       cy.url().should('include', '/producer')
       cy.getByData('producer-bookTitle').should('contain', 'Test Book')
       cy.getByData('producer-metadata-btn').click()
-      cy.get('.ant-modal-title').should('have.text', 'Book Metadata')
+      cy.getByData('producer-metadata-btn').should(
+        'have.attr',
+        'aria-pressed',
+        'true',
+      )
+      cy.contains('h1', 'Book Metadata').should('exist')
     })
 
     it('checking the content in metadata modal', () => {
-      cy.get('.ant-modal-body')
-        .find('p:nth(0)')
-        .should(
-          'have.text',
-          'This information will be used for additional book pages that are optional, go to Preview to see the pages and decide which ones you want to include in your book',
-        )
+      cy.contains(
+        'p',
+        "This information will be used for optional front matter pages. View these pages in the book's preview.",
+      )
+
+      // Checking default values for cover page section
+      cy.get('h2').first().should('have.text', 'Cover page')
+      cy.get('[title="Upload cover image"]').should(
+        'have.text',
+        'Upload cover image',
+      )
+      cy.get('input[type="file"]').should('exist')
 
       function checkDefaultFieldValues(
         fieldTitle,
@@ -189,13 +203,13 @@ describe('Checking Producer Page', () => {
       }
 
       // Checking default values for title page section
-      cy.get('h2').first().should('have.text', 'TITLE PAGE')
+      cy.get('h2:nth(1)').should('have.text', 'Title page')
       cy.get('#title').should('have.value', 'Test Book')
       checkDefaultFieldValues('Subtitle', '#subtitle', 'Optional')
       checkDefaultFieldValues('Authors', '#authors', 'Jhon, Smith')
 
       // Checking default values for copyright page section
-      cy.get('h2').last().should('have.text', 'COPYRIGHT PAGE')
+      cy.get('h2').last().should('have.text', 'Copyright page')
       cy.get('label[title="ISBN List"]').should('have.text', 'ISBN List')
       cy.getByData('metadata-addIsbn-btn')
         .should('exist')
@@ -272,7 +286,7 @@ describe('Checking Producer Page', () => {
     })
 
     it('checking multiple ISBNs', () => {
-      cy.contains('COPYRIGHT PAGE').should('exist')
+      cy.contains('Copyright page').should('exist')
       // Adding the first ISBN
       cy.getByData('metadata-addIsbn-btn').click()
 
@@ -304,8 +318,7 @@ describe('Checking Producer Page', () => {
 
       cy.setValue('#isbns_1_label', 'Paperback')
       cy.setValue('#isbns_1_isbn', '978-3-16-148410-0')
-
-      cy.get('.ant-modal-footer').contains('Save').click()
+      cy.get('#title').click()
 
       // Cannot have two ISBNs with the same label
       cy.contains('Duplicate Label values: "Paperback"')
@@ -319,64 +332,47 @@ describe('Checking Producer Page', () => {
       cy.get('#isbns_1_isbn').clear()
       cy.contains('ISBN is required')
       cy.setValue('#isbns_1_isbn', 'aaaa')
-      cy.get('.ant-modal-footer').contains('Save').click()
+      cy.get('#title').click()
 
       // Adding non numeric characters to ISBN is not allowed
       cy.contains('ISBN is invalid').should('exist')
       cy.get('#isbns_1_isbn').clear()
       cy.get('#isbns_1_isbn').type('978-3-16-148540-0')
       cy.contains('ISBN is required').should('not.exist')
-      cy.get('.ant-modal-footer').contains('Save').click()
+      cy.get('#title').click()
 
       // Removing ISBNs
-      cy.getByData('producer-metadata-btn').click()
-      cy.get('.ant-modal-title').should('have.text', 'Book Metadata')
       cy.get('[aria-label="minus-circle"]:nth(0)').should('exist')
       cy.get('[aria-label="minus-circle"]:nth(1)').should('exist')
       cy.get('[aria-label="minus-circle"]:nth(0)').click()
       cy.get('[aria-label="minus-circle"]:nth(0)').click()
-      cy.get('.ant-modal-footer').contains('Save').click()
+      cy.get('#title').click()
 
-      cy.getByData('producer-metadata-btn').click()
       cy.contains('Hardcover').should('not.exist')
       cy.contains('Paperback').should('not.exist')
       cy.getByData('metadata-addIsbn-btn').should('exist')
     })
 
     it('checking copyright licenses options', () => {
-      cy.contains('COPYRIGHT PAGE').should('exist')
+      cy.contains('Copyright page').should('exist')
 
       function selectLicenseOption(index, holderName, year) {
         cy.get(`strong:nth(${index})`).click({ force: true })
-        // cy.get('.ant-collapse-expand-icon').should('exist')
-
-        const labels = {
-          holder: 'Copyright holder name (optional)',
-          year: 'Copyright year (optional)',
-        }
-
-        cy.get('body').then($body => {
-          if ($body.find(`label[title="${labels.holder}"]`).length === 0) {
-            // Retry clicking the radio button if the holder field is not found
-            cy.get(`strong:nth(${index})`).click({ force: true })
-          }
-        })
-        cy.get(`label[title="${labels.holder}"]`).should(
-          'have.text',
-          labels.holder,
-        )
+        cy.get(`strong:nth(${index})`).click({ force: true })
 
         cy.get(`#${holderName}`).should('be.empty')
+        cy.get(`#${holderName}_help`).should(
+          'contain',
+          'Copyright holder name is required',
+        )
 
-        cy.get(`label[title="${labels.year}"]`).should('have.text', labels.year)
         cy.get(`#${year}`)
           .should('have.attr', 'placeholder', 'Select year')
           .should('be.empty')
+        cy.get(`#${year}_help`).should('contain', 'Copyright year is required')
 
-        cy.get(`#${holderName}`).type('University of California', {
-          force: true,
-        })
-        cy.get(`#${year}`).type('{selectall}2019{enter}', { force: true })
+        cy.get(`#${holderName}`).type('University of California')
+        cy.get(`#${year}`).type('2019{enter}', { force: true })
 
         if (index === 1) {
           const checkboxLabels = [
@@ -483,16 +479,16 @@ describe('Checking Producer Page', () => {
       cy.setValue('#authors', 'Test Author')
 
       cy.getByData('metadata-addIsbn-btn').click()
+      cy.get('#isbns_0_label').clear()
       cy.setValue('#isbns_0_label', 'Paperback')
+      cy.get('#isbns_0_isbn').clear()
       cy.setValue('#isbns_0_isbn', '978-3-16-148410-0')
       cy.setValue(
         '#topPage',
         'Portions of this book are works of fiction. Any references to historical events, real people, or real places are used fictitiously.',
       )
       cy.setValue('#bottomPage', 'www.author-website.com')
-
-      cy.get('.ant-modal-footer').contains('Save').click()
-      cy.getByData('producer-metadata-btn').click()
+      cy.get('#title').click()
 
       // Verify values using the custom 'verifyValue' command
       cy.verifyValue('#title', 'New title')
