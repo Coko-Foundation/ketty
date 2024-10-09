@@ -96,7 +96,7 @@ const ProfileName = props => {
         onCancel={closeModal}
         onOk={handleRename}
         open={isModalOpen}
-        title="Edit export name"
+        title="Edit profile name"
       >
         <Input
           onChange={handleRenameInputChange}

@@ -79,22 +79,25 @@ const SavedProfilesTab = props => {
             />
           ) : null}
           {!!luluConfig &&
+          !luluConfig.disabled &&
           (currentOptions.format === 'pdf' ||
             currentOptions.format === 'epub') ? (
-            <LuluIntegration
-              canUploadToProvider={canUploadToProvider}
-              isConnected={isUserConnectedToLulu}
-              isInLulu={!!projectId}
-              isSynced={isProfileSyncedWithLulu}
-              lastSynced={lastSynced}
-              luluConfig={luluConfig}
-              onClickConnect={onClickConnectToLulu}
-              projectId={projectId}
-              projectUrl={projectUrl}
-            />
+            <>
+              <LuluIntegration
+                canUploadToProvider={canUploadToProvider}
+                isConnected={isUserConnectedToLulu}
+                isInLulu={!!projectId}
+                isSynced={isProfileSyncedWithLulu}
+                lastSynced={lastSynced}
+                luluConfig={luluConfig}
+                onClickConnect={onClickConnectToLulu}
+                projectId={projectId}
+                projectUrl={projectUrl}
+              />
+              <Divider />
+            </>
           ) : null}
 
-          <Divider />
           <ExportOptionsSection
             canModifyProfiles={canModify}
             disabled={optionsDisabled}

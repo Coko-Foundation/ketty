@@ -245,6 +245,7 @@ const Footer = props => {
           loading={isUploading}
           onClick={handleClickSendToLulu}
           type="primary"
+          style={{ textTransform: 'none' }}
         >
           Upload to Lulu
         </Button>,
@@ -257,8 +258,9 @@ const Footer = props => {
           loading={isUploading}
           onClick={handleClickSendToLulu}
           type="primary"
+          style={{ textTransform: 'none' }}
         >
-          Sync With Lulu
+          Sync with Lulu
         </Button>,
       )
     }
