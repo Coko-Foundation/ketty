@@ -158,7 +158,9 @@ Cypress.Commands.add('addMember', (collaborator, access) => {
 })
 
 Cypress.Commands.add('goToPreview', () => {
-  cy.getByData('header-preview-link').click()
+  cy.getByData('header-preview-link')
+    .should('have.text', 'Preview and Publish')
+    .click()
   cy.url().should('include', '/exporter')
 })
 
