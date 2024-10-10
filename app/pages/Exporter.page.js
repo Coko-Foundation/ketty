@@ -32,7 +32,12 @@ import {
 } from '../graphql'
 
 import { isOwner, hasEditAccess } from '../helpers/permissions'
-import { showErrorModal, showDeletedBookModal } from '../helpers/commonModals'
+import {
+  showErrorModal,
+  showDeletedBookModal,
+  showFlaxPreviewErrorModal,
+  showFlaxPublishErrorModal,
+} from '../helpers/commonModals'
 import { Preview, Spin } from '../ui'
 // #endregion import
 
@@ -242,6 +247,22 @@ const PreviewerPage = () => {
             },
           })
         }
+
+        setCreatingPreview(false)
+      },
+      onError: (previewError, { variables }) => {
+        if (variables.input.previewer === 'web') {
+          const code = previewError.message.substring(
+            previewError.message.length - 3,
+          )
+
+          setCreatingPreview(true)
+
+          showFlaxPreviewErrorModal(code, () => {
+            setPreviewLink(null)
+            setCreatingPreview(false)
+          })
+        }
       },
     },
   )
@@ -335,6 +356,13 @@ const PreviewerPage = () => {
       const { path } = publishOnline
 
       return window.open(path, '_blank', 'noreferrer')
+    },
+    onError: publishingError => {
+      const code = publishingError.message.substring(
+        publishingError.message.length - 3,
+      )
+
+      showFlaxPublishErrorModal(code)
     },
     refetchQueries: [
       {
@@ -625,8 +653,6 @@ const PreviewerPage = () => {
         variables: {
           input: previewData,
         },
-      }).finally(() => {
-        setCreatingPreview(false)
       })
     } else {
       setCreatingPreview(false)

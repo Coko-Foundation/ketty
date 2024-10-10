@@ -215,6 +215,161 @@ const showDeletedBookModal = callback => {
   })
 }
 
+// preview page error modals
+const showFlaxPreviewErrorModal = (code, callback) => {
+  const errorModal = Modal.error()
+
+  switch (code) {
+    case '401':
+    case '403':
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 401: There was a problem authenticating with the Flax
+            microservice. Please contact your administrator.
+          </Paragraph>
+        ),
+        onOk() {
+          errorModal.destroy()
+          callback()
+        },
+      })
+      break
+    case '501':
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 501: We’re having trouble connecting to the preview service.
+            Please check your internet connection and try again. If the problem
+            persists, contact your administrator.
+          </Paragraph>
+        ),
+        onOk() {
+          errorModal.destroy()
+          callback()
+        },
+      })
+      break
+    case '502':
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 502: Our preview service is currently down for maintenance.
+            Please check back later or contact your administrator if the issue
+            persists.
+          </Paragraph>
+        ),
+        onOk() {
+          errorModal.destroy()
+          callback()
+        },
+      })
+      break
+    case '504':
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 504: The preview is taking longer than expected. Please wait a
+            moment and try again. If the problem persists, contact your
+            administrator.
+          </Paragraph>
+        ),
+        onOk() {
+          errorModal.destroy()
+          callback()
+        },
+      })
+      break
+
+    default:
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 500: There was an error generating your preview. Please
+            contact your administrator.
+          </Paragraph>
+        ),
+        onOk() {
+          errorModal.destroy()
+          callback()
+        },
+      })
+      break
+  }
+}
+
+const showFlaxPublishErrorModal = (code, callback) => {
+  const errorModal = Modal.error()
+
+  switch (code) {
+    case '401':
+    case '403':
+      errorModal.update({
+        title: 'Publishing failed',
+        content: (
+          <Paragraph>
+            Error 401: There was a problem authenticating with the Flax
+            microservice. Please contact your administrator.
+          </Paragraph>
+        ),
+      })
+      break
+    case '501':
+      errorModal.update({
+        title: 'Publishing failed',
+        content: (
+          <Paragraph>
+            Error 501: We couldn’t publish your book. Please check your internet
+            connection or try again later. If the problem persists, contact your
+            administrator.
+          </Paragraph>
+        ),
+      })
+      break
+    case '502':
+      errorModal.update({
+        title: 'Publishing failed',
+        content: (
+          <Paragraph>
+            Error 502: Something went wrong on our end while publishing your
+            book. Please try again in a few minutes. If the problem persists,
+            contact your administrator.
+          </Paragraph>
+        ),
+      })
+      break
+    case '504':
+      errorModal.update({
+        title: 'Preview failed',
+        content: (
+          <Paragraph>
+            Error 504: The publishing process is taking longer than usual.
+            Please give it another try in a moment. If the problem persists,
+            contact your administrator.
+          </Paragraph>
+        ),
+      })
+      break
+
+    default:
+      errorModal.update({
+        title: 'Publishing failed',
+        content: (
+          <Paragraph>
+            Error 500: There was an error publishing your book. Please contact
+            your administrator.
+          </Paragraph>
+        ),
+      })
+      break
+  }
+}
+
 export {
   showUnauthorizedAccessModal,
   showGenericErrorModal,
@@ -224,4 +379,6 @@ export {
   onInfoModal,
   showErrorModal,
   showDeletedBookModal,
+  showFlaxPreviewErrorModal,
+  showFlaxPublishErrorModal,
 }

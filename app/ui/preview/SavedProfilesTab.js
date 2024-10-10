@@ -73,10 +73,13 @@ const SavedProfilesTab = props => {
       {profileSelected && (
         <>
           {currentOptions.format === 'web' ? (
-            <FlaxIntegration
-              profiles={profiles}
-              webPublishInfo={webPublishInfo}
-            />
+            <>
+              <FlaxIntegration
+                profiles={profiles}
+                webPublishInfo={webPublishInfo}
+              />
+              <Divider />
+            </>
           ) : null}
           {!!luluConfig &&
           !luluConfig.disabled &&
