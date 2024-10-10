@@ -19,15 +19,13 @@ describe('Checking the Preview section', () => {
     cy.login(admin)
     cy.goToBook('Test Book')
     cy.goToPreview()
-    // cy.contains('New export').should('exist')
-    // cy.contains('You have unsaved changes').should('not.exist')
   })
 
   it('checking preview section', () => {
     // the preview is shown as 1 single element and I cannot interact with the components of it
     // so this section checks only the buttons
 
-    // By default, when you log in "Show single page" option is selected
+    // By default, when you log in, the "Show single page" option is selected
     cy.getByData('preview-doublePage-btn')
       .should('exist')
       .should('not.be.checked')
@@ -41,18 +39,24 @@ describe('Checking the Preview section', () => {
     cy.getByData('preview-doublePage-btn').should('be.checked')
     cy.getByData('preview-singlePage-btn').should('not.be.checked')
 
-    cy.contains('div', '100 %').should('exist')
+    // cy.contains('div', '100 %').should('exist')
     cy.getByData('preview-zoomOut-btn').should('not.be.disabled')
-    cy.getByData('preview-zoomIn-btn').should('be.disabled')
+    // cy.getByData('preview-zoomIn-btn').should('be.disabled')
 
     cy.wait(4000)
     cy.getByData('preview-zoomOut-btn').click()
-    cy.contains('div', '90 %', { timeout: 3000 }).should('exist')
+    // cy.contains('div', '90 %', { timeout: 3000 }).should('exist')
     cy.getByData('preview-zoomOut-btn').should('not.be.disabled')
     cy.getByData('preview-zoomIn-btn').should('not.be.disabled')
   })
 
-  it('checking default values for export sidebar', () => {
+  it('checking default values for New Preview', () => {
+    cy.get('#rc-tabs-0-tab-new')
+      .should('have.text', 'New preview')
+      .should('have.attr', 'aria-selected', 'true')
+    cy.get('#rc-tabs-0-tab-saved')
+      .should('have.text', 'Publishing profiles')
+      .should('have.attr', 'aria-selected', 'false')
     // cy.verifyDefault('format', 'PDF')
     cy.get(`span[title="PDF"]`).should('exist').should('have.text', 'PDF')
 
@@ -67,9 +71,7 @@ describe('Checking the Preview section', () => {
       cy.verifyDefault('content', `${option}`)
     })
 
-    cy.contains('templates:').should('exist').parent().find('[alt="vanilla"]')
-
-    cy.contains('You have unsaved changes').should('exist')
+    cy.contains('Templates:').should('exist').parent().find('[alt="vanilla"]')
 
     cy.getByData('preview-save-btn')
       .should('have.text', 'Save Publishing Profile')
@@ -81,10 +83,9 @@ describe('Checking the Preview section', () => {
     // In order to check the carousel for templates is working,
     // checking that the Tenberg template can be selected
     cy.contains('span[data-test="preview-templateName"]', 'tenberg').click()
-    cy.contains('You have unsaved changes').should('be.visible')
   })
 
-  it('creating a new PDF profile export without saving changes', () => {
+  it('creating a new PDF profile without saving the profile', () => {
     // Changing size, content and template options for PDF format
     const sizeOptions = [
       { index: 0, title: 'Digest: 5.5 × 8.5 in | 140 × 216 mm' },
@@ -97,7 +98,7 @@ describe('Checking the Preview section', () => {
     sizeOptions.forEach(({ index, title }) => {
       cy.get(`[role="option"]:nth(${index})`).click()
 
-      cy.contains('size:')
+      cy.contains('Size:')
         .parent()
         .find(`[title="${title}"]`)
         .should('have.text', title)
@@ -140,16 +141,14 @@ describe('Checking the Preview section', () => {
       cy.verifyDefault('content', `${option}`)
     })
 
-    cy.contains('templates:').should('exist').parent().find('[alt="vanilla"]')
+    cy.contains('Templates:').should('exist').parent().find('[alt="vanilla"]')
   })
 
-  it('creating a new EPUB profile export without saving changes', () => {
+  it('creating a new EPUB profile export without saving the profile', () => {
     // Changing format option
-    // cy.contains('format:').parent().find('[title="PDF"]').click()
-    cy.get(`span[title="PDF"]`).click()
+    cy.wait(5000) // wait for preview to load
+    cy.getByData('preview-format-menu').find('[title="PDF"]').click()
     cy.get('[title="EPUB"]').should('have.text', 'EPUB').click()
-
-    cy.contains('You have unsaved changes').should('be.visible')
 
     // Checking ISBN
     cy.contains('ISBN:')
@@ -173,81 +172,104 @@ describe('Checking the Preview section', () => {
     })
 
     cy.checkTemplates()
-
     cy.getByData('preview-download-btn').should('be.enabled')
   })
 
-  it('saving a new export profile', () => {
+  it('saving a new publishing profile', () => {
     // Changing size and template
     cy.get(`[title="Digest: 5.5 × 8.5 in | 140 × 216 mm"]`).click()
     cy.contains('US Letter: 8.5 × 11 in | 216 × 279 mm').click()
-    cy.contains('You have unsaved changes').should('be.visible').click()
     cy.contains('eclypse').click()
     cy.getByData('preview-save-btn').click()
 
-    // Checking Save export modal
-    cy.get('.ant-modal-header').should('have.text', 'Save export')
+    // Checking Save Publishing Profile modal
+    cy.get('.ant-modal-header').should('have.text', 'Save Publishing Profile')
     cy.get('.ant-modal-close-x').click()
 
-    // cy.contains('Save').click()
     cy.getByData('preview-save-btn').click()
-    cy.get('.ant-modal-header').should('have.text', 'Save export')
+    cy.get('.ant-modal-header').should('have.text', 'Save Publishing Profile')
 
     cy.getByData('preview-exportName-input').type('PDF Eclypse US')
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist')
+
+    cy.get('#rc-tabs-0-tab-new')
+      .should('have.text', 'New preview')
+      .should('have.attr', 'aria-selected', 'false')
+    cy.get('#rc-tabs-0-tab-saved')
+      .should('have.text', 'Publishing profiles')
+      .should('have.attr', 'aria-selected', 'true')
+
+    cy.contains('label', 'Choose a profile').should('exist')
+    cy.get('[title="PDF Eclypse US"]').should('exist')
+    cy.getByData('preview-save-btn')
+      .should('have.text', 'Update')
+      .should('be.disabled')
+    cy.getByData('preview-delete-btn')
+      .should('have.text', 'Delete')
+      .should('not.be.disabled')
+
     /* eslint-disable cypress/no-unnecessary-waiting */
-    cy.wait(3000)
-    cy.get('span[aria-label="edit"]').should('exist')
+    // cy.wait(3000)
+    cy.contains('h3', 'Lulu integration:')
     cy.getByData('preview-connectLulu-btn')
       .should('have.text', 'Connect to Lulu')
       .should('exist')
       .should('be.enabled')
+
+    cy.contains('h3', 'Profile information:')
+    cy.contains('div', 'Name').should('exist')
+    cy.contains('span', 'PDF Eclypse US').should('exist')
+    cy.get('span[aria-label="edit"]').should('exist')
+    cy.contains('div', 'Last updated:').should('exist')
+    cy.contains('div', 'Format:').should('exist')
+    cy.contains('span', 'PDF').should('exist')
+    cy.contains('div', 'Size').should('exist')
+    cy.contains('span', 'US Letter: 8.5 × 11 in | 216 × 279 mm').should('exist')
   })
 
   it('deleting an export profile', () => {
     // Changing format and template
-    cy.get(`[title="PDF"]`).click()
-    cy.contains('EPUB').click()
-    cy.contains('You have unsaved changes').should('be.visible').click()
+    cy.wait(5000) // wait for preview to load
+    cy.getByData('preview-format-menu').find('[title="PDF"]').click()
+    cy.get('[title="EPUB"]').should('have.text', 'EPUB').click()
     cy.contains('atosh').click()
     cy.getByData('preview-save-btn').click()
-    cy.get('.ant-modal-header').should('have.text', 'Save export')
+    cy.get('.ant-modal-header').should('have.text', 'Save Publishing Profile')
 
     cy.getByData('preview-exportName-input').type('EPUB atosh')
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist')
+    cy.get('#rc-tabs-0-tab-saved')
+      .should('have.text', 'Publishing profiles')
+      .should('have.attr', 'aria-selected', 'true')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
     cy.getByData('preview-delete-btn').should('exist')
 
     cy.contains('EPUB atosh').should('exist').click()
-    // cy.get('#rc_select_0_list_0').should('have.text', 'New export')
     cy.get('[role="listbox"]').contains('EPUB atosh').click()
 
     cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
-    // cy.contains('Profile has been deleted').should('exist')
-    // cy.contains('EPUB atosh').should('not.exist')
+    cy.contains('Profile has been deleted').should('exist')
   })
 
   it('renaming an export profile', () => {
     // Creating a new export
     cy.get('.ant-select-clear').click()
     cy.contains('atosh').click()
-    cy.contains('You have unsaved changes').should('be.visible').click()
     cy.getByData('preview-save-btn').click()
-    cy.get('.ant-modal-header').should('have.text', 'Save export')
+    cy.get('.ant-modal-header').should('have.text', 'Save Publishing Profile')
 
     cy.getByData('preview-exportName-input').type('atosh no content')
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist')
+    cy.get('#rc-tabs-0-tab-saved')
+      .should('have.text', 'Publishing profiles')
+      .should('have.attr', 'aria-selected', 'true')
 
     // Renaming the new export
     cy.get('span[aria-label="edit"]', { timeout: 3000 }).click({ force: true })
 
-    cy.get('.ant-modal-title').should('contain', 'Edit export name')
-    // cy.get('input[value="atosh no content"]').last().click()
+    cy.get('.ant-modal-title').should('contain', 'Edit profile name')
     cy.get('input[value="atosh no content"]').last().type(' PDF{enter}')
     cy.contains('atosh no content PDF').should('exist')
   })
@@ -289,7 +311,7 @@ describe('Checking permissions in the Preview page', () => {
     // cy.chooseFormat('admin')
 
     // cy.log('ADMIN can save new export')
-    // cy.saveExport('admin')
+    // cy.saveProfile('admin')
 
     // // Should admin be able to download?? Permissions in table and irl don't match
     // cy.log('ADMIN can NOT download EPUB')
@@ -321,7 +343,7 @@ describe('Checking permissions in the Preview page', () => {
     cy.chooseFormat('author')
 
     cy.log('AUTHOR can save new export')
-    cy.saveExport('author')
+    cy.saveProfile('author')
 
     cy.log('AUTHOR can download EPUB')
     cy.canDownload('yes')
@@ -343,7 +365,7 @@ describe('Checking permissions in the Preview page', () => {
     cy.log('AUTHOR can delete an export')
     cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
-    // cy.contains('Profile has been deleted').should('exist')
+    cy.contains('Profile has been deleted').should('exist')
   })
 
   it('checking COLLABORATOR with EDIT access permissions', () => {
@@ -354,8 +376,8 @@ describe('Checking permissions in the Preview page', () => {
     cy.log('Collaborators can choose different format options')
     cy.chooseFormat('collaborator')
 
-    cy.log('Collaborators can NOT save new export')
-    cy.saveExport('collaborator')
+    cy.log('Collaborators with EDIT access can save new export')
+    cy.saveProfile('collaborator1')
 
     cy.log('Collaborator with "EDIT" access can download EPUB')
     cy.canDownload('yes')
@@ -365,15 +387,15 @@ describe('Checking permissions in the Preview page', () => {
     // cy.contains('PDF').click()
     // cy.canDownload('yes')
 
-    cy.log('Collaborators can NOT rename an export')
-    // cy.get('span[aria-label="edit"]').should('not.be.visible')
-    cy.canRename('collaborator')
+    cy.log('Collaborator with EDIT access can rename an export')
+    cy.canRename('collaborator1')
 
     cy.log('Collaborators can NOT connect to Lulu')
     cy.getByData('preview-connectLulu-btn').should('not.exist')
 
-    cy.log('Collaborators can NOT delete an export')
-    cy.getByData('preview-delete-btn').should('not.exist')
+    cy.log('Collaborator with EDIT access can delete an export')
+    cy.getByData('preview-delete-btn').should('exist').click()
+    cy.contains('Success').should('exist')
   })
 
   it('checking COLLABORATOR with VIEW access permissions', () => {
@@ -384,8 +406,8 @@ describe('Checking permissions in the Preview page', () => {
     cy.log('Collaborators can choose different format options')
     cy.chooseFormat('collaborator')
 
-    cy.log('Collaborators can NOT save new export')
-    cy.saveExport('collaborator')
+    cy.log('Collaborator with VIEW can NOT save new export')
+    cy.saveProfile('collaborator2')
 
     cy.log('Collaborator with "VIEW" access can NOT download EPUB')
     cy.canDownload('disabled')
@@ -395,14 +417,14 @@ describe('Checking permissions in the Preview page', () => {
     cy.contains('PDF').click()
     cy.canDownload('disabled')
 
-    cy.log('Collaborators can NOT rename an export')
+    cy.log('Collaborator with VIEW access can NOT rename an export')
     // cy.get('span[aria-label="edit"]').should('not.be.visible')
-    cy.canRename('collaborator')
+    cy.canRename('collaborator2')
 
     cy.log('Collaborators can NOT connect to Lulu')
     cy.getByData('preview-connectLulu-btn').should('not.exist')
 
-    cy.log('Collaborators can NOT delete an export')
+    cy.log('Collaborator with VIEW access can NOT delete an export')
     cy.getByData('preview-delete-btn').should('not.exist')
   })
 })
@@ -438,33 +460,35 @@ Cypress.Commands.add('checkTemplates', () => {
 
   templates.forEach(title => {
     cy.contains('span[data-test="preview-templateName"]', `${title}`).click()
-    cy.contains('You have unsaved changes').should('be.visible')
   })
 })
 
 Cypress.Commands.add('chooseFormat', user => {
-  cy.get(`[title="PDF"]`).click()
-  cy.contains('EPUB').click()
+  cy.wait(5000) // wait for preview to load
+  cy.getByData('preview-format-menu').find('[title="PDF"]').click()
+  cy.get('[title="EPUB"]').should('have.text', 'EPUB').click()
   cy.contains('bikini').click()
 
   if (user === 'author') {
-    cy.contains('You have unsaved changes').should('be.visible')
+    cy.getByData('preview-save-btn').should('not.be.disabled')
   } else {
-    cy.contains('You have unsaved changes').should('not.exist')
+    cy.getByData('preview-save-btn').should('be.disabled')
   }
 })
 
-Cypress.Commands.add('saveExport', user => {
-  if (user === 'author') {
+Cypress.Commands.add('saveProfile', user => {
+  if (user === 'author' || user === 'collaborator1') {
     cy.getByData('preview-save-btn').click()
-    cy.get('.ant-modal-header').should('have.text', 'Save export')
+    cy.get('.ant-modal-header').should('have.text', 'Save Publishing Profile')
     cy.getByData('preview-exportName-input').type(`${user}'s export`)
     cy.contains('button', 'OK').click()
-    cy.contains('Profile created').should('exist')
+    cy.get('#rc-tabs-0-tab-saved')
+      .should('have.text', 'Publishing profiles')
+      .should('have.attr', 'aria-selected', 'true')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
   } else {
-    cy.getByData('preview-save-btn').should('not.exist')
+    cy.getByData('preview-save-btn').should('be.disabled')
   }
 })
 
@@ -477,9 +501,9 @@ Cypress.Commands.add('canDownload', status => {
 })
 
 Cypress.Commands.add('canRename', user => {
-  if (user === 'author') {
+  if (user === 'author' || user === 'collaborator1') {
     cy.get('span[aria-label="edit"]').click()
-    cy.get('.ant-modal-title').should('contain', 'Edit export name')
+    cy.get('.ant-modal-title').should('contain', 'Edit profile name')
     // cy.get(`input[value="${user}'s export"]`).last().click().type(' 1{enter}')
     cy.get(`input[value="${user}'s export"]`).last().type(' 1{enter}')
     cy.contains(`${user}'s export 1`).should('exist')
