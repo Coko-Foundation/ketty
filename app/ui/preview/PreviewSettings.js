@@ -273,7 +273,7 @@ const PreviewSettings = props => {
         ]}
         onChange={setActiveTabKey}
       />
-      <div>
+      <div style={{ zIndex: '9', backgroundColor: 'white' }}>
         <Button
           icon={<CollapseArrow $isCollapsed={isCollapsed} />}
           onClick={handleClickCollapse}

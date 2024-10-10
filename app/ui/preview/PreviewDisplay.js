@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Alert } from 'antd'
-
 import { grid } from '@coko/client'
-
 import { Spin } from '../common'
 import PreviewDisplayOptions from './PreviewDisplayOptions'
 
@@ -128,7 +126,7 @@ const PreviewDisplay = props => {
         <PreviewWrapper>
           <StyledSpin spinning={showLoading}>
             <IframeWrapper>
-              <Veil hide={!iFrameLoading} />
+              <Veil hide={!iFrameLoading && !!previewLink} />
               <Iframe id="previewer" src={previewLink} />
             </IframeWrapper>
           </StyledSpin>
