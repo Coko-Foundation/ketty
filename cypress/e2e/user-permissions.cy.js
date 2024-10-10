@@ -369,7 +369,7 @@ describe('Checking permissions for dashboard', () => {
 
 Cypress.Commands.add('createImportedBook', bookTitle => {
   cy.location('pathname').should('equal', '/dashboard')
-  cy.contains('[href="/create-book"]', 'New book').click()
+  cy.contains('[href="/create-book"]', 'New Book').click()
   cy.location('pathname').should('equal', '/create-book')
   cy.contains('button', 'Select files').click()
   cy.location('pathname').should('contain', '/import')
@@ -470,15 +470,14 @@ Cypress.Commands.add('deleteChapter', chapterTitle => {
     .find('[data-icon="more"]')
     .click()
   cy.contains('button', 'Delete').click()
-  cy.contains(
-    'Create or select a chapter in the chapters panel to start writing',
-    { timeout: 8000 },
-  ).should('exist')
+  cy.contains('Create or select a chapter on the left to start writing.', {
+    timeout: 8000,
+  }).should('exist')
 
   // cy.get('span[aria-label="more"]').click()
   // cy.contains('button', 'Delete', { timeout: 8000 }).click()
   // cy.contains(
-  //   'Create or select a chapter in the chapters panel to start writing',
+  //   'Create or select a chapter on the left to start writing.',
   // ).should('exist')
 })
 

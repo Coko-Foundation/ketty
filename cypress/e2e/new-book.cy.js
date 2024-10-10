@@ -9,7 +9,7 @@ describe('Start writing', () => {
     cy.contains('You don’t have any books yet').should('exist')
     cy.getByData('dashboard-newBook-button')
       .should('have.attr', 'href', '/create-book')
-      .should('contain', 'New book')
+      .should('contain', 'New Book')
       .should('exist')
     cy.logout()
   })

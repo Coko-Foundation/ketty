@@ -9,7 +9,7 @@ describe('Login', () => {
   it('allows user to login with admin credentials', () => {
     cy.getByData('login-email-input').type('admin@example.com')
     cy.getByData('login-password-input').type('password')
-    cy.get("button[type='submit']").contains('Log in').click()
+    cy.get("button[type='submit']").contains('Log In').click()
     cy.location('pathname').should('equal', '/dashboard')
 
     cy.log('Verify initals of admin show in the avatar')
@@ -20,7 +20,7 @@ describe('Login', () => {
   })
 
   it('does NOT allow user to login without providing any credentials', () => {
-    cy.get("button[type='submit']").contains('Log in').click()
+    cy.get("button[type='submit']").contains('Log In').click()
     cy.location('pathname').should('equal', '/login')
     cy.get('#email_help').contains('Email is required')
     cy.get('#password_help').contains('Password is required')
@@ -29,7 +29,7 @@ describe('Login', () => {
   it('does NOT allow user to login with a valid username and an invalid password', () => {
     cy.getByData('login-email-input').type('admin@example.com')
     cy.getByData('login-password-input').type('123')
-    cy.get("button[type='submit']").contains('Log in').click()
+    cy.get("button[type='submit']").contains('Log In').click()
     cy.location('pathname').should('equal', '/login')
     cy.contains('Invalid credentials')
   })
@@ -37,7 +37,7 @@ describe('Login', () => {
   it('does NOT allow user to login with invalid email', () => {
     cy.getByData('login-email-input').type('admin')
     cy.getByData('login-password-input').type('password')
-    cy.get("button[type='submit']").contains('Log in').click()
+    cy.get("button[type='submit']").contains('Log In').click()
     cy.location('pathname').should('equal', '/login')
     cy.get('#email_help').contains('This is not a valid email address')
   })
@@ -59,7 +59,7 @@ describe('Signup', () => {
   })
 
   it('does NOT allow user to signup without filling all the fields', () => {
-    cy.get('button[type="submit"]').contains('Sign up').click()
+    cy.get('button[type="submit"]').contains('Sign Up').click()
     cy.get('#givenNames_help').contains('Given name is required')
     cy.get('#surname_help').contains('Surname is required')
     cy.get('#email_help').contains('Email is required')
@@ -77,7 +77,7 @@ describe('Signup', () => {
     // Trying to log in without filling all the required fields
     cy.getByData('signup-givenName-input').type('John')
     cy.getByData('signup-surname-input').type('Smith')
-    cy.get('button[type="submit"]').contains('Sign up').click()
+    cy.get('button[type="submit"]').contains('Sign Up').click()
     cy.get('#email_help').contains('Email is required')
     cy.get('#password_help').contains('Password is required')
     cy.get('#password_help').contains(
@@ -103,11 +103,11 @@ describe('Signup', () => {
     cy.getByData('signup-password-input').type('password')
     cy.getByData('signup-confirmPassword-input').type('password')
     cy.getByData('signup-agreedTc-checkbox').click()
-    cy.get('button[type="submit"]').contains('Sign up').click()
-    cy.get('h1').should('have.text', 'Sign up')
+    cy.get('button[type="submit"]').contains('Sign Up').click()
+    cy.get('h1').should('have.text', 'Signup')
     cy.get('div[role="alert"]').should(
       'have.text',
-      "Sign up successful!We've sent you a verification email. Click on the link in the email to activate your account.",
+      "Signup successful!We've sent you a verification email. Click on the link in the email to activate your account.",
     )
     cy.get('div[role="alert"]').contains(
       "We've sent you a verification email. Click on the link in the email to activate your account.",
@@ -130,7 +130,7 @@ describe('Signup', () => {
     cy.getByData('signup-password-input').type('password')
     cy.getByData('signup-confirmPassword-input').type('password')
     cy.getByData('signup-agreedTc-checkbox').click()
-    cy.get('button[type="submit"]').contains('Sign up').click()
+    cy.get('button[type="submit"]').contains('Sign Up').click()
     cy.get('div[role="alert"]').should(
       'have.text',
       'A user with this email already exists',
