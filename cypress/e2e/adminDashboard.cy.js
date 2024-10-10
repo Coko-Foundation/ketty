@@ -14,7 +14,7 @@ describe('accessing admin dashboard', () => {
     cy.get('.ant-avatar-string').click()
     cy.contains('Admin').click()
     cy.location('pathname').should('equal', '/admin')
-    cy.get('h1').should('have.text', 'Admin dashboard')
+    cy.get('h1').should('have.text', 'Admin')
     cy.logout()
   })
 
@@ -43,12 +43,12 @@ describe('checking AI integration', () => {
   it('checking default values for AI integration (ON)', () => {
     cy.checkSwitchStatus('span', 'AI supplier integration', 'ai', 'true')
 
-    cy.get('form').should('contain', 'Api key')
+    cy.get('form').should('contain', 'API Key')
 
     // Checking that there is an API key
     cy.getByData('admindb-aikey-input').invoke('val').should('not.be.empty')
     cy.getByData('admindb-updateKey-btn')
-      .should('have.text', 'Update key')
+      .should('have.text', 'Update Key')
       .should('be.enabled')
 
     // Checking Book Settings when AI integration is on
@@ -70,7 +70,7 @@ describe('checking AI integration', () => {
     })
 
     cy.getByData('admindb-updateKey-btn')
-      .should('have.text', 'Update key')
+      .should('have.text', 'Update Key')
       .click()
 
     cy.contains('API key is invalid', { timeout: 8000 }).should('exist')
@@ -94,7 +94,7 @@ describe('checking AI integration', () => {
   })
 })
 
-describe('checking Export options', () => {
+describe('checking Publishing and downloads section', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('Export Book')
@@ -107,16 +107,22 @@ describe('checking Export options', () => {
 
   it('Checking that all options are ON by default', () => {
     // By default, all switches are ON
-    cy.contains('h2', 'Export options').should('exist')
-    cy.checkSwitchStatus('span', 'Export PDF', 'expPDF', 'true')
-    cy.checkSwitchStatus('span', 'Export EPUB', 'expEPUB', 'true')
-    cy.checkSwitchStatus('span', 'Publish Online Book Website', 'web', 'true')
+    cy.contains('h2', 'Publishing, downloads and integration').should('exist')
+
+    // Downloads section
+    cy.contains('h3', 'Downloads').should('exist')
+    cy.checkSwitchStatus('span', 'PDF', 'dwPDF', 'true')
+    cy.checkSwitchStatus('span', 'EPUB', 'dwEPUB', 'true')
+
+    // Publishing integrations section
+    cy.contains('h3', 'Publishing integrations').should('exist')
+    cy.checkSwitchStatus('span', 'Publish online with Flax', 'pubWeb', 'true')
     cy.contains(
-      'strong',
-      'Allow including the following downloads when publishing a book on the web:',
+      'p',
+      'Allow book owners to include the following downloads when publishing online:',
     ).should('exist')
-    cy.checkSwitchStatus('span', 'PDF download', 'downloadPDF', 'true')
-    cy.checkSwitchStatus('span', 'EPUB download', 'downloadEPUB', 'true')
+    cy.checkSwitchStatus('span', 'PDF', 'pubPDF', 'true')
+    cy.checkSwitchStatus('span', 'EPUB', 'pubEPUB', 'true')
 
     // Verifying all options are available to choose in Preview
     cy.goToNewPreview()
@@ -142,23 +148,23 @@ describe('checking Export options', () => {
   })
 
   it('Disabling PDF option', () => {
-    cy.getByData(`admindb-expPDF-switch`).click()
-    cy.checkSwitchStatus('span', 'Export PDF', 'expPDF', 'false')
+    cy.getByData(`admindb-dwPDF-switch`).click()
+    cy.checkSwitchStatus('span', 'PDF', 'dwPDF', 'false')
     cy.goToNewPreview()
     cy.get('span[title="PDF"]').should('not.exist')
   })
 
   it('Disabling EPUB option', () => {
-    cy.getByData(`admindb-expEPUB-switch`).click()
-    cy.checkSwitchStatus('span', 'Export EPUB', 'expEPUB', 'false')
+    cy.getByData(`admindb-dwEPUB-switch`).click()
+    cy.checkSwitchStatus('span', 'EPUB', 'dwEPUB', 'false')
     cy.goToNewPreview()
     cy.get('span[title="EPUB"]').should('not.exist')
   })
 
   it('Disabling Web option', () => {
     // // Disabling PDF download option
-    // cy.getByData(`admindb-downloadPDF-switch`).click()
-    // cy.checkSwitchStatus('span', 'PDF download', 'downloadPDF', 'false')
+    // cy.getByData(`admindb-pubPDF-switch`).click()
+    // cy.checkSwitchStatus('span', 'PDF', 'pubPDF', 'false')
     // cy.goToNewPreview()
     // cy.contains('span', 'Include PDF').should('not.exist')
     // cy.get('[value = "pdf"]').should('not.exist')
@@ -166,16 +172,16 @@ describe('checking Export options', () => {
 
     // // Disabling EPUB download option
     // cy.goToAdminDashboard()
-    // cy.getByData(`admindb-downloadEPUB-switch`).click()
-    // cy.checkSwitchStatus('span', 'EPUB download', 'downloadEPUB', 'false')
+    // cy.getByData(`admindb-pubEPUB-switch`).click()
+    // cy.checkSwitchStatus('span', 'EPUB', 'pubEPUB', 'false')
     // cy.goToNewPreview()
     // cy.contains('span', 'Include EPUB').should('not.exist')
     // cy.get('[value = "EPUB"]').should('not.exist')
 
     // Disabling Web option
     // cy.goToAdminDashboard()
-    cy.getByData(`admindb-web-switch`).click()
-    cy.checkSwitchStatus('span', 'Publish Online Book Website', 'web', 'false')
+    cy.getByData(`admindb-pubWeb-switch`).click()
+    cy.checkSwitchStatus('span', 'Publish online with Flax', 'pubWeb', 'false')
     cy.goToNewPreview()
     cy.get('span[title="Web"]').should('not.exist')
   })
@@ -191,18 +197,14 @@ describe('checking POD', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(2)').should(
-      'have.text',
-      'Print on demand supplier integration',
-    )
   })
 
   it('checking default values for POD (ON)', () => {
-    cy.checkSwitchStatus('span', 'Lulu', 'lulu', 'true')
-    cy.contains('span', 'Lulu').should('exist')
+    cy.checkSwitchStatus('span', 'Print-on-demand with Lulu', 'lulu', 'true')
+    cy.contains('span', 'Print-on-demand with Lulu').should('exist')
 
     // Enabling PDF export so user can save exports
-    cy.getByData(`admindb-expPDF-switch`).click()
+    cy.getByData(`admindb-dwPDF-switch`).click()
 
     // Checking Preview page when POD is on
     cy.get('[href="/dashboard"]').first().click()
@@ -215,9 +217,9 @@ describe('checking POD', () => {
   })
 
   it('switching POD OFF', () => {
-    cy.contains('span', 'Lulu').should('exist')
+    cy.contains('span', 'Print-on-demand with Lulu').should('exist')
     cy.getByData('admindb-lulu-switch').click()
-    cy.checkSwitchStatus('span', 'Lulu', 'lulu', 'false')
+    cy.checkSwitchStatus('span', 'Print-on-demand with Lulu', 'lulu', 'false')
 
     // Checking Preview page when POD is off
     cy.get('[href="/dashboard"]').first().click()
@@ -233,7 +235,7 @@ describe('checking Terms & Conditions', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(3)').should('have.text', 'Terms and conditions')
+    cy.get('h2:nth(2)').should('have.text', 'Terms and conditions')
   })
 
   it('checking default content in T&C section', () => {
