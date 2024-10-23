@@ -12,11 +12,11 @@ const testBook = 'Test Book'
 describe('Checking default state in Book Settings modal', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
     )
     cy.log('Collaborator 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
     cy.login(admin)
@@ -76,7 +76,7 @@ describe('Checking default state in Book Settings modal', () => {
     cy.toogleSwitch('toggleAI')
     cy.verifySwitch('toggleAI', 'enabled')
     cy.getByData('settings-save-btn').click()
-    cy.contains('Book settings').should('not.exist', { timeout: 6000 })
+    cy.contains('Book Settings').should('not.exist', { timeout: 6000 })
 
     cy.openBookSettings()
     cy.verifySwitch('toggleAI', 'enabled')
@@ -193,7 +193,7 @@ describe('AI writing prompt is enabled', () => {
       cy.goToBook(testBook)
       cy.contains('Untitled Chapter').click()
       cy.contains(
-        'Create or select a chapter in the chapters panel to start writing',
+        'Create or select a chapter on the left to start writing.',
       ).should('exist')
       cy.openBookSettings()
 
@@ -204,7 +204,7 @@ describe('AI writing prompt is enabled', () => {
       cy.get('#prompt')
         .should('exist')
         .should('have.attr', 'placeholder')
-        .and('eq', 'Add Prompt')
+        .and('eq', 'Add prompt')
 
       // Add a prompt
       cy.contains('button', 'Add Prompt').should('have.attr', 'type', 'submit')
@@ -228,7 +228,7 @@ describe('AI writing prompt is enabled', () => {
         cy.goToBook(testBook)
         cy.contains('Untitled Chapter').click()
         cy.contains(
-          'Create or select a chapter in the chapters panel to start writing',
+          'Create or select a chapter on the left to start writing.',
         ).should('exist')
         cy.openBookSettings()
 
@@ -242,7 +242,7 @@ describe('AI writing prompt is enabled', () => {
         cy.addPrompt('Capitalize each word')
         cy.getByData('settings-save-btn').click()
         cy.contains(
-          'Create or select a chapter in the chapters panel to start writing',
+          'Create or select a chapter on the left to start writing.',
           { timeout: 10000 },
         ).should('be.visible')
         cy.logout()
@@ -252,7 +252,7 @@ describe('AI writing prompt is enabled', () => {
         cy.goToBook(testBook)
         cy.contains('Untitled Chapter')
         cy.contains(
-          'Create or select a chapter in the chapters panel to start writing',
+          'Create or select a chapter on the left to start writing.',
         ).should('not.exist')
         cy.useCustomizedPrompt()
       })
@@ -324,7 +324,7 @@ describe('AI Book Designer (Beta)', () => {
     cy.toogleSwitch('AIDesigner')
     cy.verifySwitch('AIDesigner', 'enabled')
     cy.getByData('settings-save-btn').click()
-    cy.contains('Book settings').should('not.exist', { timeout: 6000 })
+    cy.contains('Book Settings').should('not.exist', { timeout: 6000 })
 
     cy.logout()
   })
