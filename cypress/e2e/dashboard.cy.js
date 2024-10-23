@@ -17,25 +17,31 @@ describe('checking elements of the dashboard', () => {
   it('uploading a dashboard image for a book', () => {
     cy.get('li:nth(0)').should('contain', 'Book 1')
     cy.get('li:nth(0)').find('[data-icon="more"]').click()
-    cy.contains('Upload book placeholder image').should('exist')
+    cy.contains('Manage cover and metadata').click({ force: true })
+    cy.contains('h1', 'Book Metadata')
+    cy.url().should('include', '/producer')
 
-    cy.get('input[type="file"]')
-      .should('exist') // Check if the element exists
-      .then($input => {
-        cy.wrap($input).selectFile('cypress/fixtures/images/Design1.jpg', {
-          force: true,
-        })
-      })
+    cy.contains('h2', 'Cover page')
+    cy.get('label[title="Upload cover image"]').should(
+      'have.text',
+      'Upload cover image',
+    )
+
+    cy.uploadCover('Design1.jpg')
+
+    cy.get('label[title="Alt text for cover image"]').should(
+      'have.text',
+      'Alt text for cover image',
+    )
+    cy.get('input[id="coverAlt"]').type('Some alternative text')
 
     cy.log('Replacing an existing dashboard image')
+    // Deleting the old one
+    cy.get('span[aria-label="delete"]').click({ force: true })
+    cy.get('input[id="coverAlt"]').should('not.exist')
 
-    cy.get('input[type="file"]')
-      .should('exist') // Check if the element exists
-      .then($input => {
-        cy.wrap($input).selectFile('cypress/fixtures/images/Design2.jpg', {
-          force: true,
-        })
-      })
+    cy.uploadCover('Design2.jpg')
+    cy.get('input[id="coverAlt"]').should('exist')
   })
 
   it('deleting a book', () => {
@@ -93,4 +99,15 @@ describe('checking elements of the dashboard', () => {
 
     cy.get('.ant-card-body').should('contain', 'Book 9')
   })
+})
+
+Cypress.Commands.add('uploadCover', fileName => {
+  cy.get('input[type="file"]')
+    .last()
+    .should('exist') // Check if the element exists
+    .then($input => {
+      cy.wrap($input).selectFile(`cypress/fixtures/images/${fileName}`, {
+        force: true,
+      })
+    })
 })
