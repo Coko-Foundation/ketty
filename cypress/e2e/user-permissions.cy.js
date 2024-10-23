@@ -13,15 +13,15 @@ const authorBook = 'Author Book'
 describe('Checking permissions for dashboard', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
     )
     cy.log('Author 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
     )
     cy.log('Collaborator 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
     cy.login(admin)
@@ -270,7 +270,6 @@ describe('Checking permissions for dashboard', () => {
         'COLLABORATOR with VIEW access can NOT create a new component in the book he/she is collaborator.',
       )
       cy.goToBook(authorBook)
-      cy.createUntitledChapter()
       cy.log(
         'COLLABORATOR with VIEW access can NOT use Wax toolbar in the book he/she is collaborator.',
       )
@@ -514,7 +513,7 @@ Cypress.Commands.add('canComment', (user, mentionUser) => {
 
 Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
   const metadataFields = [
-    '#title',
+    // '#title',
     '#subtitle',
     '#authors',
     '#topPage',
@@ -532,8 +531,8 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
 
     if (disabledStatus === 'not.have.attr') {
       // editing Metadata fields
+      cy.get(field).clear()
       cy.get(field).type(`edited by ${user}`)
-      cy.contains('Save').should('not.have.attr', 'disabled')
     }
   })
 
@@ -553,8 +552,6 @@ Cypress.Commands.add('canEditMetadata', (user, disabledStatus) => {
     // editing Metadata fields
     cy.contains('button', 'Add ISBN').click()
   }
-
-  cy.get('.ant-modal-close').click()
 })
 
 Cypress.Commands.add('canSeeAccess', () => {

@@ -12,11 +12,11 @@ const testBook = 'Test Book'
 describe('Checking default state in Book Settings modal', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
     )
     cy.log('Collaborator 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
     cy.login(admin)
@@ -114,7 +114,7 @@ describe('Knowledge Base is enabled', () => {
     cy.get('button[title="Ask knowledge base (disabled)"]').click()
     cy.get('button[title="Ask knowledge base (enabled)"]').should('exist')
 
-    cy.contains('Knowledge base').should('exist')
+    cy.contains('Knowledge Base').should('exist')
     cy.navigateToKnowledgeBase()
 
     // Checking the buttons in KB page
@@ -194,7 +194,7 @@ describe('Knowledge Base is enabled', () => {
   it('Checking file types that can be uploaded', () => {
     cy.login(admin)
     cy.goToBook(testBook)
-    cy.contains('Knowledge base').should('exist')
+    cy.contains('Knowledge Base').should('exist')
     cy.navigateToKnowledgeBase()
 
     cy.contains(
@@ -238,7 +238,7 @@ describe('Knowledge Base is enabled', () => {
   it('Checking file names that are supported', () => {
     cy.login(admin)
     cy.goToBook(testBook)
-    cy.contains('Knowledge base').should('exist')
+    cy.contains('Knowledge Base').should('exist')
     cy.navigateToKnowledgeBase()
 
     // Upload multiple files
@@ -275,7 +275,7 @@ describe('Knowledge Base is enabled', () => {
     it('COLLABORATOR with EDIT access can access Knowledge Base', () => {
       cy.login(collaborator1)
       cy.goToBook(testBook)
-      cy.contains('Knowledge base').should('exist')
+      cy.contains('Knowledge Base').should('exist')
       cy.navigateToKnowledgeBase()
 
       cy.canUseKB()

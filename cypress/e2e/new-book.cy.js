@@ -155,7 +155,7 @@ describe('Start writing', () => {
 
     // cy.getByData('book-chapters-list').wait(10000)
     cy.get('[role="menuitem"]:nth(0)').contains('Processing')
-    cy.contains('TEST CHAPTER 1', {
+    cy.contains('chapter1_test', {
       timeout: 8000,
     }).should('exist')
     cy.contains('chapter2_test', {
