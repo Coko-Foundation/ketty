@@ -121,7 +121,7 @@ publish production demo:
   only:
     - main
 
-build & publish storybook:
+.build & publish storybook:
   extends: .build & publish storybook
   stage: Publish
   variables:
@@ -132,7 +132,7 @@ build & publish storybook:
 
 # DEPLOY
 
-deploy storybook:
+.deploy storybook:
   extends: .deploy base
   stage: Deploy
   needs:
