@@ -34,6 +34,11 @@ describe('checking elements of the dashboard', () => {
       'Alt text for cover image',
     )
     cy.get('input[id="coverAlt"]').type('Some alternative text')
+    cy.get('input[id="coverAlt"]').should(
+      'have.attr',
+      'value',
+      'Some alternative text',
+    )
 
     cy.log('Replacing an existing dashboard image')
     // Deleting the old one

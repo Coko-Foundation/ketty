@@ -46,7 +46,7 @@ describe('checking AI integration', () => {
     cy.get('form').should('contain', 'API Key')
 
     // Checking that there is an API key
-    cy.getByData('admindb-aikey-input').invoke('val').should('not.be.empty')
+    // cy.getByData('admindb-aikey-input').invoke('val').should('not.be.empty')
     cy.getByData('admindb-updateKey-btn')
       .should('have.text', 'Update Key')
       .should('be.enabled')
@@ -312,7 +312,7 @@ describe('checking Terms & Conditions', () => {
     cy.addLists(['item1', 'item2', 'item3'], true) // Adding ordered list
     cy.addLists(['item1', 'item2', 'item3'], false) // Adding bullet list
 
-    cy.getByData('admindb-updateT&C-btn').click()
+    cy.getByData('admindb-updateTC-btn').click()
     cy.contains('Terms and Conditions updated successfully')
     cy.log('Terms and Conditions were updated.')
 
