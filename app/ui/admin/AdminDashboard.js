@@ -182,6 +182,7 @@ const AdminDashboard = props => {
               checked={exportOptions?.pdfDownload?.enabled}
               loading={paramsLoading}
               onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+              data-test="admindb-dwPDF-switch"
             />
           </StyledControlWrapper>
           <StyledControlWrapper>
@@ -190,6 +191,7 @@ const AdminDashboard = props => {
               checked={exportOptions?.epubDownload?.enabled}
               loading={paramsLoading}
               onChange={val => exportConfigUpdate(val, 'epubDownload')}
+              data-test="admindb-dwEPUB-switch"
             />
           </StyledControlWrapper>
         </Stack>
@@ -200,6 +202,7 @@ const AdminDashboard = props => {
             checked={exportOptions?.webPublish?.enabled}
             loading={paramsLoading}
             onChange={val => exportConfigUpdate(val, 'webPublish')}
+            data-test="admindb-pubWeb-switch"
           />
           {exportOptions?.webPublish?.enabled && (
             <Stack
@@ -218,6 +221,7 @@ const AdminDashboard = props => {
                   checked={exportOptions?.webPdfDownload?.enabled}
                   loading={paramsLoading}
                   onChange={val => exportConfigUpdate(val, 'webPdfDownload')}
+                  data-test="admindb-pubPDF-switch"
                 />
               </StyledControlWrapper>
               <StyledControlWrapper>
@@ -226,6 +230,7 @@ const AdminDashboard = props => {
                   checked={exportOptions?.webEpubDownload?.enabled}
                   loading={paramsLoading}
                   onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
+                  data-test="admindb-pubEPUB-switch"
                 />
               </StyledControlWrapper>
             </Stack>
@@ -261,7 +266,7 @@ const AdminDashboard = props => {
         <div>
           <Button
             onClick={udpateTermsAndConditions}
-            data-test="admindb-updateT&C-btn"
+            data-test="admindb-updateTC-btn"
           >
             Update Terms and Conditions
           </Button>
