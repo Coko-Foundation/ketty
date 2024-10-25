@@ -12,11 +12,11 @@ const testBook = 'Test Book'
 describe('Checking default state in Book Settings modal', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
     )
     cy.log('Collaborator 1 is created.')
     cy.exec(
-      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
     cy.login(admin)
@@ -25,6 +25,9 @@ describe('Checking default state in Book Settings modal', () => {
     cy.addMember(collaborator1, 'edit')
     cy.reload()
     cy.addMember(collaborator2, 'view')
+
+    cy.goToAdminDashboard()
+    cy.turnSwitchOn('ai')
     cy.logout()
   })
 

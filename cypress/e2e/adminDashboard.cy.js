@@ -11,10 +11,7 @@ describe('accessing admin dashboard', () => {
 
   it('admin can acess the admin dashboard', () => {
     cy.login(admin)
-    cy.get('.ant-avatar-string').click()
-    cy.contains('Admin').click()
-    cy.location('pathname').should('equal', '/admin')
-    cy.get('h1').should('have.text', 'Admin')
+    cy.goToAdminDashboard()
     cy.logout()
   })
 
@@ -31,6 +28,8 @@ describe('checking AI integration', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('AI Book')
+    cy.goToAdminDashboard()
+    cy.turnSwitchOn('ai')
     cy.logout()
   })
 
@@ -98,6 +97,12 @@ describe('checking Publishing and downloads section', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('Export Book')
+    cy.goToAdminDashboard()
+    const switches = ['dwEPUB', 'pubWeb', 'pubPDF', 'pubEPUB']
+    switches.forEach(switchId => {
+      cy.turnSwitchOn(switchId)
+      cy.wait(3000)
+    })
     cy.logout()
   })
   beforeEach(() => {
@@ -191,6 +196,8 @@ describe('checking POD', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('POD Book')
+    cy.goToAdminDashboard()
+    cy.turnSwitchOn('lulu')
     cy.logout()
   })
 
@@ -328,12 +335,6 @@ describe('checking Terms & Conditions', () => {
     cy.verifyListContent(listItems, 'ol>li')
     cy.verifyListContent(listItems, 'ul>li>.paragraph')
   })
-})
-
-Cypress.Commands.add('goToAdminDashboard', () => {
-  cy.get('.ant-avatar-string').click()
-  cy.contains('Admin').click()
-  cy.location('pathname').should('equal', '/admin')
 })
 
 Cypress.Commands.add('addLists', (listItems, isOrdered) => {

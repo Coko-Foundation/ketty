@@ -164,6 +164,23 @@ Cypress.Commands.add('goToPreview', () => {
   cy.url().should('include', '/exporter')
 })
 
+Cypress.Commands.add('goToAdminDashboard', () => {
+  cy.get('.ant-avatar-string').click()
+  cy.contains('Admin').click()
+  cy.location('pathname').should('equal', '/admin')
+  cy.get('h1').should('have.text', 'Admin')
+})
+
+Cypress.Commands.add('turnSwitchOn', switchName => {
+  cy.getByData(`admindb-${switchName}-switch`).then($switch => {
+    const isChecked = $switch.attr('aria-checked') === 'true'
+
+    if (!isChecked) {
+      cy.wrap($switch).click()
+    }
+  })
+})
+
 Cypress.Commands.add('openBookSettings', () => {
   cy.getByData('header-bookSettings-btn').click()
   cy.contains('Book Settings').should('exist')

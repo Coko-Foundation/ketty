@@ -1,7 +1,6 @@
 /* eslint-disable jest/expect-expect */
 /* eslint-disable jest/no-commented-out-tests */
 const {
-  admin,
   author,
   collaborator1,
   collaborator2,
@@ -9,6 +8,8 @@ const {
 
 describe('Checking "Share" modal', () => {
   before(() => {
+    // cy.exec('docker exec kdk_server_1 node ./scripts/seeds/truncateDB.js')
+
     cy.exec(
       'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
     )
@@ -21,12 +22,12 @@ describe('Checking "Share" modal', () => {
       'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
-    cy.login(admin)
+    cy.login(author)
     cy.addBook('Test Book')
     cy.logout()
   })
   beforeEach(() => {
-    cy.login(admin)
+    cy.login(author)
     cy.goToBook('Test Book')
     cy.reload()
     cy.contains('Untitled Chapter', { timeout: 8000 })
@@ -62,7 +63,7 @@ describe('Checking "Share" modal', () => {
       .should('be.disabled')
       .should('contain', 'Share')
 
-    cy.get('.ant-list-item').should('have.text', 'AAAdmin AdminiusOwner')
+    cy.get('.ant-list-item').should('have.text', 'A1Author 1Owner')
 
     cy.get('[aria-label="question-circle"]')
       .should('exist')
@@ -85,14 +86,14 @@ describe('Checking "Share" modal', () => {
     cy.get('div[role="option"]', { timeout: 8000 }).should('not.exist')
     cy.getByData('modal-share-btn').should('be.disabled')
 
-    cy.log('author.1@example.com exists')
-    cy.get('.ant-select-selection-overflow').type(author.email)
+    cy.log('collaborator.1@example.com exists')
+    cy.get('.ant-select-selection-overflow').type(collaborator1.email)
     cy.get('div[role="option"]', { timeout: 8000 }).click()
 
     cy.get('.ant-select-selection-overflow').should(
       'contain',
-      author.name,
-      author.surname,
+      collaborator1.name,
+      collaborator1.surname,
     )
     cy.get('button[type="submit"]').should('not.be.disabled')
   })
@@ -110,19 +111,22 @@ describe('Checking "Share" modal', () => {
       .should('be.visible')
       .click({ force: true }) // Force a click to ensure focus
     cy.get('.ant-select-selection-overflow input', { timeout: 8000 }).type(
-      author.email,
+      collaborator1.email,
       {
         delay: 100,
         force: true,
       },
     )
-    cy.get('.ant-select-selection-overflow').should('contain', author.email)
+    cy.get('.ant-select-selection-overflow').should(
+      'contain',
+      collaborator1.email,
+    )
     cy.get('div[role="option"]', { timeout: 8000 }).click()
 
     cy.get('.ant-select-selection-overflow').should(
       'contain',
-      author.name,
-      author.surname,
+      collaborator1.name,
+      collaborator1.surname,
     )
     cy.get('button[type="submit"]').should('not.be.disabled')
 
@@ -133,7 +137,12 @@ describe('Checking "Share" modal', () => {
     cy.contains('Can edit').click()
     cy.get('button[type="submit"]').click()
 
-    cy.get('.ant-list-item').should('contain', 'A1', 'Author 1', 'Can edit')
+    cy.get('.ant-list-item').should(
+      'contain',
+      'C1',
+      'Collaborator 1',
+      'Can edit',
+    )
 
     cy.get('.ant-list-item').contains('Can edit').click()
     cy.get('[role="option"]:nth(0)').should('have.text', 'Can view')

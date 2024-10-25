@@ -13,6 +13,12 @@ describe('Checking the Preview section', () => {
   before(() => {
     cy.login(admin)
     cy.addBook('Test Book')
+    cy.goToAdminDashboard()
+    const switches = ['dwPDF', 'dwEPUB', 'lulu']
+    switches.forEach(switchId => {
+      cy.turnSwitchOn(switchId)
+      cy.wait(3000)
+    })
     cy.logout()
   })
   beforeEach(() => {
