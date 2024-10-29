@@ -16,7 +16,7 @@ import styled from 'styled-components'
 import {
   GET_ENTIRE_BOOK,
   GET_BOOK_SETTINGS,
-  RENAME_BOOK_COMPONENT_TITLE,
+  RENAME_BOOK_COMPONENT,
   UPDATE_BOOK_COMPONENT_CONTENT,
   UPDATE_BOOK_COMPONENT_TYPE,
   DELETE_BOOK_COMPONENT,
@@ -146,6 +146,8 @@ const ProducerPage = () => {
   })
 
   const hasRendered = useRef(false)
+  const canUpdateTitle = useRef()
+  const currentChapterTitle = useRef()
 
   const {
     loading,
@@ -444,7 +446,10 @@ const ProducerPage = () => {
       },
     })
 
-  const [renameBookComponent] = useMutation(RENAME_BOOK_COMPONENT_TITLE, {
+  const [renameBookComponent] = useMutation(RENAME_BOOK_COMPONENT, {
+    variables: {
+      id: selectedChapterId,
+    },
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
@@ -545,6 +550,12 @@ const ProducerPage = () => {
     }
   }
 
+  const onPeriodicBookComponentContentChange = debounce(changedContent => {
+    if (editorMode && editorMode === 'full') {
+      onBookComponentContentChange(changedContent)
+    }
+  }, 50)
+
   const onBookComponentTypeChange = (componentId, componentType) => {
     if (componentId && componentType && canModify) {
       updateBookComponentType({
@@ -603,31 +614,36 @@ const ProducerPage = () => {
     })
   }
 
-  const onBookComponentTitleChange = title => {
-    const currentChapter = find(
-      bookQueryData?.getBook?.divisions[1].bookComponents,
-      {
-        id: selectedChapterId,
-      },
-    )
+  canUpdateTitle.current =
+    selectedChapterId &&
+    canModify &&
+    !(applicationParametersLoading || loading || bookComponentLoading)
 
+  currentChapterTitle.current = find(
+    bookQueryData?.getBook?.divisions[1].bookComponents,
+    {
+      id: selectedChapterId,
+    },
+  )?.title
+
+  const onBookComponentTitleChange = title => {
     // only fire if new title !== current title to avoid unnecessary call
-    if (
-      selectedChapterId &&
-      canModify &&
-      title !== currentChapter?.title &&
-      !(applicationParametersLoading || loading || bookComponentLoading)
-    ) {
+    if (canUpdateTitle.current && title !== currentChapterTitle.current) {
       renameBookComponent({
         variables: {
           input: {
             id: selectedChapterId,
             title,
           },
+          title,
         },
       })
     }
   }
+
+  const onPeriodicTitleChange = debounce(title => {
+    onBookComponentTitleChange(title)
+  }, 50)
 
   const onDeleteChapter = bookComponentId => {
     if (!canModify) {
@@ -905,6 +921,11 @@ const ProducerPage = () => {
     const isAlreadySelected =
       selectedChapterId && chapterId === selectedChapterId
 
+    if (isAlreadySelected) {
+      setSelectedChapterId(null)
+      return
+    }
+
     if (found.status === 300) {
       showConversionErrorModal(chapterId)
       return
@@ -912,11 +933,6 @@ const ProducerPage = () => {
 
     if (found.uploading) {
       showUploadingModal()
-      return
-    }
-
-    if (isAlreadySelected) {
-      setSelectedChapterId(null)
       return
     }
 
@@ -952,12 +968,6 @@ const ProducerPage = () => {
 
     input.click()
   }
-
-  const onPeriodicBookComponentContentChange = debounce(changedContent => {
-    if (editorMode && editorMode === 'full') {
-      onBookComponentContentChange(changedContent)
-    }
-  }, 50)
 
   const handleImageUpload = async file => {
     if (!canModify) {
@@ -1163,7 +1173,6 @@ const ProducerPage = () => {
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       onAddChapter={onAddChapter}
       onBookComponentParentIdChange={onBookComponentParentIdChange}
-      onBookComponentTitleChange={onBookComponentTitleChange}
       onBookComponentTypeChange={onBookComponentTypeChange}
       onChapterClick={onChapterClick}
       onDeleteChapter={onDeleteChapter}
@@ -1172,6 +1181,7 @@ const ProducerPage = () => {
       onPeriodicBookComponentContentChange={
         onPeriodicBookComponentContentChange
       }
+      onPeriodicTitleChange={onPeriodicTitleChange}
       onReorderChapter={onReorderChapter}
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadBookCover={handleUploadBookCover}
