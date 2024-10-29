@@ -4,9 +4,7 @@ import styled from 'styled-components'
 import { grid } from '@coko/client'
 import { Collapse, Radio } from '../common'
 
-const { Panel } = Collapse
-
-const StyledPanel = styled(Panel)`
+const StyledPanel = styled(Collapse.Panel)`
   .ant-collapse-header {
     align-items: center !important; /* stylelint-disable-line declaration-no-important */
   }
@@ -16,8 +14,8 @@ const Wrapper = styled.div`
   align-items: center;
   display: flex;
 
-  > div {
-    margin-right: ${grid(2)};
+  .ant-radio {
+    margin-inline-end: ${grid(2)};
   }
 `
 
@@ -27,7 +25,6 @@ const CopyrightLicenseOption = props => {
     description,
     link,
     linkText,
-    key,
     children,
     selected,
     onChange,
@@ -46,15 +43,12 @@ const CopyrightLicenseOption = props => {
     <StyledPanel
       forceRender
       header={
-        <Wrapper onClick={handleClick}>
-          <div>
-            <Radio
-              checked={selected}
-              disabled={!canChangeMetadata}
-              onChange={() => onChange(name)}
-            />
-          </div>
-          <div>
+        <Wrapper>
+          <Radio
+            checked={selected}
+            disabled={!canChangeMetadata}
+            onChange={handleClick}
+          >
             <strong>{title}</strong>
             <p>{description}</p>
             {link && (
@@ -62,10 +56,9 @@ const CopyrightLicenseOption = props => {
                 {linkText}
               </a>
             )}
-          </div>
+          </Radio>
         </Wrapper>
       }
-      key={key}
       showArrow={selected}
       {...rest}
     >
@@ -76,7 +69,6 @@ const CopyrightLicenseOption = props => {
 
 CopyrightLicenseOption.propTypes = {
   title: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   link: PropTypes.string,
   linkText: PropTypes.string,

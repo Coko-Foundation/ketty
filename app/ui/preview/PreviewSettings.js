@@ -1,43 +1,59 @@
 ﻿/* stylelint-disable no-descending-specificity */
-
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Divider } from 'antd'
 import pick from 'lodash/pick'
-import isEqual from 'lodash/isEqual'
+import { isEqualWith, isNil } from 'lodash'
 import { VerticalAlignTopOutlined } from '@ant-design/icons'
-
 import { grid } from '@coko/client'
-
-import {
-  Button,
-  Ribbon,
-  //  Spin
-} from '../common'
-import ProfileRow from './ProfileRow'
-import ExportOptionsSection from './ExportOptionsSection'
-import LuluIntegration from './LuluIntegration'
-import Footer from './Footer'
+import { Button, Stack, TabsStyled as Tabs } from '../common'
+import NewProfileTab from './NewProfileTab'
+import SavedProfilesTab from './SavedProfilesTab'
 
 // #region styled
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
-  padding: ${grid(4)};
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 ${grid(4)};
 
   > * + * {
     margin-block-start: ${grid(2)};
   }
+`
 
-  > :last-child:not(:first-child) {
-    margin-block-start: auto;
+const StyledTabs = styled(Tabs)`
+  width: 500px;
+
+  .ant-tabs-nav {
+    padding-inline: 0;
+  }
+
+  &[data-collapsed='true'] {
+    .ant-tabs-nav,
+    .ant-tabs-content-holder {
+      overflow: hidden;
+      width: 0;
+    }
+  }
+
+  .ant-tabs-content {
+    position: unset;
+  }
+
+  .ant-tabs-content,
+  [role='tabpanel'] {
+    height: 100%;
   }
 `
 
-const TopRowWrapper = styled.div`
-  display: flex;
+const StyledStack = styled(Stack)`
+  --space: 1em;
+  height: 100%;
 `
 
 const CollapseArrow = styled(VerticalAlignTopOutlined)`
@@ -45,24 +61,45 @@ const CollapseArrow = styled(VerticalAlignTopOutlined)`
     props.$isCollapsed ? 'rotate(270deg)' : 'rotate(90deg)'};
   transition: transform 0.3s ease-out;
 `
+// #endregion styled
 
 // #region helpoers
 const selectKeys = ['label', 'value']
-const optionKeys = ['format', 'size', 'content', 'template', 'isbn']
+
+const optionKeys = [
+  'format',
+  'size',
+  'content',
+  'template',
+  'isbn',
+  'includePdf',
+  'includeEpub',
+  'pdfProfileId',
+  'epubProfileId',
+]
+
+const contentOrder = [
+  'includeCoverPage',
+  'includeTitlePage',
+  'includeCopyrights',
+  'includeTOC',
+]
 
 const getProfileSelectOptions = profile => pick(profile, selectKeys)
 
-const getAllProfileSelectOptions = profiles =>
-  profiles?.map(p => getProfileSelectOptions(p))
-
 const sanitizeOptionData = data => {
   const d = { ...data }
-  d.content = d.content?.sort()
+  d.content =
+    d.content?.sort(
+      (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+    ) || null
+
   return d
 }
 
 const getProfileExportOptions = profile => {
   const p = pick(profile, optionKeys)
+  if (p.content === undefined) p.content = null
   return sanitizeOptionData(p)
 }
 // #endregion helpers
@@ -71,13 +108,12 @@ const PreviewSettings = props => {
   const {
     createProfile,
     currentOptions,
+    newOptions,
     deleteProfile,
-    defaultProfile,
     download,
     isCollapsed,
     canModify,
     canUploadToProvider,
-    isDownloadButtonDisabled,
     isUserConnectedToLulu,
     loadingPreview,
     luluConfig,
@@ -93,6 +129,14 @@ const PreviewSettings = props => {
     templates,
     isbns,
     updateProfileOptions,
+    activeTabKey,
+    setActiveTabKey,
+    exportsConfig,
+    onPublish,
+    publishing,
+    onUnpublish,
+    webPublishInfo,
+    hasCover,
   } = props
 
   // #region functions
@@ -116,11 +160,14 @@ const PreviewSettings = props => {
   const handleClickCollapse = () => {
     onClickCollapse(!isCollapsed)
   }
+
+  const handleFormatChange = format => {
+    if (optionsDisabled) return // handle here to prevent flashing
+    handleOptionsChange({ format })
+  }
   // #endregion functions
 
   // #region data wrangling
-  const profileSelectOptions = getAllProfileSelectOptions(profiles)
-
   const fullSelectedProfile = findProfile(selectedProfile) || {}
 
   const selectedProfileSelectOption =
@@ -129,87 +176,110 @@ const PreviewSettings = props => {
   const selectedProfileExportOptions =
     getProfileExportOptions(fullSelectedProfile)
 
-  const isNewProfileSelected = selectedProfile === defaultProfile.value
   const { lastSynced, projectId, projectUrl, synced } = fullSelectedProfile
-  const isProfileInLulu = !!projectId
   const isProfileSyncedWithLulu = synced
-  const hasChanges = !isEqual(selectedProfileExportOptions, currentOptions)
+
+  const hasChanges = !isEqualWith(
+    selectedProfileExportOptions,
+    currentOptions,
+    (a, b) => {
+      if (isNil(a) && isNil(b)) {
+        return true
+      }
+
+      return undefined
+    },
+  )
   // #endregion data wrangling
 
   return (
     <Wrapper>
-      <TopRowWrapper>
-        {luluConfig && (
-          <ProfileRow
-            canModifyProfiles={canModify}
-            isCollapsed={isCollapsed}
-            isNewProfileSelected={isNewProfileSelected}
-            onProfileChange={handleProfileChange}
-            onProfileRename={renameProfile}
-            profiles={profileSelectOptions}
-            selectedProfile={selectedProfileSelectOption}
-          />
-        )}
+      <StyledTabs
+        activeKey={activeTabKey}
+        data-collapsed={isCollapsed}
+        destroyInactiveTabPane
+        items={[
+          {
+            label: 'New preview',
+            key: 'new',
+            children: (
+              <StyledStack>
+                <NewProfileTab
+                  canModify={canModify}
+                  createProfile={createProfile}
+                  exportsConfig={exportsConfig}
+                  handleFormatChange={handleFormatChange}
+                  handleOptionsChange={handleOptionsChange}
+                  hasCover={hasCover}
+                  isbns={isbns}
+                  isCollapsed={isCollapsed}
+                  isNewProfileSelected
+                  loadingPreview={loadingPreview}
+                  newProfileOptions={newOptions}
+                  onClickDownload={download}
+                  optionsDisabled={optionsDisabled}
+                  profiles={profiles}
+                  templates={templates}
+                  updateProfileOptions={updateProfileOptions}
+                  // updateLoading={updateLoading}
+                />
+              </StyledStack>
+            ),
+          },
+          {
+            label: 'Publishing profiles',
+            key: 'saved',
+            children: (
+              <StyledStack>
+                <SavedProfilesTab
+                  canModify={canModify}
+                  canUploadToProvider={canUploadToProvider}
+                  createProfile={createProfile}
+                  currentOptions={currentOptions}
+                  exportsConfig={exportsConfig}
+                  handleOptionsChange={handleOptionsChange}
+                  handleProfileChange={handleProfileChange}
+                  hasChanges={hasChanges}
+                  hasCover={hasCover}
+                  isbns={isbns}
+                  isCollapsed={isCollapsed}
+                  isProfileSyncedWithLulu={isProfileSyncedWithLulu}
+                  isUserConnectedToLulu={isUserConnectedToLulu}
+                  lastSynced={lastSynced}
+                  loadingPreview={loadingPreview}
+                  luluConfig={luluConfig}
+                  onClickConnectToLulu={onClickConnectToLulu}
+                  onClickDelete={deleteProfile}
+                  onClickDownload={download}
+                  onPublish={onPublish}
+                  onUnpublish={onUnpublish}
+                  optionsDisabled={optionsDisabled}
+                  profiles={profiles}
+                  projectId={projectId}
+                  projectUrl={projectUrl}
+                  publishing={publishing}
+                  renameProfile={renameProfile}
+                  selectedProfile={selectedProfile}
+                  selectedProfileLastUpdated={fullSelectedProfile.updated}
+                  selectedProfileSelectOption={selectedProfileSelectOption}
+                  sendToLulu={sendToLulu}
+                  templates={templates}
+                  updateProfileOptions={updateProfileOptions}
+                  webPublishInfo={webPublishInfo}
+                />
+              </StyledStack>
+            ),
+          },
+        ]}
+        onChange={setActiveTabKey}
+      />
+      <div style={{ zIndex: '9', backgroundColor: 'white' }}>
         <Button
           icon={<CollapseArrow $isCollapsed={isCollapsed} />}
           onClick={handleClickCollapse}
           type="text"
         />
-      </TopRowWrapper>
-
-      {!isCollapsed && (
-        <>
-          {canModify && hasChanges && (
-            <Ribbon hide={!hasChanges || !canModify}>
-              You have unsaved changes
-            </Ribbon>
-          )}
-
-          <ExportOptionsSection
-            disabled={optionsDisabled}
-            isbns={isbns}
-            onChange={handleOptionsChange}
-            selectedContent={currentOptions.content}
-            selectedFormat={currentOptions.format}
-            selectedIsbn={currentOptions.isbn}
-            selectedSize={currentOptions.size}
-            selectedTemplate={currentOptions.template}
-            templates={templates}
-          />
-
-          <Divider />
-
-          {!isNewProfileSelected && (
-            <LuluIntegration
-              canUploadToProvider={canUploadToProvider}
-              isConnected={isUserConnectedToLulu}
-              isInLulu={isProfileInLulu}
-              isSynced={isProfileSyncedWithLulu}
-              lastSynced={lastSynced}
-              onClickConnect={onClickConnectToLulu}
-              onClickSendToLulu={sendToLulu}
-              projectId={projectId}
-              projectUrl={projectUrl}
-            />
-          )}
-
-          <Footer
-            canModify={canModify}
-            createProfile={createProfile}
-            isDownloadButtonDisabled={isDownloadButtonDisabled}
-            isNewProfileSelected={isNewProfileSelected}
-            isSaveDisabled={
-              !canModify ||
-              loadingPreview ||
-              (!isNewProfileSelected && !hasChanges)
-            }
-            loadingPreview={loadingPreview}
-            onClickDelete={deleteProfile}
-            onClickDownload={download}
-            updateProfile={updateProfileOptions}
-          />
-        </>
-      )}
+      </div>
     </Wrapper>
   )
 }
@@ -217,10 +287,31 @@ const PreviewSettings = props => {
 PreviewSettings.propTypes = {
   createProfile: PropTypes.func.isRequired,
   currentOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
-      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCoverPage',
+      ]),
+    ),
+    template: PropTypes.string,
+    isbn: PropTypes.string,
+    spread: PropTypes.oneOf(['single', 'double']),
+    zoom: PropTypes.number,
+  }).isRequired,
+  newOptions: PropTypes.shape({
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
+    size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
+    content: PropTypes.arrayOf(
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCoverPage',
+      ]),
     ),
     template: PropTypes.string,
     isbn: PropTypes.string,
@@ -231,7 +322,7 @@ PreviewSettings.propTypes = {
   defaultProfile: PropTypes.shape({
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
@@ -243,14 +334,13 @@ PreviewSettings.propTypes = {
   isCollapsed: PropTypes.bool.isRequired,
   canModify: PropTypes.bool.isRequired,
   canUploadToProvider: PropTypes.bool.isRequired,
-  isDownloadButtonDisabled: PropTypes.bool.isRequired,
   isUserConnectedToLulu: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,
   luluConfig: PropTypes.shape(),
   onClickCollapse: PropTypes.func.isRequired,
   onClickConnectToLulu: PropTypes.func.isRequired,
   onOptionsChange: PropTypes.func.isRequired,
-  onProfileChange: PropTypes.func.isRequired,
+  // onProfileChange: PropTypes.func.isRequired,
   optionsDisabled: PropTypes.bool.isRequired,
   profiles: PropTypes.arrayOf(
     PropTypes.shape({
@@ -258,7 +348,7 @@ PreviewSettings.propTypes = {
       value: PropTypes.string.isRequired,
       format: PropTypes.string.isRequired,
       size: PropTypes.string,
-      content: PropTypes.arrayOf(PropTypes.string).isRequired,
+      content: PropTypes.arrayOf(PropTypes.string),
       template: PropTypes.string,
       synced: PropTypes.bool,
       lastSynced: PropTypes.string,
@@ -266,8 +356,8 @@ PreviewSettings.propTypes = {
       projectUrl: PropTypes.string,
     }),
   ).isRequired,
-  renameProfile: PropTypes.func.isRequired,
-  selectedProfile: PropTypes.string.isRequired,
+  // renameProfile: PropTypes.func.isRequired,
+  selectedProfile: PropTypes.string,
   sendToLulu: PropTypes.func.isRequired,
   templates: PropTypes.arrayOf(
     PropTypes.shape({
@@ -283,10 +373,19 @@ PreviewSettings.propTypes = {
     }),
   ).isRequired,
   updateProfileOptions: PropTypes.func.isRequired,
+  onPublish: PropTypes.func,
+  publishing: PropTypes.bool,
+  webPublishInfo: PropTypes.shape(),
+  onUnpublish: PropTypes.func,
 }
 
 PreviewSettings.defaultProps = {
+  selectedProfile: null,
   luluConfig: null,
+  onPublish: null,
+  publishing: false,
+  onUnpublish: null,
+  webPublishInfo: null,
 }
 
 export default PreviewSettings

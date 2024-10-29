@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Alert } from 'antd'
-
 import { grid } from '@coko/client'
-
 import { Spin } from '../common'
 import PreviewDisplayOptions from './PreviewDisplayOptions'
 
@@ -71,6 +69,7 @@ const PreviewDisplay = props => {
   const {
     className,
     isEpub,
+    isPdf,
     loading,
     // noPreview,
     onOptionsChange,
@@ -127,19 +126,21 @@ const PreviewDisplay = props => {
         <PreviewWrapper>
           <StyledSpin spinning={showLoading}>
             <IframeWrapper>
-              <Veil hide={!iFrameLoading} />
+              <Veil hide={!iFrameLoading && !!previewLink} />
               <Iframe id="previewer" src={previewLink} />
             </IframeWrapper>
           </StyledSpin>
 
-          <Floating>
-            <PreviewDisplayOptions
-              disabled={loading}
-              onOptionsChange={onOptionsChange}
-              spread={spread}
-              zoom={zoom}
-            />
-          </Floating>
+          {isPdf && (
+            <Floating>
+              <PreviewDisplayOptions
+                disabled={loading}
+                onOptionsChange={onOptionsChange}
+                spread={spread}
+                zoom={zoom}
+              />
+            </Floating>
+          )}
         </PreviewWrapper>
       )}
     </Wrapper>
@@ -147,7 +148,8 @@ const PreviewDisplay = props => {
 }
 
 PreviewDisplay.propTypes = {
-  isEpub: PropTypes.bool.isRequired,
+  isEpub: PropTypes.bool,
+  isPdf: PropTypes.bool,
   loading: PropTypes.bool.isRequired,
   // noPreview: PropTypes.bool.isRequired,
   onOptionsChange: PropTypes.func.isRequired,
@@ -158,8 +160,10 @@ PreviewDisplay.propTypes = {
 
 PreviewDisplay.defaultProps = {
   previewLink: null,
-  spread: 'double',
+  spread: 'single',
   zoom: 1,
+  isEpub: false,
+  isPdf: true,
 }
 
 export default PreviewDisplay

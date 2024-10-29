@@ -24,12 +24,14 @@ const GET_EXPORT_PROFILES = gql`
     getBookExportProfiles(bookId: $bookId) {
       result {
         id
+        updated
         displayName
         format
         includedComponents {
           copyright
           titlePage
           toc
+          cover
         }
         providerInfo {
           providerLabel
@@ -40,6 +42,12 @@ const GET_EXPORT_PROFILES = gql`
         templateId
         trimSize
         isbn
+        downloadableAssets {
+          pdf
+          epub
+          pdfProfileId
+          epubProfileId
+        }
       }
     }
   }
@@ -56,6 +64,7 @@ const CREATE_EXPORT_PROFILE = gql`
         copyright
         titlePage
         toc
+        cover
       }
       providerInfo {
         providerLabel
@@ -66,6 +75,12 @@ const CREATE_EXPORT_PROFILE = gql`
       templateId
       trimSize
       isbn
+      downloadableAssets {
+        pdf
+        epub
+        pdfProfileId
+        epubProfileId
+      }
     }
   }
 `
@@ -97,6 +112,7 @@ const UPDATE_EXPORT_PROFILE_OPTIONS = gql`
         copyright
         titlePage
         toc
+        cover
       }
       providerInfo {
         providerLabel
@@ -127,6 +143,9 @@ const GET_BOOK_COMPONENT_IDS = gql`
           isbn
           label
         }
+      }
+      cover {
+        coverUrl
       }
     }
   }

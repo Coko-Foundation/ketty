@@ -68,6 +68,10 @@ const GET_ENTIRE_BOOK = gql`
         customPromptsOn
         knowledgeBaseOn
       }
+      cover {
+        coverUrl
+        altText
+      }
     }
   }
 `
@@ -79,7 +83,10 @@ const GET_BOOKS = gql`
         id
         archived
         title
-        thumbnailURL
+        cover {
+          coverUrl
+        }
+        # thumbnailURL
       }
       totalCount
     }
@@ -98,6 +105,20 @@ const GET_BOOK_SETTINGS = gql`
         freeTextPromptsOn
         customPromptsOn
         knowledgeBaseOn
+      }
+    }
+  }
+`
+
+const GET_BOOK_WEB_PUBLISH_INFO = gql`
+  query GetBook($id: ID!) {
+    getBook(id: $id) {
+      webPublishInfo {
+        published
+        # firstPublished
+        lastUpdated
+        publicUrl
+        profileId
       }
     }
   }
@@ -277,11 +298,34 @@ const UPDATE_BOOK_POD_METADATA = gql`
 `
 
 const UPLOAD_BOOK_THUMBNAIL = gql`
-  mutation UploadBookThumbnail($id: ID!, $file: Upload!) {
+  mutation UploadBookThumbnail($id: ID!, $file: Upload) {
     uploadBookThumbnail(bookId: $id, file: $file) {
       id
       thumbnailId
       thumbnailURL
+    }
+  }
+`
+
+const UPLOAD_BOOK_COVER = gql`
+  mutation UploadBookCover($id: ID!, $file: Upload) {
+    uploadBookCover(bookId: $id, file: $file) {
+      id
+      cover {
+        fileId
+        coverUrl
+      }
+    }
+  }
+`
+
+const UPDATE_COVER_ALT = gql`
+  mutation UpdateCoverAlt($id: ID!, $coverAlt: String) {
+    updateCoverAlt(bookId: $id, coverAlt: $coverAlt) {
+      id
+      cover {
+        altText
+      }
     }
   }
 `
@@ -291,6 +335,14 @@ const EXPORT_BOOK = gql`
     exportBook(input: $input) {
       path
       validationResult
+    }
+  }
+`
+
+const PUBLISH_ONLINE = gql`
+  mutation PublishOnline($input: ExportBookInput!, $profileId: ID!) {
+    publishOnline(input: $input, profileId: $profileId) {
+      path
     }
   }
 `
@@ -400,4 +452,8 @@ export {
   BOOK_DELETED_SUBSCRIPTION,
   BOOK_RENAMED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  PUBLISH_ONLINE,
+  GET_BOOK_WEB_PUBLISH_INFO,
+  UPLOAD_BOOK_COVER,
+  UPDATE_COVER_ALT,
 }

@@ -71,7 +71,7 @@ const Signup = props => {
   return (
     <Page maxWidth={600}>
       <AuthenticationWrapper className={className}>
-        <AuthenticationHeader>Sign up</AuthenticationHeader>
+        <AuthenticationHeader>Signup</AuthenticationHeader>
 
         {hasSuccess && (
           <div role="alert">
@@ -84,7 +84,7 @@ const Signup = props => {
                   the email to activate your account.
                 </Paragraph>
               }
-              title="Sign up successful!"
+              title="Signup successful!"
             />
           </div>
         )}
@@ -99,15 +99,18 @@ const Signup = props => {
             loading={loading}
             onSubmit={onSubmit}
             showForgotPassword={false}
-            submitButtonLabel="Sign up"
-            title="Sign up"
+            submitButtonLabel="Sign Up"
+            title="Signup"
           >
             <Form.Item
-              label="Given Name"
+              label="Given name"
               name="givenNames"
               rules={[{ required: true, message: 'Given name is required' }]}
             >
-              <Input placeholder="Fill in your first name" />
+              <Input
+                placeholder="Fill in your first name"
+                data-test="signup-givenName-input"
+              />
             </Form.Item>
 
             <Form.Item
@@ -115,7 +118,10 @@ const Signup = props => {
               name="surname"
               rules={[{ required: true, message: 'Surname is required' }]}
             >
-              <Input placeholder="Fill in your last name" />
+              <Input
+                placeholder="Fill in your last name"
+                data-test="signup-surname-input"
+              />
             </Form.Item>
 
             <Form.Item
@@ -132,7 +138,11 @@ const Signup = props => {
                 },
               ]}
             >
-              <Input placeholder="Fill in your email" type="email" />
+              <Input
+                placeholder="Fill in your email"
+                type="email"
+                data-test="signup-email-input"
+              />
             </Form.Item>
 
             <Form.Item
@@ -155,12 +165,16 @@ const Signup = props => {
                 }),
               ]}
             >
-              <Input placeholder="Fill in your password" type="password" />
+              <Input
+                placeholder="Fill in your password"
+                type="password"
+                data-test="signup-password-input"
+              />
             </Form.Item>
 
             <Form.Item
               dependencies={['password']}
-              label="Confirm Password"
+              label="Confirm password"
               name="confirmPassword"
               rules={[
                 {
@@ -185,6 +199,7 @@ const Signup = props => {
               <Input
                 placeholder="Fill in your password again"
                 type="password"
+                data-test="signup-confirmPassword-input"
               />
             </Form.Item>
             <ModalContext.Provider value={null}>
@@ -204,7 +219,10 @@ const Signup = props => {
                 ]}
                 valuePropName="checked"
               >
-                <Checkbox aria-label="I agree to the terms and conditions">
+                <Checkbox
+                  aria-label="I agree to the terms and conditions"
+                  data-test="signup-agreedTc-checkbox"
+                >
                   I agree to the{' '}
                   <Link
                     as="a"

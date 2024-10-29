@@ -166,14 +166,14 @@ services:
     ports:
       - ${SERVICE_PAGEDJS_PORT:-3003}:${SERVICE_PAGEDJS_PORT:-3003}
     environment:
-      - PUBSWEET_SECRET=pagedjs_dev_secret
+      - SECRET=pagedjs_dev_secret
       - POSTGRES_USER=pagedjs_user_dev
       - POSTGRES_PASSWORD=pagedjs_user_password
       - POSTGRES_HOST=db-pagedjs
       - POSTGRES_DB=pagedjs_dev
       - POSTGRES_PORT=5432
       - SERVER_PORT=${SERVICE_PAGEDJS_PORT:-3003}
-      - PUBLIC_URL=${PAGEDJS_PUBLIC_URL:-http://localhost:3003}
+      - SERVER_URL=${PAGEDJS_PUBLIC_URL:-http://localhost:3003}
       - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
       - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
     security_opt:

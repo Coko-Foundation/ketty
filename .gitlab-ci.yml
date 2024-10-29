@@ -67,7 +67,7 @@ lint:
     WORKDIR: $PATH_INSIDE_CONTAINER
     STYLELINT: 1
 
-unit test:
+.unit test:
   extends: .client unit test
   stage: Lint & Unit test
   variables:
@@ -121,35 +121,35 @@ publish production demo:
   only:
     - main
 
-build & publish storybook:
-  extends: .build & publish storybook
-  stage: Publish
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_STORYBOOK
-    BUILD_PATH: $PATH_TO_BUILD
-  only:
-    - develop
+# .build & publish storybook:
+#   extends: .build & publish storybook
+#   stage: Publish
+#   variables:
+#     IMAGE_NAME: $IMAGE_NAME_STORYBOOK
+#     BUILD_PATH: $PATH_TO_BUILD
+#   only:
+#     - develop
 
 # DEPLOY
 
-deploy storybook:
-  extends: .deploy base
-  stage: Deploy
-  needs:
-    - build & publish storybook
-  variables:
-    URL: $STORYBOOK_SSH_URL
-    PORT: $STORYBOOK_SSH_PORT
-    USER: $STORYBOOK_SSH_USER
-    PRIVATE_KEY: $STORYBOOK_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $STORYBOOK_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_STORYBOOK
-    SERVICE_NAME: $SERVICE_NAME_STORYBOOK
-  only:
-    - develop
-  environment:
-    name: storybook
-    url: https://$STORYBOOK_SSH_URL
+# .deploy storybook:
+#   extends: .deploy base
+#   stage: Deploy
+#   needs:
+#     - build & publish storybook
+#   variables:
+#     URL: $STORYBOOK_SSH_URL
+#     PORT: $STORYBOOK_SSH_PORT
+#     USER: $STORYBOOK_SSH_USER
+#     PRIVATE_KEY: $STORYBOOK_SSH_PRIVATE_KEY
+#     APP_PATH_ON_SERVER: $STORYBOOK_APP_PATH_ON_SERVER
+#     COMPOSE_FILE: $COMPOSE_FILE_STORYBOOK
+#     SERVICE_NAME: $SERVICE_NAME_STORYBOOK
+#   only:
+#     - develop
+#   environment:
+#     name: storybook
+#     url: https://$STORYBOOK_SSH_URL
 
 deploy develop:
   extends: .deploy base

@@ -5,21 +5,9 @@ import styled from 'styled-components'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import { Wax } from 'wax-prosemirror-core'
-import { Button, Divider, Switch, Input, Form } from '../common'
+import { Button, Divider, Switch, Input, Form, Center, Stack } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
-
-const Center = styled.div`
-  --max-width: 90ch;
-  --min-width: 0;
-  --padding: ${grid(4)};
-
-  box-sizing: content-box;
-  margin-inline: auto;
-  max-width: var(--max-width, 70ch);
-  min-width: var(--min-width, 0);
-  padding: var(--padding);
-`
 
 const StyledControlWrapper = styled.div`
   align-items: center;
@@ -27,7 +15,7 @@ const StyledControlWrapper = styled.div`
   flex-flow: row wrap;
   gap: ${grid(4)};
   justify-content: space-between;
-  max-width: 50%;
+  max-width: 400px;
 `
 
 const TCWrapper = styled.div`
@@ -74,6 +62,8 @@ const AdminDashboard = props => {
     termsAndConditions,
     onTCUpdate,
     onChatGPTKeyUpdate,
+    exportOptions,
+    exportConfigUpdate,
   } = props
 
   const waxRef = useRef()
@@ -127,8 +117,10 @@ const AdminDashboard = props => {
   }
 
   return (
-    <Center>
-      <h1>Admin dashboard</h1>
+    <Center
+      style={{ '--max-width': '90ch', '--s1': '16px', 'margin-bottom': '3rem' }}
+    >
+      <h1>Admin</h1>
       <Divider />
       <h2>AI integration</h2>
       <StyledControlWrapper>
@@ -137,6 +129,7 @@ const AdminDashboard = props => {
           checked={aiEnabled}
           loading={paramsLoading}
           onChange={aiToggleIntegration}
+          data-test="admindb-ai-switch"
         />
         <ChatGPTAPIKeyWrapper $hidden={!aiEnabled}>
           <Form
@@ -147,15 +140,19 @@ const AdminDashboard = props => {
             requiredMark={false}
           >
             <Form.Item
-              label="Api key"
+              label="API Key"
               name="apiKey"
               rules={[{ required: true, message: 'You need to provide a key' }]}
             >
-              <Input placeholder="Insert key" />
+              <Input placeholder="Insert key" data-test="admindb-aikey-input" />
             </Form.Item>
             <div>
-              <Button htmlType="submit" loading={keyUpdateResult?.loading}>
-                Update key
+              <Button
+                htmlType="submit"
+                loading={keyUpdateResult?.loading}
+                data-test="admindb-updateKey-btn"
+              >
+                Update Key
               </Button>
               <UpdateResult $success={keyUpdateResult?.success} role="status">
                 {keyUpdateResult?.message && (
@@ -175,19 +172,81 @@ const AdminDashboard = props => {
         </ChatGPTAPIKeyWrapper>
       </StyledControlWrapper>
       <Divider />
-      <h2>Print on demand supplier integration</h2>
-      <StyledControlWrapper>
-        <span>Lulu</span>
-        <Switch
-          checked={luluConfigEnabled}
-          loading={paramsLoading}
-          onChange={luluToggleConfig}
-        />
-      </StyledControlWrapper>
+      <h2>Publishing, downloads and integration</h2>
+      <Stack style={{ '--space': '2rem' }}>
+        <h3>Downloads</h3>
+        <Stack style={{ '--space': '1rem' }}>
+          <StyledControlWrapper>
+            <span>PDF</span>
+            <Switch
+              checked={exportOptions?.pdfDownload?.enabled}
+              loading={paramsLoading}
+              onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+            />
+          </StyledControlWrapper>
+          <StyledControlWrapper>
+            <span>EPUB</span>
+            <Switch
+              checked={exportOptions?.epubDownload?.enabled}
+              loading={paramsLoading}
+              onChange={val => exportConfigUpdate(val, 'epubDownload')}
+            />
+          </StyledControlWrapper>
+        </Stack>
+        <h3>Publishing integrations</h3>
+        <StyledControlWrapper>
+          <span>Publish online with Flax</span>
+          <Switch
+            checked={exportOptions?.webPublish?.enabled}
+            loading={paramsLoading}
+            onChange={val => exportConfigUpdate(val, 'webPublish')}
+          />
+          {exportOptions?.webPublish?.enabled && (
+            <Stack
+              style={{
+                '--space': '1em',
+                paddingInlineStart: '3ch',
+              }}
+            >
+              <p style={{ 'grid-column': 'span 2' }}>
+                Allow book owners to include the following downloads when
+                publishing online:
+              </p>
+              <StyledControlWrapper>
+                <span>PDF</span>
+                <Switch
+                  checked={exportOptions?.webPdfDownload?.enabled}
+                  loading={paramsLoading}
+                  onChange={val => exportConfigUpdate(val, 'webPdfDownload')}
+                />
+              </StyledControlWrapper>
+              <StyledControlWrapper>
+                <span>EPUB</span>
+                <Switch
+                  checked={exportOptions?.webEpubDownload?.enabled}
+                  loading={paramsLoading}
+                  onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
+                />
+              </StyledControlWrapper>
+            </Stack>
+          )}
+        </StyledControlWrapper>
+        <StyledControlWrapper>
+          <span>Print-on-demand with Lulu</span>
+          <Switch
+            checked={luluConfigEnabled}
+            loading={paramsLoading}
+            onChange={luluToggleConfig}
+            data-test="admindb-lulu-switch"
+          />
+        </StyledControlWrapper>
+      </Stack>
+      {/* <h2>Print on demand supplier integration</h2> */}
+
       <Divider />
       <h2>Terms and conditions</h2>
       <p>
-        Provide the terms and conditions that users must agree to on sign up
+        Provide the terms and conditions that users must agree to on sign up.
       </p>
       <TCWrapper>
         <Wax
@@ -200,7 +259,10 @@ const AdminDashboard = props => {
           value={termsAndConditions}
         />
         <div>
-          <Button onClick={udpateTermsAndConditions}>
+          <Button
+            onClick={udpateTermsAndConditions}
+            data-test="admindb-updateT&C-btn"
+          >
             Update Terms and Conditions
           </Button>
           <UpdateResult $success={tcUpdateResult?.success} role="status">
@@ -232,6 +294,8 @@ AdminDashboard.propTypes = {
   onTCUpdate: PropTypes.func,
   chatGptApiKey: PropTypes.string,
   onChatGPTKeyUpdate: PropTypes.func,
+  exportOptions: PropTypes.shape(),
+  exportConfigUpdate: PropTypes.func,
 }
 
 AdminDashboard.defaultProps = {
@@ -244,6 +308,8 @@ AdminDashboard.defaultProps = {
   onTCUpdate: null,
   chatGptApiKey: '',
   onChatGPTKeyUpdate: null,
+  exportOptions: {},
+  exportConfigUpdate: null,
 }
 
 export default AdminDashboard

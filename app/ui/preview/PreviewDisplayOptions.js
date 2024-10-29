@@ -87,11 +87,11 @@ const PreviewDisplayOptions = props => {
         onChange={handleChangeSpread}
         value={options.spread}
       >
-        <Radio.Button value="double">
+        <Radio.Button value="double" data-test="preview-doublePage-btn">
           <ReadOutlined />
         </Radio.Button>
 
-        <Radio.Button value="single">
+        <Radio.Button value="single" data-test="preview-singlePage-btn">
           <BorderOutlined />
         </Radio.Button>
       </Radio.Group>
@@ -103,6 +103,7 @@ const PreviewDisplayOptions = props => {
           icon={<ZoomOutOutlined />}
           onClick={handleZoomOut}
           shape="circle"
+          data-test="preview-zoomOut-btn"
         />
 
         <Zoom>{`${options.zoom * 100} %`}</Zoom>
@@ -113,6 +114,7 @@ const PreviewDisplayOptions = props => {
           icon={<ZoomInOutlined />}
           onClick={handleZoomIn}
           shape="circle"
+          data-test="preview-zoomIn-btn"
         />
       </ZoomWrapper>
     </Wrapper>

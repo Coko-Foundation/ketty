@@ -6,31 +6,33 @@ import { th, grid } from '@coko/client'
 
 import fallback from '../../../static/imageFallback.png'
 
-const Wrapper = styled.div`
+const Wrapper = styled.li`
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
   cursor: pointer;
   display: inline-flex;
   flex-direction: column;
   max-width: 85px;
   object-fit: cover;
-`
 
-const Marker = styled.div`
-  background-color: ${th('colorText')};
-  border-radius: 5px;
-  height: ${grid(1)};
-  margin: 0 auto ${grid(1)};
-  transition: visibility 0.1s ease-in, width 0.1s ease-in;
-  visibility: ${props => (props.selected ? 'visible' : 'hidden')};
-  width: ${props => (props.selected ? grid(8) : 0)};
+  &[aria-checked='true']::before {
+    background-color: ${th('colorText')};
+    border-radius: 5px;
+    content: '';
+    height: ${grid(1)};
+    margin: 0 auto ${grid(1)};
+    position: relative;
+    top: 0;
+    transition: visibility 0.1s ease-in, width 0.1s ease-in;
+    visibility: 'visible';
+    width: ${grid(8)};
+  }
 
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
-  ${props =>
-    props.isDot &&
-    css`
-      border-radius: 50%;
-      height: ${grid(2)};
-      width: ${props.selected ? grid(2) : 0};
-    `}
+  &[aria-checked='false'] {
+    padding-top: ${grid(2)};
+  }
 `
 
 const Name = styled.div`
@@ -39,21 +41,12 @@ const Name = styled.div`
   text-transform: capitalize;
   word-wrap: break-word;
 
-  /* > span {
-    padding-bottom: ${grid(0.2)};
-  } */
-
   /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${props =>
     props.selected &&
     css`
       font-weight: bold;
       transition: font-weight 0.1s ease-in;
-
-      /* > span {
-        border-bottom: 2px solid ${th('colorPrimary')};
-        transition: border 0.1s ease-in;
-      } */
     `}
 `
 
@@ -91,12 +84,14 @@ const Template = props => {
   const handleClick = () => onClick(id)
 
   return (
-    <Wrapper className={className} key={id} onClick={handleClick}>
-      <Marker
-        // isDot
-        selected={isSelected}
-      />
-
+    <Wrapper
+      aria-checked={isSelected}
+      className={className}
+      id={id}
+      key={id}
+      onClick={handleClick}
+      role="radio"
+    >
       <TemplateImg
         alt={name}
         selected={isSelected}
@@ -104,7 +99,9 @@ const Template = props => {
       />
 
       <Name selected={isSelected}>
-        <span>{name}</span>
+        <span aria-hidden="true" data-test="preview-templateName">
+          {name}
+        </span>
       </Name>
     </Wrapper>
   )

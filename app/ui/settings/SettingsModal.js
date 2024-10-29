@@ -245,10 +245,11 @@ const SettingsModal = ({
         <div>
           <SettingTitle>AI writing prompt use</SettingTitle>
           <SettingInfo>
-            Users with edit access to this book can use AI writing prompts
+            Users with edit access to this book can use AI writing prompts.
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-toggleAI-switch"
           checked={isAiOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={toggleAiOn}
@@ -263,6 +264,7 @@ const SettingsModal = ({
                 <SettingTitle>Free-text writing prompts</SettingTitle>
               </SettingInfo>
               <Switch
+                data-test="settings-freeTextPrompt-switch"
                 checked={isFreeTextPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleFreePromptSwitch(e)}
@@ -274,6 +276,7 @@ const SettingsModal = ({
                 <SettingTitle>Customize AI writing prompts</SettingTitle>
               </SettingInfo>
               <Switch
+                data-test="settings-customPrompt-switch"
                 checked={isCustomPromptsOn}
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleCustomPromptsSwitch(e)}
@@ -299,7 +302,7 @@ const SettingsModal = ({
                           },
                         ]}
                       >
-                        <Input placeholder="Add Prompt" />
+                        <Input placeholder="Add prompt" />
                       </StyledFormItem>
                       <StyledFormButton
                         disabled={updateLoading || !canChangeSettings}
@@ -335,10 +338,11 @@ const SettingsModal = ({
         <div>
           <SettingTitle>AI Book Designer (Beta)</SettingTitle>
           <SettingInfo>
-            Users with edit access to this book can use the AI Book Designer
+            Users with edit access to this book can use the AI Book Designer.
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-AIDesigner-switch"
           checked={isAiPdfOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => setIsAiPdfOn(e)}
@@ -350,11 +354,12 @@ const SettingsModal = ({
           <SettingTitle>Knowledge Base</SettingTitle>
           <SettingInfo>
             Users with edit access to this book can create and query a knowledge
-            base. <br /> Requires AI writing prompts and free text prompts to be
+            base. <br /> Requires AI writing prompts and free-text prompts to be
             on.
           </SettingInfo>
         </div>
         <Switch
+          data-test="settings-kb-switch"
           checked={isKnowledgeBaseOn}
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleKnowledgeBase(e)}
@@ -362,6 +367,16 @@ const SettingsModal = ({
       </SettingsWrapper>
       <ButtonsContainer>
         <StyledButton
+          data-test="settings-cancel-btn"
+          disabled={updateLoading}
+          htmlType="reset"
+          onClick={closeModal}
+        >
+          Cancel
+        </StyledButton>
+
+        <StyledButton
+          data-test="settings-save-btn"
           disabled={!canChangeSettings}
           htmlType="submit"
           loading={updateLoading}
@@ -369,14 +384,6 @@ const SettingsModal = ({
           type="primary"
         >
           Save
-        </StyledButton>
-
-        <StyledButton
-          disabled={updateLoading}
-          htmlType="reset"
-          onClick={closeModal}
-        >
-          Cancel
         </StyledButton>
       </ButtonsContainer>
     </Stack>

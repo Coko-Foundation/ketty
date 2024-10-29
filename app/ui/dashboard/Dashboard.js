@@ -63,18 +63,17 @@ const Dashboard = props => {
     canDeleteBook,
     canUploadBookThumbnail,
     loading,
-    onUploadBookThumbnail,
   } = props
 
   return (
     <Wrapper>
       <SectionHeader>
-        <h1>Your books</h1>
-        <StyledLink to="/create-book">
+        <h1>Your Books</h1>
+        <StyledLink data-test="dashboard-newBook-button" to="/create-book">
           <span>
             <EditOutlined />
           </span>
-          <span>New book</span>
+          <span>New Book</span>
         </StyledLink>
       </SectionHeader>
 
@@ -87,7 +86,6 @@ const Dashboard = props => {
         loading={loading}
         onClickDelete={onClickDelete}
         onPageChange={onPageChange}
-        onUploadBookThumbnail={onUploadBookThumbnail}
         totalCount={totalCount}
       />
     </Wrapper>
@@ -105,7 +103,6 @@ Dashboard.propTypes = {
   ).isRequired,
   booksPerPage: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
-  onUploadBookThumbnail: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,
   totalCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,

@@ -154,16 +154,13 @@ const SiteHeader = () => {
     return inviteModal.update({
       title: (
         <StyledMembersHeader>
-          <StyledMembersHeaderTitle>Share book</StyledMembersHeaderTitle>
+          <StyledMembersHeaderTitle>Share</StyledMembersHeaderTitle>
           <Tooltip
             arrow={false}
             color="black"
             overlayInnerStyle={{ width: '480px' }}
             placement="right"
-            title="Only the book owner can share the book. Collaborators with
-            'edit access' can edit the book and its metadata, view the preview,
-            and download PDF and Epub files. Collaborators with 'view access'
-            can view the book, its metadata, and the preview."
+            title="The book owner has full access. Collaborators with edit access can edit content and create publishing profiles. Collaborators with view access can view content and publishing profiles."
           >
             <QuestionCircleOutlined />
           </Tooltip>
@@ -190,7 +187,7 @@ const SiteHeader = () => {
     return settingsModal.update({
       title: (
         <StyledMembersHeader>
-          <StyledMembersHeaderTitle>Book settings</StyledMembersHeaderTitle>
+          <StyledMembersHeaderTitle>Book Settings</StyledMembersHeaderTitle>
         </StyledMembersHeader>
       ),
       content: (

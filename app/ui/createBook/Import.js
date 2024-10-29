@@ -39,6 +39,7 @@ const Import = ({ onClickContinue, canImport, loading }) => {
                 disabled={!canImport}
                 multiple
                 onFilesChange={setFilesToImport}
+                data-test="import-upload-button"
               />
 
               <Row justify="end">
@@ -48,6 +49,7 @@ const Import = ({ onClickContinue, canImport, loading }) => {
                   onClick={() => onClickContinue(filesToImport)}
                   size="large"
                   type="primary"
+                  data-test="import-continue-button"
                 >
                   Continue
                 </Button>

@@ -151,7 +151,11 @@ const Header = props => {
 
   if (showDashboard) {
     navItemsLeft.push(
-      <UnstyledLink key="dashboard" to="/dashboard">
+      <UnstyledLink
+        data-test="header-dashboard-link"
+        key="dashboard"
+        to="/dashboard"
+      >
         Dashboard
       </UnstyledLink>,
     )
@@ -159,7 +163,11 @@ const Header = props => {
 
   if (showBackToBook) {
     navItemsLeft.push(
-      <UnstyledLink key="back" to={`/books/${bookId}/producer`}>
+      <UnstyledLink
+        data-test="header-back-link"
+        key="back"
+        to={`/books/${bookId}/producer`}
+      >
         Back to book
       </UnstyledLink>,
     )
@@ -167,15 +175,24 @@ const Header = props => {
 
   if (showPreview) {
     navItemsRight.push(
-      <UnstyledLink key="preiew" to={`/books/${bookId}/exporter`}>
-        Preview
+      <UnstyledLink
+        data-test="header-preview-link"
+        key="preiew"
+        to={`/books/${bookId}/exporter`}
+      >
+        Preview and Publish
       </UnstyledLink>,
     )
   }
 
   if (showInvite) {
     navItemsRight.push(
-      <Button key="share" onClick={onInvite} type="text">
+      <Button
+        data-test="header-share-btn"
+        key="share"
+        onClick={onInvite}
+        type="text"
+      >
         Share
       </Button>,
     )
@@ -183,15 +200,23 @@ const Header = props => {
 
   if (showKnowledgeBaseLink) {
     navItemsRight.push(
-      <UnstyledLink key="kb" to={`/books/${bookId}/knowledge-base`}>
-        Knowledge base
+      <UnstyledLink
+        data-test="header-kb-link"
+        key="kb"
+        to={`/books/${bookId}/knowledge-base`}
+      >
+        Knowledge Base
       </UnstyledLink>,
     )
   }
 
   if (showAiAssistantLink) {
     navItemsRight.push(
-      <UnstyledLink key="ai-designer" to={`/books/${bookId}/ai-pdf`}>
+      <UnstyledLink
+        key="ai-designer"
+        to={`/books/${bookId}/ai-pdf`}
+        data-test="header-aiDesigner-link"
+      >
         AI Book Designer (Beta)
       </UnstyledLink>,
     )
@@ -200,10 +225,11 @@ const Header = props => {
   if (showSettings) {
     navItemsRight.push(
       <Button
+        data-test="header-bookSettings-btn"
         aria-label="Book settings"
         key="settings"
         onClick={onSettings}
-        title="Book settings"
+        title="Book Settings"
         type="text"
       >
         <SettingOutlined />
@@ -214,7 +240,7 @@ const Header = props => {
   return (
     <StyledHeader role="banner" {...rest}>
       <BrandingContainer>
-        <UnstyledLink to={homeURL}>
+        <UnstyledLink data-test="header-logo-link" to={homeURL}>
           {brandLogoURL ? (
             <BrandLogo alt={brandLabel} src={brandLogoURL} />
           ) : (
@@ -233,13 +259,16 @@ const Header = props => {
             position="block-end"
             toggle={
               <Button type="text">
-                <Avatar>{getInitials(userDisplayName)}</Avatar>
+                <Avatar data-test="avatar-initials">
+                  {getInitials(userDisplayName)}
+                </Avatar>
               </Button>
             }
           >
             <PopupContentWrapper>
               {canAccessAdminPage && (
                 <UnstyledLink
+                  data-test="header-admin-link"
                   onClick={() => {
                     document.querySelector('#main-content').focus()
                   }}
@@ -248,7 +277,9 @@ const Header = props => {
                   Admin
                 </UnstyledLink>
               )}
-              <Button onClick={onLogout}>Logout</Button>
+              <Button data-test="logout-button" onClick={onLogout}>
+                Logout
+              </Button>
             </PopupContentWrapper>
           </StyledPopup>
         </LinksContainer>

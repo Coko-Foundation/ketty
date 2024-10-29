@@ -61,9 +61,9 @@ const LicenseTypes = props => {
 
 LicenseTypes.propTypes = {
   value: PropTypes.shape({
-    NC: PropTypes.bool.isRequired,
-    SA: PropTypes.bool.isRequired,
-    ND: PropTypes.bool.isRequired,
+    NC: PropTypes.bool,
+    SA: PropTypes.bool,
+    ND: PropTypes.bool,
   }),
   onChange: PropTypes.func,
   canChangeMetadata: PropTypes.bool.isRequired,

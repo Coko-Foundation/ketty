@@ -43,7 +43,7 @@ const BookTitle = ({ onClickContinue, title, canRename }) => {
           initialValues={{ bookTitle: title }}
           onFinish={handleContinue}
         >
-          <Form.Item name="bookTitle">
+          <Form.Item name="bookTitle" data-test="rename-bookTitle">
             <StyledInput autoFocus placeholder="Book title" type="text" />
           </Form.Item>
           <p>Don&apos;t overthink it, you can change your title at any time</p>
@@ -51,6 +51,7 @@ const BookTitle = ({ onClickContinue, title, canRename }) => {
             disabled={!bookTitle || !canRename}
             onClick={handleContinue}
             type="primary"
+            data-test="rename-continue-button"
           >
             Continue
           </Button>

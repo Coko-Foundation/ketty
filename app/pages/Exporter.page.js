@@ -27,10 +27,17 @@ import {
   RENAME_EXPORT_PROFILE,
   UPLOAD_TO_LULU,
   UPDATE_EXPORT_PROFILE_OPTIONS,
+  PUBLISH_ONLINE,
+  GET_BOOK_WEB_PUBLISH_INFO,
 } from '../graphql'
 
-import { isOwner, hasEditAccess, isAdmin } from '../helpers/permissions'
-import { showErrorModal, showDeletedBookModal } from '../helpers/commonModals'
+import { isOwner, hasEditAccess } from '../helpers/permissions'
+import {
+  showErrorModal,
+  showDeletedBookModal,
+  showFlaxPreviewErrorModal,
+  showFlaxPublishErrorModal,
+} from '../helpers/commonModals'
 import { Preview, Spin } from '../ui'
 // #endregion import
 
@@ -52,21 +59,46 @@ export const defaultProfile = {
   isbn: null,
 }
 
+const contentOrder = [
+  'includeCoverPage',
+  'includeTitlePage',
+  'includeCopyrights',
+  'includeTOC',
+]
+
 const sanitizeProfileData = input => {
   const res = { ...input }
   if (res.format === 'epub') res.trimSize = null
   return res
 }
 
-const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : 'epub')
+const getFormatTarget = format => (format === 'pdf' ? 'pagedjs' : format)
 
 const sanitizeOptionData = data => {
   const d = { ...data }
-  d.content = d.content.sort()
+  d.content =
+    d.format !== 'web'
+      ? d.content.sort(
+          (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+        )
+      : null
+
+  d.includePdf = !!d.includePdf
+  d.includeEpub = !!d.includeEpub
   return d
 }
 
-const optionKeys = ['format', 'size', 'content', 'template', 'isbn']
+const optionKeys = [
+  'format',
+  'size',
+  'content',
+  'template',
+  'isbn',
+  'includePdf',
+  'includeEpub',
+  'pdfProfileId',
+  'epubProfileId',
+]
 
 const getProfileExportOptions = profile => {
   const p = pick(profile, optionKeys)
@@ -90,6 +122,7 @@ const PreviewerPage = () => {
   const [previewLink, setPreviewLink] = useState(null)
   const [creatingPreview, setCreatingPreview] = useState(true)
   const [selectedTemplate, setSelectedTemplate] = useState(null)
+  const [activeTabKey, setActiveTabKey] = useState('new')
 
   React.useEffect(() => {
     if (!localStorage.getItem('zoomPercentage')) {
@@ -97,25 +130,12 @@ const PreviewerPage = () => {
     }
 
     if (!localStorage.getItem('pageSpread')) {
-      localStorage.setItem('pageSpread', 'double')
+      localStorage.setItem('pageSpread', 'single')
     }
   }, [])
   // #endregion init
 
   // #region queries
-  const {
-    data: templatesData,
-    loading: templatesLoading,
-    refetch: refetchTemplates,
-  } = useQuery(GET_SPECIFIC_TEMPLATES, {
-    variables: {
-      where: {
-        target: getFormatTarget(defaultProfile.format),
-        trimSize: defaultProfile.size,
-      },
-    },
-  })
-
   const {
     data: profilesData,
     loading: profilesLoading,
@@ -137,8 +157,55 @@ const PreviewerPage = () => {
     },
   })
 
+  const { data: { getBook: { webPublishInfo } = {} } = {} } = useQuery(
+    GET_BOOK_WEB_PUBLISH_INFO,
+    {
+      variables: {
+        id: bookId,
+      },
+    },
+  )
+
   const { data: { getApplicationParameters } = {}, loading: paramsLoading } =
-    useQuery(APPLICATION_PARAMETERS)
+    useQuery(APPLICATION_PARAMETERS, {
+      onCompleted: ({ getApplicationParameters: applicationParams }) => {
+        const exportsConfig = applicationParams?.find(
+          p => p.area === 'exportsConfig',
+        ).config
+
+        if (!exportsConfig.pdfDownload.enabled) {
+          if (exportsConfig.epubDownload.enabled) {
+            defaultProfile.format = 'epub'
+            defaultProfile.size = null
+          } else if (exportsConfig.webPublish.enabled) {
+            defaultProfile.format = 'web'
+            defaultProfile.size = null
+          } else {
+            defaultProfile.format = 'Preview disabled'
+          }
+        }
+
+        setNewProfileOptions({
+          ...newProfileOptions,
+          includePdf: exportsConfig.webPdfDownload?.enabled,
+          includeEpub: exportsConfig.webEpubDownload?.enabled,
+        })
+      },
+    })
+
+  const {
+    data: templatesData,
+    loading: templatesLoading,
+    refetch: refetchTemplates,
+  } = useQuery(GET_SPECIFIC_TEMPLATES, {
+    skip: !getApplicationParameters,
+    variables: {
+      where: {
+        target: getFormatTarget(defaultProfile.format),
+        trimSize: defaultProfile.size,
+      },
+    },
+  })
 
   const [getPagedLink, { loading: previewIsLoading }] = useLazyQuery(
     GET_PAGED_PREVIEWER_LINK,
@@ -169,12 +236,33 @@ const PreviewerPage = () => {
             }),
         }
 
-        return getPagedLink({
-          variables: {
-            hash: hash[0],
-            previewerOptions,
-          },
-        })
+        if (input.previewer === 'web') {
+          // preview the url returned by the server
+          setPreviewLink(path)
+        } else {
+          getPagedLink({
+            variables: {
+              hash: hash[0],
+              previewerOptions,
+            },
+          })
+        }
+
+        setCreatingPreview(false)
+      },
+      onError: (previewError, { variables }) => {
+        if (variables.input.previewer === 'web') {
+          const code = previewError.message.substring(
+            previewError.message.length - 3,
+          )
+
+          setCreatingPreview(true)
+
+          showFlaxPreviewErrorModal(code, () => {
+            setPreviewLink(null)
+            setCreatingPreview(false)
+          })
+        }
       },
     },
   )
@@ -189,13 +277,60 @@ const PreviewerPage = () => {
     awaitRefetchQueries: true,
     onCompleted: res => {
       const created = res.createExportProfile
-      setSelectedProfile(created.id)
+      const { id, includedComponents } = created
+      setSelectedProfile(id)
+
+      setCurrentOptions({
+        format: created.format,
+        size: created.trimSize,
+        content:
+          created.format !== 'web'
+            ? Array.from(Object.keys(includedComponents))
+                .map(e => {
+                  if (includedComponents[e]) {
+                    switch (e) {
+                      case 'copyright':
+                        return 'includeCopyrights'
+                      case 'toc':
+                        return 'includeTOC'
+                      case 'titlePage':
+                        return 'includeTitlePage'
+                      case 'cover':
+                        return 'includeCoverPage'
+                      default:
+                        return false
+                    }
+                  }
+
+                  return false
+                })
+                .filter(e => !!e)
+                .sort(
+                  (a, b) => contentOrder.indexOf(a) - contentOrder.indexOf(b),
+                )
+            : null,
+        isbn: created.isbn,
+        template: created.templateId,
+        includePdf: created.downloadableAssets.pdf,
+        includeEpub: created.downloadableAssets.epub,
+        pdfProfileId: created.downloadableAssets.pdfProfileId,
+        epubProfileId: created.downloadableAssets.epubProfileId,
+      })
+
+      setActiveTabKey('saved')
     },
   })
 
   const [renameProfile] = useMutation(RENAME_EXPORT_PROFILE)
 
-  const [updateProfileOptions] = useMutation(UPDATE_EXPORT_PROFILE_OPTIONS)
+  const [updateProfileOptions] = useMutation(UPDATE_EXPORT_PROFILE_OPTIONS, {
+    refetchQueries: [
+      {
+        query: GET_EXPORT_PROFILES,
+        variables: { bookId },
+      },
+    ],
+  })
 
   const [deleteProfile] = useMutation(DELETE_EXPORT_PROFILE, {
     refetchQueries: [
@@ -212,8 +347,29 @@ const PreviewerPage = () => {
       const { path } = exportBook
 
       if (fileExtension === 'epub') return window.location.replace(path)
-      return window.open(path, '_blank')
+      return window.open(path, '_blank', 'noreferrer')
     },
+  })
+
+  const [publish, { loading: publishing }] = useMutation(PUBLISH_ONLINE, {
+    onCompleted: ({ publishOnline }) => {
+      const { path } = publishOnline
+
+      return window.open(path, '_blank', 'noreferrer')
+    },
+    onError: publishingError => {
+      const code = publishingError.message.substring(
+        publishingError.message.length - 3,
+      )
+
+      showFlaxPublishErrorModal(code)
+    },
+    refetchQueries: [
+      {
+        query: GET_BOOK_WEB_PUBLISH_INFO,
+        variables: { id: bookId },
+      },
+    ],
   })
 
   const [uploadToLulu] = useMutation(UPLOAD_TO_LULU)
@@ -225,10 +381,6 @@ const PreviewerPage = () => {
       refetchProfiles({ id: bookId })
     },
   })
-
-  const luluConfig = getApplicationParameters?.find(
-    p => p.area === 'integrations',
-  ).config.lulu
   // #endregion queries
 
   // #region handlers
@@ -252,7 +404,7 @@ const PreviewerPage = () => {
     window.open(luluURL, null, 'width=600, height=600')
   }
 
-  const handleSendToLulu = e => {
+  const handleSendToLulu = () => {
     return uploadToLulu({
       variables: { id: selectedProfile },
     })
@@ -265,20 +417,32 @@ const PreviewerPage = () => {
       content,
       template: templateId,
       isbn,
-    } = currentOptions
+      includeEpub,
+      includePdf,
+      pdfProfileId,
+      epubProfileId,
+    } = newProfileOptions
+    // } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
       bookId,
       displayName,
       format,
       includedComponents: {
-        toc: content.includes('includeTOC'),
-        copyright: content.includes('includeCopyrights'),
-        titlePage: content.includes('includeTitlePage'),
+        toc: content?.includes('includeTOC') || false,
+        copyright: content?.includes('includeCopyrights') || false,
+        titlePage: content?.includes('includeTitlePage') || false,
+        cover: content?.includes('includeCoverPage') || false,
       },
       templateId,
       trimSize,
       isbn,
+      downloadableAssets: {
+        epub: includeEpub,
+        pdf: includePdf,
+        pdfProfileId,
+        epubProfileId,
+      },
     }
 
     return createProfile({
@@ -288,6 +452,7 @@ const PreviewerPage = () => {
     })
   }
 
+  // TODO: fix this, differentiate between currentOptions and newProfileOptions
   const handleDeleteProfile = () => {
     setSelectedProfile(defaultProfile.value)
 
@@ -326,18 +491,29 @@ const PreviewerPage = () => {
       content,
       template: templateId,
       isbn,
-    } = currentOptions
+      includePdf,
+      includeEpub,
+      pdfProfileId,
+      epubProfileId,
+    } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
       format,
       includedComponents: {
-        toc: content.includes('includeTOC'),
-        copyright: content.includes('includeCopyrights'),
-        titlePage: content.includes('includeTitlePage'),
+        toc: !!content?.includes('includeTOC'),
+        copyright: !!content?.includes('includeCopyrights'),
+        titlePage: !!content?.includes('includeTitlePage'),
+        cover: !!content?.includes('includeCoverPage'),
       },
       templateId,
       trimSize,
       isbn,
+      downloadableAssets: {
+        pdf: includePdf,
+        epub: includeEpub,
+        pdfProfileId: includePdf ? pdfProfileId : null,
+        epubProfileId: includeEpub ? epubProfileId : null,
+      },
     }
 
     return updateProfileOptions({
@@ -349,7 +525,9 @@ const PreviewerPage = () => {
   }
 
   const handleDownload = () => {
-    const { format, template, content, isbn } = currentOptions
+    const { format, template, content, isbn } =
+      activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
     return download({
       variables: {
         input: {
@@ -360,11 +538,39 @@ const PreviewerPage = () => {
             includeTOC: content.includes('includeTOC'),
             includeCopyrights: content.includes('includeCopyrights'),
             includeTitlePage: content.includes('includeTitlePage'),
+            includeCoverPage: content.includes('includeCoverPage'),
             isbn,
           },
         },
       },
     })
+  }
+
+  const handlePublish = () => {
+    const { template, includePdf, includeEpub, pdfProfileId, epubProfileId } =
+      currentOptions
+
+    return publish({
+      variables: {
+        input: {
+          bookId,
+          templateId: template,
+          additionalExportOptions: {
+            includePdf,
+            includeEpub,
+            pdfProfileId,
+            epubProfileId,
+          },
+        },
+        profileId: selectedProfile,
+      },
+    })
+  }
+
+  const handleUnpulbish = () => {
+    // return unpublish({
+    //   bookId,
+    // })
   }
 
   const handleCreatePreview = (templates, options, target) => {
@@ -401,29 +607,52 @@ const PreviewerPage = () => {
 
     const previewData = {
       bookId,
-      previewer: 'pagedjs',
+      previewer: target,
       templateId: optionsToApply.template,
       additionalExportOptions: {
-        includeTOC: options.content.includes('includeTOC'),
-        includeCopyrights: options.content.includes('includeCopyrights'),
-        includeTitlePage: options.content.includes('includeTitlePage'),
+        ...(target === 'web'
+          ? {
+              includePdf: options.includePdf,
+              includeEpub: options.includeEpub,
+            }
+          : {
+              includeTOC: options.content.includes('includeTOC'),
+              includeCopyrights: options.content.includes('includeCopyrights'),
+              includeTitlePage: options.content.includes('includeTitlePage'),
+              includeCoverPage: options.content.includes('includeCoverPage'),
+            }),
       },
     }
 
-    setCurrentOptions({
-      ...currentOptions,
-      ...getProfileExportOptions(optionsToApply),
-      zoom: options.zoom,
-      spread: options.spread,
-    })
+    if (activeTabKey === 'saved') {
+      setCurrentOptions({
+        ...currentOptions,
+        ...getProfileExportOptions(optionsToApply),
+        zoom: options.zoom,
+        spread: options.spread,
+        includePdf: options.includePdf,
+        includeEpub: options.includeEpub,
+        pdfProfileId: options.pdfProfileId,
+        epubProfileId: options.epubProfileId,
+      })
+    } else {
+      setNewProfileOptions({
+        ...newProfileOptions,
+        ...getProfileExportOptions(optionsToApply),
+        zoom: options.zoom,
+        spread: options.spread,
+        includePdf: options.includePdf,
+        includeEpub: options.includeEpub,
+        pdfProfileId: options.pdfProfileId,
+        epubProfileId: options.epubProfileId,
+      })
+    }
 
-    if (target === 'pagedjs' && !previewIsLoading) {
+    if ((target === 'pagedjs' || target === 'web') && !previewIsLoading) {
       createPreview({
         variables: {
           input: previewData,
         },
-      }).finally(() => {
-        setCreatingPreview(false)
       })
     } else {
       setCreatingPreview(false)
@@ -432,7 +661,7 @@ const PreviewerPage = () => {
 
   const handleRefetchTemplates = options => {
     const templateTarget = getFormatTarget(options.format)
-    const templateTrimSize = templateTarget === 'epub' ? null : options.size
+    const templateTrimSize = templateTarget === 'pagedjs' ? options.size : null
 
     setCreatingPreview(true)
 
@@ -451,33 +680,71 @@ const PreviewerPage = () => {
   }
 
   const handleOptionsChange = newOptions => {
-    const options = { ...currentOptions, ...newOptions }
+    const current =
+      activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
+    const options = { ...current, ...newOptions }
 
     if (options.format === 'pdf' && !options.size) {
       options.size = defaultProfile.size
     }
 
-    if (options.format === 'epub') {
+    if (options.format === 'epub' || options.format === 'web') {
       options.size = null
     }
 
-    if (isEqual(currentOptions, options)) return
+    if (options.format === 'web') {
+      options.content = null
+    }
 
-    handleRefetchTemplates(options)
+    if (activeTabKey === 'new' && newProfileOptions.format !== options.format) {
+      if (options.format === 'epub') {
+        options.content = [...contentOrder]
+      } else if (options.format === 'pdf') {
+        options.content = [...contentOrder].splice(1, 3)
+      }
+    }
+
+    if (isEqual(current, options)) return
+
+    if (options.format === 'web' && current.format === 'web') {
+      setCreatingPreview(true)
+      handleCreatePreview(templatesData.getSpecificTemplates, options, 'web')
+    } else {
+      handleRefetchTemplates(options)
+    }
   }
 
   const handleProfileChange = profileId => {
     setSelectedProfile(profileId)
+    // localStorage.setItem(`exportProfileId-${bookId}`, profileId)
 
-    const newProfile = [defaultProfileWithTemplate, ...profiles].find(
-      p => p.value === profileId,
-    )
+    if (profileId) {
+      const newProfile = [defaultProfileWithTemplate, ...profiles].find(
+        p => p.value === profileId,
+      )
 
-    handleOptionsChange(getProfileExportOptions(newProfile))
+      handleOptionsChange(getProfileExportOptions(newProfile))
+    }
+  }
+
+  const handleTabChange = activeKey => {
+    if (activeKey) {
+      setActiveTabKey(activeKey)
+    }
   }
   // #endregion handlers
 
   // #region data wrangling
+
+  const luluConfig = getApplicationParameters?.find(
+    p => p.area === 'integrations',
+  ).config.lulu
+
+  const exportsConfig = getApplicationParameters?.find(
+    p => p.area === 'exportsConfig',
+  ).config
+
   const luluIdentity = currentUser?.identities?.find(
     id => id.provider === 'lulu',
   )
@@ -516,7 +783,13 @@ const PreviewerPage = () => {
     template: defaultTemplate?.id,
   }
 
-  const [selectedProfile, setSelectedProfile] = useState(defaultProfile.value)
+  const [selectedProfile, setSelectedProfile] = useState()
+
+  const [newProfileOptions, setNewProfileOptions] = useState({
+    ...getProfileExportOptions(defaultProfileWithTemplate),
+    zoom: initialZoom,
+    spread: initialSpread,
+  })
 
   const [currentOptions, setCurrentOptions] = useState({
     ...getProfileExportOptions(defaultProfileWithTemplate),
@@ -532,10 +805,19 @@ const PreviewerPage = () => {
       }
 
       if (templatesData && selectedTemplate && !createPreviewCalled) {
+        // const options =
+        //   activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
+        const options = {
+          ...getProfileExportOptions(defaultProfileWithTemplate),
+          zoom: initialZoom,
+          spread: initialSpread,
+        }
+
         handleCreatePreview(
           templatesData.getSpecificTemplates,
-          currentOptions,
-          getFormatTarget(currentOptions.format),
+          options,
+          getFormatTarget(options.format),
         )
       }
     }
@@ -545,50 +827,64 @@ const PreviewerPage = () => {
     return { isbn: item?.isbn, label: item?.label }
   })
 
+  const hasCover = book?.getBook?.cover && book.getBook.cover[0].coverUrl
+
   const profiles =
     getApplicationParameters &&
-    profilesData?.getBookExportProfiles.result.map(p => {
-      const luluProfile = p.providerInfo.find(x => x.providerLabel === 'lulu')
-      const projectId = luluProfile ? luluProfile.externalProjectId : null
+    exportsConfig &&
+    profilesData?.getBookExportProfiles.result
+      .map(p => {
+        const luluProfile = p.providerInfo.find(x => x.providerLabel === 'lulu')
+        const projectId = luluProfile ? luluProfile.externalProjectId : null
 
-      const luluProjectUrl = projectId
-        ? `${getLuluConfigValue('projectBaseUrl')}/${projectId}`
-        : null
+        const luluProjectUrl = projectId
+          ? `${getLuluConfigValue('projectBaseUrl')}/${projectId}`
+          : null
 
-      const content = []
+        const content = []
 
-      if (p.includedComponents.copyright) content.push('includeCopyrights')
-      if (p.includedComponents.titlePage) content.push('includeTitlePage')
-      if (p.includedComponents.toc) content.push('includeTOC')
+        if (p.includedComponents.copyright) content.push('includeCopyrights')
+        if (p.includedComponents.titlePage) content.push('includeTitlePage')
+        if (p.includedComponents.toc) content.push('includeTOC')
+        if (p.includedComponents.cover) content.push('includeCoverPage')
 
-      return {
-        format: p.format,
-        content,
-        label: p.displayName,
-        lastSynced: luluProfile ? luluProfile.lastSync : null,
-        projectId,
-        projectUrl: luluProjectUrl,
-        size: p.trimSize,
-        synced: luluProfile ? luluProfile.inSync : null,
-        template: p.templateId,
-        value: p.id,
-        // Require that p.isbn is a valid option from podMetadata.isbns
-        isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
-      }
-    })
+        return {
+          updated: p.updated,
+          format: p.format,
+          content: p.format !== 'web' ? content : null,
+          label: p.displayName,
+          lastSynced: luluProfile ? luluProfile.lastSync : null,
+          projectId,
+          projectUrl: luluProjectUrl,
+          size: p.format === 'pdf' ? p.trimSize : null,
+          synced: luluProfile ? luluProfile.inSync : null,
+          template: p.templateId,
+          value: p.id,
+          // Require that p.isbn is a valid option from podMetadata.isbns
+          isbn: p.isbn && isbns.find(i => i.isbn === p.isbn) ? p.isbn : null,
+          includePdf: !!p.downloadableAssets?.pdf,
+          includeEpub: !!p.downloadableAssets?.epub,
+          pdfProfileId: p.downloadableAssets?.pdfProfileId,
+          epubProfileId: p.downloadableAssets?.epubProfileId,
+        }
+      })
+      .filter(p => {
+        switch (p.format) {
+          case 'pdf':
+            return exportsConfig.pdfDownload.enabled
+          case 'epub':
+            return exportsConfig.epubDownload.enabled
+          case 'web':
+            return exportsConfig.webPublish.enabled
+          default:
+            return false
+        }
+      })
 
-  const allProfiles = profiles && [defaultProfileWithTemplate, ...profiles]
-
-  const hasContent =
-    book?.getBook.divisions.find(d => d?.label === 'Body').bookComponents
-      .length > 0
+  const allProfiles = profiles // && [defaultProfileWithTemplate, ...profiles]
 
   const userIsOwner = isOwner(bookId, currentUser)
-  const userIsAdmin = isAdmin(currentUser)
-
-  const isDownloadButtonDisabled =
-    !hasEditAccess(bookId, currentUser) ||
-    (!hasContent && currentOptions.format === 'epub')
+  const canEdit = hasEditAccess(bookId, currentUser)
   // #endregion data wrangling
 
   if (
@@ -611,31 +907,37 @@ const PreviewerPage = () => {
 
   return (
     <Preview
-      canModify={
-        luluConfig && !luluConfig?.disabled && (userIsOwner || userIsAdmin)
-      }
-      canUploadToProvider={userIsOwner}
+      activeTabKey={activeTabKey}
+      canModify={userIsOwner || canEdit}
+      canUploadToProvider={luluConfig && !luluConfig?.disabled && userIsOwner}
       connectToLulu={handleConnectToLulu}
       createProfile={handleCreateProfile}
       currentOptions={currentOptions}
       defaultProfile={defaultProfileWithTemplate}
       deleteProfile={handleDeleteProfile}
       download={handleDownload}
+      exportsConfig={exportsConfig}
+      hasCover={!!hasCover}
       isbns={isbns}
-      isDownloadButtonDisabled={isDownloadButtonDisabled}
       isUserConnectedToLulu={isUserConnectedToLulu}
       loadingExport={false}
       loadingPreview={creatingPreview}
-      luluConfig={luluConfig && !luluConfig?.disabled}
+      luluConfig={luluConfig}
+      newProfileOptions={newProfileOptions}
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
+      onPublish={userIsOwner ? handlePublish : null}
+      onUnpulbish={handleUnpulbish}
       previewLink={previewLink}
       profiles={allProfiles}
+      publishing={publishing}
       renameProfile={handleRenameProfile}
       selectedProfile={selectedProfile}
       sendToLulu={handleSendToLulu}
+      setActiveTabKey={handleTabChange}
       templates={templates}
       updateProfileOptions={handleUpdateProfileOptions}
+      webPublishInfo={webPublishInfo}
     />
   )
 }

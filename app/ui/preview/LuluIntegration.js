@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { grid } from '@coko/client'
 
-import { Button, ButtonGroup } from '../common'
+import { Button } from '../common'
 import Synced from './Synced'
 import ExportOption from './ExportOption'
 
@@ -18,13 +18,14 @@ const ConnectedWrapper = styled.div`
     margin-bottom: ${grid(2)};
   }
 
-  > div:not(:first-child) {
+  > :not(:first-child) {
     margin-left: 26px;
   }
 `
 
-const StyledButtonGroup = styled(ButtonGroup)`
+const StyledButton = styled(Button)`
   margin-top: ${grid(5)};
+  width: fit-content;
 `
 
 const LuluIntegration = props => {
@@ -36,43 +37,25 @@ const LuluIntegration = props => {
     isSynced,
     lastSynced,
     onClickConnect,
-    onClickSendToLulu,
     projectId,
     projectUrl,
   } = props
 
-  const [isUploading, setUploading] = useState(false)
-
-  const handleClickSendToLulu = () => {
-    setUploading(true)
-
-    onClickSendToLulu().finally(() => {
-      setUploading(false)
-    })
-  }
-
   return (
     <Wrapper className={className}>
+      <h3 style={{ marginBlockStart: 0 }}>Lulu integration:</h3>
       {!isConnected && canUploadToProvider && (
         <div>
-          <Button onClick={onClickConnect} type="primary">
+          <Button
+            data-test="preview-connectLulu-btn"
+            onClick={onClickConnect}
+            type="primary"
+          >
             Connect to Lulu
           </Button>
         </div>
       )}
-
-      {isConnected && !isInLulu && canUploadToProvider && (
-        <div>
-          <Button
-            disabled={isUploading}
-            loading={isUploading}
-            onClick={handleClickSendToLulu}
-            type="primary"
-          >
-            Upload to Lulu
-          </Button>
-        </div>
-      )}
+      {isConnected && !isInLulu && <p>Not uploaded to Lulu</p>}
 
       {isConnected && isInLulu && (
         <ConnectedWrapper>
@@ -82,24 +65,12 @@ const LuluIntegration = props => {
             {projectId}
           </ExportOption>
 
-          <StyledButtonGroup>
-            <Button disabled={!projectUrl}>
-              <a href={projectUrl} rel="noreferrer" target="_blank">
-                Open lulu project
-              </a>
-            </Button>
-
-            {!isSynced && (
-              <Button
-                disabled={isUploading}
-                loading={isUploading}
-                onClick={handleClickSendToLulu}
-                type="primary"
-              >
-                Sync with lulu
-              </Button>
-            )}
-          </StyledButtonGroup>
+          <StyledButton
+            onClick={() => window.open(projectUrl, '_blank', 'noreferrer')}
+            disabled={!projectUrl}
+          >
+            Open Lulu Project
+          </StyledButton>
         </ConnectedWrapper>
       )}
     </Wrapper>
@@ -116,7 +87,6 @@ LuluIntegration.propTypes = {
   isSynced: PropTypes.bool,
   lastSynced: PropTypes.string,
   onClickConnect: PropTypes.func.isRequired,
-  onClickSendToLulu: PropTypes.func.isRequired,
   projectId: PropTypes.string,
   projectUrl: PropTypes.string,
 }

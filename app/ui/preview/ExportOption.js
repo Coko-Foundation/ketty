@@ -4,11 +4,17 @@ import styled, { css } from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 500px;
+  min-block-size: 32px;
+`
 
 const Label = styled.div`
   color: ${th('colorTextLight')};
-  text-transform: capitalize;
+  white-space: nowrap;
 
   /* stylelint-disable-next-line order/properties-alphabetical-order */
   ${props =>
@@ -23,14 +29,18 @@ const Label = styled.div`
 `
 
 const ChildWrapper = styled.div`
-  display: ${props => (props.inline ? 'inline-block' : 'block')};
+  overflow: auto;
+
+  > &:focus-within {
+    outline: 1px solid ${th('colorOutline')};
+  }
 `
 
 const ExportOption = props => {
-  const { className, children, label, inline } = props
+  const { className, children, label, inline, id } = props
 
   return (
-    <Wrapper className={className}>
+    <Wrapper className={className} {...(id ? { id } : {})}>
       <Label inline={inline}>{label}:</Label>
       <ChildWrapper inline={inline}>{children}</ChildWrapper>
     </Wrapper>
@@ -39,11 +49,13 @@ const ExportOption = props => {
 
 ExportOption.propTypes = {
   label: PropTypes.string.isRequired,
+  id: PropTypes.string,
   inline: PropTypes.bool,
 }
 
 ExportOption.defaultProps = {
   inline: false,
+  id: null,
 }
 
 export default ExportOption

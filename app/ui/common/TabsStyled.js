@@ -14,7 +14,7 @@ const TabsStyled = styled(Tabs)`
       font-weight: 700;
       margin: 0;
       padding: ${grid(0.5)};
-      text-transform: uppercase;
+      text-transform: capitalize;
 
       &:hover {
         color: inherit;

@@ -9,15 +9,21 @@ const StyledDatePicker = styled(DatePicker)`
 `
 
 const CopyrightInputs = props => {
-  const { namePrefix, canChangeMetadata } = props
+  const { namePrefix, canChangeMetadata, selected } = props
 
   return (
     <Row gutter={[12, 0]}>
       <Col span={18}>
         <Form.Item
-          label="Copyright holder name (optional)"
+          label="Copyright holder name"
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightHolder`}
+          rules={[
+            {
+              required: selected,
+              message: 'Copyright holder name is required',
+            },
+          ]}
         >
           <Input disabled={!canChangeMetadata} />
         </Form.Item>
@@ -25,9 +31,12 @@ const CopyrightInputs = props => {
 
       <Col span={6}>
         <Form.Item
-          label="Copyright year (optional)"
+          label="Copyright year"
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightYear`}
+          rules={[
+            { required: selected, message: 'Copyright year is required' },
+          ]}
         >
           <StyledDatePicker disabled={!canChangeMetadata} picker="year" />
         </Form.Item>
@@ -39,6 +48,7 @@ const CopyrightInputs = props => {
 CopyrightInputs.propTypes = {
   namePrefix: PropTypes.string.isRequired,
   canChangeMetadata: PropTypes.bool.isRequired,
+  selected: PropTypes.bool.isRequired,
 }
 
 export default CopyrightInputs

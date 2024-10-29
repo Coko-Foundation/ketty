@@ -28,12 +28,10 @@ const AdminPage = () => {
       },
     })
 
-  const [updateApplicationParametersMutation] = useMutation(
-    UPDATE_APPLICATION_PARAMETERS,
-    {
+  const [updateApplicationParametersMutation, { loading: updateLoading }] =
+    useMutation(UPDATE_APPLICATION_PARAMETERS, {
       refetchQueries: [APPLICATION_PARAMETERS],
-    },
-  )
+    })
 
   const luluConfig = getApplicationParameters?.find(
     p => p.area === 'integrations',
@@ -45,6 +43,10 @@ const AdminPage = () => {
 
   const chatGptApiKey = getApplicationParameters?.find(
     p => p.area === 'chatGptApiKey',
+  )?.config
+
+  const exportsConfig = getApplicationParameters?.find(
+    p => p.area === 'exportsConfig',
   )?.config
 
   const toggleLuluConfig = val => {
@@ -77,6 +79,22 @@ const AdminPage = () => {
         context: 'bookBuilder',
         area: 'aiEnabled',
         config: `${val}`,
+      },
+    }
+
+    updateApplicationParametersMutation({ variables })
+  }
+
+  const toggleExportsConfig = (val, which) => {
+    const config = JSON.parse(JSON.stringify(exportsConfig))
+
+    config[which] = { enabled: val }
+
+    const variables = {
+      input: {
+        context: 'bookBuilder',
+        area: 'exportsConfig',
+        config: JSON.stringify(config),
       },
     }
 
@@ -134,11 +152,13 @@ const AdminPage = () => {
       aiEnabled={aiEnabled}
       aiToggleIntegration={toggleAIFeatures}
       chatGptApiKey={chatGptApiKey}
+      exportConfigUpdate={toggleExportsConfig}
+      exportOptions={exportsConfig}
       luluConfigEnabled={!luluConfig?.disabled}
       luluToggleConfig={toggleLuluConfig}
       onChatGPTKeyUpdate={handleUpdateChatGPTApiKey}
       onTCUpdate={handleTCUppdate}
-      paramsLoading={paramsLoading}
+      paramsLoading={paramsLoading || updateLoading}
       termsAndConditions={tcContent}
     />
   )

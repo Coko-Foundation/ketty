@@ -11,6 +11,7 @@ import PreviewSettings from './PreviewSettings'
 const Wrapper = styled.div`
   display: flex;
   height: 100%;
+  overflow-y: hidden;
 
   > div {
     transition: width 0.3s;
@@ -23,22 +24,24 @@ const Wrapper = styled.div`
 
   > div:last-child {
     min-width: 50px;
-    width: ${props => (props.$showSettings ? '500px' : '2%')};
+    width: ${props => (props.$showSettings ? '550px' : '2%')};
   }
 `
 // #endregion styled
 
 const Preview = props => {
   const {
+    activeTabKey,
+    setActiveTabKey,
     connectToLulu,
     createProfile,
     currentOptions,
+    newProfileOptions,
     deleteProfile,
     defaultProfile,
     download,
     canModify,
     canUploadToProvider,
-    isDownloadButtonDisabled,
     isUserConnectedToLulu,
     loadingExport,
     loadingPreview,
@@ -53,6 +56,12 @@ const Preview = props => {
     templates,
     isbns,
     updateProfileOptions,
+    exportsConfig,
+    onPublish,
+    publishing,
+    onUnpublish,
+    webPublishInfo,
+    hasCover,
   } = props
 
   const [showSettings, setShowSettings] = useState(true)
@@ -65,13 +74,16 @@ const Preview = props => {
     onOptionsChange(newOptions)
   }
 
-  const { spread, zoom, ...exportOptions } = currentOptions
+  const options = activeTabKey === 'saved' ? currentOptions : newProfileOptions
+
+  const { spread, zoom, ...exportOptions } = options
 
   return (
     <Page>
       <Wrapper $showSettings={showSettings}>
         <PreviewDisplay
-          isEpub={currentOptions.format === 'epub'}
+          isEpub={options.format === 'epub'}
+          isPdf={options.format === 'pdf'}
           loading={loadingPreview}
           noPreview={!loadingPreview && !previewLink}
           onOptionsChange={handleOptionsChange}
@@ -81,6 +93,7 @@ const Preview = props => {
         />
 
         <PreviewSettings
+          activeTabKey={activeTabKey}
           canModify={canModify}
           canUploadToProvider={canUploadToProvider}
           createProfile={createProfile}
@@ -88,23 +101,30 @@ const Preview = props => {
           defaultProfile={defaultProfile}
           deleteProfile={deleteProfile}
           download={download}
+          exportsConfig={exportsConfig}
+          hasCover={hasCover}
           isbns={isbns}
           isCollapsed={!showSettings}
-          isDownloadButtonDisabled={isDownloadButtonDisabled}
           isUserConnectedToLulu={isUserConnectedToLulu}
           loadingPreview={loadingPreview}
           luluConfig={luluConfig}
+          newOptions={newProfileOptions}
           onClickCollapse={handleClickCollapse}
           onClickConnectToLulu={connectToLulu}
           onOptionsChange={handleOptionsChange}
           onProfileChange={onProfileChange}
+          onPublish={onPublish}
+          onUnpublish={onUnpublish}
           optionsDisabled={loadingExport || loadingPreview}
           profiles={profiles}
+          publishing={publishing}
           renameProfile={renameProfile}
           selectedProfile={selectedProfile}
           sendToLulu={sendToLulu}
+          setActiveTabKey={setActiveTabKey}
           templates={templates}
           updateProfileOptions={updateProfileOptions}
+          webPublishInfo={webPublishInfo}
         />
       </Wrapper>
     </Page>
@@ -112,13 +132,35 @@ const Preview = props => {
 }
 
 Preview.propTypes = {
+  activeTabKey: PropTypes.string.isRequired,
+  setActiveTabKey: PropTypes.func.isRequired,
   connectToLulu: PropTypes.func.isRequired,
   createProfile: PropTypes.func.isRequired,
   currentOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
-      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCoverPage',
+      ]),
+    ),
+    template: PropTypes.string,
+    spread: PropTypes.oneOf(['single', 'double']),
+    zoom: PropTypes.number,
+  }).isRequired,
+  newProfileOptions: PropTypes.shape({
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
+    size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
+    content: PropTypes.arrayOf(
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCoverPage',
+      ]),
     ),
     template: PropTypes.string,
     spread: PropTypes.oneOf(['single', 'double']),
@@ -127,10 +169,15 @@ Preview.propTypes = {
   defaultProfile: PropTypes.shape({
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
-    format: PropTypes.oneOf(['pdf', 'epub']),
+    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
-      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+      PropTypes.oneOf([
+        'includeTitlePage',
+        'includeCopyrights',
+        'includeTOC',
+        'includeCover',
+      ]),
     ),
     template: PropTypes.string,
   }).isRequired,
@@ -138,7 +185,6 @@ Preview.propTypes = {
   download: PropTypes.func.isRequired,
   canModify: PropTypes.bool.isRequired,
   canUploadToProvider: PropTypes.bool.isRequired,
-  isDownloadButtonDisabled: PropTypes.bool.isRequired,
   isUserConnectedToLulu: PropTypes.bool.isRequired,
   loadingExport: PropTypes.bool.isRequired,
   loadingPreview: PropTypes.bool.isRequired,
@@ -152,7 +198,7 @@ Preview.propTypes = {
       value: PropTypes.string.isRequired,
       format: PropTypes.string.isRequired,
       size: PropTypes.string,
-      content: PropTypes.arrayOf(PropTypes.string).isRequired,
+      content: PropTypes.arrayOf(PropTypes.string),
       template: PropTypes.string,
       synced: PropTypes.bool,
       lastSynced: PropTypes.string,
@@ -161,7 +207,7 @@ Preview.propTypes = {
     }),
   ).isRequired,
   renameProfile: PropTypes.func.isRequired,
-  selectedProfile: PropTypes.string.isRequired,
+  selectedProfile: PropTypes.string,
   sendToLulu: PropTypes.func.isRequired,
   templates: PropTypes.arrayOf(
     PropTypes.shape({
@@ -177,11 +223,24 @@ Preview.propTypes = {
     }),
   ).isRequired,
   updateProfileOptions: PropTypes.func.isRequired,
+  exportsConfig: PropTypes.shape(),
+  webPublishInfo: PropTypes.shape(),
+  onPublish: PropTypes.func,
+  onUnpublish: PropTypes.func,
+  publishing: PropTypes.bool,
+  hasCover: PropTypes.bool,
 }
 
 Preview.defaultProps = {
+  selectedProfile: null,
   luluConfig: null,
   previewLink: null,
+  exportsConfig: null,
+  onPublish: null,
+  onUnpublish: null,
+  publishing: false,
+  webPublishInfo: null,
+  hasCover: false,
 }
 
 export default Preview

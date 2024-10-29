@@ -59,7 +59,6 @@ const BookGrid = ({
   totalCount,
   currentPage,
   loading,
-  onUploadBookThumbnail,
   canDeleteBook,
   canUploadBookThumbnail,
 }) => {
@@ -91,7 +90,6 @@ const BookGrid = ({
             canDeleteBook={canDeleteBook}
             canUploadBookThumbnail={canUploadBookThumbnail}
             onClickDelete={onClickDelete}
-            onUploadBookThumbnail={onUploadBookThumbnail}
             showActions
           />
         )}
@@ -106,7 +104,11 @@ BookGrid.propTypes = {
   books: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      thumbnailURL: PropTypes.string,
+      cover: PropTypes.arrayOf(
+        PropTypes.shape({
+          coverUrl: PropTypes.string,
+        }),
+      ),
       title: PropTypes.string,
     }),
   ),
@@ -118,7 +120,6 @@ BookGrid.propTypes = {
   canDeleteBook: PropTypes.func.isRequired,
   canUploadBookThumbnail: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
-  onUploadBookThumbnail: PropTypes.func.isRequired,
 }
 
 BookGrid.defaultProps = {
