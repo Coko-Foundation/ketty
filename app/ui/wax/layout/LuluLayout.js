@@ -149,9 +149,9 @@ const StyledSpin = styled(Spin)`
   height: 100vh;
   inset: 0;
   justify-content: center;
+  margin-inline: auto;
   padding-block-start: 20%;
   position: absolute;
-  width: 816px;
 `
 
 const LeftPanelWrapper = styled.div`
@@ -337,17 +337,23 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 style={{ position: 'relative' }}
               >
                 <EditorContainer selectedChapterId={selectedChapterId}>
-                  {selectedChapterId ? (
-                    <WaxView {...rest} />
+                  {editorLoading ? (
+                    <StyledSpin spinning={editorLoading} />
                   ) : (
-                    <NoSelectedChapterWrapper>
-                      Create or select a chapter on the left to start writing.
-                    </NoSelectedChapterWrapper>
+                    <>
+                      {selectedChapterId ? (
+                        <WaxView {...rest} />
+                      ) : (
+                        <NoSelectedChapterWrapper>
+                          Create or select a chapter on the left to start
+                          writing.
+                        </NoSelectedChapterWrapper>
+                      )}
+                      <CommentsContainer>
+                        <RightArea area="main" />
+                      </CommentsContainer>
+                    </>
                   )}
-                  <CommentsContainer>
-                    <RightArea area="main" />
-                  </CommentsContainer>
-                  {editorLoading && <StyledSpin spinning={editorLoading} />}
                 </EditorContainer>
               </WaxSurfaceScroll>
             </EditorArea>

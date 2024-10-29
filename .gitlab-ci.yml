@@ -67,7 +67,7 @@ lint:
     WORKDIR: $PATH_INSIDE_CONTAINER
     STYLELINT: 1
 
-unit test:
+.unit test:
   extends: .client unit test
   stage: Lint & Unit test
   variables:

@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
 import React, { useEffect, useState } from 'react'
 import { Wax } from 'wax-prosemirror-core'
-import debounce from 'lodash/debounce'
 import { LuluLayout } from './layout'
 import defaultConfig from './config/config'
 import configWithAi from './config/configWithAI'
@@ -11,9 +10,9 @@ const EditorWrapper = ({
   subtitle,
   chapters,
   onPeriodicBookComponentContentChange,
+  onPeriodicTitleChange,
   isReadOnly,
   onImageUpload,
-  onBookComponentTitleChange,
   onBookComponentTypeChange,
   onBookComponentParentIdChange,
   onAddChapter,
@@ -76,16 +75,10 @@ const EditorWrapper = ({
 
   const selectedConfig = aiEnabled ? configWithAi : defaultConfig
 
-  const periodicTitleChanges = debounce(changedTitle => {
-    if (!isReadOnly) {
-      onBookComponentTitleChange(changedTitle)
-    }
-  }, 50)
-
   useEffect(() => {
     return () => {
       onPeriodicBookComponentContentChange.cancel()
-      periodicTitleChanges.cancel()
+      onPeriodicTitleChange.cancel()
     }
   }, [])
 
@@ -111,7 +104,7 @@ const EditorWrapper = ({
   }
 
   selectedConfig.TitleService = {
-    updateTitle: periodicTitleChanges,
+    updateTitle: onPeriodicTitleChange,
   }
 
   selectedConfig.CommentsService = {

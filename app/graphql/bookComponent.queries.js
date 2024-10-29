@@ -83,28 +83,11 @@ const UPDATE_BOOK_COMPONENT_PARENT_ID = gql`
   }
 `
 
-const RENAME_BOOK_COMPONENT_TITLE = gql`
-  mutation RenameBookComponentTitle($input: UpdateBookComponentInput!) {
-    renameBookComponent(input: $input) {
+const RENAME_BOOK_COMPONENT = gql`
+  mutation RenameBookComponent($id: ID!, $title: String!) {
+    renameBookComponentTitle(id: $id, title: $title) {
       id
       title
-      divisionId
-      # content
-      componentType
-      trackChangesEnabled
-      uploading
-      status
-      lock {
-        userId
-        username
-        created
-        givenNames
-        tabId
-        foreignId
-        isAdmin
-        surname
-        id
-      }
     }
   }
 `
@@ -278,7 +261,7 @@ export {
   GET_BOOK_COMPONENT,
   CREATE_BOOK_COMPONENT,
   UPDATE_BOOK_COMPONENT_CONTENT,
-  RENAME_BOOK_COMPONENT_TITLE,
+  RENAME_BOOK_COMPONENT,
   DELETE_BOOK_COMPONENT,
   UPDATE_BOOK_COMPONENTS_ORDER,
   LOCK_BOOK_COMPONENT,
