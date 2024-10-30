@@ -281,7 +281,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu data-loading={editorLoading} isHidden={viewMetadata}>
-          <MainMenuToolBar />
+          {!editorLoading ? <MainMenuToolBar /> : null}
         </TopMenu>
         <Main>
           {!options.fullScreen && (
