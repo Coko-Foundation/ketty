@@ -184,6 +184,7 @@ const ExportOptionsSection = props => {
               options={exportOptions}
               popupMatchSelectWidth={120}
               value={selectedFormat}
+              data-test="preview-format-menu"
             />
           </ExportOption>
         ) : (
