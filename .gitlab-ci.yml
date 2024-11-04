@@ -173,6 +173,8 @@ deploy:
   image: $CI_REGISTRY/cokoinfra/ansible-deployer
   services:
     - docker:26-dind
+  # needs:
+  #   - publish production develop
   variables:
     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true #this is needed on some db setups like DO
     ANSCOMPOSE_SERVER_URL: ${SERVER_URL}
@@ -218,10 +220,10 @@ deploy:
     ANSCOMPOSE_AI_ENABLED: ${AI_ENABLED}
     ANSCOMPOSE_CHAT_GPT_KEY: ${CHAT_GPT_KEY}
     COMPOSE_SERVICES: client,server #comma separated value for each docker-compose service that should be converted into k8s object
-    COMPOSE_SERVICES_client_URL: ketty-dev.coko.app #<service name> is each value defined in COMPOSE_SERVICES
-    COMPOSE_SERVICES_client_IMAGE: cokoapps/ketty-client:latest # name of the image
-    COMPOSE_SERVICES_server_URL: ketty-dev-server.coko.app #<service name> is each value defined in COMPOSE_SERVICES
-    COMPOSE_SERVICES_server_IMAGE: cokoapps/ketty-server:1.32.0 # name of the image
+    COMPOSE_SERVICES_CLIENT_URL: ketty.coko.app #<service name> is each value defined in COMPOSE_SERVICES
+    COMPOSE_SERVICES_CLIENT_IMAGE: cokoapps/ketty-client:latest # name of the image
+    COMPOSE_SERVICES_server_URL: ketty-server.coko.app #<service name> is each value defined in COMPOSE_SERVICES
+    COMPOSE_SERVICES_server_IMAGE: cokoapps/ketty-server:latest # name of the image
     do_spaces_access_key: $DIGITAL_OCEAN_SPACES_ACCESS_KEY
     do_spaces_secret_key: $DIGITAL_OCEAN_SPACES_SECRET_KEY
   script:
