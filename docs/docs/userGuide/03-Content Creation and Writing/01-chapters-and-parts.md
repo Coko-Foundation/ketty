@@ -10,7 +10,7 @@ There are two ways to add chapters to your book from the **Producer** page:
 
 ### Write from scratch
 
-Select the '+' button from the left sidebar to create a new empty chapter. You can then start writing your content directly in the editor.
+Select the "+" button from the left sidebar to create a new empty chapter. You can then start writing your content directly in the editor.
 
 ### Upload existing chapters
 
@@ -28,7 +28,7 @@ When uploading existing chapters, Ketty maintains your:
 Parts help you organise longer works into logical divisions with common themes or subjects. To create a part in your book:
 
 1. Select the three horizontal dots next to any chapter title
-2. Choose 'Convert to part' from the menu
+2. Choose "Convert to part" from the menu
 3. Position the part where needed in your book body
 4. Drag and drop relevant chapters into the part
 
@@ -45,6 +45,6 @@ Once you have created chapters and parts, you can:
 ## Best practices
 
 - Create a consistent structure using parts for major themes or sections
-- Use meaningful names for chapters and parts to aid navigation
+- Use meaningful titles for chapters and parts to aid navigation
 - Consider your table of contents structure when organising content
 - Review your book's organisation from the **Preview and Publish** page to see how it appears to readers

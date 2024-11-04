@@ -4,7 +4,7 @@ title: 'Instance configurations'
 
 ## Overview 
 
-To access the **Admin** page, select your initials in the top-right of the navigation bar, then select ‘Admin’.
+To access the **Admin** page, select your initials in the top-right of the navigation bar, then select "Admin".
 
 :::note
 An administrator user should be set when a Ketty instance is first deployed and more admins can be added at any time. Speak to your hosting provider about configuring admin access.
@@ -14,7 +14,7 @@ An administrator user should be set when a Ketty instance is first deployed and 
 
 Ketty supports AI use with: 
 1. The AI assistant in a book's editor
-2. Built-in Knowledge Base at the book level 
+2. The built-in Knowledge Base at the book level 
 3. The AI Book Designer (Beta). 
 
 ### Link an AI key 
@@ -32,13 +32,13 @@ Admins can control the publshing options that are avialable to users.
 
 Give users access to preview, export and publish: 
 
-1. PDF
-2. EPUB
+1. PDFs
+2. EPUBs
 3. Online (web)
 
 ### Print-on-demand integration
 
-Ketty can be integrated with Print-on-demand suppliers so that you can order your printed book directly from the application. Currently, Ketty integrates with [Lulu](https://www.lulu.com/), which enables Book Owners to publish, print, and sell their books internationally with Lulu’s Print-on-demand network. This feature can be enabled or disabled at any time.
+Ketty can be integrated with print-on-demand suppliers so that you can order your printed book directly from the application. Currently, Ketty integrates with [Lulu](https://www.lulu.com/), which enables Book Owners to publish, print, and sell their books internationally with Lulu’s Print-on-demand network. This feature can be enabled or disabled at any time.
 
 Eable the "print-on-demand with Lulu" toggle to give Book Owners the ability to sync their Ketty account with their Lulu account.
 

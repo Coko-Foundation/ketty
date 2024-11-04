@@ -35,7 +35,7 @@ The Producer is your main workspace for creating and managing book content.
 
 - Top bar: Links to the **Dashboard**, **Preview and Publish**, **Share**, and **Settings** pages
 - User menu: Your initials for account options
-- Left sidebar: Book structure and chapter management and access **Book Metadata** page
+- Left sidebar: Book structure, chapter management, and access **Book Metadata** page
 - Main area: Content editor
 
 ![Producer page example](../../../static/img/producer.png)
@@ -80,9 +80,9 @@ Preview helps you review your book's appearance and prepare for publication. Sav
 - Show/hide the right sidebar
 
 
-## The Administration interface
+## The Admin interface
 
-The Administration interface is available to users with admin privileges.
+The Admin interface is available to users with admin privileges.
 
 ### Admin capabilities
 

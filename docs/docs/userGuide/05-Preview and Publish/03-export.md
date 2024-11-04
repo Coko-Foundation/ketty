@@ -9,6 +9,8 @@ Ketty supports exporting your book as a PDF and EPUB through publishing profiles
 1. Navigate to the **Preview and Publish** page
 2. Select the "Publishing Profiles" tab
 3. Choose a PDF or EPUB profile from the dropdown menu
+4. Review the profile
+5. Select "Download"
 
 ### PDF export
 

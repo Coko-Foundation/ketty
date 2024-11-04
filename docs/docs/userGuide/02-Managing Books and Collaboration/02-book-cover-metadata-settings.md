@@ -12,8 +12,8 @@ The **Book Metadata** page can be accessed in two ways:
 
 From the **Book Metadata** page, you can:
 - Upload a cover image
-- Provide alt-text for the cover image
-- Delete a cover image
+- Provide alt text for the cover image
+- Delete or replace a cover image
 
 ### Cover image usage
 
@@ -46,7 +46,7 @@ Add publishing and rights information:
 #### ISBNs
 
 - Add multiple ISBNs with unique labels
-- Each ISBN can include a custom label (Useful for different formats and regions)
+- Each ISBN can include a custom label (useful for different formats and regions)
 
 #### Copyright license
 
