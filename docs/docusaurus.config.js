@@ -108,7 +108,7 @@ const config = {
             items: [
               {
                 label: 'User guide',
-                to: '/docs/userGuide/Getting Started/intro',
+                to: '/docs/userGuide/Getting Started with Ketty/getting-started-introduction',
               },
               {
                 label: 'Developer guide',
