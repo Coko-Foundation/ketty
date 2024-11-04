@@ -93,6 +93,9 @@
 | `SERVICE_ICML_URL` | The url of the ICML microservice (only used in ketty v1). |
 | `SERVICE_ICML_CLIENT_ID` | The client id for the ICML microservice. |
 | `SERVICE_ICML_SECRET` | The client secret for the ICML microservice. |
+| `SERVICE_FLAX_URL` | The url of the Flax microservice. |
+| `SERVICE_FLAX_CLIENT_ID` | The client id for the Flax microservice. |
+| `SERVICE_FLAX_SECRET` | The client secret for the Flax microservice. |
 
 ## Client
 
