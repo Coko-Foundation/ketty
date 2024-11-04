@@ -12,6 +12,7 @@ There are a few things that need to be up and running before running the app:
   - Pagedjs (pdf preview & generation)
   - XSweet (docx upload to html conversions)
   - EpubChecker (epub validation before generating file)
+  - Flax (publish books on the web)
 
 ### Databases
 
@@ -32,12 +33,14 @@ All microservices are published in dockerhub:
 - Pagedjs: https://hub.docker.com/r/cokoapps/pagedjs/tags
 - Xsweet: https://hub.docker.com/r/cokoapps/xsweet/tags
 - Epubchecker: https://hub.docker.com/r/cokoapps/epubchecker/tags
+- Flax: https://hub.docker.com/r/cokoapps/ketty-flax/tags
 
 For more details on how to run each microservice, check the read me file in the following repos:
 
 - Pagedjs: https://gitlab.coko.foundation/cokoapps/pagedjs
 - Xsweet: https://gitlab.coko.foundation/cokoapps/xsweet
 - Epubchecker: https://gitlab.coko.foundation/cokoapps/epub-checker
+- Flax: https://gitlab.coko.foundation/coko-org/products/ketty/flax
 
 ---
 

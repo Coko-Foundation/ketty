@@ -8,15 +8,14 @@ Link: https://gitlab.coko.foundation/ketty/server
 ### Ketty clients
 
 :::note
-Ketty client evolved from its predecessor, Editoria. We will continue to support Editoria until all the necessary features have been transferred to Ketty, however new features will only be merged for Ketty client. 
+Ketty client evolved from its predecessor, Editoria. We will continue to support Editoria until all the necessary features have been transferred to Ketty, however new features will only be merged for Ketty client.
 :::
 
 **Ketty client** (also mentioned as "v2" or “Lulu” or “POD” - print on demand)  
 The current client — this is maintained and new features are released every month.
-Link: https://gitlab.coko.foundation/ketty/ketty  
+Link: https://gitlab.coko.foundation/ketty/ketty
 
-
-**Editoria** (also mentioned as “v1”) 
+**Editoria** (also mentioned as “v1”)
 The previous client — this is only maintained.
 Link https://gitlab.coko.foundation/ketty/editoria
 
@@ -43,6 +42,10 @@ Checks the validity of an epub file.
 Link: https://gitlab.coko.foundation/cokoapps/icml  
 Converts HTML to ICML.
 
+**Flax**  
+Link: https://gitlab.coko.foundation/coko-org/products/ketty/flax  
+Generates and serves a website for books created with Ketty.
+
 The required microservices for each client to function properly are as follows:
 
 - Editoria
@@ -58,6 +61,7 @@ The required microservices for each client to function properly are as follows:
   - Pagedjs
   - XSweet
   - Epubchecker
+  - Flax
 
 For OEN, XSweet is not needed, as there is no docx ingestion.  
 For Ketty client, ICML is not needed, as the use case for it hasn’t come up yet.
