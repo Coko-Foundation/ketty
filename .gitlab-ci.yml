@@ -228,7 +228,7 @@ deploy:
     do_spaces_secret_key: $DIGITAL_OCEAN_SPACES_SECRET_KEY
   script:
     - kubectl config get-contexts
-    - kubectl config use-context ketty/agent:agent-1
+    - kubectl config use-context coko-org/products/ketty/agent:agent-1
     - cp $DEPLOY_COMPOSE_FILE /ansible
     - cd /ansible
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
