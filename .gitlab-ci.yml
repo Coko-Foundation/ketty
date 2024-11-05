@@ -224,7 +224,7 @@ deploy:
     COMPOSE_SERVICES_CLIENT_URL: ketty.coko.app #<service name> is each value defined in COMPOSE_SERVICES
     COMPOSE_SERVICES_CLIENT_IMAGE: cokoapps/ketty-client:latest # name of the image
     COMPOSE_SERVICES_SERVER_URL: ketty-server.coko.app #<service name> is each value defined in COMPOSE_SERVICES
-    COMPOSE_SERVICES_SERVER_IMAGE: cokoapps/ketty-server-develop:e246b5d741710a6a52cad0df77ae0657fca76e0c # name of the image
+    COMPOSE_SERVICES_SERVER_IMAGE: cokoapps/ketty-server-develop:test # name of the image
     do_spaces_access_key: $DIGITAL_OCEAN_SPACES_ACCESS_KEY
     do_spaces_secret_key: $DIGITAL_OCEAN_SPACES_SECRET_KEY
   script:
