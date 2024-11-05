@@ -64,5 +64,3 @@ services:
       - TEMP_DIRECTORY_CLEAN_UP=${TEMP_DIRECTORY_CLEAN_UP:-true}
       - AI_ENABLED=${AI_ENABLED}
       - CHAT_GPT_KEY=${CHAT_GPT_KEY}
-    volumes:
-      - ./config/local.js:/home/node/server/config/local.js
