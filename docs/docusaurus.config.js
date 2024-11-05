@@ -9,7 +9,7 @@ import { themes as prismThemes } from 'prism-react-renderer'
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Ketty Docs',
-  tagline: 'documentation',
+  tagline: 'Documentation',
   favicon: 'img/ketty.ico',
 
   // Set the production url of your site here
@@ -58,7 +58,7 @@ const config = {
       navbar: {
         title: 'Ketty',
         logo: {
-          alt: 'Ketty - the single source book production software',
+          alt: 'Ketty - the single-source book production software',
           src: 'img/ketty.png',
         },
         items: [
@@ -66,19 +66,19 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'userSidebar',
             position: 'left',
-            label: 'User guide',
+            label: 'User Guide',
           },
           {
             type: 'docSidebar',
             sidebarId: 'developerSidebar',
             position: 'left',
-            label: 'Developer guide',
+            label: 'Developer Guide',
           },
           {
             type: 'docSidebar',
             sidebarId: 'deploySidebar',
             position: 'left',
-            label: 'Deploy',
+            label: 'Deployment Guide',
           },
           // {
           //   type: 'docSidebar',
@@ -107,15 +107,15 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'User guide',
+                label: 'User Guide',
                 to: '/docs/userGuide/Getting Started with Ketty/getting-started-introduction',
               },
               {
-                label: 'Developer guide',
+                label: 'Developer Guide',
                 to: '/docs/developerGuide/Repositories & Setup',
               },
               {
-                label: 'Deployment guide',
+                label: 'Deployment Guide',
                 to: '/docs/deploy/Deploy Ketty in production',
               },
             ],
@@ -147,7 +147,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Coko Foundation. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Coko Foundation CC BY-SA. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
