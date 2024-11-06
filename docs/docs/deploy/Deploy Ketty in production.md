@@ -16,9 +16,10 @@ There are a few things that need to be up and running before running the app:
 
 ### Databases
 
-The app, as well as each of the microservices needs a separate postgresql database to connect to.  
-Make sure that the pgcrypto extension is installed on each of them.  
+The app, as well as each of the microservices needs a separate postgresql database to connect to. Make sure that the pgcrypto extension is installed on each of them.  
 To install this extension you can run `CREATE EXTENSION IF NOT EXISTS pgcrypto;` in your postgres environment.
+
+Additionally, the database for the main app needs the [pgvector extension](https://github.com/pgvector/pgvector), used for RAG Search in the Knowledge Base. To install pgvector run `CREATE EXTENSION IF NOT EXISTS vector;` in your postgres environment.
 
 ### Object storage
 
