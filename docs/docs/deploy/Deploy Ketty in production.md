@@ -57,7 +57,7 @@ You can find the repos for Ketty server & client in the following links:
 
 ### Environment variables
 
-First thing to do is to setup the correct environment variables in the environment where the containers will run. The most up to date list of environment variables can be found in the [production compose file](https://gitlab.coko.foundation/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads) in the Ketty repo. You can use this compose file as is, or recreate its logic with the docker compose equivalent of your choice (eg. kubernetes).
+First thing to do is to setup the correct environment variables in the environment where the containers will run. The most up to date list of environment variables can be found in the [production compose file](https://gitlab.coko.foundation/coko-org/products/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads) in the Ketty repo. You can use this compose file as is, or recreate its logic with the docker compose equivalent of your choice (eg. kubernetes).
 
 Some notes on specific variables:
 
@@ -75,7 +75,7 @@ Some notes on specific variables:
 
 ### Config file
 
-To enable export templates and integration with lulu, you will also need to mount a config file (eg. [with compose](https://gitlab.coko.foundation/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads#L67)) inside the server container at the `config/local.js` location.  
+To enable export templates and integration with lulu, you will also need to mount a config file (eg. [with compose](https://gitlab.coko.foundation/coko-org/products/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads#L67)) inside the server container at the `config/local.js` location.  
 This will enable these specific templates, but you can also replace these with the templates of your choice.  
 Note that in the lulu integration section, you should replace the `{clientUrl}` and `{luluClientId}` with proper values, as well as replace the sandbox values with their non-sandboxes equivalents.
 
@@ -83,51 +83,51 @@ Note that in the lulu integration section, you should replace the `{clientUrl}` 
 module.exports = {
   templates: [
     {
-      label: "lategrey",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/lategrey.git",
+      label: "slategrey",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/slategrey.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "significa",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/significa.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/significa.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "bikini",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/bikini.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/bikini.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "vanilla",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/vanilla.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/vanilla.git",
       assetsRoot: "dist",
       default: true,
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "atosh",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/atosh.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/atosh.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "eclypse",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/eclypse.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/eclypse.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "logical",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/logical.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/logical.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
     {
       label: "tenberg",
-      url: "https://gitlab.coko.foundation/ketty/ketty-templates/tenberg.git",
+      url: "https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/tenberg.git",
       assetsRoot: "dist",
       supportedNoteTypes: ["footnotes"],
     },
@@ -149,7 +149,7 @@ module.exports = {
 
 ### Websockets
 
-The server container exposes two different ports, one for the main server and one for the websocket server (used for keeping chapters locked when a user is editing). You should map each of these to a different port on your machine. See [the server port part of the compose file](https://gitlab.coko.foundation/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads#L18-19) for reference.
+The server container exposes two different ports, one for the main server and one for the websocket server (used for keeping chapters locked when a user is editing). You should map each of these to a different port on your machine. See [the server port part of the compose file](https://gitlab.coko.foundation/coko-org/products/ketty/ketty/-/blob/main/docker-compose.demo-deploy.yml?ref_type=heads#L18-19) for reference.
 
 ### SSL
 

@@ -3,7 +3,7 @@
 ### Ketty server
 
 The server used by all Ketty clients  
-Link: https://gitlab.coko.foundation/ketty/server
+Link: https://gitlab.coko.foundation/coko-org/products/ketty/server
 
 ### Ketty clients
 
@@ -13,11 +13,11 @@ Ketty client evolved from its predecessor, Editoria. We will continue to support
 
 **Ketty client** (also mentioned as "v2" or “Lulu” or “POD” - print on demand)  
 The current client — this is maintained and new features are released every month.
-Link: https://gitlab.coko.foundation/ketty/ketty
+Link: https://gitlab.coko.foundation/coko-org/products/ketty/ketty
 
 **Editoria** (also mentioned as “v1”)
 The previous client — this is only maintained.
-Link https://gitlab.coko.foundation/ketty/editoria
+Link https://gitlab.coko.foundation//coko-org/products/ketty/editoria
 
 **OEN**  
 Essentially the same as Editoria, but with book structure enabled, and docx uploads disabled (both controlled via [environment variables](docs/docs/developerGuide/04-Environment Variables.md)). The only feature that OEN introduces compared to v1 is the open textbook planner (and the corresponding book structure property in the book model). This is part of the same repo as Editoria.
