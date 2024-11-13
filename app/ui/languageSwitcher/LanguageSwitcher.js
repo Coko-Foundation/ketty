@@ -5,7 +5,7 @@ import 'flag-icon-css/css/flag-icon.min.css'
 import cookies from 'js-cookie'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
-import i18n from '../../translations/i18n'
+import i18n from '../../../config/translations/i18n'
 import Select from '../common/Select'
 
 const Wrapper = styled.div`

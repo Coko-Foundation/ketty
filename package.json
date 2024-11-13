@@ -31,7 +31,7 @@
     "wax-table-service": "0.9.57"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.6.2",
+    "@ant-design/icons": "^5.1.4",
     "@apollo/client": "^3.6.8",
     "@coko/client": "0.0.60",
     "@dnd-kit/core": "^6.1.0",
@@ -61,8 +61,7 @@
     "wax-table-service": "0.9.57"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@coko/lint": "^2.0.1",
+    "@coko/lint": "^2.1.0",
     "@coko/storybook": "^1.6.0",
     "@faker-js/faker": "^7.6.0",
     "cypress": "^12.1.0",
