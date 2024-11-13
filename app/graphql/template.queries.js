@@ -46,6 +46,32 @@ const TEMPLATE_UPDATED_SUBSCRIPTION = gql`
   }
 `
 
+// const GET_BOOK_ASSOCIATED_TEMPLATES = gql`
+//   query GetBook($id: ID!) {
+//     getBook(id: $id) {
+//       associatedTemplates {
+//         pagedjs {
+//           trimSize
+//           templateId
+//           additionalExportOptions {
+//             includeTOC
+//             includeCopyrights
+//             includeTitlePage
+//           }
+//         }
+//         epub {
+//           templateId
+//           additionalExportOptions {
+//             includeTOC
+//             includeCopyrights
+//             includeTitlePage
+//           }
+//         }
+//       }
+//     }
+//   }
+// `
+
 const UPDATE_ASSOCIATED_TEMPLATES = gql`
   mutation UpdateAssociatedTemplates(
     $bookId: ID!

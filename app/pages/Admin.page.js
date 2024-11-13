@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import {
   APPLICATION_PARAMETERS,
   UPDATE_APPLICATION_PARAMETERS,
+  UPLOAD_TRANSLATION,
 } from '../graphql'
 import { isAdmin } from '../helpers/permissions'
 import { AdminDashboard } from '../ui/admin'
@@ -33,6 +34,8 @@ const AdminPage = () => {
       refetchQueries: [APPLICATION_PARAMETERS],
     })
 
+  const [upload] = useMutation(UPLOAD_TRANSLATION)
+
   const luluConfig = getApplicationParameters?.find(
     p => p.area === 'integrations',
   )?.config.lulu
@@ -47,6 +50,10 @@ const AdminPage = () => {
 
   const exportsConfig = getApplicationParameters?.find(
     p => p.area === 'exportsConfig',
+  )?.config
+
+  const languages = getApplicationParameters?.find(
+    p => p.area === 'languages',
   )?.config
 
   const toggleLuluConfig = val => {
@@ -143,6 +150,29 @@ const AdminPage = () => {
     return updateApplicationParametersMutation({ variables })
   }
 
+  const handleLanguagesUpdate = newConfig => {
+    const variables = {
+      input: {
+        context: 'bookBuilder',
+        area: 'languages',
+        config: JSON.stringify(newConfig),
+      },
+    }
+
+    return updateApplicationParametersMutation({ variables })
+  }
+
+  const handleTranslationsUpload = async (file, code) => {
+    const mutationVariables = {
+      variables: {
+        file,
+        code,
+      },
+    }
+
+    return upload(mutationVariables)
+  }
+
   if (currentUser && !isAdmin(currentUser)) {
     history.push('/dashboard')
   }
@@ -154,10 +184,13 @@ const AdminPage = () => {
       chatGptApiKey={chatGptApiKey}
       exportConfigUpdate={toggleExportsConfig}
       exportOptions={exportsConfig}
+      languages={languages}
       luluConfigEnabled={!luluConfig?.disabled}
       luluToggleConfig={toggleLuluConfig}
       onChatGPTKeyUpdate={handleUpdateChatGPTApiKey}
+      onLanguagesUpdate={handleLanguagesUpdate}
       onTCUpdate={handleTCUppdate}
+      onTranslationsUpload={handleTranslationsUpload}
       paramsLoading={paramsLoading || updateLoading}
       termsAndConditions={tcContent}
     />

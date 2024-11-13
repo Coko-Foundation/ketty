@@ -11,6 +11,7 @@ import {
   SpecialCharactersService,
   BlockDropDownToolGroupService,
   FindAndReplaceService,
+  // FindAndReplaceToolGroupService,
   FullScreenService,
   // disallowPasteImagesPlugin,
   CommentsService,
@@ -33,6 +34,17 @@ const config = {
         'BlockDropDown',
         // { name: 'BlockQuoteTool', exclude: ['Lift'] },l
         { name: 'Lists', exclude: ['JoinUp'] },
+        // {
+        //   name: 'Text',
+        //   exclude: [
+        //     'ExtractPoetry',
+        //     'ExtractProse',
+        //     'ParagraphContinued',
+        //     'Subscript',
+        //     'SourceNote',
+        //     'Paragraph',
+        //   ],
+        // },
         'Images',
         {
           name: 'Annotations',
@@ -45,6 +57,7 @@ const config = {
       ],
     },
   ],
+
   SchemaService: DefaultSchema,
   SpecialCharactersService: charactersList,
   PmPlugins: [
@@ -77,6 +90,7 @@ const config = {
     new SpecialCharactersService(),
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
+    // new FindAndReplaceToolGroupService(),
     new FullScreenService(),
   ],
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Col, Row, DatePicker } from 'antd'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Form, Input } from '../common'
 
 const StyledDatePicker = styled(DatePicker)`
@@ -10,18 +11,19 @@ const StyledDatePicker = styled(DatePicker)`
 
 const CopyrightInputs = props => {
   const { namePrefix, canChangeMetadata, selected } = props
+  const { t } = useTranslation()
 
   return (
     <Row gutter={[12, 0]}>
       <Col span={18}>
         <Form.Item
-          label="Copyright holder name"
+          label={t('copyright_holder')}
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightHolder`}
           rules={[
             {
               required: selected,
-              message: 'Copyright holder name is required',
+              message: t('copyright_holder_required'),
             },
           ]}
         >
@@ -31,11 +33,11 @@ const CopyrightInputs = props => {
 
       <Col span={6}>
         <Form.Item
-          label="Copyright year"
+          label={t('copyright_year')}
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightYear`}
           rules={[
-            { required: selected, message: 'Copyright year is required' },
+            { required: selected, message: t('copyright_year_required') },
           ]}
         >
           <StyledDatePicker disabled={!canChangeMetadata} picker="year" />

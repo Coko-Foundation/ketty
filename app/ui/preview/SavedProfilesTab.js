@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import { Divider } from 'antd'
+import { useTranslation } from 'react-i18next'
 import ProfileRow from './ProfileRow'
 import ExportOptionsSection from './ExportOptionsSection'
 import Footer from './Footer'
@@ -51,6 +52,8 @@ const SavedProfilesTab = props => {
   const { includePdf, includeEpub, pdfProfileId, epubProfileId } =
     currentOptions
 
+  const { t } = useTranslation()
+
   return (
     <>
       <div>
@@ -66,7 +69,7 @@ const SavedProfilesTab = props => {
         />
         {profileSelected && canModify && hasChanges && !loadingPreview && (
           <Ribbon hide={!hasChanges || !canModify}>
-            You have unsaved changes
+            {t('unsaved_changed_profile')}
           </Ribbon>
         )}
       </div>

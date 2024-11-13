@@ -34,7 +34,7 @@ const hasEditAccess = (bookId, user) => {
     member => member.user?.id === user.id,
   )
 
-  return !!teamMember?.status && teamMember.status === 'write'
+  return teamMember?.status && teamMember.status === 'write'
 }
 
 module.exports = {

@@ -20,4 +20,14 @@ const UPDATE_APPLICATION_PARAMETERS = gql`
   }
 `
 
-export { APPLICATION_PARAMETERS, UPDATE_APPLICATION_PARAMETERS }
+const UPLOAD_TRANSLATION = gql`
+  mutation UploadTranslation($file: Upload, $code: String) {
+    uploadTranslation(file: $file, code: $code)
+  }
+`
+
+export {
+  APPLICATION_PARAMETERS,
+  UPDATE_APPLICATION_PARAMETERS,
+  UPLOAD_TRANSLATION,
+}

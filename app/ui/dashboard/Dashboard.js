@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
 import { grid } from '@coko/client'
 import { Link } from 'react-router-dom'
+// import { Space } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { BookGrid } from '../bookGrid'
 
 const Wrapper = styled.div`
@@ -65,15 +67,17 @@ const Dashboard = props => {
     loading,
   } = props
 
+  const { t } = useTranslation()
+
   return (
     <Wrapper>
       <SectionHeader>
-        <h1>Your Books</h1>
+        <h1>{t('Your Books'.toLowerCase().replace(/ /g, '_'))}</h1>
         <StyledLink data-test="dashboard-newBook-button" to="/create-book">
           <span>
             <EditOutlined />
           </span>
-          <span>New Book</span>
+          <span>{t('New Book'.toLowerCase().replace(/ /g, '_'))}</span>
         </StyledLink>
       </SectionHeader>
 

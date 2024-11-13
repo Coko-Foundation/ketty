@@ -1,11 +1,8 @@
 import React from 'react'
-import { Typography } from 'antd'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { MissingImageIcon } from '../common'
-
-const { Text } = Typography
 
 const Wrapper = styled.div`
   aspect-ratio: 101 / 136;
@@ -31,20 +28,6 @@ const StyledMissingImageIcon = styled(MissingImageIcon)`
   width: calc(100% - 20px);
 `
 
-const MissingImageText = styled.div`
-  bottom: ${grid(5)};
-  color: ${th('colorText')};
-  left: 0;
-  position: absolute;
-  text-align: center;
-  width: 100%;
-`
-
-const IdealSizeText = styled(Text)`
-  color: ${th('colorText')};
-  font-size: ${th('fontSizeBaseSmall')};
-`
-
 const BookCover = ({ className, src, title }) => {
   return (
     <Wrapper className={className}>
@@ -53,11 +36,6 @@ const BookCover = ({ className, src, title }) => {
       ) : (
         <BookNoCover>
           <StyledMissingImageIcon />
-          <MissingImageText>
-            {/* <strong>Placeholder</strong> */}
-            <br />
-            <IdealSizeText>Ideal size: 202 x 272 px</IdealSizeText>
-          </MissingImageText>
         </BookNoCover>
       )}
     </Wrapper>

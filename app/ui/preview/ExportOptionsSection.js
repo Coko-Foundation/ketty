@@ -2,6 +2,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 import ExportOption from './ExportOption'
 import TemplateList from './TemplateList'
 import { Select } from '../common'
@@ -39,26 +40,6 @@ const exportSizeOptions = [
   },
 ]
 
-const makeContentOptions = (isPdf, isEpub, hasCover) => [
-  {
-    value: 'includeCoverPage',
-    label: 'Cover',
-    disabled: isPdf || !hasCover,
-  },
-  {
-    value: 'includeTitlePage',
-    label: 'Title page',
-  },
-  {
-    value: 'includeCopyrights',
-    label: 'Copyright page',
-  },
-  {
-    value: 'includeTOC',
-    label: 'Table of contents',
-    disabled: isEpub,
-  },
-]
 // #endregion menu options
 
 // #region styled
@@ -113,6 +94,29 @@ const ExportOptionsSection = props => {
     exportOptions,
     handleFormatChange,
   } = props
+
+  const { t } = useTranslation()
+
+  const makeContentOptions = (isPdf, isEpub, cover) => [
+    {
+      value: 'includeCoverPage',
+      label: t('cover'),
+      disabled: isPdf || !cover,
+    },
+    {
+      value: 'includeTitlePage',
+      label: t('title_page'),
+    },
+    {
+      value: 'includeCopyrights',
+      label: t('copyright_page'),
+    },
+    {
+      value: 'includeTOC',
+      label: t('table_of_contents'),
+      disabled: isEpub,
+    },
+  ]
 
   const isbnOptions = [
     ...isbns.map(isbnItem => {
@@ -175,22 +179,22 @@ const ExportOptionsSection = props => {
     <>
       <div>
         {newProfile ? (
-          <ExportOption inline label="Format">
+          <ExportOption inline label={t('format')}>
             <Select
-              aria-label="Format"
+              aria-label={t('format')}
               bordered={false}
+              data-test="preview-format-menu"
               disabled={previewLoading}
               onChange={handleFormatChange}
               options={exportOptions}
               popupMatchSelectWidth={120}
               value={selectedFormat}
-              data-test="preview-format-menu"
             />
           </ExportOption>
         ) : (
           <>
-            <h3 style={{ marginBlock: 0 }}>Profile information:</h3>
-            <ExportOption inline label="Name">
+            <h3 style={{ marginBlock: 0 }}>{t('profile_information')}:</h3>
+            <ExportOption inline label={t('name')}>
               <ProfileName
                 canModifyProfiles={canModifyProfiles}
                 onProfileRename={onProfileRename}
@@ -198,11 +202,11 @@ const ExportOptionsSection = props => {
               />
             </ExportOption>
 
-            <ExportOption inline label="Last updated">
+            <ExportOption inline label={t('last_updated')}>
               <span>{lastUpdated}</span>
             </ExportOption>
 
-            <ExportOption inline label="Format">
+            <ExportOption inline label={t('format')}>
               <span>
                 {
                   exportFormatOptions.find(f => f.value === selectedFormat)
@@ -214,9 +218,9 @@ const ExportOptionsSection = props => {
         )}
 
         {isPdf && (
-          <ExportOption inline label="Size">
+          <ExportOption inline label={t('size')}>
             <Select
-              aria-label="Paper size"
+              aria-label={t('paper_size')}
               bordered={false}
               onChange={handleSizeChange}
               options={exportSizeOptions}
@@ -226,14 +230,14 @@ const ExportOptionsSection = props => {
         )}
 
         {isEpub && (
-          <ExportOption inline label="ISBN">
+          <ExportOption inline label={t('isbn')}>
             <Select
-              aria-label="ISBN"
               allowClear
+              aria-label={t('isbn')}
               bordered={false}
               onChange={handleIsbnChange}
               options={isbnOptions}
-              placeholder="No selection"
+              placeholder={t('no_selection')}
               style={{ minWidth: '230px' }}
               value={selectedIsbn || null}
             />
@@ -241,16 +245,16 @@ const ExportOptionsSection = props => {
         )}
 
         {(isEpub || isPdf) && (
-          <FrontmatterOption inline label="Front matter">
+          <FrontmatterOption inline label={t('front_matter')}>
             <MultiSelect
-              aria-label="Front matter pages to include"
               allowClear
+              aria-label={t('front_matter_label')}
               bordered={false}
               data-test="preview-content"
               mode="multiple"
               onChange={handleContentChange}
               options={contentOptions}
-              placeholder="Please select"
+              placeholder={t('please_select')}
               showSearch={false}
               value={selectedContent}
             />
@@ -275,7 +279,7 @@ const ExportOptionsSection = props => {
           </div>
         )}
       </div>
-      <TemplateOption id="templates" label="Templates">
+      <TemplateOption id="templates" label={t('templates')}>
         <TemplateList
           disabled={previewLoading}
           onTemplateClick={handleTemplateClick}

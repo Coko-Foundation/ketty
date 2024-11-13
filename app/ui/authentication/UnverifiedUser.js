@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
+import { useTranslation } from 'react-i18next'
 import { Page, Result, Button } from '../common'
 
 const Wrapper = styled.div``
@@ -10,6 +11,7 @@ const ExtraWrapper = styled.div``
 
 const UnverifiedUser = props => {
   const { className, resend } = props
+  const { t } = useTranslation()
 
   return (
     <Page maxWidth={600}>
@@ -18,7 +20,11 @@ const UnverifiedUser = props => {
           extra={
             <ExtraWrapper>
               <Button onClick={resend} type="primary">
-                Send me a new verification email
+                {t(
+                  'Send me a new verification email'
+                    .replace(/ /g, '_')
+                    .toLowerCase(),
+                )}
               </Button>
             </ExtraWrapper>
           }

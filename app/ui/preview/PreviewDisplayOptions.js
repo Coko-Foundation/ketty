@@ -87,11 +87,11 @@ const PreviewDisplayOptions = props => {
         onChange={handleChangeSpread}
         value={options.spread}
       >
-        <Radio.Button value="double" data-test="preview-doublePage-btn">
+        <Radio.Button data-test="preview-doublePage-btn" value="double">
           <ReadOutlined />
         </Radio.Button>
 
-        <Radio.Button value="single" data-test="preview-singlePage-btn">
+        <Radio.Button data-test="preview-singlePage-btn" value="single">
           <BorderOutlined />
         </Radio.Button>
       </Radio.Group>
@@ -99,22 +99,22 @@ const PreviewDisplayOptions = props => {
       <ZoomWrapper>
         <ZoomButton
           // disabled={disabled || zoomAtMin}
+          data-test="preview-zoomOut-btn"
           disabled={zoomAtMin}
           icon={<ZoomOutOutlined />}
           onClick={handleZoomOut}
           shape="circle"
-          data-test="preview-zoomOut-btn"
         />
 
         <Zoom>{`${options.zoom * 100} %`}</Zoom>
 
         <ZoomButton
           // disabled={disabled || zoomAtMax}
+          data-test="preview-zoomIn-btn"
           disabled={zoomAtMax}
           icon={<ZoomInOutlined />}
           onClick={handleZoomIn}
           shape="circle"
-          data-test="preview-zoomIn-btn"
         />
       </ZoomWrapper>
     </Wrapper>

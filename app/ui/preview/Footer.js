@@ -7,7 +7,7 @@ import {
   CheckCircleTwoTone,
   WarningTwoTone,
 } from '@ant-design/icons'
-
+import { useTranslation } from 'react-i18next'
 import { grid, th } from '@coko/client'
 
 import { Button, Cluster, Input, Modal, Spin } from '../common'
@@ -61,6 +61,7 @@ const Footer = props => {
   const [isUploading, setUploading] = useState(false)
   const [createInput, setCreateInput] = useState(null)
   const inputRef = useRef(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (isCreateModalOpen && inputRef && inputRef.current) {
@@ -153,59 +154,45 @@ const Footer = props => {
 
   const publishingModalContent = (missingPdf, missingEpub, loading) => {
     if (missingPdf) {
-      return (
-        <p>
-          You need to select a PDF profile if you want to include a PDF in your
-          website
-        </p>
-      )
+      return <p>{t('webpublish_modal_missing_pdf')}</p>
     }
 
     if (missingEpub) {
-      return (
-        <p>
-          You need to select an EPUB profile if you want to include an EPUB in
-          your website
-        </p>
-      )
+      return <p>{t('webpublish_modal_missing_epub')}</p>
     }
 
     return loading ? (
       <div style={{ textAlign: 'center' }}>
         <Spin />
-        <p>Publishing</p>
+        <p>{t('publishing_loading')}</p>
       </div>
     ) : (
       <>
-        <p>
-          Your book will be published at a unique URL. You can update and
-          republish it anytime.
-        </p>
+        <p>{t('webpublish_modal_info_1')}</p>
 
+        <p>{t('webpublish_modal_info_2')}</p>
         <p>
-          Publishing may take a few minutes. Once complete, the book will open
-          in a new browser tab.
-        </p>
-        <p>
-          Selected template:{' '}
+          {t('webpublish_modal_selected_template')}{' '}
           <span style={{ textTransform: 'capitalize' }}>
             {selectedTemplate?.name}
           </span>
         </p>
         {includePdf && (
           <p>
-            <CheckCircleTwoTone twoToneColor="green" /> Includes PDF download
+            <CheckCircleTwoTone twoToneColor="green" />{' '}
+            {t('webpublish_modal_include_pdf')}
           </p>
         )}
         {includeEpub && (
           <p>
-            <CheckCircleTwoTone twoToneColor="green" /> Includes EPUB download
+            <CheckCircleTwoTone twoToneColor="green" />{' '}
+            {t('webpublish_modal_include_epub')}
           </p>
         )}
         {publishedBefore && (
           <p>
-            <WarningTwoTone twoToneColor="#ffc300" /> Careful: Publishing again
-            will overwrite the previously published book.
+            <WarningTwoTone twoToneColor="#ffc300" />{' '}
+            {t('webpublish_modal_warning')}
           </p>
         )}
       </>
@@ -223,7 +210,7 @@ const Footer = props => {
           key="save-profile"
           onClick={handleClickSave}
         >
-          Save Publishing Profile
+          {t('save_publishin_profile')}
         </Button>,
       )
     } else if (selectedFormat === 'web') {
@@ -234,7 +221,7 @@ const Footer = props => {
           onClick={() => setPublishModalOpen(true)}
           type="primary"
         >
-          {publishedBefore ? 'Publish Again' : 'Publish'}
+          {publishedBefore ? t('publish_again_action') : t('publish_action')}
         </Button>,
       )
     } else if (isConnected && !isInLulu && canUploadToProvider) {
@@ -244,10 +231,10 @@ const Footer = props => {
           key="upload-to-lulu"
           loading={isUploading}
           onClick={handleClickSendToLulu}
-          type="primary"
           style={{ textTransform: 'none' }}
+          type="primary"
         >
-          Upload to Lulu
+          {t('upload_to_lulu')}
         </Button>,
       )
     } else if (isConnected && isInLulu && !isSynced) {
@@ -257,10 +244,10 @@ const Footer = props => {
           key="lulu-sync"
           loading={isUploading}
           onClick={handleClickSendToLulu}
-          type="primary"
           style={{ textTransform: 'none' }}
+          type="primary"
         >
-          Sync with Lulu
+          {t('sync_with_lulu')}
         </Button>,
       )
     }
@@ -275,7 +262,7 @@ const Footer = props => {
           loading={downloadLoading}
           onClick={handleClickDownload}
         >
-          Download
+          {t('download')}
         </Button>,
       )
     }
@@ -294,7 +281,7 @@ const Footer = props => {
         onCancel={closeCreateModal}
         onOk={handleCreate}
         open={isCreateModalOpen}
-        title="Save Publishing Profile"
+        title={t('save_publishing_profile')}
       >
         <Input
           data-test="preview-exportName-input"
@@ -310,11 +297,11 @@ const Footer = props => {
         okButtonProps={{
           disabled: missingPdfProfile || missingEpubProfile || publishing,
         }}
-        okText="Publish"
+        okText={t('publish_action')}
         onCancel={() => setPublishModalOpen(false)}
         onOk={handlePublish}
         open={isPublishModalOpen}
-        title="Publish Online"
+        title={t('publish_online')}
       >
         {publishingModalContent(
           missingPdfProfile,

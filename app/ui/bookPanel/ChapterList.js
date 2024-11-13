@@ -16,6 +16,7 @@ import {
 import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import styled from 'styled-components'
+// import { useTranslation } from 'react-i18next'
 import {
   buildTree,
   flattenTree,
@@ -95,6 +96,7 @@ const ChapterList = ({
   className,
   canEdit,
 }) => {
+  // const { t } = useTranslation()
   const indentationWidth = 33
 
   const [items, setItems] = useState(() =>
