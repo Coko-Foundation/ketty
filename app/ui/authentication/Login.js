@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-// import styled from 'styled-components'
 
+import { useTranslation } from 'react-i18next'
 import { Form, Input, Page } from '../common'
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
@@ -10,11 +10,12 @@ import AuthenticationWrapper from './AuthenticationWrapper'
 
 const Login = props => {
   const { className, errorMessage, hasError, loading, onSubmit } = props
+  const { t } = useTranslation('translation', { useSuspense: false })
 
   return (
     <Page maxWidth={600}>
       <AuthenticationWrapper className={className}>
-        <AuthenticationHeader>Login</AuthenticationHeader>
+        <AuthenticationHeader>{t('Login'.toLowerCase())}</AuthenticationHeader>
 
         <AuthenticationForm
           alternativeActionLabel="Do you want to sign up instead?"
@@ -28,39 +29,55 @@ const Login = props => {
           title="Login"
         >
           <Form.Item
-            label="Email"
+            label={t('Email'.toLowerCase())}
             name="email"
             rules={[
               {
                 required: true,
-                message: 'Email is required',
+                message: () =>
+                  t('Email is required'.toLowerCase().replace(/ /g, '_')),
               },
               {
                 type: 'email',
-                message: 'This is not a valid email address',
+                message: () =>
+                  t(
+                    'This is not a valid email address'
+                      .toLowerCase()
+                      .replace(/ /g, '_'),
+                  ),
               },
             ]}
           >
             <Input
               autoComplete="on"
-              placeholder="Please enter your email"
+              data-test="login-email-input"
+              placeholder={t(
+                'Please enter your email'.toLowerCase().replace(/ /g, '_'),
+              )}
               prefix={<UserOutlined className="site-form-item-icon" />}
               type="email"
-              data-test="login-email-input"
             />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t('Password'.toLowerCase())}
             name="password"
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[
+              {
+                required: true,
+                message: () =>
+                  t('Password is required'.toLowerCase().replace(/ /g, '_')),
+              },
+            ]}
           >
             <Input
               autoComplete="on"
-              placeholder="Please enter your password"
+              data-test="login-password-input"
+              placeholder={t(
+                'Please enter your password'.toLowerCase().replace(/ /g, '_'),
+              )}
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              data-test="login-password-input"
             />
           </Form.Item>
         </AuthenticationForm>

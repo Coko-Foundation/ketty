@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { InteractionOutlined, PrinterOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 
 import Editor from './components/Editor'
 import CssAssistant from './CssAssistant'
@@ -140,6 +141,7 @@ const WindowHeading = styled.div`
 
   > :first-child {
     color: #aaa;
+    text-transform: uppercase;
   }
 `
 
@@ -202,6 +204,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
   const [showEditor, setShowEditor] = useState(true)
   const [showPreview, setShowPreview] = useState(true)
   const [showChat, setShowChat] = useState(false)
+  const { t } = useTranslation()
 
   useEffect(() => {
     showPreview && livePreview && updatePreview()
@@ -254,7 +257,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
           <ChatBubble forceHide={showChat} onRight />
           <Assistant
             enabled
-            placeholder="Type your book design instruction or question here ..."
+            placeholder={t('ai_designer_prompt_placeholder')}
             stylesFromSource={initialPagedJSCSS}
             updatePreview={updatePreview}
           />
@@ -265,21 +268,21 @@ const AiPDFDesigner = ({ bookTitle }) => {
               checked={showEditor || (!showPreview && !showEditor)}
               handleChange={() => setShowEditor(!showEditor)}
               id="showContent"
-              label="Content"
+              label={t('ai_designer_content')}
               style={{ margin: 0 }}
             />
             <StyledCheckbox
               checked={showPreview}
               handleChange={() => setShowPreview(!showPreview)}
               id="showPreview"
-              label="Book Preview"
+              label={t('ai_designer_preview')}
               style={{ margin: 0 }}
             />
             <StyledCheckbox
               checked={showChat}
               handleChange={() => setShowChat(!showChat)}
               id="showChatHistory"
-              label="Chat History"
+              label={t('ai_designer_chat_history')}
               style={{ margin: 0 }}
             />
           </span>
@@ -288,7 +291,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
       <WindowsContainer>
         <StyledWindow $show={showChat} style={{ maxWidth: '30%' }}>
           <WindowHeading>
-            <span>CHAT HISTORY</span>
+            <span>{t('ai_designer_chat_history')}</span>
           </WindowHeading>
           <ChatHistory />
         </StyledWindow>
@@ -297,13 +300,14 @@ const AiPDFDesigner = ({ bookTitle }) => {
         <StyledWindow $show={showEditor}>
           <WindowHeading>
             <span>
-              CONTENT SELECTION{bookTitle ? ` for: "${bookTitle}"` : ':'}
+              {t('ai_designer_content_selection')}
+              {bookTitle ? ` for: "${bookTitle}"` : ':'}
             </span>
             <span>
-              Selection:{' '}
+              {t('selection')}:{' '}
               {selectedCtx?.node && selectedCtx.node !== htmlSrc
                 ? htmlTagNames[selectedCtx.tagName]
-                : 'Book'}
+                : t('book')}
             </span>
           </WindowHeading>
           <EditorContainer onScroll={handleScroll}>
@@ -317,18 +321,19 @@ const AiPDFDesigner = ({ bookTitle }) => {
         {showEditor && showPreview && <WindowDivision />}
         <StyledWindow $show={showPreview}>
           <WindowHeading>
-            <span>BOOK PREVIEW{bookTitle ? ` for: "${bookTitle}"` : ':'}</span>
+            <span>{t('ai_designer_preview')}</span>
+            <span>{bookTitle ? ` for: "${bookTitle}"` : ':'}</span>
             <StyledRefreshButton>
               <button
                 onClick={updatePreview}
-                title="Update preview"
+                title={t('ai_designer_preview_update')}
                 type="button"
               >
                 <InteractionOutlined />
               </button>
               <button
                 onClick={() => previewRef?.current?.contentWindow?.print()}
-                title="Print"
+                title={t('print')}
                 type="button"
               >
                 <PrinterOutlined />
@@ -337,7 +342,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
                 checked={livePreview}
                 handleChange={() => setLivePreview(!livePreview)}
                 id="livePreview"
-                label="Live preview"
+                label={t('ai_designer_live_preview')}
                 style={{ margin: 0 }}
               />
             </StyledRefreshButton>

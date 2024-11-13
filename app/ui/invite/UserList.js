@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { List, Select } from '../common'
 
 const StyledListItem = styled(List.Item)`
@@ -69,10 +70,12 @@ const UserListItem = ({
   canChangeAccess,
   user,
 }) => {
+  const { t } = useTranslation()
+
   const dropdownItems = [
-    { value: 'read', label: 'Can view' },
-    { value: 'write', label: 'Can edit' },
-    { value: 'remove', label: 'Remove access' },
+    { value: 'read', label: t('can_view') },
+    { value: 'write', label: t('can_edit') },
+    { value: 'remove', label: t('remove_access') },
   ]
 
   const { displayName, id: userId, email } = user
@@ -87,7 +90,7 @@ const UserListItem = ({
           <span>{displayName}</span>
         </UserDetails>
         {role === 'owner' ? (
-          <OwnerLabel>Owner</OwnerLabel>
+          <OwnerLabel>{t('owner')}</OwnerLabel>
         ) : (
           <StyledSelect
             bordered={false}

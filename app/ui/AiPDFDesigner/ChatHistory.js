@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { fadeIn } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 import { htmlTagNames } from './utils'
 
@@ -101,6 +102,7 @@ const MessageContent = styled.div`
 const ChatHistory = () => {
   const { selectedCtx, htmlSrc, feedback } = useContext(CssAssistantContext)
   const threadRef = useRef(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     const observer = new MutationObserver(mutations => {
@@ -150,7 +152,7 @@ const ChatHistory = () => {
                       >
                         Y
                       </span>
-                      <strong>@You</strong>
+                      <strong>@{t('you')}</strong>
                     </>
                   ) : (
                     <>
@@ -161,9 +163,9 @@ const ChatHistory = () => {
                           textAlign: 'center',
                         }}
                       >
-                        AI
+                        {t('ai')}
                       </span>
-                      <strong>Coko AI Book designer:</strong>
+                      <strong>{t('ai_designer_name')}:</strong>
                     </>
                   )}
                 </MessageHeader>
@@ -182,15 +184,13 @@ const ChatHistory = () => {
             textAlign: 'center',
           }}
         >
-          {`Make your first prompt related to ${
-            selectedCtx?.node === htmlSrc
-              ? 'the Book'
-              : `this ${
-                  selectedCtx?.tagName
-                    ? htmlTagNames[selectedCtx?.tagName]
-                    : 'selected'
-                }`
-          }`}
+          {selectedCtx?.node === htmlSrc
+            ? t('ai_designer_chat_empty_1')
+            : `${t('ai_designer_chat_empty_2')} ${
+                selectedCtx?.tagName
+                  ? htmlTagNames[selectedCtx?.tagName]
+                  : 'selected'
+              }`}
         </span>
       )}
     </ChatHistoryContainer>

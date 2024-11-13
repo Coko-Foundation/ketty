@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Card } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { grid, th } from '@coko/client'
 import { Button } from '../common'
 
@@ -121,6 +122,7 @@ const StyledButton = styled(Button)`
 
 const InitBook = props => {
   const { onCreateBook, onImportBook } = props
+  const { t } = useTranslation()
 
   const [loadingCreateBook, setLoadingCreateBook] = useState(false)
   const [loadingImportBook, setLoadingImportBook] = useState(false)
@@ -146,18 +148,23 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>Write from scratch</h2>
+                <h2>{t('write_from_scratch')}</h2>
                 <p>
-                  Start your book with a blank slate using the built-in Editor.
+                  {t(
+                    'Start your book with a blank slate using the built-in Editor'
+                      .toLowerCase()
+                      .replace(/ /g, '_'),
+                  )}
+                  .
                 </p>
                 <StyledButton
+                  data-test="createBook-startWriting-button"
                   disabled={loadingCreateBook || loadingImportBook}
                   onClick={handleCreateBook}
                   size="large"
                   type="primary"
-                  data-test="createBook-startWriting-button"
                 >
-                  Start writing
+                  {t('Start writing'.toLowerCase().replace(/ /g, '_'))}
                 </StyledButton>
               </Stack>
             }
@@ -167,16 +174,25 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>Upload your files</h2>
-                <p>Start your book with .docx files.</p>
+                <h2>
+                  {t('Upload your files'.toLowerCase().replace(/ /g, '_'))}
+                </h2>
+                <p>
+                  {t(
+                    'Start your book with .docx files'
+                      .toLowerCase()
+                      .replace(/ /g, '_'),
+                  )}
+                  .
+                </p>
                 <StyledButton
+                  data-test="createBook-selectFiles-button"
                   disabled={loadingCreateBook || loadingImportBook}
                   onClick={handleImportBook}
                   size="large"
                   type="primary"
-                  data-test="createBook-selectFiles-button"
                 >
-                  Select files
+                  {t('Select files'.toLowerCase().replace(/ /g, '_'))}
                 </StyledButton>
               </Stack>
             }

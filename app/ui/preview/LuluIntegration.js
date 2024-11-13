@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
 import { grid } from '@coko/client'
+import { t } from 'i18next'
 
 import { Button } from '../common'
 import Synced from './Synced'
@@ -43,7 +43,7 @@ const LuluIntegration = props => {
 
   return (
     <Wrapper className={className}>
-      <h3 style={{ marginBlockStart: 0 }}>Lulu integration:</h3>
+      <h3 style={{ marginBlockStart: 0 }}>{t('lulu_integration')}:</h3>
       {!isConnected && canUploadToProvider && (
         <div>
           <Button
@@ -51,25 +51,25 @@ const LuluIntegration = props => {
             onClick={onClickConnect}
             type="primary"
           >
-            Connect to Lulu
+            {t('lulu_connect')}
           </Button>
         </div>
       )}
-      {isConnected && !isInLulu && <p>Not uploaded to Lulu</p>}
+      {isConnected && !isInLulu && <p>{t('lulu_not_uploaded')}</p>}
 
       {isConnected && isInLulu && (
         <ConnectedWrapper>
           <Synced isSynced={isSynced} lastSynced={lastSynced} />
 
-          <ExportOption inline label="Project ID">
+          <ExportOption inline label={t('lulu_project_id')}>
             {projectId}
           </ExportOption>
 
           <StyledButton
-            onClick={() => window.open(projectUrl, '_blank', 'noreferrer')}
             disabled={!projectUrl}
+            onClick={() => window.open(projectUrl, '_blank', 'noreferrer')}
           >
-            Open Lulu Project
+            {t('lulu_open_project')}
           </StyledButton>
         </ConnectedWrapper>
       )}

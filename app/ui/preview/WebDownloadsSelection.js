@@ -3,6 +3,7 @@
 import React from 'react'
 import { WarningTwoTone } from '@ant-design/icons'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { CheckboxGroup, Select, Stack } from '../common'
 
 const StyledSelect = styled(Select)`
@@ -28,10 +29,12 @@ const WebDownloadsSelection = props => {
     })
   }
 
+  const { t } = useTranslation()
+
   return (
     <Stack style={{ '--space': '1em' }}>
       <div>
-        <p>Include the following downloads in your website</p>
+        <p>{t('include_downloads')}</p>
         <CheckboxGroup
           defaultValue={[
             ...(includePdf ? ['pdf'] : []),
@@ -48,9 +51,7 @@ const WebDownloadsSelection = props => {
         <div>
           {profiles.filter(p => p.format === 'pdf').length > 0 ? (
             <>
-              <label htmlFor="pdf-profile">
-                Choose a saved PDF profile for the PDF you want to include:
-              </label>
+              <label htmlFor="pdf-profile">{t('select_pdf_profile')}:</label>
               <StyledSelect
                 disabled={previewLoading}
                 id="pdf-profile"
@@ -67,8 +68,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              You don&apos;t have a saved PDF profile. Please create one in
-              order to be able to inlcude a PDF in your website.
+              {t('no_saved_pdf_profile')}
             </p>
           )}
         </div>
@@ -77,9 +77,7 @@ const WebDownloadsSelection = props => {
         <div>
           {profiles.filter(p => p.format === 'epub').length > 0 ? (
             <>
-              <label htmlFor="epub-profile">
-                Choose a saved EPUB profile for the EPUB you want to include
-              </label>
+              <label htmlFor="epub-profile">{t('select_epub_profile')}:</label>
               <StyledSelect
                 disabled={previewLoading}
                 id="epub-profile"
@@ -96,8 +94,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              You don&apos;t have a saved EPUB profile. Please create one in
-              order to be able to inlcude an EPUB in your website.
+              {t('no_saved_epub_profile')}
             </p>
           )}
         </div>

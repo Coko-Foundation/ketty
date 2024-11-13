@@ -10,7 +10,9 @@ import { Avatar } from 'antd'
 import isEmpty from 'lodash/isEmpty'
 import { SettingOutlined } from '@ant-design/icons'
 import Popup from '@coko/client/dist/ui/common/Popup'
+import { useTranslation } from 'react-i18next'
 import Button from './Button'
+import { LanguageSwitcher } from '../languageSwitcher'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -143,9 +145,11 @@ const Header = props => {
     showAiAssistantLink,
     showKnowledgeBaseLink,
     bookId,
+    languages,
     ...rest
   } = props
 
+  const { t } = useTranslation()
   const navItemsLeft = []
   const navItemsRight = []
 
@@ -156,7 +160,7 @@ const Header = props => {
         key="dashboard"
         to="/dashboard"
       >
-        Dashboard
+        {t('dashboard')}
       </UnstyledLink>,
     )
   }
@@ -168,7 +172,7 @@ const Header = props => {
         key="back"
         to={`/books/${bookId}/producer`}
       >
-        Back to book
+        {t('Back to book'.toLowerCase().replace(/ /g, '_'))}
       </UnstyledLink>,
     )
   }
@@ -180,7 +184,7 @@ const Header = props => {
         key="preiew"
         to={`/books/${bookId}/exporter`}
       >
-        Preview and Publish
+        {t('Preview and Publish'.toLowerCase().replace(/ /g, '_'))}
       </UnstyledLink>,
     )
   }
@@ -193,7 +197,7 @@ const Header = props => {
         onClick={onInvite}
         type="text"
       >
-        Share
+        {t('share')}
       </Button>,
     )
   }
@@ -205,7 +209,7 @@ const Header = props => {
         key="kb"
         to={`/books/${bookId}/knowledge-base`}
       >
-        Knowledge Base
+        {t('Knowledge Base'.toLowerCase().replace(/ /g, '_'))}
       </UnstyledLink>,
     )
   }
@@ -213,11 +217,11 @@ const Header = props => {
   if (showAiAssistantLink) {
     navItemsRight.push(
       <UnstyledLink
+        data-test="header-aiDesigner-link"
         key="ai-designer"
         to={`/books/${bookId}/ai-pdf`}
-        data-test="header-aiDesigner-link"
       >
-        AI Book Designer (Beta)
+        {t('AI Book Designer'.toLowerCase().replace(/ /g, '_'))} (Beta)
       </UnstyledLink>,
     )
   }
@@ -225,8 +229,8 @@ const Header = props => {
   if (showSettings) {
     navItemsRight.push(
       <Button
-        data-test="header-bookSettings-btn"
         aria-label="Book settings"
+        data-test="header-bookSettings-btn"
         key="settings"
         onClick={onSettings}
         title="Book Settings"
@@ -254,34 +258,40 @@ const Header = props => {
         </LinksContainer>
         <LinksContainer>
           {!isEmpty(navItemsRight) && navItemsRight.map(item => item)}
-          <StyledPopup
-            alignment="end"
-            position="block-end"
-            toggle={
-              <Button type="text">
-                <Avatar data-test="avatar-initials">
-                  {getInitials(userDisplayName)}
-                </Avatar>
-              </Button>
-            }
-          >
-            <PopupContentWrapper>
-              {canAccessAdminPage && (
-                <UnstyledLink
-                  data-test="header-admin-link"
-                  onClick={() => {
-                    document.querySelector('#main-content').focus()
-                  }}
-                  to="/admin"
-                >
-                  Admin
-                </UnstyledLink>
-              )}
-              <Button data-test="logout-button" onClick={onLogout}>
-                Logout
-              </Button>
-            </PopupContentWrapper>
-          </StyledPopup>
+          {userDisplayName ? (
+            <StyledPopup
+              alignment="end"
+              position="block-end"
+              toggle={
+                <Button type="text">
+                  <Avatar data-test="avatar-initials">
+                    {getInitials(userDisplayName)}
+                  </Avatar>
+                </Button>
+              }
+            >
+              <PopupContentWrapper>
+                <LanguageSwitcher languages={languages} />
+                {canAccessAdminPage && (
+                  <UnstyledLink
+                    data-test="header-admin-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    style={{ justifyContent: 'center', height: '32px' }}
+                    to="/admin"
+                  >
+                    {t('admin')}
+                  </UnstyledLink>
+                )}
+                <Button data-test="logout-button" onClick={onLogout}>
+                  {t('logout')}
+                </Button>
+              </PopupContentWrapper>
+            </StyledPopup>
+          ) : (
+            <LanguageSwitcher languages={languages} />
+          )}
         </LinksContainer>
       </Navigation>
     </StyledHeader>
@@ -297,7 +307,7 @@ Header.propTypes = {
   userDisplayName: PropTypes.string.isRequired,
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
-  showDashboard: PropTypes.bool.isRequired,
+  showDashboard: PropTypes.bool,
   showAiAssistantLink: PropTypes.bool,
   showKnowledgeBaseLink: PropTypes.bool,
   showInvite: PropTypes.bool.isRequired,
@@ -315,6 +325,7 @@ Header.propTypes = {
       onClickHandler: PropTypes.func.isRequired,
     }),
   ),
+  languages: PropTypes.arrayOf(PropTypes.shape({})),
 }
 
 Header.defaultProps = {
@@ -327,6 +338,8 @@ Header.defaultProps = {
   previewURL: null,
   showAiAssistantLink: false,
   showKnowledgeBaseLink: false,
+  languages: [],
+  showDashboard: true,
 }
 
 export default Header

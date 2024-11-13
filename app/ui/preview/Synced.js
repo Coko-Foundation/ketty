@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 
 dayjs.extend(relativeTime)
 
@@ -35,6 +36,7 @@ const DateText = styled.span`
 const Synced = props => {
   const { className, isSynced, lastSynced } = props
   const dateString = dayjs(lastSynced).fromNow()
+  const { t } = useTranslation()
 
   return (
     <Wrapper className={className} synced={isSynced}>
@@ -42,9 +44,11 @@ const Synced = props => {
         {isSynced ? <CheckCircleFilled /> : <WarningFilled />}
       </IconWrapper>
 
-      <Message>{!isSynced && 'not'} synced with Lulu</Message>
+      <Message>{isSynced ? t('lulu_synced') : t('lulu_not_synced')} </Message>
 
-      <DateText>(last synced {dateString})</DateText>
+      <DateText>
+        ({t('lulu_last_synced')} {dateString})
+      </DateText>
     </Wrapper>
   )
 }

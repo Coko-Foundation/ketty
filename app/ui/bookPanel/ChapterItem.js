@@ -8,6 +8,7 @@ import { HolderOutlined, MoreOutlined } from '@ant-design/icons'
 import styled, { keyframes } from 'styled-components'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../common'
 
 const animation = keyframes`
@@ -256,6 +257,7 @@ const ChapterItem = forwardRef(
     ref,
   ) => {
     const chapterRef = useRef(null)
+    const { t } = useTranslation()
 
     useEffect(() => {
       // apply focus if current element recieves `focused=true`
@@ -312,10 +314,10 @@ const ChapterItem = forwardRef(
             />
             <ChapterTitle
               data-status={status}
-              onClick={() => onChapterClick(id)}
               data-test="producer-chapterTitle"
+              onClick={() => onChapterClick(id)}
             >
-              {!uploading ? title || 'Untitled Chapter' : 'Processing'}
+              {!uploading ? title || t('untitled_chapter') : t('processing')}
             </ChapterTitle>
             {lock ? (
               <UserAvatar data-test="producer-userAvatar">
@@ -327,10 +329,10 @@ const ChapterItem = forwardRef(
               position="inline-start"
               toggle={
                 <MoreActions
+                  data-test="producer-more-btn"
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   onKeyUp={e => e.key === 'Enter' && e.stopPropagation()}
                   tabIndex={focused ? 0 : -1}
-                  data-test="producer-more-btn"
                 >
                   <MoreOutlined />
                 </MoreActions>
@@ -348,15 +350,15 @@ const ChapterItem = forwardRef(
                     }}
                     onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   >
-                    Convert to {isPart ? 'chapter' : 'part'}
+                    {isPart ? t('convert_to_chapter') : t('convert_to_part')}
                   </Button>
                 )}
                 <Button
+                  data-test="producer-deleteChapter"
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
-                  data-test="producer-deleteChapter"
                 >
-                  Delete
+                  {t('delete')}
                 </Button>
               </PopupContentWrapper>
             </StyledPopup>

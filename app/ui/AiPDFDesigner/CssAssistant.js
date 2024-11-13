@@ -4,6 +4,7 @@ import { debounce, takeRight } from 'lodash'
 import { rotate360 } from '@coko/client'
 import PropTypes from 'prop-types'
 import { useLazyQuery } from '@apollo/client'
+import { useTranslation } from 'react-i18next'
 import { USE_CHATGPT } from '../../graphql'
 import {
   autoResize,
@@ -83,11 +84,6 @@ const SendButton = styled.button`
   }
 `
 
-const responses = {
-  error1:
-    'There was an error generating the response\n Please, try again in a few seconds',
-}
-
 const CssAssistant = ({
   enabled,
   className,
@@ -117,6 +113,12 @@ const CssAssistant = ({
     addToCtx,
     getValidSelectors,
   } = useContext(CssAssistantContext)
+
+  const { t } = useTranslation()
+
+  const responses = {
+    error1: t('ai_designer_error'),
+  }
 
   const [callOpenAi, { loading }] = useLazyQuery(USE_CHATGPT, {
     onCompleted: ({ openAi }) => {
@@ -228,7 +230,7 @@ const CssAssistant = ({
   const handleSend = async e => {
     if (loading) return
     e.preventDefault()
-    userPrompt && setFeedback('Just give me a few seconds')
+    userPrompt && setFeedback(t('ai_designer_loading'))
     userPrompt
       ? callOpenAi({
           variables: {
@@ -245,7 +247,7 @@ const CssAssistant = ({
             },
           },
         })
-      : setFeedback('Please, tell me what you want to do')
+      : setFeedback(t('ai_designer_asking'))
     selectedCtx.history.push({ role: 'user', content: userPrompt })
   }
 

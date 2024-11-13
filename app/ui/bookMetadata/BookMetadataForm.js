@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { th } from '@coko/client'
 import { PlusOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import mapValues from 'lodash/mapValues'
 import { Form, Upload, Image } from 'antd'
@@ -22,6 +23,7 @@ const BookMetadataForm = ({
   onUploadBookCover,
 }) => {
   const [form] = Form.useForm()
+  const { t } = useTranslation()
   const { coverUrl, ...rest } = initialValues
 
   const transformedInitialValues = mapValues(rest, (value, key) => {
@@ -131,15 +133,12 @@ const BookMetadataForm = ({
           onValuesChange={handleFormUpdate}
           preserve={false}
         >
-          <h1>Book Metadata</h1>
-          <p>
-            This information will be used for optional front matter pages. View
-            these pages in the book&apos;s preview.
-          </p>
+          <h1>{t('book_metadata')}</h1>
+          <p>{t('book_metadata_subheader')}</p>
           <FormSection>
-            <h2>Cover page</h2>
+            <h2>{t('cover_page')}</h2>
             <Form.Item
-              label="Upload cover image"
+              label={t('upload_cover_image')}
               labelCol={{ span: 24 }}
               valuePropName="fileList"
             >
@@ -160,7 +159,7 @@ const BookMetadataForm = ({
                     type="button"
                   >
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>Upload</div>
+                    <div style={{ marginTop: 8 }}>{t('upload')}</div>
                   </button>
                 ) : null}
               </Upload>
@@ -178,7 +177,7 @@ const BookMetadataForm = ({
             </Form.Item>
             {cover?.length > 0 ? (
               <Form.Item
-                label="Alt text for cover image"
+                label={t('cover_alt')}
                 labelCol={{ span: 24 }}
                 name="coverAlt"
               >
@@ -187,7 +186,7 @@ const BookMetadataForm = ({
             ) : null}
           </FormSection>
           <FormSection>
-            <h2>Title page</h2>
+            <h2>{t('title_page')}</h2>
             <Form.Item
               label="Title"
               labelCol={{ span: 24 }}
@@ -201,7 +200,7 @@ const BookMetadataForm = ({
               />
             </Form.Item>
             <Form.Item
-              label="Subtitle"
+              label={t('subtitle')}
               labelCol={{ span: 24 }}
               name="subtitle"
               wrapperCol={{ span: 24 }}
@@ -209,20 +208,20 @@ const BookMetadataForm = ({
               <Input disabled={!canChangeMetadata} placeholder="Optional" />
             </Form.Item>
             <Form.Item
-              label="Authors"
+              label={t('authors')}
               labelCol={{ span: 24 }}
               name="authors"
               // rules={[{ required: true, message: 'Authors is required' }]}
               wrapperCol={{ span: 24 }}
             >
-              <Input disabled={!canChangeMetadata} placeholder="Jhon, Smith" />
+              <Input disabled={!canChangeMetadata} placeholder="John, Smith" />
             </Form.Item>
           </FormSection>
 
           <FormSection>
-            <h2>Copyright page</h2>
+            <h2>{t('copyright_page')}</h2>
             <Form.Item
-              label="ISBN List"
+              label={t('isbn_list')}
               labelCol={{ span: 24 }}
               style={{ marginBottom: '0px' }}
               wrapperCol={{ span: 24 }}
@@ -230,29 +229,29 @@ const BookMetadataForm = ({
               <ISBNList canChangeMetadata={canChangeMetadata} name="isbns" />
             </Form.Item>
             <Form.Item
-              label="Top of the page"
+              label={t('top_of_the_page')}
               labelCol={{ span: 24 }}
               name="topPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder="Optional - Provide additional description that will appear on the top of the Copyright page"
+                placeholder={t('top_of_the_page_placeholder')}
               />
             </Form.Item>
             <Form.Item
-              label="Bottom of the page"
+              label={t('bottom_of_the_page')}
               labelCol={{ span: 24 }}
               name="bottomPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder="Optional - Provide additional description that will appear on the top of the Copyright page"
+                placeholder={t('bottom_of_the_page_placeholder')}
               />
             </Form.Item>
             <Form.Item
-              label="Copyright License"
+              label={t('copyright_license')}
               labelCol={{ span: 24 }}
               name="copyrightLicense"
               wrapperCol={{ span: 24 }}

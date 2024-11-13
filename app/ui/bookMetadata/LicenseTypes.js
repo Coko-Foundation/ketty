@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Checkbox } from '../common'
 
 const Wrapper = styled.div`
@@ -9,7 +10,7 @@ const Wrapper = styled.div`
 
 const LicenseTypes = props => {
   const { value, onChange, canChangeMetadata } = props
-
+  const { t } = useTranslation()
   const [currentValue, setCurrentValue] = useState(value)
 
   const handleChange = (checked, type) => {
@@ -39,21 +40,21 @@ const LicenseTypes = props => {
         disabled={!canChangeMetadata}
         onChange={handleNcChange}
       >
-        NonCommercial (NC)
+        {t('copyright_cc_nc')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.SA}
         disabled={currentValue?.ND || !canChangeMetadata}
         onChange={handleSaChange}
       >
-        ShareAlike (SA)
+        {t('copyright_cc_sa')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.ND}
         disabled={currentValue?.SA || !canChangeMetadata}
         onChange={handleNdChange}
       >
-        NoDerivatives (ND)
+        {t('copyright_cc_nd')}
       </Checkbox>
     </Wrapper>
   )

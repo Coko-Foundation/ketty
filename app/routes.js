@@ -1,11 +1,12 @@
 /* stylelint-disable no-descending-specificity */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { Modal, Tooltip } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useApolloClient, useQuery } from '@apollo/client'
 import { Route, Switch, useHistory, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 import {
   Authenticate,
@@ -109,6 +110,7 @@ const SiteHeader = () => {
   const [modal, contextHolder] = Modal.useModal()
   const client = useApolloClient()
   const history = useHistory()
+  const { t } = useTranslation()
   const [currentPath, setCurrentPath] = useState(history.location.pathname)
 
   useEffect(() => {
@@ -149,18 +151,22 @@ const SiteHeader = () => {
     c => c.area === 'aiEnabled',
   )
 
+  const languages = applicationParametersData?.getApplicationParameters.find(
+    c => c.area === 'languages',
+  )
+
   const triggerInviteModal = () => {
     const inviteModal = modal.confirm()
     return inviteModal.update({
       title: (
         <StyledMembersHeader>
-          <StyledMembersHeaderTitle>Share</StyledMembersHeaderTitle>
+          <StyledMembersHeaderTitle>{t('share')}</StyledMembersHeaderTitle>
           <Tooltip
             arrow={false}
             color="black"
             overlayInnerStyle={{ width: '480px' }}
             placement="right"
-            title="The book owner has full access. Collaborators with edit access can edit content and create publishing profiles. Collaborators with view access can view content and publishing profiles."
+            title={t('info_share')}
           >
             <QuestionCircleOutlined />
           </Tooltip>
@@ -187,7 +193,9 @@ const SiteHeader = () => {
     return settingsModal.update({
       title: (
         <StyledMembersHeader>
-          <StyledMembersHeaderTitle>Book Settings</StyledMembersHeaderTitle>
+          <StyledMembersHeaderTitle>
+            {t('book_settings')}
+          </StyledMembersHeaderTitle>
         </StyledMembersHeader>
       ),
       content: (
@@ -215,14 +223,15 @@ const SiteHeader = () => {
   const isKnowledgeBasePage = currentPath.includes('/knowledge-base')
   const canEdit = currentUser && hasEditAccess(getBookId(), currentUser)
 
-  return currentUser ? (
+  return (
     <>
       <Header
         bookId={getBookId()}
         brandLabel="Lulu"
         brandLogoURL="/ketida.png"
-        canAccessAdminPage={isAdmin(currentUser)}
+        canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
         homeURL="/dashboard"
+        languages={languages?.config.filter(l => l.enabled)}
         onInvite={triggerInviteModal}
         onLogout={logout}
         onSettings={triggerSettingsModal}
@@ -235,7 +244,7 @@ const SiteHeader = () => {
         showBackToBook={
           isExporterPage || isAiAssistantPage || isKnowledgeBasePage
         }
-        showDashboard={currentPath !== '/dashboard'}
+        showDashboard={currentUser && currentPath !== '/dashboard'}
         showInvite={isProducerPage}
         showKnowledgeBaseLink={
           canEdit &&
@@ -245,11 +254,11 @@ const SiteHeader = () => {
         }
         showPreview={isProducerPage}
         showSettings={isProducerPage && canEdit && isAIEnabled?.config}
-        userDisplayName={currentUser.displayName}
+        userDisplayName={currentUser ? currentUser.displayName : ''}
       />
       {contextHolder}
     </>
-  ) : null
+  )
 }
 
 const StyledMain = styled.main`
@@ -281,120 +290,122 @@ const routes = (
     <GlobalStyle />
     <LayoutWrapper>
       <Wrapper>
-        <SiteHeader />
-        <StyledPage fadeInPages>
-          <StyledMain id="main-content" tabIndex="-1">
-            <GlobalContextProvider>
-              <Switch>
-                <Redirect exact path="/" to="/dashboard" />
+        <Suspense fallback={<div>Loading...</div>}>
+          <SiteHeader />
+          <StyledPage fadeInPages>
+            <StyledMain id="main-content" tabIndex="-1">
+              <GlobalContextProvider>
+                <Switch>
+                  <Redirect exact path="/" to="/dashboard" />
 
-                <Route component={SignupPage} exact path="/signup" />
-                <Route component={LoginPage} exact path="/login" />
+                  <Route component={SignupPage} exact path="/signup" />
+                  <Route component={LoginPage} exact path="/login" />
 
-                <Route
-                  component={RequestPasswordResetPage}
-                  exact
-                  path="/request-password-reset"
-                />
-                <Route
-                  component={ResetPasswordPage}
-                  exact
-                  path="/password-reset/:token"
-                />
-                <Route
-                  component={VerifyEmailPage}
-                  exact
-                  path="/email-verification/:token"
-                />
-                <Route
-                  component={UnverifiedUserPage}
-                  exact
-                  path="/unverified-user/"
-                />
-                <Route
-                  component={RequestVerificationEmailPage}
-                  exact
-                  path="/request-verification-email/"
-                />
-                <Route
-                  exact
-                  path="/dashboard"
-                  render={() => (
+                  <Route
+                    component={RequestPasswordResetPage}
+                    exact
+                    path="/request-password-reset"
+                  />
+                  <Route
+                    component={ResetPasswordPage}
+                    exact
+                    path="/password-reset/:token"
+                  />
+                  <Route
+                    component={VerifyEmailPage}
+                    exact
+                    path="/email-verification/:token"
+                  />
+                  <Route
+                    component={UnverifiedUserPage}
+                    exact
+                    path="/unverified-user/"
+                  />
+                  <Route
+                    component={RequestVerificationEmailPage}
+                    exact
+                    path="/request-verification-email/"
+                  />
+                  <Route
+                    exact
+                    path="/dashboard"
+                    render={() => (
+                      <Authenticated>
+                        <DashboardPage />
+                      </Authenticated>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/create-book"
+                    render={() => (
+                      <Authenticated>
+                        <CreateBook />
+                      </Authenticated>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/books/:bookId/rename"
+                    render={() => (
+                      <Authenticated>
+                        <BookTitlePage />
+                      </Authenticated>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/books/:bookId/import"
+                    render={() => (
+                      <Authenticated>
+                        <ImportPage />
+                      </Authenticated>
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/books/:bookId/producer"
+                    render={() => (
+                      <Authenticated>
+                        <ProducerPage />
+                      </Authenticated>
+                    )}
+                  />
+
+                  <Route exact path="/books/:bookId/exporter">
                     <Authenticated>
-                      <DashboardPage />
+                      <ExporterPage />
                     </Authenticated>
-                  )}
-                />
-                <Route
-                  exact
-                  path="/create-book"
-                  render={() => (
+                  </Route>
+
+                  <Route exact path="/books/:bookId/ai-pdf">
                     <Authenticated>
-                      <CreateBook />
+                      <CssAssistantProvider>
+                        <AiPDFDesignerPage />
+                      </CssAssistantProvider>
                     </Authenticated>
-                  )}
-                />
-                <Route
-                  exact
-                  path="/books/:bookId/rename"
-                  render={() => (
+                  </Route>
+
+                  <Route exact path="/books/:bookId/knowledge-base">
                     <Authenticated>
-                      <BookTitlePage />
+                      <KnowledgeBasePage />
                     </Authenticated>
-                  )}
-                />
-                <Route
-                  exact
-                  path="/books/:bookId/import"
-                  render={() => (
+                  </Route>
+
+                  <Route exact path="/provider-redirect/:provider">
+                    <ProviderConnectionPage closeOnSuccess />
+                  </Route>
+
+                  <Route exact path="/admin">
                     <Authenticated>
-                      <ImportPage />
+                      <AdminPage />
                     </Authenticated>
-                  )}
-                />
-                <Route
-                  exact
-                  path="/books/:bookId/producer"
-                  render={() => (
-                    <Authenticated>
-                      <ProducerPage />
-                    </Authenticated>
-                  )}
-                />
-
-                <Route exact path="/books/:bookId/exporter">
-                  <Authenticated>
-                    <ExporterPage />
-                  </Authenticated>
-                </Route>
-
-                <Route exact path="/books/:bookId/ai-pdf">
-                  <Authenticated>
-                    <CssAssistantProvider>
-                      <AiPDFDesignerPage />
-                    </CssAssistantProvider>
-                  </Authenticated>
-                </Route>
-
-                <Route exact path="/books/:bookId/knowledge-base">
-                  <Authenticated>
-                    <KnowledgeBasePage />
-                  </Authenticated>
-                </Route>
-
-                <Route exact path="/provider-redirect/:provider">
-                  <ProviderConnectionPage closeOnSuccess />
-                </Route>
-
-                <Route exact path="/admin">
-                  <Authenticated>
-                    <AdminPage />
-                  </Authenticated>
-                </Route>
-              </Switch>
-            </GlobalContextProvider>
-          </StyledMain>
-        </StyledPage>
+                  </Route>
+                </Switch>
+              </GlobalContextProvider>
+            </StyledMain>
+          </StyledPage>
+        </Suspense>
       </Wrapper>
     </LayoutWrapper>
   </Authenticate>

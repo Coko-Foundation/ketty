@@ -3,6 +3,7 @@ import { Button, Row, Space, Typography, Upload as AntUpload } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 const { Dragger } = AntUpload
@@ -41,16 +42,17 @@ const StyledSpace = styled(Space)`
   display: flex;
 `
 
-const FilesList = styled.div`
-  max-height: 200px;
-  overflow-y: auto;
-  padding: 0 15px 0 35px;
-`
+// const FilesList = styled.div`
+//   max-height: 200px;
+//   overflow-y: auto;
+//   padding: 0 15px 0 35px;
+// `
 
 const Upload = props => {
   const { multiple, onFilesChange } = props
 
   const [files, setFiles] = useState([])
+  const { t } = useTranslation()
 
   useEffect(() => {
     onFilesChange(files)
@@ -82,28 +84,27 @@ const Upload = props => {
     >
       <StyledSpace direction="vertical" size="middle">
         <Text>
-          Drag and drop files, or <Text underline>Browse</Text>
+          {t('Drag and drop files, or'.toLowerCase().replace(/ /g, '_'))}{' '}
+          <Text underline>{t('browse')}</Text>
         </Text>
-        <FilesList>
-          {files.length > 0 &&
-            files.map(file => (
-              <Row
-                align="middle"
-                justify="space-between"
-                key={file.uid}
-                span={24}
-              >
-                <FileInfoText ellipsis={{ tooltip: file.name }} strong>
-                  {file.name}
-                </FileInfoText>
-                <Button
-                  icon={<CloseOutlined />}
-                  onClick={evt => onClickRemove(evt, file)}
-                  type="link"
-                />
-              </Row>
-            ))}
-        </FilesList>
+        {files.length > 0 &&
+          files.map(file => (
+            <Row
+              align="middle"
+              justify="space-between"
+              key={file.uid}
+              span={24}
+            >
+              <FileInfoText ellipsis={{ tooltip: file.name }} strong>
+                {file.name}
+              </FileInfoText>
+              <Button
+                icon={<CloseOutlined />}
+                onClick={evt => onClickRemove(evt, file)}
+                type="link"
+              />
+            </Row>
+          ))}
       </StyledSpace>
     </StyledDragger>
   )

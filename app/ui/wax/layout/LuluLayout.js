@@ -5,6 +5,7 @@ import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
 import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import BookMetadataForm from '../../bookMetadata/BookMetadataForm'
@@ -12,7 +13,6 @@ import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
-import 'wax-table-service/dist/index.css'
 
 const Wrapper = styled.div`
   background: ${th('colorBackground')};
@@ -211,6 +211,7 @@ const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
+  const { t } = useTranslation()
 
   let fullScreenStyles = {}
 
@@ -296,7 +297,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   onClick={toggleMetadata}
                   type="text"
                 >
-                  Book Metadata
+                  {t('book_metadata')}
                 </Button>
               </MetadataArea>
               <BookPanel
@@ -345,8 +346,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                         <WaxView {...rest} />
                       ) : (
                         <NoSelectedChapterWrapper>
-                          Create or select a chapter on the left to start
-                          writing.
+                          {t('no_chapter_selected')}
                         </NoSelectedChapterWrapper>
                       )}
                       <CommentsContainer>

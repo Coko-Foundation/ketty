@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import { keys } from 'lodash'
+import { useTranslation } from 'react-i18next'
 import FilesList from './FilesList'
 // import ActionsSidebar from './ActionsSidebar'
 // import KBHeader from './KBHeader'
@@ -77,6 +78,8 @@ const Header = styled.div`
 
 const KnowledgeBase = props => {
   const { bookId, docs, createDocument, deleteDocument } = props
+
+  const { t } = useTranslation()
 
   const {
     filesToUpload,
@@ -155,7 +158,7 @@ const KnowledgeBase = props => {
   return (
     <Wrapper>
       <Header>
-        <h2>Knowledge Base</h2>
+        <h2>{t('knowledge_base')}</h2>
       </Header>
       <FileList
         bulkActions={bulkActions}
