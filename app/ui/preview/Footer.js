@@ -210,7 +210,7 @@ const Footer = props => {
           key="save-profile"
           onClick={handleClickSave}
         >
-          {t('save_publishin_profile')}
+          {t('save_publishing_profile')}
         </Button>,
       )
     } else if (selectedFormat === 'web') {

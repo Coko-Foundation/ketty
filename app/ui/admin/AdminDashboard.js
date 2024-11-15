@@ -8,7 +8,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { Form, Upload, Collapse } from 'antd'
 import { grid, serverUrl, th, uuid } from '@coko/client'
 import { Wax } from 'wax-prosemirror-core'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { Button, Divider, Switch, Input, Center, Stack } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
@@ -92,12 +92,18 @@ const StyledUpload = styled(Upload)`
 
 const UploadBtn = styled.span`
   align-items: center;
-  border: 1px solid;
+  border: 1px solid gainsboro;
+  border-radius: 2px;
   cursor: pointer;
   display: inline-flex;
   height: 20px;
   justify-content: center;
+  transition: border-color 0.2s ease;
   width: 20px;
+
+  &:hover {
+    border-color: ${th('colorText')};
+  }
 `
 
 const normFile = e => {
@@ -278,18 +284,15 @@ const AdminDashboard = props => {
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-flag-code-${l.flagCode}`}>
-                {t('flag_code_description')}.{' '}
-                <Trans i18nKey="flag_code_description_1">
-                  See{' '}
-                  <a
-                    href="https://www.iso.org/obp/ui/#search/code/"
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    this list
-                  </a>{' '}
-                  for reference.
-                </Trans>
+                {t('flag_code_description')}. {t('see')}{' '}
+                <a
+                  href="https://www.iso.org/obp/ui/#search/code/"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {t('this_list')}
+                </a>{' '}
+                {t('for_reference')}.
               </DescriptionParagraph>
             </StyledControlWrapper>
             <StyledControlWrapper>
@@ -302,7 +305,10 @@ const AdminDashboard = props => {
                 valuePropName="checked"
               >
                 <Switch
-                  disabled={languages.filter(lng => lng.enabled).length === 1}
+                  disabled={
+                    l.enabled &&
+                    languages.filter(lng => lng.enabled).length === 1
+                  }
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-name-${l.name}`}>
@@ -540,15 +546,15 @@ const AdminDashboard = props => {
                     />
                   </Form.Item>
                   <DescriptionParagraph id="desc-flag-code-new">
-                    {t('flag_code_description')}. See{' '}
+                    {t('flag_code_description')}. {t('see')}{' '}
                     <a
                       href="https://www.iso.org/obp/ui/#search/code/"
                       rel="noreferrer"
                       target="_blank"
                     >
-                      this list
+                      {t('this_list')}
                     </a>{' '}
-                    for reference.
+                    {t('for_reference')}.
                   </DescriptionParagraph>
                 </StyledControlWrapper>
                 <StyledControlWrapper>
