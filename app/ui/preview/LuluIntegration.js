@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '../common'
 import Synced from './Synced'
@@ -40,6 +40,8 @@ const LuluIntegration = props => {
     projectId,
     projectUrl,
   } = props
+
+  const { t } = useTranslation()
 
   return (
     <Wrapper className={className}>
