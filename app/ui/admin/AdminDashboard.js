@@ -1,3 +1,5 @@
+/* stylelint-disable indentation */
+/* stylelint-disable selector-combinator-space-before */
 /* stylelint-disable declaration-no-important */
 /* stylelint-disable string-quotes */
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -9,7 +11,17 @@ import { Form, Upload, Collapse } from 'antd'
 import { grid, serverUrl, th, uuid } from '@coko/client'
 import { Wax } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
-import { Button, Divider, Switch, Input, Center, Stack } from '../common'
+
+import {
+  Button,
+  Divider,
+  Switch,
+  Input,
+  Center,
+  Stack,
+  ButtonGroup,
+} from '../common'
+
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
 
@@ -104,6 +116,20 @@ const UploadBtn = styled.span`
   &:hover {
     border-color: ${th('colorText')};
   }
+`
+
+const StyledLanguageStack = styled(Stack)`
+  --space: 1em;
+  padding-inline-start: 3ch;
+
+  > #std-wrapper:has([role='switch'][aria-checked='true'])
+    ~ div:not(#lang-form-submit) {
+    display: none;
+  }
+`
+
+const StyledButtonGroup = styled(ButtonGroup)`
+  align-items: flex-start;
 `
 
 const normFile = e => {
@@ -206,17 +232,15 @@ const AdminDashboard = props => {
   const updateLanguage = async values => {
     const { language, ...rest } = values
 
-    if (translationFile) {
+    if (!rest.standardised && translationFile) {
       await onTranslationsUpload(translationFile, JSON.parse(language).code)
 
       setTranslationFile(null)
 
       const languageConfig = languages.map(l => {
-        if (JSON.stringify(l) === language)
-          return {
-            ...l,
-            ...rest,
-          }
+        if (JSON.stringify(l) === language) {
+          return { ...l, ...rest }
+        }
 
         return l
       })
@@ -224,12 +248,29 @@ const AdminDashboard = props => {
       onLanguagesUpdate(languageConfig)
     } else {
       const languageConfig = languages.map(l => {
-        if (JSON.stringify(l) === language) return { ...l, ...rest }
+        if (JSON.stringify(l) === language) {
+          if (rest.standardised) {
+            return {
+              ...l,
+              ...rest,
+              name: l.standard.name,
+              flagCode: l.standard.flagCode,
+            }
+          }
+
+          return { ...l, ...rest }
+        }
+
         return l
       })
 
       onLanguagesUpdate(languageConfig)
     }
+  }
+
+  const removeLanguage = async code => {
+    const languageConfig = languages.filter(l => l.code !== code)
+    onLanguagesUpdate(languageConfig)
   }
 
   const languageItems = languages.map(l => {
@@ -243,12 +284,52 @@ const AdminDashboard = props => {
       ),
       children: (
         <Form name={l.name} onFinish={updateLanguage}>
-          <Stack
-            style={{
-              '--space': '1em',
-              paddingInlineStart: '3ch',
-            }}
-          >
+          <StyledLanguageStack>
+            <StyledControlWrapper>
+              <span style={{ textTransform: 'capitalize' }}>
+                {t('enabled')}
+              </span>
+              <Form.Item
+                initialValue={l.enabled}
+                name="enabled"
+                valuePropName="checked"
+              >
+                <Switch
+                  disabled={
+                    l.enabled &&
+                    languages.filter(lng => lng.enabled).length === 1
+                  }
+                />
+              </Form.Item>
+              <DescriptionParagraph id={`desc-name-${l.name}`}>
+                {t('language_enabled_description')}.
+              </DescriptionParagraph>
+            </StyledControlWrapper>
+            {!!l.standard && (
+              <StyledControlWrapper id="std-wrapper">
+                <span style={{ textTransform: 'capitalize' }}>
+                  Use standardised version
+                </span>
+                <Form.Item
+                  initialValue={l.standardised}
+                  name="standardised"
+                  valuePropName="checked"
+                >
+                  <Switch
+                    aria-describedby={`desc-standard-${l.standard.name}`}
+                    data-modified={!l.standardised}
+                  />
+                </Form.Item>
+                <DescriptionParagraph id={`desc-standard-${l.standard.name}`}>
+                  Turning the standardised version off will allow you to upload
+                  your own translation strings, but this may come at the cost of
+                  having to update it manually when the UI updates. To
+                  contribute to the standardised translation check out our
+                  contributors guide.
+                </DescriptionParagraph>
+              </StyledControlWrapper>
+            )}
+
             <StyledControlWrapper>
               <label htmlFor={`name-${l.name}`}>{t('label')}:</label>
               <Form.Item
@@ -296,26 +377,6 @@ const AdminDashboard = props => {
               </DescriptionParagraph>
             </StyledControlWrapper>
             <StyledControlWrapper>
-              <span style={{ textTransform: 'capitalize' }}>
-                {t('enabled')}
-              </span>
-              <Form.Item
-                initialValue={l.enabled}
-                name="enabled"
-                valuePropName="checked"
-              >
-                <Switch
-                  disabled={
-                    l.enabled &&
-                    languages.filter(lng => lng.enabled).length === 1
-                  }
-                />
-              </Form.Item>
-              <DescriptionParagraph id={`desc-name-${l.name}`}>
-                {t('language_enabled_description')}.
-              </DescriptionParagraph>
-            </StyledControlWrapper>
-            <StyledControlWrapper>
               <Form.Item
                 getValueFromEvent={normFile}
                 label={t('upload_new_translation_file')}
@@ -338,18 +399,28 @@ const AdminDashboard = props => {
             >
               {t('download_translation')}
             </a>
-            <StyledControlWrapper>
+            <StyledControlWrapper id="lang-form-submit">
               <span />
-              <Form.Item>
-                <Button htmlType="submit" type="primary">
-                  {t('update')}
-                </Button>
-              </Form.Item>
+              <StyledButtonGroup>
+                {!l.standard ? (
+                  <Button
+                    onClick={() => removeLanguage(l.code)}
+                    status="danger"
+                  >
+                    Remove
+                  </Button>
+                ) : null}
+                <Form.Item>
+                  <Button htmlType="submit" type="primary">
+                    {t('update')}
+                  </Button>
+                </Form.Item>
+              </StyledButtonGroup>
             </StyledControlWrapper>
             <Form.Item hidden initialValue={JSON.stringify(l)} name="language">
               <Input type="text" />
             </Form.Item>
-          </Stack>
+          </StyledLanguageStack>
         </Form>
       ),
     }
@@ -504,12 +575,7 @@ const AdminDashboard = props => {
         {newLanguage ? (
           <LanguageWrapper id="new">
             <Form form={newLanguageForm}>
-              <Stack
-                style={{
-                  '--space': '1em',
-                  paddingInlineStart: '3ch',
-                }}
-              >
+              <StyledLanguageStack>
                 <StyledControlWrapper>
                   <label htmlFor="name-new">{t('label')}:</label>
                   <Form.Item
@@ -573,7 +639,7 @@ const AdminDashboard = props => {
                     </StyledUpload>
                   </Form.Item>
                 </StyledControlWrapper>
-              </Stack>
+              </StyledLanguageStack>
             </Form>
           </LanguageWrapper>
         ) : null}
