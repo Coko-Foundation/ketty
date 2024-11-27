@@ -64,6 +64,12 @@ const config = {
         items: [
           {
             type: 'docSidebar',
+            sidebarId: 'roadmapSidebar',
+            position: 'left',
+            label: 'Roadmap',
+          },
+          {
+            type: 'docSidebar',
             sidebarId: 'userSidebar',
             position: 'left',
             label: 'User Guide',
