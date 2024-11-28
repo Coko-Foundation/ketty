@@ -58,7 +58,7 @@ Ketty is actively developed with new features and improvements added regularly. 
 Join our community and keep up with the latest developments:
 
 - **[Ketty Forum](https://forum.ketty.community/)**: Discuss features, share experiences, and get help
-- **[Development Roadmap](https://miro.com/app/board/uXjVP89vFkc=/?share_link_id=340765697607)**: See what's coming next
+- **[Development Roadmap](../../roadmap/01-ketty-roadmap.md)**: See what's coming next
 - **[Ketty Mattermost Channel](https://mattermost.coko.foundation/coko/channels/ketty)**: Chat with the community
 - **email**: Reach us at ketty@coko.foundation
 
