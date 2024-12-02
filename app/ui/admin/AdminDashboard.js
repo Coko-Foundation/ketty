@@ -295,6 +295,7 @@ const AdminDashboard = props => {
                 valuePropName="checked"
               >
                 <Switch
+                  data-test="admindb-en-switch"
                   disabled={
                     l.enabled &&
                     languages.filter(lng => lng.enabled).length === 1
@@ -318,6 +319,7 @@ const AdminDashboard = props => {
                   <Switch
                     aria-describedby={`desc-standard-${l.standard.name}`}
                     data-modified={!l.standardised}
+                    data-test="admindb-standartized-switch"
                   />
                 </Form.Item>
                 <DescriptionParagraph id={`desc-standard-${l.standard.name}`}>
@@ -341,6 +343,7 @@ const AdminDashboard = props => {
               >
                 <Input
                   aria-describedby={`desc-name-${l.name}`}
+                  data-test="admindb-engName-input"
                   id={`name-${l.name}`}
                   type="text"
                 />
@@ -360,6 +363,7 @@ const AdminDashboard = props => {
               >
                 <Input
                   aria-describedby={`desc-flag-code-${l.flagCode}`}
+                  data-test="admindb-engFlag-input"
                   id={`flag-code-${l.flagCode}`}
                   type="text"
                 />
@@ -385,6 +389,7 @@ const AdminDashboard = props => {
                 <StyledUpload
                   accept=".json"
                   beforeUpload={() => false}
+                  data-test="admindb-engStringsUpload-btn"
                   maxCount={1}
                   onChange={({ file }) => setTranslationFile(file)}
                 >
@@ -404,6 +409,7 @@ const AdminDashboard = props => {
               <StyledButtonGroup>
                 {!l.standard ? (
                   <Button
+                    data-test="admindb-removeLang-btn"
                     onClick={() => removeLanguage(l.code)}
                     status="danger"
                   >
@@ -411,7 +417,11 @@ const AdminDashboard = props => {
                   </Button>
                 ) : null}
                 <Form.Item>
-                  <Button htmlType="submit" type="primary">
+                  <Button
+                    data-test="admindb-update-btn"
+                    htmlType="submit"
+                    type="primary"
+                  >
                     {t('update')}
                   </Button>
                 </Form.Item>
@@ -586,6 +596,7 @@ const AdminDashboard = props => {
                   >
                     <Input
                       aria-describedby="desc-name-new"
+                      data-test="admindb-newLangName-input"
                       id="name-new"
                       type="text"
                     />
@@ -607,6 +618,7 @@ const AdminDashboard = props => {
                   >
                     <Input
                       aria-describedby="desc-flag-code-new"
+                      data-test="admindb-newLangFlag-input"
                       id="flag-code-new"
                       type="text"
                     />
@@ -632,6 +644,7 @@ const AdminDashboard = props => {
                     <StyledUpload
                       accept=".json"
                       beforeUpload={() => false}
+                      data-test="admindb-uploadStrings-btn"
                       maxCount={1}
                       onChange={({ file }) => setTranslationFile(file)}
                     >
@@ -645,15 +658,24 @@ const AdminDashboard = props => {
         ) : null}
         <div>
           {!newLanguage ? (
-            <Button onClick={() => setNewLanguage(true)}>
+            <Button
+              data-test="admindb-addNewLang-btn"
+              onClick={() => setNewLanguage(true)}
+            >
               {t('add_new_language')}
             </Button>
           ) : (
             <>
-              <Button onClick={() => setNewLanguage(false)}>
+              <Button
+                data-test="admindb-cancelNewLang-btn"
+                onClick={() => setNewLanguage(false)}
+              >
                 {t('cancel')}
               </Button>{' '}
-              <Button onClick={addLanguage}> {t('save_new_language')}</Button>
+              <Button data-test="admindb-saveNewLang-btn" onClick={addLanguage}>
+                {' '}
+                {t('save_new_language')}
+              </Button>
             </>
           )}
         </div>
