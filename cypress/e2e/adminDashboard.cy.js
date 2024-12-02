@@ -4,7 +4,7 @@ const { admin, author } = require('../support/credentials')
 describe('accessing admin dashboard', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
     )
     cy.log('Author 1 is created.')
   })
@@ -19,7 +19,7 @@ describe('accessing admin dashboard', () => {
     cy.login(author)
     cy.get('.ant-avatar-string').click()
     cy.contains('Admin').should('not.exist')
-    cy.contains('Logout').should('exist').click()
+    cy.contains('Log Out').should('exist').click()
     cy.location('pathname').should('equal', '/login')
   })
 })
@@ -36,7 +36,7 @@ describe('checking AI integration', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(0)').should('have.text', 'AI integration')
+    cy.checkHeading('h2', '0', 'AI integration')
   })
 
   it('checking default values for AI integration (ON)', () => {
@@ -112,15 +112,15 @@ describe('checking Publishing and downloads section', () => {
 
   it('Checking that all options are ON by default', () => {
     // By default, all switches are ON
-    cy.contains('h2', 'Publishing, downloads and integration').should('exist')
+    cy.checkHeading('h2', '1', 'Publishing, downloads and integration')
 
     // Downloads section
-    cy.contains('h3', 'Downloads').should('exist')
+    cy.checkHeading('h3', '0', 'Downloads')
     cy.checkSwitchStatus('span', 'PDF', 'dwPDF', 'true')
     cy.checkSwitchStatus('span', 'EPUB', 'dwEPUB', 'true')
 
     // Publishing integrations section
-    cy.contains('h3', 'Publishing integrations').should('exist')
+    cy.checkHeading('h3', '1', 'Publishing integrations')
     cy.checkSwitchStatus('span', 'Publish online with Flax', 'pubWeb', 'true')
     cy.contains(
       'p',
@@ -238,11 +238,139 @@ describe('checking POD', () => {
   })
 })
 
+describe('checking Available Languages section', () => {
+  beforeEach(() => {
+    cy.login(admin)
+    cy.goToAdminDashboard()
+    cy.checkHeading('h2', '2', 'Available languages')
+  })
+
+  it('checking default language and content in the "Available Languages" section', () => {
+    cy.contains('span', 'English').should('exist')
+    cy.contains('span', '(enabled)').should('exist')
+    cy.getByData('admindb-addNewLang-btn')
+      .should('have.text', 'Add new language')
+      .should('be.enabled')
+
+    // Expanding the section about English
+    cy.get('.ant-collapse-item').click()
+    cy.checkSwitchStatus('span', 'enabled', 'en', 'true')
+
+    cy.get('#desc-name-English').should(
+      'have.text',
+      'Disabled languages will not show in the language switcher.',
+    )
+    cy.checkSwitchStatus(
+      '#std-wrapper',
+      'Use standardised version',
+      'standartized',
+      'true',
+    )
+    cy.get('#std-wrapper').should(
+      'contain',
+      'Turning the standardised version off will allow you to upload your own translation strings, but this may come at the cost of having to update it manually when the UI updates. To contribute to the standardised translation check out our contributors guide.',
+    )
+    cy.contains('a', 'Download translation strings for this language').should(
+      'exist',
+    )
+    cy.getByData('admindb-update-btn').should('have.text', 'Update')
+  })
+
+  it('disabling the Standartized Version', () => {
+    cy.get('.ant-collapse-item').click()
+    cy.getByData('admindb-standartized-switch').click()
+    cy.contains('label', 'Label').should('exist')
+    cy.get('p#desc-name-English')
+      .last()
+      .should(
+        'contain',
+        'The name of the language that will appear in the language selection dropdown.',
+      )
+
+    cy.contains('label', 'Flag code').should('exist')
+    cy.get('#desc-flag-code-gb').should(
+      'contain',
+      'Flag for the selected language in the language dropdown. see this_list for_reference.',
+    )
+    cy.get('label[title="Upload a new translations file"]').should('exist')
+
+    cy.getByData('admindb-engName-input').should('have.value', 'English')
+    cy.getByData('admindb-engFlag-input').should('have.value', 'gb')
+
+    // uploading a file
+    cy.getByData('admindb-engStringsUpload-btn').selectFile(
+      'cypress/fixtures/docs/sample.json',
+      { force: true },
+    )
+
+    cy.contains('sample.json').should('exist')
+
+    // Delete the file
+    cy.get('.ant-upload-list-item-actions').click()
+  })
+
+  it('adding and deleting a new language', () => {
+    cy.getByData('admindb-addNewLang-btn').click()
+
+    // Checking default values
+    cy.contains('label', 'Label').should('exist')
+    cy.get('p#desc-name-new')
+      .last()
+      .should(
+        'contain',
+        'The name of the language that will appear in the language selection dropdown.',
+      )
+
+    cy.contains('label', 'Flag code').should('exist')
+
+    cy.get('#desc-flag-code-new').should(
+      'contain',
+      'Flag for the selected language in the language dropdown. see this_list for_reference.',
+    )
+    cy.get('label[title="Upload a new translations file"]').should('exist')
+    cy.getByData('admindb-newLangName-input').should('be.empty')
+    cy.getByData('admindb-newLangFlag-input').should('be.empty')
+
+    // checking error warnings when you try to save without adding new information
+    cy.getByData('admindb-saveNewLang-btn').click()
+    cy.get('#name_help').should('contain', 'Language label is required')
+    cy.get('#flagCode_help').should('contain', 'Flag code is required')
+    cy.getByData('admindb-cancelNewLang-btn').click()
+
+    // adding a new language
+    cy.getByData('admindb-addNewLang-btn').click()
+    cy.getByData('admindb-newLangName-input').type('Shqip')
+    cy.getByData('admindb-newLangFlag-input').type('al')
+    cy.getByData('admindb-uploadStrings-btn').selectFile(
+      'cypress/fixtures/docs/sample.json',
+      { force: true },
+    )
+
+    cy.contains('sample.json').should('exist')
+    cy.getByData('admindb-saveNewLang-btn').click()
+
+    // checking new language
+    cy.get('a[href="/dashboard"]').last().click()
+    cy.location('pathname').should('equal', '/dashboard')
+    cy.get('.ant-avatar-string').click()
+    cy.get('span[title="English"]').click()
+    cy.contains('Shqip').should('exist')
+    cy.reload()
+    cy.goToAdminDashboard()
+
+    cy.location('pathname').should('equal', '/admin')
+    cy.contains('span', 'Shqip').should('exist')
+    cy.get('.ant-collapse-header-text').last().click()
+    cy.getByData('admindb-removeLang-btn').click()
+    cy.contains('Shqip').should('not.exist')
+  })
+})
+
 describe('checking Terms & Conditions', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.get('h2:nth(2)').should('have.text', 'Terms and conditions')
+    cy.checkHeading('h2', '3', 'terms and conditions')
   })
 
   it('checking default content in T&C section', () => {
@@ -345,6 +473,7 @@ Cypress.Commands.add('addLists', (listItems, isOrdered) => {
   })
   cy.get('.ProseMirror').type('{enter}')
 })
+
 Cypress.Commands.add('verifyListContent', (listItems, listSelector) => {
   cy.get(`${listSelector}`).each(($el, index) => {
     cy.get($el).should('contain', listItems[index], { timeout: 8000 })
@@ -367,6 +496,10 @@ Cypress.Commands.add('addLink', link => {
   cy.get('input').last().should('be.visible').focus()
   cy.get('input').last().type(link)
   cy.contains('button', 'Apply').should('be.visible').click()
+})
+
+Cypress.Commands.add('checkHeading', (headinLvl, orderNo, content) => {
+  cy.get(`${headinLvl}:nth(${orderNo})`).should('have.text', `${content}`)
 })
 
 Cypress.Commands.add('checkSwitchStatus', (element, content, name, status) => {
