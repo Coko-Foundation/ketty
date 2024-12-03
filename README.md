@@ -8,7 +8,7 @@ Visit the project's [website](https://ketty.community/) or our [chat channel](ht
 
 ## Project roadmap
 
-[The Ketty project roadmap](https://miro.com/app/board/uXjVP89vFkc=/?share_link_id=9428254884) is available to view on Miro.
+Take a look at [the Ketty project roadmap](https://docs.ketty.community/docs/roadmap/ketty-roadmap) to see what we're working on.
 
 ## Contribute
 
