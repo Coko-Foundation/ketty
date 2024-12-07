@@ -7,22 +7,25 @@ import { Button } from '../common'
 
 const FlaxIntegration = props => {
   const { webPublishInfo, profiles } = props
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
 
   return (
     <div>
-      <h3 style={{ marginBlock: 0 }}>{t('flax_integration')}:</h3>
+      <h3 style={{ marginBlock: 0 }}>{t('flax.heading')}</h3>
       {webPublishInfo?.published ? (
         <>
           <p>
-            {t('flax_last_published')}:{' '}
+            {t('flax.status.published.yes')}{' '}
             {new Intl.DateTimeFormat('en-GB', {
               dateStyle: 'medium',
               timeStyle: 'long',
             }).format(new Date(webPublishInfo?.lastUpdated))}
           </p>
           <p>
-            {t('flax_published_with_profile')}:{' '}
+            {t('flax.status.published.profile')}{' '}
             {profiles.find(p => p.value === webPublishInfo.profileId)?.label}
           </p>
           <div style={{ display: 'flex', gap: '2em' }}>
@@ -31,12 +34,12 @@ const FlaxIntegration = props => {
                 window.open(webPublishInfo?.publicUrl, '_blank', 'noreferrer')
               }
             >
-              {t('flax_open_published')}
+              {t('flax.actions.open')}
             </Button>
           </div>
         </>
       ) : (
-        <p>{t('flax_not_published')}</p>
+        <p>{t('flax.status.published.no')}</p>
       )}
     </div>
   )

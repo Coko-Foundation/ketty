@@ -25,7 +25,8 @@ const Wrapper = styled.div`
 `
 
 const BookTitle = ({ onClickContinue, title, canRename }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.titlePage' })
+
   const [form] = Form.useForm()
   const bookTitle = Form.useWatch('bookTitle', form)
 
@@ -46,26 +47,16 @@ const BookTitle = ({ onClickContinue, title, canRename }) => {
           onFinish={handleContinue}
         >
           <Form.Item data-test="rename-bookTitle" name="bookTitle">
-            <StyledInput
-              autoFocus
-              placeholder={t('Book title'.replace(/ /g, '_').toLowerCase())}
-              type="text"
-            />
+            <StyledInput autoFocus placeholder={t('input')} type="text" />
           </Form.Item>
-          <p>
-            {t(
-              "Don't overthink it, you can change your title at any time"
-                .toLowerCase()
-                .replace(/ /g, '_'),
-            )}
-          </p>
+          <p>{t('description')}</p>
           <Button
             data-test="rename-continue-button"
             disabled={!bookTitle || !canRename}
             onClick={handleContinue}
             type="primary"
           >
-            {t('Continue'.toLowerCase())}
+            {t('continue', { keyPrefix: 'pages.common.actions' })}
           </Button>
         </Form>
       </Wrapper>

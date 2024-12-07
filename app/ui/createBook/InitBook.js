@@ -122,7 +122,7 @@ const StyledButton = styled(Button)`
 
 const InitBook = props => {
   const { onCreateBook, onImportBook } = props
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.sections' })
 
   const [loadingCreateBook, setLoadingCreateBook] = useState(false)
   const [loadingImportBook, setLoadingImportBook] = useState(false)
@@ -148,15 +148,8 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>{t('write_from_scratch')}</h2>
-                <p>
-                  {t(
-                    'Start your book with a blank slate using the built-in Editor'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
-                  .
-                </p>
+                <h2>{t('write.heading')}</h2>
+                <p>{t('write.description')}.</p>
                 <StyledButton
                   data-test="createBook-startWriting-button"
                   disabled={loadingCreateBook || loadingImportBook}
@@ -164,7 +157,7 @@ const InitBook = props => {
                   size="large"
                   type="primary"
                 >
-                  {t('Start writing'.toLowerCase().replace(/ /g, '_'))}
+                  {t('write.action')}
                 </StyledButton>
               </Stack>
             }
@@ -174,17 +167,8 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>
-                  {t('Upload your files'.toLowerCase().replace(/ /g, '_'))}
-                </h2>
-                <p>
-                  {t(
-                    'Start your book with .docx files'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
-                  .
-                </p>
+                <h2>{t('upload.heading')}</h2>
+                <p>{t('upload.description')}.</p>
                 <StyledButton
                   data-test="createBook-selectFiles-button"
                   disabled={loadingCreateBook || loadingImportBook}
@@ -192,7 +176,7 @@ const InitBook = props => {
                   size="large"
                   type="primary"
                 >
-                  {t('Select files'.toLowerCase().replace(/ /g, '_'))}
+                  {t('upload.action')}
                 </StyledButton>
               </Stack>
             }

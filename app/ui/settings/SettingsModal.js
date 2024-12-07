@@ -99,7 +99,10 @@ const SettingsModal = ({
   closeModal,
   refetchBookSettings,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.bookSettingsModal',
+  })
+
   const [form] = Form.useForm()
   form.validateTrigger = ['onSubmit']
 
@@ -245,12 +248,8 @@ const SettingsModal = ({
     <Stack>
       <SettingsWrapper style={{ marginTop: '24px' }}>
         <div>
-          <SettingTitle>
-            {t('AI writing prompt use'.toLowerCase().replace(/ /g, '_'))}
-          </SettingTitle>
-          <SettingInfo>
-            {t('ai_writing_prompt_info'.toLowerCase().replace(/ /g, '_'))}.
-          </SettingInfo>
+          <SettingTitle>{t('aiWriting.promptUse')}</SettingTitle>
+          <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
         </div>
         <Switch
           checked={isAiOn}
@@ -265,13 +264,7 @@ const SettingsModal = ({
           <Stack>
             <SettingsWrapper>
               <SettingInfo>
-                <SettingTitle>
-                  {t(
-                    'Free-text writing prompts'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
-                </SettingTitle>
+                <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
               </SettingInfo>
               <Switch
                 checked={isFreeTextPromptsOn}
@@ -283,13 +276,7 @@ const SettingsModal = ({
 
             <SettingsWrapper>
               <SettingInfo>
-                <SettingTitle>
-                  {t(
-                    'Customize AI writing prompts'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
-                </SettingTitle>
+                <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
               </SettingInfo>
               <Switch
                 checked={isCustomPromptsOn}
@@ -307,7 +294,9 @@ const SettingsModal = ({
                         rules={[
                           {
                             required: true,
-                            message: t('add_prompt_error'),
+                            message: t(
+                              'aiWriting.customPrompts.input.errors.noValue',
+                            ),
                             validator: (_, value) => {
                               if (!value.trim().length) {
                                 return Promise.reject()
@@ -318,13 +307,15 @@ const SettingsModal = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('add_prompt_placeholder')} />
+                        <Input
+                          placeholder={t('aiWriting.customPrompts.input')}
+                        />
                       </StyledFormItem>
                       <StyledFormButton
                         disabled={updateLoading || !canChangeSettings}
                         htmlType="submit"
                       >
-                        {t('add_prompt_action')}
+                        {t('aiWriting.customPrompts.actions.add')}
                       </StyledFormButton>
                     </StyledForm>
                   )}
@@ -352,8 +343,8 @@ const SettingsModal = ({
 
       <SettingsWrapper>
         <div>
-          <SettingTitle>{t('ai_book_designer')} (Beta)</SettingTitle>
-          <SettingInfo>{t('ai_book_designer_info')}.</SettingInfo>
+          <SettingTitle>{t('aiDesigner')}</SettingTitle>
+          <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
         </div>
         <Switch
           checked={isAiPdfOn}
@@ -365,11 +356,11 @@ const SettingsModal = ({
 
       <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
         <div>
-          <SettingTitle>{t('knowledge_base')}</SettingTitle>
+          <SettingTitle>{t('knowledgeBase')}</SettingTitle>
           <SettingInfo>
-            {t('knowledge_base_info_1')}
-            <br />
-            {t('knowledge_base_info_2')}
+            {t('knowledgeBase.detail')}
+            {/* <br />
+            {t('knowledge_base_info_2')} */}
           </SettingInfo>
         </div>
         <Switch
@@ -386,7 +377,7 @@ const SettingsModal = ({
           htmlType="reset"
           onClick={closeModal}
         >
-          {t('cancel')}
+          {t('cancel', { keyPrefix: 'pages.common.actions' })}
         </StyledButton>
 
         <StyledButton
@@ -397,7 +388,7 @@ const SettingsModal = ({
           onClick={handleUpdateBookSettings}
           type="primary"
         >
-          {t('save')}
+          {t('save', { keyPrefix: 'pages.common.actions' })}
         </StyledButton>
       </ButtonsContainer>
     </Stack>

@@ -95,14 +95,15 @@ const StyledPage = styled(Page)`
   }
 `
 
-const StyledMembersHeader = styled.div`
+const ModalHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: flex-start;
 `
 
-const StyledMembersHeaderTitle = styled.span`
-  margin-right: ${grid(1)};
+const ModalTitle = styled.h4`
+  font-size: ${th('fontSizeLarge')};
+  margin: 0 ${grid(1)} 0 0;
 `
 
 const SiteHeader = () => {
@@ -110,7 +111,7 @@ const SiteHeader = () => {
   const [modal, contextHolder] = Modal.useModal()
   const client = useApolloClient()
   const history = useHistory()
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.common.header' })
   const [currentPath, setCurrentPath] = useState(history.location.pathname)
 
   useEffect(() => {
@@ -159,18 +160,18 @@ const SiteHeader = () => {
     const inviteModal = modal.confirm()
     return inviteModal.update({
       title: (
-        <StyledMembersHeader>
-          <StyledMembersHeaderTitle>{t('share')}</StyledMembersHeaderTitle>
+        <ModalHeader>
+          <ModalTitle>{t('shareModal.title')}</ModalTitle>
           <Tooltip
             arrow={false}
             color="black"
             overlayInnerStyle={{ width: '480px' }}
             placement="right"
-            title={t('info_share')}
+            title={t('shareModal.info')}
           >
             <QuestionCircleOutlined />
           </Tooltip>
-        </StyledMembersHeader>
+        </ModalHeader>
       ),
       content: (
         <UserInviteModal
@@ -192,11 +193,9 @@ const SiteHeader = () => {
     const settingsModal = modal.confirm()
     return settingsModal.update({
       title: (
-        <StyledMembersHeader>
-          <StyledMembersHeaderTitle>
-            {t('book_settings')}
-          </StyledMembersHeaderTitle>
-        </StyledMembersHeader>
+        <ModalHeader>
+          <ModalTitle>{t('bookSettingsModal.title')}</ModalTitle>
+        </ModalHeader>
       ),
       content: (
         <SettingsModal

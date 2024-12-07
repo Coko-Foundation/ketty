@@ -17,26 +17,19 @@ const Wrapper = styled.div`
 
 const Import = ({ onClickContinue, canImport, loading }) => {
   const [filesToImport, setFilesToImport] = useState([])
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.importPage' })
 
   return (
     <Page maxWidth={1200}>
       <Wrapper>
-        <h1>{t('Import'.toLowerCase().replace(/ /g, '_'))}</h1>
+        <h1>{t('title')}</h1>
         <Row gutter={[24, 12]}>
           <Col md={12} xs={24}>
             <p>
-              {t('Files supported'.toLowerCase().replace(/ /g, '_'))}:{' '}
-              <strong>.docx</strong>
+              {t('info')} <strong>.docx</strong>
             </p>
             <p>
-              <InfoCircleFilled />{' '}
-              {t(
-                'Each file you upload will be a separate chapter in your book. You can reorder chapters and import more chapters later'
-                  .toLowerCase()
-                  .replace(/ /g, '_'),
-              )}
-              .
+              <InfoCircleFilled /> {t('info.details')}
             </p>
           </Col>
           <Col md={12} xs={24}>
@@ -58,7 +51,7 @@ const Import = ({ onClickContinue, canImport, loading }) => {
                   size="large"
                   type="primary"
                 >
-                  {t('continue')}
+                  {t('continue', { keyPrefix: 'pages.common.actions' })}
                 </Button>
               </Row>
             </Space>

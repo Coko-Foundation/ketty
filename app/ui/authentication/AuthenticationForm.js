@@ -65,7 +65,7 @@ const AuthenticationForm = props => {
         {children}
 
         <SubmitButton htmlType="submit" loading={loading} type="primary">
-          {t(submitButtonLabel.toLowerCase().replace(/ /g, '_'))}
+          {submitButtonLabel}
         </SubmitButton>
       </Form>
 
@@ -74,15 +74,13 @@ const AuthenticationForm = props => {
           {showForgotPassword && (
             <ForgotPassword>
               <Link to={forgotPasswordUrl}>
-                {t('Forgot your password?'.toLowerCase().replace(/ /g, '_'))}
+                {t('pages.login.links.forgotPassword')}
               </Link>
             </ForgotPassword>
           )}
 
           <AlternativeAction>
-            <Link to={alternativeActionLink}>
-              {t(alternativeActionLabel.toLowerCase().replace(/ /g, '_'))}
-            </Link>
+            <Link to={alternativeActionLink}>{alternativeActionLabel}</Link>
           </AlternativeAction>
         </Footer>
       )}

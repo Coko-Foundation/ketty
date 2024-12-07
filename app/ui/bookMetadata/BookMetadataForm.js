@@ -23,7 +23,11 @@ const BookMetadataForm = ({
   onUploadBookCover,
 }) => {
   const [form] = Form.useForm()
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab',
+  })
+
   const { coverUrl, ...rest } = initialValues
 
   const transformedInitialValues = mapValues(rest, (value, key) => {
@@ -133,12 +137,12 @@ const BookMetadataForm = ({
           onValuesChange={handleFormUpdate}
           preserve={false}
         >
-          <h1>{t('book_metadata')}</h1>
-          <p>{t('book_metadata_subheader')}</p>
+          <h1>{t('title')}</h1>
+          <p>{t('introduction')}</p>
           <FormSection>
-            <h2>{t('cover_page')}</h2>
+            <h2>{t('sections.coverPage.heading')}</h2>
             <Form.Item
-              label={t('upload_cover_image')}
+              label={t('sections.coverPage.upload.instructions')}
               labelCol={{ span: 24 }}
               valuePropName="fileList"
             >
@@ -159,7 +163,9 @@ const BookMetadataForm = ({
                     type="button"
                   >
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>{t('upload')}</div>
+                    <div style={{ marginTop: 8 }}>
+                      {t('sections.coverPage.upload.button')}
+                    </div>
                   </button>
                 ) : null}
               </Upload>
@@ -177,7 +183,7 @@ const BookMetadataForm = ({
             </Form.Item>
             {cover?.length > 0 ? (
               <Form.Item
-                label={t('cover_alt')}
+                label={t('sections.coverPage.altText')}
                 labelCol={{ span: 24 }}
                 name="coverAlt"
               >
@@ -186,42 +192,49 @@ const BookMetadataForm = ({
             ) : null}
           </FormSection>
           <FormSection>
-            <h2>{t('title_page')}</h2>
+            <h2>{t('sections.titlePage.heading')}</h2>
             <Form.Item
-              label="Title"
+              label={t('sections.titlePage.title')}
               labelCol={{ span: 24 }}
               name="title"
-              rules={[{ required: true, message: 'Title is required' }]}
+              rules={[
+                {
+                  required: true,
+                  message: t('sections.titlePage.title.errors.noValue'),
+                },
+              ]}
               wrapperCol={{ span: 24 }}
             >
-              <Input
-                disabled={!canChangeMetadata}
-                // placeholder="The history of future past"
-              />
+              <Input disabled={!canChangeMetadata} />
             </Form.Item>
             <Form.Item
-              label={t('subtitle')}
+              label={t('sections.titlePage.subtitle')}
               labelCol={{ span: 24 }}
               name="subtitle"
               wrapperCol={{ span: 24 }}
             >
-              <Input disabled={!canChangeMetadata} placeholder="Optional" />
+              <Input
+                disabled={!canChangeMetadata}
+                placeholder={t('sections.titlePage.subtitle.placeholder')}
+              />
             </Form.Item>
             <Form.Item
-              label={t('authors')}
+              label={t('sections.titlePage.authors')}
               labelCol={{ span: 24 }}
               name="authors"
-              // rules={[{ required: true, message: 'Authors is required' }]}
               wrapperCol={{ span: 24 }}
             >
-              <Input disabled={!canChangeMetadata} placeholder="John, Smith" />
+              <Input
+                disabled={!canChangeMetadata}
+                placeholder={t('sections.titlePage.authors.placeholder')}
+              />
             </Form.Item>
           </FormSection>
 
           <FormSection>
-            <h2>{t('copyright_page')}</h2>
+            <h2>{t('sections.copyrightPage.heading')}</h2>
             <Form.Item
-              label={t('isbn_list')}
+              label={t('sections.copyrightPage.isbnList')}
               labelCol={{ span: 24 }}
               style={{ marginBottom: '0px' }}
               wrapperCol={{ span: 24 }}
@@ -229,29 +242,33 @@ const BookMetadataForm = ({
               <ISBNList canChangeMetadata={canChangeMetadata} name="isbns" />
             </Form.Item>
             <Form.Item
-              label={t('top_of_the_page')}
+              label={t('sections.copyrightPage.pageContent.top')}
               labelCol={{ span: 24 }}
               name="topPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder={t('top_of_the_page_placeholder')}
+                placeholder={t(
+                  'sections.copyrightPage.pageContent.top.placeholder',
+                )}
               />
             </Form.Item>
             <Form.Item
-              label={t('bottom_of_the_page')}
+              label={t('sections.copyrightPage.pageContent.bottom')}
               labelCol={{ span: 24 }}
               name="bottomPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder={t('bottom_of_the_page_placeholder')}
+                placeholder={t(
+                  'sections.copyrightPage.pageContent.top.placeholder',
+                )}
               />
             </Form.Item>
             <Form.Item
-              label={t('copyright_license')}
+              label={t('sections.copyrightPage.license')}
               labelCol={{ span: 24 }}
               name="copyrightLicense"
               wrapperCol={{ span: 24 }}

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 
-import { grid, th } from '@coko/client'
+import { grid, th, uuid } from '@coko/client'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   min-block-size: 32px;
 `
 
-const Label = styled.div`
+const Label = styled.label`
   color: ${th('colorTextLight')};
   white-space: nowrap;
 
@@ -38,11 +38,16 @@ const ChildWrapper = styled.div`
 
 const ExportOption = props => {
   const { className, children, label, inline, id } = props
+  const labelId = uuid()
 
   return (
     <Wrapper className={className} {...(id ? { id } : {})}>
-      <Label inline={inline}>{label}:</Label>
-      <ChildWrapper inline={inline}>{children}</ChildWrapper>
+      <Label id={labelId} inline={inline}>
+        {label}:
+      </Label>
+      <ChildWrapper aria-labelledby={labelId} inline={inline}>
+        {children}
+      </ChildWrapper>
     </Wrapper>
   )
 }

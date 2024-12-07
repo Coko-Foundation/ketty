@@ -61,7 +61,10 @@ const Footer = props => {
   const [isUploading, setUploading] = useState(false)
   const [createInput, setCreateInput] = useState(null)
   const inputRef = useRef(null)
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections',
+  })
 
   useEffect(() => {
     if (isCreateModalOpen && inputRef && inputRef.current) {
@@ -154,25 +157,27 @@ const Footer = props => {
 
   const publishingModalContent = (missingPdf, missingEpub, loading) => {
     if (missingPdf) {
-      return <p>{t('webpublish_modal_missing_pdf')}</p>
+      return <p>{t('tabs.publishingProfiles.publishModal.missingPDF')}</p>
     }
 
     if (missingEpub) {
-      return <p>{t('webpublish_modal_missing_epub')}</p>
+      return <p>{t('tabs.publishingProfiles.publishModal.missingEPUB')}</p>
     }
 
     return loading ? (
       <div style={{ textAlign: 'center' }}>
         <Spin />
-        <p>{t('publishing_loading')}</p>
+        <p>
+          {t('tabs.publishingProfiles.publishModal.actions.publish.loading')}
+        </p>
       </div>
     ) : (
       <>
-        <p>{t('webpublish_modal_info_1')}</p>
+        <p>{t('tabs.publishingProfiles.publishModal.content_1')}</p>
 
-        <p>{t('webpublish_modal_info_2')}</p>
+        <p>{t('tabs.publishingProfiles.publishModal.content_2')}</p>
         <p>
-          {t('webpublish_modal_selected_template')}{' '}
+          {t('tabs.publishingProfiles.publishModal.template')}{' '}
           <span style={{ textTransform: 'capitalize' }}>
             {selectedTemplate?.name}
           </span>
@@ -180,19 +185,19 @@ const Footer = props => {
         {includePdf && (
           <p>
             <CheckCircleTwoTone twoToneColor="green" />{' '}
-            {t('webpublish_modal_include_pdf')}
+            {t('tabs.publishingProfiles.publishModal.includesPDF')}
           </p>
         )}
         {includeEpub && (
           <p>
             <CheckCircleTwoTone twoToneColor="green" />{' '}
-            {t('webpublish_modal_include_epub')}
+            {t('tabs.publishingProfiles.publishModal.includesEPUB')}
           </p>
         )}
         {publishedBefore && (
           <p>
             <WarningTwoTone twoToneColor="#ffc300" />{' '}
-            {t('webpublish_modal_warning')}
+            {t('tabs.publishingProfiles.publishModal.warning')}
           </p>
         )}
       </>
@@ -210,7 +215,7 @@ const Footer = props => {
           key="save-profile"
           onClick={handleClickSave}
         >
-          {t('save_publishing_profile')}
+          {t('tabs.newPreview.actions.save')}
         </Button>,
       )
     } else if (selectedFormat === 'web') {
@@ -221,7 +226,9 @@ const Footer = props => {
           onClick={() => setPublishModalOpen(true)}
           type="primary"
         >
-          {publishedBefore ? t('publish_again_action') : t('publish_action')}
+          {publishedBefore
+            ? t('tabs.publishingProfiles.flax.actions.publishAgain')
+            : t('tabs.publishingProfiles.flax.actions.publish')}
         </Button>,
       )
     } else if (isConnected && !isInLulu && canUploadToProvider) {
@@ -234,7 +241,7 @@ const Footer = props => {
           style={{ textTransform: 'none' }}
           type="primary"
         >
-          {t('upload_to_lulu')}
+          {t('tabs.publishingProfiles.lulu.actions.upload')}
         </Button>,
       )
     } else if (isConnected && isInLulu && !isSynced) {
@@ -247,7 +254,7 @@ const Footer = props => {
           style={{ textTransform: 'none' }}
           type="primary"
         >
-          {t('sync_with_lulu')}
+          {t('tabs.publishingProfiles.lulu.actions.sync')}
         </Button>,
       )
     }
@@ -262,7 +269,7 @@ const Footer = props => {
           loading={downloadLoading}
           onClick={handleClickDownload}
         >
-          {t('download')}
+          {t('download', { keyPrefix: 'pages.common.actions' })}
         </Button>,
       )
     }
@@ -281,7 +288,7 @@ const Footer = props => {
         onCancel={closeCreateModal}
         onOk={handleCreate}
         open={isCreateModalOpen}
-        title={t('save_publishing_profile')}
+        title={t('tabs.newPreview.actions.save')}
       >
         <Input
           data-test="preview-exportName-input"
@@ -297,11 +304,11 @@ const Footer = props => {
         okButtonProps={{
           disabled: missingPdfProfile || missingEpubProfile || publishing,
         }}
-        okText={t('publish_action')}
+        okText={t('tabs.publishingProfiles.publishModal.actions.publish')}
         onCancel={() => setPublishModalOpen(false)}
         onOk={handlePublish}
         open={isPublishModalOpen}
-        title={t('publish_online')}
+        title={t('tabs.publishingProfiles.publishModal.title')}
       >
         {publishingModalContent(
           missingPdfProfile,

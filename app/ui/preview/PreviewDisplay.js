@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Alert } from 'antd'
 import { grid } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Spin } from '../common'
 import PreviewDisplayOptions from './PreviewDisplayOptions'
 
@@ -78,6 +79,10 @@ const PreviewDisplay = props => {
     zoom,
   } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.format',
+  })
+
   const [iFrameLoading, setIFrameLoading] = useState(false)
 
   // This and the Veil are to hide the flashing effect of the pagedjs previewer
@@ -106,8 +111,8 @@ const PreviewDisplay = props => {
       {showEpub && (
         <AlertWrapper>
           <Alert
-            description="Please download your EPUB and preview it in your reader of choice."
-            message="Preview is not available for EPUB format."
+            description={t('epub.alert.detail')}
+            message={t('epub.alert.title')}
             type="warning"
           />
         </AlertWrapper>

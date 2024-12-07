@@ -58,29 +58,31 @@ const BookPanel = props => {
     onBookComponentParentIdChange,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookBodySidebar',
+  })
   // TO RE-DO: Do no show meta data form if chapters are being processed
 
   return (
     <ChaptersArea className={className}>
       <ChaptersHeader>
-        <StyledHeading>{t('book_body')}</StyledHeading>
+        <StyledHeading>{t('title')}</StyledHeading>
         <ChaptersActions>
           <IconWrapper
-            aria-label={t('upload_a_chapter')}
+            aria-label={t('actions.upload')}
             disabled={!canEdit}
             icon={<CloudUploadOutlined />}
             onClick={onUploadChapter}
-            title={t('upload_a_chapter')}
+            title={t('actions.upload')}
             type="text"
           />
           <IconWrapper
-            aria-label={t('create_a_chapter')}
+            aria-label={t('actions.create')}
             data-test="producer-createChapter-btn"
             disabled={!canEdit}
             icon={<PlusOutlined />}
             onClick={onAddChapter}
-            title={t('create_a_chapter')}
+            title={t('actions.create')}
             type="text"
           />
         </ChaptersActions>

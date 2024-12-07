@@ -10,7 +10,11 @@ const Wrapper = styled.div`
 
 const LicenseTypes = props => {
   const { value, onChange, canChangeMetadata } = props
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab.sections.copyrightPage.options',
+  })
+
   const [currentValue, setCurrentValue] = useState(value)
 
   const handleChange = (checked, type) => {
@@ -40,21 +44,21 @@ const LicenseTypes = props => {
         disabled={!canChangeMetadata}
         onChange={handleNcChange}
       >
-        {t('copyright_cc_nc')}
+        {t('creativeCommons.restrictions.nonCommercial')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.SA}
         disabled={currentValue?.ND || !canChangeMetadata}
         onChange={handleSaChange}
       >
-        {t('copyright_cc_sa')}
+        {t('creativeCommons.restrictions.shareAlike')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.ND}
         disabled={currentValue?.SA || !canChangeMetadata}
         onChange={handleNdChange}
       >
-        {t('copyright_cc_nd')}
+        {t('creativeCommons.restrictions.noDerivatives')}
       </Checkbox>
     </Wrapper>
   )

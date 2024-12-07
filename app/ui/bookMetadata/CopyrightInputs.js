@@ -11,19 +11,22 @@ const StyledDatePicker = styled(DatePicker)`
 
 const CopyrightInputs = props => {
   const { namePrefix, canChangeMetadata, selected } = props
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab.sections.copyrightPage',
+  })
 
   return (
     <Row gutter={[12, 0]}>
       <Col span={18}>
         <Form.Item
-          label={t('copyright_holder')}
+          label={t('copyrightHolder')}
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightHolder`}
           rules={[
             {
               required: selected,
-              message: t('copyright_holder_required'),
+              message: t('copyrightHolder.errors.noValue'),
             },
           ]}
         >
@@ -33,11 +36,11 @@ const CopyrightInputs = props => {
 
       <Col span={6}>
         <Form.Item
-          label={t('copyright_year')}
+          label={t('copyrightYear')}
           labelCol={{ span: 24 }}
           name={`${namePrefix}CopyrightYear`}
           rules={[
-            { required: selected, message: t('copyright_year_required') },
+            { required: selected, message: t('copyrightYear.errors.noValue') },
           ]}
         >
           <StyledDatePicker disabled={!canChangeMetadata} picker="year" />

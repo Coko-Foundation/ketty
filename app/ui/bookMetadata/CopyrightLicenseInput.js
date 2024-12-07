@@ -23,7 +23,10 @@ ExpandIcon.propTypes = {
 const CopyrightLicenseInput = props => {
   const { onChange, value, canChangeMetadata } = props
   const [activeKey, setActiveKey] = useState(value)
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab.sections.copyrightPage',
+  })
 
   const handleChange = v => {
     onChange(v)
@@ -40,12 +43,12 @@ const CopyrightLicenseInput = props => {
     >
       <CopyrightLicenseOption
         canChangeMetadata={canChangeMetadata}
-        description={t('copyright_scl_description')}
+        description={t('options.allRightsReserved.detail')}
         key="SCL"
         name="SCL"
         onChange={handleChange}
         selected={value === 'SCL'}
-        title={t('copyright_scl')}
+        title={t('options.allRightsReserved')}
       >
         <CopyrightInputs
           canChangeMetadata={canChangeMetadata}
@@ -56,14 +59,14 @@ const CopyrightLicenseInput = props => {
 
       <CopyrightLicenseOption
         canChangeMetadata={canChangeMetadata}
-        description={t('copyright_cc_description')}
+        description={t('options.creativeCommons.detail')}
         key="CC"
         link="https://creativecommons.org/about/cclicenses/"
-        linkText={t('copyright_cc_link')}
+        linkText={t('options.creativeCommons.link')}
         name="CC"
         onChange={handleChange}
         selected={value === 'CC'}
-        title={t('copyright_cc')}
+        title={t('options.creativeCommons')}
       >
         <CopyrightInputs
           canChangeMetadata={canChangeMetadata}
@@ -77,12 +80,12 @@ const CopyrightLicenseInput = props => {
 
       <CopyrightLicenseOption
         canChangeMetadata={canChangeMetadata}
-        description={t('copyright_pd_description')}
+        description={t('options.publicDomain.detail')}
         key="PD"
         name="PD"
         onChange={handleChange}
         selected={value === 'PD'}
-        title={t('copyright_pd')}
+        title={t('options.publicDomain')}
       >
         <Form.Item name="publicDomainType">
           <Radio.Group
@@ -91,9 +94,9 @@ const CopyrightLicenseInput = props => {
               {
                 label: (
                   <div>
-                    <strong>{t('copyright_pd_cc0')}</strong>
+                    <strong>{t('options.publicDomain.cc0')}</strong>
                     <StyledParagraph>
-                      {t('copyright_pd_cc0_info')}
+                      {t('options.publicDomain.cc0.details')}
                     </StyledParagraph>
                   </div>
                 ),
@@ -102,9 +105,9 @@ const CopyrightLicenseInput = props => {
               {
                 label: (
                   <div>
-                    <strong>{t('copyright_pd_pd')}</strong>
+                    <strong>{t('options.publicDomain.noCc')}</strong>
                     <StyledParagraph>
-                      {t('copyright_pd_pd_info')}
+                      {t('options.publicDomain.noCc.details')}
                     </StyledParagraph>
                   </div>
                 ),

@@ -30,7 +30,9 @@ const ProfileRow = props => {
     updateProfile,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
 
   const [updateLoading, setUpdateLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
@@ -90,7 +92,7 @@ const ProfileRow = props => {
     <Wrapper className={className}>
       {notificationContextHolder}
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label htmlFor="select-profile">{t('choose_profile')}</label>
+      <label htmlFor="select-profile">{t('profile.select')}</label>
       <div style={{ display: 'flex', gap: '1ch' }}>
         <Select
           disabled={loadingPreview}
@@ -112,7 +114,7 @@ const ProfileRow = props => {
           loading={updateLoading}
           onClick={handleUpdate}
         >
-          {t('update')}
+          {t('profile.actions.update')}
         </Button>
 
         <Button
@@ -123,7 +125,7 @@ const ProfileRow = props => {
           onClick={handleClickDelete}
           status="danger"
         >
-          {t('delete')}
+          {t('profile.actions.delete')}
         </Button>
       </div>
     </Wrapper>
