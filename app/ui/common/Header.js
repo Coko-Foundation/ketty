@@ -149,7 +149,10 @@ const Header = props => {
     ...rest
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.menu.options',
+  })
+
   const navItemsLeft = []
   const navItemsRight = []
 
@@ -172,7 +175,7 @@ const Header = props => {
         key="back"
         to={`/books/${bookId}/producer`}
       >
-        {t('Back to book'.toLowerCase().replace(/ /g, '_'))}
+        {t('backToBook')}
       </UnstyledLink>,
     )
   }
@@ -184,7 +187,7 @@ const Header = props => {
         key="preiew"
         to={`/books/${bookId}/exporter`}
       >
-        {t('Preview and Publish'.toLowerCase().replace(/ /g, '_'))}
+        {t('previewAndPublish')}
       </UnstyledLink>,
     )
   }
@@ -209,7 +212,7 @@ const Header = props => {
         key="kb"
         to={`/books/${bookId}/knowledge-base`}
       >
-        {t('Knowledge Base'.toLowerCase().replace(/ /g, '_'))}
+        {t('knowledgeBase')}
       </UnstyledLink>,
     )
   }
@@ -221,7 +224,7 @@ const Header = props => {
         key="ai-designer"
         to={`/books/${bookId}/ai-pdf`}
       >
-        {t('AI Book Designer'.toLowerCase().replace(/ /g, '_'))} (Beta)
+        {t('aiBookDesigner')}
       </UnstyledLink>,
     )
   }
@@ -233,7 +236,7 @@ const Header = props => {
         data-test="header-bookSettings-btn"
         key="settings"
         onClick={onSettings}
-        title="Book Settings"
+        title={t('bookSettings')}
         type="text"
       >
         <SettingOutlined />

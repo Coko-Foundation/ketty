@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { get, isEmpty } from 'lodash'
 import { MinusCircleTwoTone, PlusOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import { Button, Form } from 'antd'
 import ISBNInput from './ISBNInput'
 
@@ -15,6 +16,10 @@ const IconWrapper = styled(Button)`
 `
 
 const ISBNList = ({ canChangeMetadata, name }) => {
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab.sections.copyrightPage.isbnList',
+  })
+
   const checkForDuplicates = (items, itemPath, itemDescription) => {
     if (!isEmpty(items)) {
       // Identify duplicate
@@ -69,9 +74,9 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                   canChangeMetadata={canChangeMetadata}
                   field={field}
                   initialValue=""
-                  label="ISBN label"
+                  label={t('isbnLabel')}
                   name="label"
-                  placeholder="Label"
+                  placeholder={t('isbnLabel.placeholder')}
                   rules={[
                     {
                       validator: (_, value) => {
@@ -79,13 +84,13 @@ const ISBNList = ({ canChangeMetadata, name }) => {
 
                         if (fields.length > 1 && trimmedValue === '') {
                           return Promise.reject(
-                            new Error('Label is required (for multiple ISBNs)'),
+                            new Error(t('isbnLabel.errors.noValue')),
                           )
                         }
 
                         if (value && !trimmedValue) {
                           return Promise.reject(
-                            new Error('Label contains only spaces'),
+                            new Error(t('isbnLabel.errors.invalid')),
                           )
                         }
 
@@ -101,18 +106,18 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                   field={field}
                   label="ISBN value"
                   name="isbn"
-                  placeholder="ISBN: update this value before exporting versions requiring unique identifier"
+                  placeholder={t('isbn')}
                   rules={[
                     {
                       validator: (_, value) => {
                         const trimmedValue = value?.trim() || ''
 
                         if (!trimmedValue) {
-                          return Promise.reject(new Error('ISBN is required'))
+                          return Promise.reject(new Error(t('errors.noValue')))
                         }
 
                         if (trimmedValue.search(/[^\s\-0-9]/) !== -1) {
-                          return Promise.reject(new Error('ISBN is invalid'))
+                          return Promise.reject(new Error(t('errors.invalid')))
                         }
 
                         return Promise.resolve()
@@ -149,7 +154,8 @@ const ISBNList = ({ canChangeMetadata, name }) => {
                 onClick={() => add()}
                 type="dashed"
               >
-                <PlusOutlined /> Add{fields.length < 1 ? '' : ' Another'} ISBN
+                <PlusOutlined />{' '}
+                {t('addButton', { context: fields.length < 1 ? 'first' : '' })}
               </Button>
             </Form.Item>
             <Form.Item style={{ paddingLeft: '1em' }} wrapperCol={{ span: 24 }}>

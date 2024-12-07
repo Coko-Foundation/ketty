@@ -70,12 +70,14 @@ const UserListItem = ({
   canChangeAccess,
   user,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.shareModal.permissions',
+  })
 
   const dropdownItems = [
-    { value: 'read', label: t('can_view') },
-    { value: 'write', label: t('can_edit') },
-    { value: 'remove', label: t('remove_access') },
+    { value: 'read', label: t('options.view') },
+    { value: 'write', label: t('options.edit') },
+    { value: 'remove', label: t('options.remove') },
   ]
 
   const { displayName, id: userId, email } = user
@@ -90,7 +92,7 @@ const UserListItem = ({
           <span>{displayName}</span>
         </UserDetails>
         {role === 'owner' ? (
-          <OwnerLabel>{t('owner')}</OwnerLabel>
+          <OwnerLabel>{t('options.owner')}</OwnerLabel>
         ) : (
           <StyledSelect
             bordered={false}

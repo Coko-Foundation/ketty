@@ -3,7 +3,7 @@ import { Button, Row, Space, Typography, Upload as AntUpload } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { useTranslation } from 'react-i18next'
+import { Trans } from 'react-i18next'
 
 const { Text } = Typography
 const { Dragger } = AntUpload
@@ -52,7 +52,7 @@ const Upload = props => {
   const { multiple, onFilesChange } = props
 
   const [files, setFiles] = useState([])
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
 
   useEffect(() => {
     onFilesChange(files)
@@ -84,8 +84,9 @@ const Upload = props => {
     >
       <StyledSpace direction="vertical" size="middle">
         <Text>
-          {t('Drag and drop files, or'.toLowerCase().replace(/ /g, '_'))}{' '}
-          <Text underline>{t('browse')}</Text>
+          <Trans i18nKey="pages.newBook.importPage.dropArea">
+            Drag and drop files, or <Text underline>browse</Text>
+          </Trans>
         </Text>
         {files.length > 0 &&
           files.map(file => (

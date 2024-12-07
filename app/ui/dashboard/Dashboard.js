@@ -67,17 +67,17 @@ const Dashboard = props => {
     loading,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.dash' })
 
   return (
     <Wrapper>
       <SectionHeader>
-        <h1>{t('Your Books'.toLowerCase().replace(/ /g, '_'))}</h1>
+        <h1>{t('title')}</h1>
         <StyledLink data-test="dashboard-newBook-button" to="/create-book">
           <span>
             <EditOutlined />
           </span>
-          <span>{t('New Book'.toLowerCase().replace(/ /g, '_'))}</span>
+          <span>{t('actions.newBook')}</span>
         </StyledLink>
       </SectionHeader>
 

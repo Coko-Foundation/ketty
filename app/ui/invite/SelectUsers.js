@@ -79,11 +79,7 @@ const SelectUsers = ({
       }}
       onSearch={debounceFetcher}
       options={options}
-      placeholder={t(
-        'Enter email addresses, separated by commas'
-          .toLowerCase()
-          .replace(/ /g, '_'),
-      )}
+      placeholder={t('pages.common.header.shareModal.emailInput')}
       value={value}
     />
   )
