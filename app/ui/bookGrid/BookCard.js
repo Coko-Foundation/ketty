@@ -135,7 +135,7 @@ const BookCard = ({
   canUploadBookThumbnail,
   gridView,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.dash.book' })
 
   return (
     <StyledCard
@@ -165,19 +165,11 @@ const BookCard = ({
                       style={{}}
                       to={`/books/${id}/producer#metadata`}
                     >
-                      {t(
-                        'Manage cover and metadata'
-                          .toLowerCase()
-                          .replace(/ /g, '_'),
-                      )}
+                      {t('menu.options.manageMetadata')}
                     </StyledLink>
                   ) : (
                     <DisabledPlaceholder>
-                      {t(
-                        'Manage cover and metadata'
-                          .toLowerCase()
-                          .replace(/ /g, '_'),
-                      )}
+                      {t('menu.options.manageMetadata')}
                     </DisabledPlaceholder>
                   )}
                 </div>
@@ -193,7 +185,7 @@ const BookCard = ({
                     }}
                     type="text"
                   >
-                    {t('Delete book'.toLowerCase().replace(/ /g, '_'))}
+                    {t('menu.options.delete')}
                   </Button>
                 </div>
               </PopupContentWrapper>

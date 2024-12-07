@@ -159,7 +159,7 @@ const AdminDashboard = props => {
   } = props
 
   const waxRef = useRef()
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
 
   const [apiKeyForm] = Form.useForm()
   const [newLanguageForm] = Form.useForm()
@@ -178,7 +178,7 @@ const AdminDashboard = props => {
       .then(() => {
         setTCUpdateResult({
           success: true,
-          message: t('tc_update_success'),
+          message: t('termsAndConditions.update.success'),
         })
         setTimeout(() => {
           setTCUpdateResult(null)
@@ -187,7 +187,7 @@ const AdminDashboard = props => {
       .catch(() => {
         setTCUpdateResult({
           success: false,
-          message: t('tc_update_error'),
+          message: t('termsAndConditions.update.error'),
         })
         setTimeout(() => {
           setTCUpdateResult(null)
@@ -199,13 +199,19 @@ const AdminDashboard = props => {
     setKeyUpdateResult({ loading: true })
     onChatGPTKeyUpdate(val.apiKey)
       .then(() => {
-        setKeyUpdateResult({ success: true, message: t('ai_key_updated') })
+        setKeyUpdateResult({
+          success: true,
+          message: t('aiIntegration.updateKey.success'),
+        })
         setTimeout(() => {
           setKeyUpdateResult(null)
         }, 5000)
       })
       .catch(() => {
-        setKeyUpdateResult({ success: false, message: t('ai_key_invalid') })
+        setKeyUpdateResult({
+          success: false,
+          message: t('aiIntegration.updateKey.error'),
+        })
         setTimeout(() => {
           setKeyUpdateResult(null)
         }, 5000)
@@ -279,7 +285,13 @@ const AdminDashboard = props => {
       label: (
         <StyledControlWrapper>
           <span>{l.name}</span>
-          <span>({l.enabled ? t('enabled') : t('disabled')})</span>
+          <span>
+            (
+            {l.enabled
+              ? t('availableLanguages.state.enabled')
+              : t('availableLanguages.state.disabled')}
+            )
+          </span>
         </StyledControlWrapper>
       ),
       children: (
@@ -287,7 +299,7 @@ const AdminDashboard = props => {
           <StyledLanguageStack>
             <StyledControlWrapper>
               <span style={{ textTransform: 'capitalize' }}>
-                {t('enabled')}
+                {t('availableLanguages.enabled')}
               </span>
               <Form.Item
                 initialValue={l.enabled}
@@ -303,13 +315,13 @@ const AdminDashboard = props => {
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-name-${l.name}`}>
-                {t('language_enabled_description')}.
+                {t('availableLanguages.enabled.explanation')}
               </DescriptionParagraph>
             </StyledControlWrapper>
             {!!l.standard && (
               <StyledControlWrapper id="std-wrapper">
                 <span style={{ textTransform: 'capitalize' }}>
-                  Use standardised version
+                  {t('availableLanguages.standardised')}
                 </span>
                 <Form.Item
                   initialValue={l.standardised}
@@ -323,22 +335,25 @@ const AdminDashboard = props => {
                   />
                 </Form.Item>
                 <DescriptionParagraph id={`desc-standard-${l.standard.name}`}>
-                  Turning the standardised version off will allow you to upload
-                  your own translation strings, but this may come at the cost of
-                  having to update it manually when the UI updates. To
-                  contribute to the standardised translation check out our
-                  contributors guide.
+                  {t('availableLanguages.standardised.explanation')}
                 </DescriptionParagraph>
               </StyledControlWrapper>
             )}
 
             <StyledControlWrapper>
-              <label htmlFor={`name-${l.name}`}>{t('label')}:</label>
+              <label htmlFor={`name-${l.name}`}>
+                {t('availableLanguages.customised.languageLabel')}
+              </label>
               <Form.Item
                 initialValue={l.name}
                 name="name"
                 rules={[
-                  { required: true, message: t('language_label_required') },
+                  {
+                    required: true,
+                    message: t(
+                      'availableLanguages.customised.languageLabel.error.noValue',
+                    ),
+                  },
                 ]}
               >
                 <Input
@@ -349,17 +364,24 @@ const AdminDashboard = props => {
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-name-${l.name}`}>
-                {t('language_label_description')}.
+                {t('availableLanguages.customised.languageLabel.explanation')}
               </DescriptionParagraph>
             </StyledControlWrapper>
             <StyledControlWrapper>
               <label htmlFor={`flag-code-${l.flagCode}`}>
-                {t('flag_code')}:
+                {t('availableLanguages.customised.flagCode')}
               </label>
               <Form.Item
                 initialValue={l.flagCode}
                 name="flagCode"
-                rules={[{ required: true, message: t('flag_code_required') }]}
+                rules={[
+                  {
+                    required: true,
+                    message: t(
+                      'availableLanguages.customised.flagCode.error.noValue',
+                    ),
+                  },
+                ]}
               >
                 <Input
                   aria-describedby={`desc-flag-code-${l.flagCode}`}
@@ -369,7 +391,8 @@ const AdminDashboard = props => {
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-flag-code-${l.flagCode}`}>
-                {t('flag_code_description')}. {t('see')}{' '}
+                {t('availableLanguages.customised.flagCode.explanation')}
+                {/* {t('see')}{' '}
                 <a
                   href="https://www.iso.org/obp/ui/#search/code/"
                   rel="noreferrer"
@@ -377,13 +400,13 @@ const AdminDashboard = props => {
                 >
                   {t('this_list')}
                 </a>{' '}
-                {t('for_reference')}.
+                {t('for_reference')}. */}
               </DescriptionParagraph>
             </StyledControlWrapper>
             <StyledControlWrapper>
               <Form.Item
                 getValueFromEvent={normFile}
-                label={t('upload_new_translation_file')}
+                label={t('availableLanguages.customised.uploadInstructions')}
                 valuePropName="fileList"
               >
                 <StyledUpload
@@ -402,7 +425,7 @@ const AdminDashboard = props => {
               rel="noreferrer"
               target="_blank"
             >
-              {t('download_translation')}
+              {t('availableLanguages.actions.downloadStrings')}
             </a>
             <StyledControlWrapper id="lang-form-submit">
               <span />
@@ -413,7 +436,7 @@ const AdminDashboard = props => {
                     onClick={() => removeLanguage(l.code)}
                     status="danger"
                   >
-                    Remove
+                    {t('availableLanguages.actions.remove')}
                   </Button>
                 ) : null}
                 <Form.Item>
@@ -422,7 +445,7 @@ const AdminDashboard = props => {
                     htmlType="submit"
                     type="primary"
                   >
-                    {t('update')}
+                    {t('availableLanguages.actions.update')}
                   </Button>
                 </Form.Item>
               </StyledButtonGroup>
@@ -440,12 +463,12 @@ const AdminDashboard = props => {
     <Center
       style={{ '--max-width': '90ch', '--s1': '16px', marginBottom: '3rem' }}
     >
-      <h1>{t('admin')}</h1>
+      <h1>{t('title')}</h1>
       <Divider />
       {/* ai integration */}
-      <h2>{t('ai_integration')}</h2>
+      <h2>{t('aiIntegration.heading')}</h2>
       <StyledControlWrapper>
-        <span>{t('ai_supplier_integration')}</span>
+        <span>{t('aiIntegration.supplier')}</span>
         <Switch
           checked={aiEnabled}
           data-test="admindb-ai-switch"
@@ -461,13 +484,18 @@ const AdminDashboard = props => {
             requiredMark={false}
           >
             <Form.Item
-              label="API Key"
+              label={t('aiIntegration.apiKey')}
               name="apiKey"
-              rules={[{ required: true, message: t('ai_key_empty') }]}
+              rules={[
+                {
+                  required: true,
+                  message: t('aiIntegration.apiKey.error.noValue'),
+                },
+              ]}
             >
               <Input
                 data-test="admindb-aikey-input"
-                placeholder={t('ai_insert_key')}
+                placeholder={t('aiIntegration.apiKey.placeholder')}
               />
             </Form.Item>
             <div>
@@ -476,7 +504,7 @@ const AdminDashboard = props => {
                 htmlType="submit"
                 loading={keyUpdateResult?.loading}
               >
-                {t('ai_update_key')}
+                {t('aiIntegration.updateKey')}
               </Button>
               <UpdateResult $success={keyUpdateResult?.success} role="status">
                 {keyUpdateResult?.message && (
@@ -497,12 +525,12 @@ const AdminDashboard = props => {
       </StyledControlWrapper>
       <Divider />
       {/* downloads, flax and lulu integrations */}
-      <h2>{t('pub_section_header')}</h2>
+      <h2>{t('publishing.heading')}</h2>
       <Stack style={{ '--space': '2rem' }}>
-        <h3>{t('downloads')}</h3>
+        <h3>{t('downloads.heading')}</h3>
         <Stack style={{ '--space': '1rem' }}>
           <StyledControlWrapper>
-            <span>PDF</span>
+            <span>{t('downloads.pdf')}</span>
             <Switch
               checked={exportOptions?.pdfDownload?.enabled}
               data-test="admindb-dwPDF-switch"
@@ -511,7 +539,7 @@ const AdminDashboard = props => {
             />
           </StyledControlWrapper>
           <StyledControlWrapper>
-            <span>EPUB</span>
+            <span>{t('downloads.epub')}</span>
             <Switch
               checked={exportOptions?.epubDownload?.enabled}
               data-test="admindb-dwEPUB-switch"
@@ -520,9 +548,9 @@ const AdminDashboard = props => {
             />
           </StyledControlWrapper>
         </Stack>
-        <h3>{t('pub_integrations')}</h3>
+        <h3>{t('integrations.heading')}</h3>
         <StyledControlWrapper>
-          <span>{t('pub_flax')}</span>
+          <span>{t('integrations.flax')}</span>
           <Switch
             checked={exportOptions?.webPublish?.enabled}
             data-test="admindb-pubWeb-switch"
@@ -537,10 +565,10 @@ const AdminDashboard = props => {
               }}
             >
               <p style={{ gridColumn: 'span 2' }}>
-                {t('pub_flax_include_downloads')}:
+                {t('integrations.flax.explanation')}
               </p>
               <StyledControlWrapper>
-                <span>PDF</span>
+                <span>{t('integrations.flax.downloadOptions.pdf')}</span>
                 <Switch
                   checked={exportOptions?.webPdfDownload?.enabled}
                   data-test="admindb-pubPDF-switch"
@@ -549,7 +577,7 @@ const AdminDashboard = props => {
                 />
               </StyledControlWrapper>
               <StyledControlWrapper>
-                <span>EPUB</span>
+                <span>{t('integrations.flax.downloadOptions.epub')}</span>
                 <Switch
                   checked={exportOptions?.webEpubDownload?.enabled}
                   data-test="admindb-pubEPUB-switch"
@@ -561,7 +589,7 @@ const AdminDashboard = props => {
           )}
         </StyledControlWrapper>
         <StyledControlWrapper>
-          <span>{t('pub_lulu')}</span>
+          <span>{t('integrations.lulu')}</span>
           <Switch
             checked={luluConfigEnabled}
             data-test="admindb-lulu-switch"
@@ -572,7 +600,7 @@ const AdminDashboard = props => {
       </Stack>
       <Divider />
       {/* translations */}
-      <h2>{t('languages_header')}</h2>
+      <h2>{t('availableLanguages.heading')}</h2>
       <Stack style={{ '--space': '1rem' }}>
         <Collapse
           accordion
@@ -587,11 +615,18 @@ const AdminDashboard = props => {
             <Form form={newLanguageForm}>
               <StyledLanguageStack>
                 <StyledControlWrapper>
-                  <label htmlFor="name-new">{t('label')}:</label>
+                  <label htmlFor="name-new">
+                    {t('availableLanguages.customised.languageLabel')}:
+                  </label>
                   <Form.Item
                     name="name"
                     rules={[
-                      { required: true, message: t('language_label_required') },
+                      {
+                        required: true,
+                        message: t(
+                          'availableLanguages.customised.languageLabel.error.noValue',
+                        ),
+                      },
                     ]}
                   >
                     <Input
@@ -602,17 +637,23 @@ const AdminDashboard = props => {
                     />
                   </Form.Item>
                   <DescriptionParagraph id="desc-name-new">
-                    {t('language_label_description')}.
+                    {t(
+                      'availableLanguages.customised.languageLabel.explanation',
+                    )}
                   </DescriptionParagraph>
                 </StyledControlWrapper>
                 <StyledControlWrapper>
-                  <label htmlFor="flag-code-new">{t('flag_code')}:</label>
+                  <label htmlFor="flag-code-new">
+                    {t('availableLanguages.customised.flagCode')}:
+                  </label>
                   <Form.Item
                     name="flagCode"
                     rules={[
                       {
                         required: true,
-                        message: t('flag_code_required'),
+                        message: t(
+                          'availableLanguages.customised.flagCode.error.noValue',
+                        ),
                       },
                     ]}
                   >
@@ -624,7 +665,8 @@ const AdminDashboard = props => {
                     />
                   </Form.Item>
                   <DescriptionParagraph id="desc-flag-code-new">
-                    {t('flag_code_description')}. {t('see')}{' '}
+                    {t('availableLanguages.customised.flagCode.explanation')}
+                    {/* . {t('see')}{' '}
                     <a
                       href="https://www.iso.org/obp/ui/#search/code/"
                       rel="noreferrer"
@@ -632,13 +674,15 @@ const AdminDashboard = props => {
                     >
                       {t('this_list')}
                     </a>{' '}
-                    {t('for_reference')}.
+                    {t('for_reference')}. */}
                   </DescriptionParagraph>
                 </StyledControlWrapper>
                 <StyledControlWrapper>
                   <Form.Item
                     getValueFromEvent={normFile}
-                    label={t('upload_new_translation_file')}
+                    label={t(
+                      'availableLanguages.customised.uploadInstructions',
+                    )}
                     valuePropName="fileList"
                   >
                     <StyledUpload
@@ -662,7 +706,7 @@ const AdminDashboard = props => {
               data-test="admindb-addNewLang-btn"
               onClick={() => setNewLanguage(true)}
             >
-              {t('add_new_language')}
+              {t('availableLanguages.actions.addNew')}
             </Button>
           ) : (
             <>
@@ -670,11 +714,11 @@ const AdminDashboard = props => {
                 data-test="admindb-cancelNewLang-btn"
                 onClick={() => setNewLanguage(false)}
               >
-                {t('cancel')}
+                {t('cancel', { keyPrefix: 'pages.common.actions' })}
               </Button>{' '}
               <Button data-test="admindb-saveNewLang-btn" onClick={addLanguage}>
                 {' '}
-                {t('save_new_language')}
+                {t('availableLanguages.actions.save')}
               </Button>
             </>
           )}
@@ -682,8 +726,8 @@ const AdminDashboard = props => {
       </Stack>
       <Divider />
       {/* terms and conditions */}
-      <TCHeader>{t('terms_and_conditions')}</TCHeader>
-      <p>{t('tc_subheader')}</p>
+      <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
+      <p>{t('termsAndConditions.explanation')}</p>
       <TCWrapper>
         <Wax
           autoFocus={false}
@@ -699,7 +743,7 @@ const AdminDashboard = props => {
             data-test="admindb-updateTC-btn"
             onClick={udpateTermsAndConditions}
           >
-            {t('tc_update_action')}
+            {t('termsAndConditions.update')}
           </Button>
           <UpdateResult $success={tcUpdateResult?.success} role="status">
             {tcUpdateResult?.message && (

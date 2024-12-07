@@ -257,7 +257,10 @@ const ChapterItem = forwardRef(
     ref,
   ) => {
     const chapterRef = useRef(null)
-    const { t } = useTranslation()
+
+    const { t } = useTranslation(null, {
+      keyPrefix: 'pages.producer.bookBodySidebar.chapter',
+    })
 
     useEffect(() => {
       // apply focus if current element recieves `focused=true`
@@ -317,7 +320,7 @@ const ChapterItem = forwardRef(
               data-test="producer-chapterTitle"
               onClick={() => onChapterClick(id)}
             >
-              {!uploading ? title || t('untitled_chapter') : t('processing')}
+              {!uploading ? title || t('new') : t('processing')}
             </ChapterTitle>
             {lock ? (
               <UserAvatar data-test="producer-userAvatar">
@@ -350,7 +353,9 @@ const ChapterItem = forwardRef(
                     }}
                     onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   >
-                    {isPart ? t('convert_to_chapter') : t('convert_to_part')}
+                    {isPart
+                      ? t('menu.options.convertToChapter')
+                      : t('menu.options.convertToPart')}
                   </Button>
                 )}
                 <Button
@@ -358,7 +363,7 @@ const ChapterItem = forwardRef(
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                 >
-                  {t('delete')}
+                  {t('menu.options.delete')}
                 </Button>
               </PopupContentWrapper>
             </StyledPopup>

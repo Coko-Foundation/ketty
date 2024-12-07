@@ -81,15 +81,7 @@ const BookGrid = ({
         locale={{
           emptyText: (
             <Empty
-              description={
-                <span>
-                  {t(
-                    'You don’t have any books yet'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
-                </span>
-              }
+              description={<span>{t('pages.dash.empty')}</span>}
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ),

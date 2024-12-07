@@ -29,12 +29,14 @@ const WebDownloadsSelection = props => {
     })
   }
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.format',
+  })
 
   return (
     <Stack style={{ '--space': '1em' }}>
       <div>
-        <p>{t('include_downloads')}</p>
+        <p>{t('webDownload.description')}</p>
         <CheckboxGroup
           defaultValue={[
             ...(includePdf ? ['pdf'] : []),
@@ -51,7 +53,9 @@ const WebDownloadsSelection = props => {
         <div>
           {profiles.filter(p => p.format === 'pdf').length > 0 ? (
             <>
-              <label htmlFor="pdf-profile">{t('select_pdf_profile')}:</label>
+              <label htmlFor="pdf-profile">
+                {t('webDownload.options.pdf.selectProfile')}
+              </label>
               <StyledSelect
                 disabled={previewLoading}
                 id="pdf-profile"
@@ -68,7 +72,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              {t('no_saved_pdf_profile')}
+              {t('webDownload.options.pdf.noProfileAvailable')}
             </p>
           )}
         </div>
@@ -77,7 +81,9 @@ const WebDownloadsSelection = props => {
         <div>
           {profiles.filter(p => p.format === 'epub').length > 0 ? (
             <>
-              <label htmlFor="epub-profile">{t('select_epub_profile')}:</label>
+              <label htmlFor="epub-profile">
+                {t('webDownload.options.epub.selectProfile')}:
+              </label>
               <StyledSelect
                 disabled={previewLoading}
                 id="epub-profile"
@@ -94,7 +100,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              {t('no_saved_epub_profile')}
+              {t('webDownload.options.epub.noProfileAvailable')}
             </p>
           )}
         </div>

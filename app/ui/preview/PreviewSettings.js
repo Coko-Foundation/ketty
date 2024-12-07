@@ -140,7 +140,9 @@ const PreviewSettings = props => {
     hasCover,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs',
+  })
 
   // #region functions
   const findProfile = profileValue => {
@@ -203,7 +205,7 @@ const PreviewSettings = props => {
         destroyInactiveTabPane
         items={[
           {
-            label: t('new_preview'),
+            label: t('newPreview.title'),
             key: 'new',
             children: (
               <StyledStack>
@@ -230,7 +232,7 @@ const PreviewSettings = props => {
             ),
           },
           {
-            label: t('publishing_profiles'),
+            label: t('publishingProfiles.title'),
             key: 'saved',
             children: (
               <StyledStack>

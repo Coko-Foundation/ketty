@@ -211,7 +211,7 @@ const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   let fullScreenStyles = {}
 
@@ -288,7 +288,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
           {!options.fullScreen && (
             <LeftPanelWrapper>
               <TitleArea data-test="producer-bookTitle">
-                {title || 'Untitled Book'}
+                {title || t('untitledBook')}
               </TitleArea>
               <MetadataArea>
                 <Button
@@ -297,7 +297,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   onClick={toggleMetadata}
                   type="text"
                 >
-                  {t('book_metadata')}
+                  {t('bookMetadataTab.title')}
                 </Button>
               </MetadataArea>
               <BookPanel
@@ -333,10 +333,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
             />
           ) : (
             <EditorArea isFullscreen={options.fullScreen}>
-              <WaxSurfaceScroll
-                id="wax-surface-scroll"
-                style={{ position: 'relative' }}
-              >
+              <WaxSurfaceScroll id="wax-surface-scroll">
                 <EditorContainer selectedChapterId={selectedChapterId}>
                   {editorLoading ? (
                     <StyledSpin spinning={editorLoading} />
@@ -346,7 +343,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                         <WaxView {...rest} />
                       ) : (
                         <NoSelectedChapterWrapper>
-                          {t('no_chapter_selected')}
+                          {t('editor.noChapterSelected')}
                         </NoSelectedChapterWrapper>
                       )}
                       <CommentsContainer>

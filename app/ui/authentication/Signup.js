@@ -39,7 +39,7 @@ const Signup = props => {
     // userEmail,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.signup' })
 
   const [modal, contextHolder] = Modal.useModal()
 
@@ -54,7 +54,7 @@ const Signup = props => {
 
     const termsAndConditionsModal = modal.info()
     termsAndConditionsModal.update({
-      title: t('Usage Terms and Conditions'.toLowerCase().replace(/ /g, '_')),
+      title: t('form.terms.modal.title'),
       content: (
         <TCWrapper dangerouslySetInnerHTML={{ __html: termsAndConditions }} />
       ),
@@ -62,7 +62,7 @@ const Signup = props => {
         handleTCAgree()
         termsAndConditionsModal.destroy()
       },
-      okText: 'Agree',
+      okText: t('form.terms.modal.action'),
       maskClosable: true,
       width: 570,
       bodyStyle: {
@@ -76,9 +76,7 @@ const Signup = props => {
     <Page maxWidth={600}>
       <Suspense fallback={<div>Loading...</div>}>
         <AuthenticationWrapper className={className}>
-          <AuthenticationHeader>
-            {t('Sign up'.toLowerCase().replace(/ /g, '_'))}
-          </AuthenticationHeader>
+          <AuthenticationHeader>{t('title')}</AuthenticationHeader>
 
           {hasSuccess && (
             <div role="alert">
@@ -102,7 +100,7 @@ const Signup = props => {
 
           {!hasSuccess && (
             <AuthenticationForm
-              alternativeActionLabel="Do you want to log in instead?"
+              alternativeActionLabel={t('links.login')}
               alternativeActionLink="/login"
               errorMessage={errorMessage}
               form={form}
@@ -110,90 +108,82 @@ const Signup = props => {
               loading={loading}
               onSubmit={onSubmit}
               showForgotPassword={false}
-              submitButtonLabel="Sign Up"
-              title="Signup"
+              submitButtonLabel={t('actions.signup')}
+              title={t('title')}
             >
               <Form.Item
-                label={t('Given Name'.toLowerCase().replace(/ /g, '_'))}
+                label={t('form.givenName')}
                 name="givenNames"
                 rules={[
                   {
                     required: true,
-                    message: () =>
-                      t(
-                        'Given name is required'
-                          .replace(/ /g, '_')
-                          .toLowerCase(),
-                      ),
+                    message: () => t('form.givenName.errors.noValue'),
                   },
                 ]}
               >
                 <Input
                   data-test="signup-givenName-input"
-                  placeholder={t(
-                    'Fill in your first name'.toLowerCase().replace(/ /g, '_'),
-                  )}
+                  placeholder={t('form.givenName.placeholder')}
                 />
               </Form.Item>
 
               <Form.Item
-                label={t('Surname'.toLowerCase().replace(/ /g, '_'))}
+                label={t('form.surname')}
                 name="surname"
                 rules={[
                   {
                     required: true,
-                    message: () =>
-                      t('Surname is required'.toLowerCase().replace(/ /g, '_')),
+                    message: () => t('form.surname.errors.noValue'),
                   },
                 ]}
               >
                 <Input
                   data-test="signup-surname-input"
-                  placeholder={t(
-                    'Fill in your last name'.toLowerCase().replace(/ /g, '_'),
-                  )}
+                  placeholder={t('form.surname.placeholder')}
                 />
               </Form.Item>
 
               <Form.Item
-                label={t('Email'.toLowerCase().replace(/ /g, '_'))}
+                label={t('email', { keyPrefix: 'pages.common.form' })}
                 name="email"
                 rules={[
                   {
                     required: true,
                     message: () =>
-                      t('Email is required'.toLowerCase().replace(/ /g, '_')),
+                      t('email.errors.noValue', {
+                        keyPrefix: 'pages.common.form',
+                      }),
                   },
                   {
                     type: 'email',
                     message: () =>
-                      t(
-                        'This is not a valid email address'
-                          .toLowerCase()
-                          .replace(/ /g, '_'),
-                      ),
+                      t('email.errors.invalidEmail', {
+                        keyPrefix: 'pages.common.form',
+                      }),
                   },
                 ]}
               >
                 <Input
                   data-test="signup-email-input"
-                  placeholder={t(
-                    'Fill in your email'.toLowerCase().replace(/ /g, '_'),
-                  )}
+                  placeholder={t('email.placeholder', {
+                    keyPrefix: 'pages.common.form',
+                  })}
                   type="email"
                 />
               </Form.Item>
 
               <Form.Item
-                label={t('Password'.toLowerCase())}
+                label={t('password', {
+                  keyPrefix: 'pages.common.form',
+                })}
                 name="password"
                 rules={[
                   {
                     required: true,
                     message: () =>
-                      t(
-                        'Password is required'.toLowerCase().replace(/ /g, '_'),
-                      ),
+                      t('password.errors.noValue', {
+                        keyPrefix: 'pages.common.form',
+                      }),
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
@@ -203,11 +193,9 @@ const Signup = props => {
 
                       return Promise.reject(
                         new Error(
-                          t(
-                            'Password should not be shorter than 8 characters'
-                              .toLowerCase()
-                              .replace(/ /g, '_'),
-                          ),
+                          t('password.errors.tooShort', {
+                            keyPrefix: 'pages.common.form',
+                          }),
                         ),
                       )
                     },
@@ -216,26 +204,26 @@ const Signup = props => {
               >
                 <Input
                   data-test="signup-password-input"
-                  placeholder={t(
-                    'Fill in your password'.toLowerCase().replace(/ /g, '_'),
-                  )}
+                  placeholder={t('password.placeholder', {
+                    keyPrefix: 'pages.common.form',
+                  })}
                   type="password"
                 />
               </Form.Item>
 
               <Form.Item
                 dependencies={['password']}
-                label={t('Confirm Password'.toLowerCase().replace(/ /g, '_'))}
+                label={t('confirmPassword', {
+                  keyPrefix: 'pages.common.form',
+                })}
                 name="confirmPassword"
                 rules={[
                   {
                     required: true,
                     message: () =>
-                      t(
-                        'Please confirm your password!'
-                          .replace(/ /g, '_')
-                          .toLowerCase(),
-                      ),
+                      t('confirmPassword.errors.noValue', {
+                        keyPrefix: 'pages.common.form',
+                      }),
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
@@ -245,11 +233,9 @@ const Signup = props => {
 
                       return Promise.reject(
                         new Error(
-                          t(
-                            'The two passwords that you entered do not match!'
-                              .replace(/ /g, '_')
-                              .toLowerCase(),
-                          ),
+                          t('confirmPassword.errors.noMatch', {
+                            keyPrefix: 'pages.common.form',
+                          }),
                         ),
                       )
                     },
@@ -258,15 +244,21 @@ const Signup = props => {
               >
                 <Input
                   data-test="signup-confirmPassword-input"
-                  placeholder={t(
-                    'Fill in your password again'
-                      .toLowerCase()
-                      .replace(/ /g, '_'),
-                  )}
+                  placeholder={t('confirmPassword.placeholder', {
+                    keyPrefix: 'pages.common.form',
+                  })}
                   type="password"
                 />
               </Form.Item>
               <ModalContext.Provider value={null}>
+                <Link
+                  as="a"
+                  href="#termsAndCondition"
+                  id="termsAndConditions"
+                  onClick={showTermsAndConditions}
+                >
+                  {t('form.terms.link')}
+                </Link>
                 <Form.Item
                   name="agreedTc"
                   rules={[
@@ -275,37 +267,17 @@ const Signup = props => {
                         value
                           ? Promise.resolve()
                           : Promise.reject(
-                              new Error(
-                                t(
-                                  'You need to agree to the terms and conditions'
-                                    .toLowerCase()
-                                    .replace(/ /g, '_'),
-                                ),
-                              ),
+                              new Error(t('form.terms.errors.noValue')),
                             ),
                     },
                   ]}
                   valuePropName="checked"
                 >
                   <Checkbox
-                    aria-label={t(
-                      'I agree to the terms and conditions'
-                        .toLowerCase()
-                        .replace(/ /g, '_'),
-                    )}
+                    aria-label={t('terms')}
                     data-test="signup-agreedTc-checkbox"
                   >
-                    {t('I agree to the'.toLowerCase().replace(/ /g, '_'))}{' '}
-                    <Link
-                      as="a"
-                      href="#termsAndCondition"
-                      id="termsAndConditions"
-                      onClick={showTermsAndConditions}
-                    >
-                      {t(
-                        'terms and conditions'.toLowerCase().replace(/ /g, '_'),
-                      )}
-                    </Link>
+                    {t('form.terms')}
                   </Checkbox>
                 </Form.Item>
                 {contextHolder}

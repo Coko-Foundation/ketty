@@ -3,7 +3,6 @@ import { initReactI18next } from 'react-i18next'
 import HttpApi from 'i18next-http-backend'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { serverUrl } from '@coko/client'
-import format from './i18n-format'
 
 i18next
   .use(initReactI18next)
@@ -12,7 +11,8 @@ i18next
   .init({
     // lng will override the browser detector if provided
     // lng: defaultLanguage,
-    ns: 'translation',
+    // ns: 'translation',
+    interpolation: { escapeValue: false },
 
     nonExplicitSupportedLngs: true,
     detection: {
@@ -25,29 +25,18 @@ i18next
     // attempts to load default fallbackLng ("dev").
     fallbackLng: 'en',
 
-    // Eagerly loaded languages
-    // preload: ["en", "es"],
-
     // Back-end config
     backend: {
       loadPath: `${serverUrl}/languages/{{lng}}.json`,
-      // loadpath: "http://localhost:3000/api/translations/{{lng}}"
     },
-
-    interpolation: {
-      // React will escape output values, so we don't need
-      // i18next to do it.
-      escapeValue: false,
-      format,
+    returnedObjectHandler: (key, object) => {
+      const { value } = object
+      return value || `No translation value found for key ${key}`
     },
-
-    // react-i18next config
-    // react: {
-    //   useSuspense: true,
-    // },
-
+    parseMissingKeyHandler: key => {
+      return `Missing translation string for ${key}`
+    },
     debug: process.env.NODE_ENV === 'development',
-    keySeparator: false,
   })
 
 export default i18next

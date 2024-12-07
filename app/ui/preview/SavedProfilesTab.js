@@ -52,7 +52,9 @@ const SavedProfilesTab = props => {
   const { includePdf, includeEpub, pdfProfileId, epubProfileId } =
     currentOptions
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
 
   return (
     <>
@@ -69,7 +71,7 @@ const SavedProfilesTab = props => {
         />
         {profileSelected && canModify && hasChanges && !loadingPreview && (
           <Ribbon hide={!hasChanges || !canModify}>
-            {t('unsaved_changed_profile')}
+            {t('profile.information.changes')}
           </Ribbon>
         )}
       </div>

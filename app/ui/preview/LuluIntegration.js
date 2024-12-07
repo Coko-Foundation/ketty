@@ -41,11 +41,13 @@ const LuluIntegration = props => {
     projectUrl,
   } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
 
   return (
     <Wrapper className={className}>
-      <h3 style={{ marginBlockStart: 0 }}>{t('lulu_integration')}:</h3>
+      <h3 style={{ marginBlockStart: 0 }}>{t('lulu.heading')}:</h3>
       {!isConnected && canUploadToProvider && (
         <div>
           <Button
@@ -53,17 +55,17 @@ const LuluIntegration = props => {
             onClick={onClickConnect}
             type="primary"
           >
-            {t('lulu_connect')}
+            {t('lulu.actions.connect')}
           </Button>
         </div>
       )}
-      {isConnected && !isInLulu && <p>{t('lulu_not_uploaded')}</p>}
+      {isConnected && !isInLulu && <p>{t('lulu.status.states.notUploaded')}</p>}
 
       {isConnected && isInLulu && (
         <ConnectedWrapper>
           <Synced isSynced={isSynced} lastSynced={lastSynced} />
 
-          <ExportOption inline label={t('lulu_project_id')}>
+          <ExportOption inline label={t('lulu.status.project')}>
             {projectId}
           </ExportOption>
 
@@ -71,7 +73,7 @@ const LuluIntegration = props => {
             disabled={!projectUrl}
             onClick={() => window.open(projectUrl, '_blank', 'noreferrer')}
           >
-            {t('lulu_open_project')}
+            {t('lulu.actions.openProject')}
           </StyledButton>
         </ConnectedWrapper>
       )}

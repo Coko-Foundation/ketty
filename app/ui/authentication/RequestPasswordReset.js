@@ -12,11 +12,15 @@ const RequestPasswordResetForm = props => {
   // disable prop types that will be checked in the exported component anyway
   // eslint-disable-next-line react/prop-types
   const { hasError, loading, onSubmit } = props
-  const { t } = useTranslation('translation', { useSuspense: false })
+
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'pages',
+    useSuspense: false,
+  })
 
   return (
     <AuthenticationForm
-      alternativeActionLabel="Return to login form"
+      alternativeActionLabel={t('passwordReset.links.login')}
       alternativeActionLink="/login"
       errorMessage={t(
         'Something went wrong! Please contact the administrator.'
@@ -26,34 +30,25 @@ const RequestPasswordResetForm = props => {
       hasError={hasError}
       loading={loading}
       onSubmit={onSubmit}
-      submitButtonLabel="Send"
+      submitButtonLabel={t('passwordReset.actions.send')}
     >
-      <Paragraph>
-        {t(
-          'Please enter the email address connected to your account.'
-            .toLowerCase()
-            .replace(/ /g, '_'),
-        )}
-      </Paragraph>
+      <Paragraph>{t('passwordReset.description')}</Paragraph>
 
       <Form.Item
-        label={t('Email'.toLowerCase())}
+        label={t('common.form.email')}
         name="email"
         rules={[
           {
             required: true,
-            message: () =>
-              t('Email is required'.toLowerCase().replace(/ /g, '_')),
+            message: () => t('common.form.email.errors.noValue'),
           },
           {
             type: 'email',
-            message: () => t("Doesn't look like a valid email"),
+            message: () => t('common.form.email.errors.invalidEmail'),
           },
         ]}
       >
-        <Input
-          placeholder={t('Enter your email'.toLowerCase().replace(/ /g, '_'))}
-        />
+        <Input placeholder={t('common.form.email.placeholder')} />
       </Form.Item>
     </AuthenticationForm>
   )
@@ -63,15 +58,16 @@ const RequestPasswordReset = props => {
   const { className, hasError, hasSuccess, loading, onSubmit, userEmail } =
     props
 
-  const { t } = useTranslation('translation', { useSuspense: false })
+  const { t } = useTranslation('translation', {
+    keyPrefix: 'pages.passwordReset',
+    useSuspense: false,
+  })
 
   return (
     <Page maxWidth={600}>
       <Suspense fallback={<div>Loading...</div>}>
         <AuthenticationWrapper className={className}>
-          <AuthenticationHeader>
-            {t('Request password reset'.toLowerCase().replace(/ /g, '_'))}
-          </AuthenticationHeader>
+          <AuthenticationHeader>{t('title')}</AuthenticationHeader>
 
           {hasSuccess && (
             <div role="alert">
@@ -79,18 +75,12 @@ const RequestPasswordReset = props => {
                 data-testid="result-request-password-success"
                 extra={[
                   <Link key={1} to="/login">
-                    {t(
-                      'Return to the login form'
-                        .toLowerCase()
-                        .replace(/ /g, '_'),
-                    )}
+                    {t('links.login')}
                   </Link>,
                 ]}
                 status="success"
                 subTitle={<SuccessSubTitle userEmail={userEmail} />}
-                title={t(
-                  'Request successful!'.toLowerCase().replace(/ /g, '_'),
-                )}
+                title={t('success')}
               />
             </div>
           )}

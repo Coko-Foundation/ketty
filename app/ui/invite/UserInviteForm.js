@@ -33,16 +33,18 @@ const StyledFormItem = styled(Form.Item)`
 `
 
 const UserInviteForm = ({ form, fetchOptions, onInvite, canChangeAccess }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.shareModal',
+  })
 
   const accessOptions = [
     {
       value: 'read',
-      label: t('can_view'),
+      label: t('permissions.options.view'),
     },
     {
       value: 'write',
-      label: t('can_edit'),
+      label: t('permissions.options.edit'),
     },
   ]
 
@@ -79,7 +81,7 @@ const UserInviteForm = ({ form, fetchOptions, onInvite, canChangeAccess }) => {
             htmlType="submit"
             type="primary"
           >
-            {t('share')}
+            {t('actions.share')}
           </Button>
         </StyledSpace>
       </Form>

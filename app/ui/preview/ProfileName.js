@@ -36,7 +36,9 @@ const StyledButton = styled(Button)`
 const ProfileName = props => {
   const { selectedProfile, canModifyProfiles, onProfileRename } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs',
+  })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRenaming, setIsRenaming] = useState(false)
@@ -99,7 +101,7 @@ const ProfileName = props => {
         onCancel={closeModal}
         onOk={handleRename}
         open={isModalOpen}
-        title={t('edit_profile_name')}
+        title={t('publishingProfiles.profile.rename')}
       >
         <Input
           onChange={handleRenameInputChange}
