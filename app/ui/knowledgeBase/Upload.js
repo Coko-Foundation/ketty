@@ -49,7 +49,7 @@ const UploadHiddenDropZone = props => {
     <StyledDragger
       {...props}
       action=""
-      aria-label={t('upload_drop')}
+      aria-label={t('pages.knowledgeBase.files.uploadZone')}
       openFileDialogOnClick={false}
       showUploadList={false}
     />

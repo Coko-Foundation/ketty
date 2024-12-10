@@ -194,7 +194,7 @@ const FilesToUploadMap = ({
   handleUpload,
   setFilesToUpload,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.knowledgeBase' })
 
   return (
     <ul>
@@ -212,32 +212,32 @@ const FilesToUploadMap = ({
               <p>
                 {filesBeingUploaded[0] === file.uid
                   ? `${file.name}`
-                  : `${file.name} (pending)`}
+                  : `${file.name} ${t('status.pending')}`}
               </p>
             </div>
             {filesBeingUploaded.indexOf(file.uid) === -1 ? (
               <span>
                 <Button
-                  aria-label={t('upload')}
+                  aria-label={t('files.actions.upload')}
                   icon={<UploadOutlined />}
                   onClick={async () => handleUpload(file)}
-                  title={t('upload')}
+                  title={t('files.actions.upload')}
                   type="text"
                 />
                 <Button
-                  aria-label={t('remove')}
+                  aria-label={t('files.actions.delete')}
                   icon={<CloseOutlined />}
                   onClick={() =>
                     setFilesToUpload(
                       filesToUpload.filter(f => f.uid !== file.uid),
                     )
                   }
-                  title={t('remove')}
+                  title={t('files.actions.delete')}
                   type="text"
                 />
               </span>
             ) : (
-              <span>{t('uploading')}...</span>
+              <span>{t('files.status.uploading')}</span>
             )}
           </FileMapRoot>
         )}
@@ -298,10 +298,10 @@ const FilesMap = ({
               </div>
               <span>
                 <Button
-                  aria-label={t('delete_file')}
+                  aria-label={t('files.actions.delete')}
                   icon={<DeleteOutlined />}
                   onClick={e => handleRemove(e, id)}
-                  title={t('delete_file')}
+                  title={t('files.actions.delete')}
                   type="text"
                 />
               </span>
@@ -333,7 +333,7 @@ const FilesList = props => {
   const { filesToUpload, setFilesToUpload, filesBeingUploaded } =
     useContext(GlobalContext)
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.knowledgeBase' })
 
   return (
     <div className={className}>
@@ -346,39 +346,40 @@ const FilesList = props => {
           }
           onChange={bulkActions.select}
         >
-          <span>{t('select_all')}</span>
+          <span>{t('files.select')}</span>
         </Checkbox>
 
         <StyledUploadButton
           accept={filesToAccept}
-          aria-label={t('upload_files')}
+          aria-label={t('actions.addFiles')}
           customRequest={handleFileChange}
           multiple
           showUploadList={false}
         >
-          {t('add_files')}
+          {t('actions.addFiles')}
         </StyledUploadButton>
         <Actions>
           <StyledButton
-            aria-label={t('upload_pending_files')}
+            aria-label={t('actions.uploadAll')}
             disabled={
               filesToUpload.length === 0 || filesBeingUploaded.length > 0
             }
             onClick={bulkActions.upload}
           >
-            {t('upload_all')}
+            {t('actions.uploadAll')}
           </StyledButton>
           <StyledButton
-            aria-label={t('delete_selected_files')}
+            aria-label={t('actions.deleteSelected')}
             data-type="danger"
             disabled={selectedFiles.length === 0}
             onClick={bulkActions.delete}
           >
-            {t('delete')}
+            {t('actions.deleteSelected')}
           </StyledButton>
         </Actions>
         <p>
-          {t('selected')}: {`${selectedFiles.length} / ${docs.length}`}
+          {t('files.status.selected')}:{' '}
+          {`${selectedFiles.length} / ${docs.length}`}
         </p>
       </FilesHeading>
 
@@ -387,7 +388,7 @@ const FilesList = props => {
         customRequest={handleFileChange}
         multiple
       >
-        {noFilesNotUploads && <NoFiles>{t('kb_no_documents')}</NoFiles>}
+        {noFilesNotUploads && <NoFiles>{t('files.uploadZone')}</NoFiles>}
         <FilesToUploadMap
           filesBeingUploaded={filesBeingUploaded}
           filesToUpload={filesToUpload}

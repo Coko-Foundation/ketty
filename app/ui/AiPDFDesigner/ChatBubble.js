@@ -159,7 +159,7 @@ const OptionsTemplate = ({ content }) => {
 const ChatBubble = ({ forceHide }) => {
   const { feedback } = useContext(CssAssistantContext)
   const [hideMessage, setHideMessage] = useState(false)
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner' })
 
   useEffect(() => {
     setHideMessage(false)
@@ -182,7 +182,7 @@ const ChatBubble = ({ forceHide }) => {
           color: '#fff',
         }}
       >
-        {t('ai')}
+        {t('chat.bubble')}
       </UnStyledButton>
       <ChatBox hide={forceHide || (!forceHide && hideMessage)}>
         <span
@@ -192,7 +192,7 @@ const ChatBubble = ({ forceHide }) => {
             justifyContent: 'space-between',
           }}
         >
-          <SmallText>{t('ai_designer_name')}:</SmallText>
+          <SmallText>{t('chat.title')}:</SmallText>
           <UnStyledButton
             onClick={() => setHideMessage(!hideMessage)}
             style={{ objectFit: 'contain', width: '18px', height: '18px' }}
@@ -203,15 +203,13 @@ const ChatBubble = ({ forceHide }) => {
         <PaddedContent>
           {feedback || (
             <>
-              <span>{t('ai_designer_info_l1')}</span>
-              <span>{t('ai_designer_info_l2')}</span>
-              <span>{t('ai_designer_info_l3')}</span>
-              <span>{t('ai_designer_info_l4')}</span>
-              <span>{t('ai_designer_info_l5')}</span>
+              {t('chat.welcome').map((s, i) =>
+                i < 5 ? <span>{s}</span> : null,
+              )}
               <ul style={{ marginTop: '20px' }}>
-                <OptionsTemplate content={t('ai_designer_prompt_ex_1')} />
-                <OptionsTemplate content={t('ai_designer_prompt_ex_2')} />
-                <OptionsTemplate content={t('ai_designer_prompt_ex_3')} />
+                {t('chat.welcome').map((s, i) =>
+                  i >= 5 ? <OptionsTemplate content={s} /> : null,
+                )}
               </ul>
             </>
           )}
