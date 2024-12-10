@@ -204,7 +204,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
   const [showEditor, setShowEditor] = useState(true)
   const [showPreview, setShowPreview] = useState(true)
   const [showChat, setShowChat] = useState(false)
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner' })
 
   useEffect(() => {
     showPreview && livePreview && updatePreview()
@@ -257,7 +257,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
           <ChatBubble forceHide={showChat} onRight />
           <Assistant
             enabled
-            placeholder={t('ai_designer_prompt_placeholder')}
+            placeholder={t('chat.prompt')}
             stylesFromSource={initialPagedJSCSS}
             updatePreview={updatePreview}
           />
@@ -268,21 +268,21 @@ const AiPDFDesigner = ({ bookTitle }) => {
               checked={showEditor || (!showPreview && !showEditor)}
               handleChange={() => setShowEditor(!showEditor)}
               id="showContent"
-              label={t('ai_designer_content')}
+              label={t('sections.content.select')}
               style={{ margin: 0 }}
             />
             <StyledCheckbox
               checked={showPreview}
               handleChange={() => setShowPreview(!showPreview)}
               id="showPreview"
-              label={t('ai_designer_preview')}
+              label={t('sections.bookPreview.select')}
               style={{ margin: 0 }}
             />
             <StyledCheckbox
               checked={showChat}
               handleChange={() => setShowChat(!showChat)}
               id="showChatHistory"
-              label={t('ai_designer_chat_history')}
+              label={t('sections.chatHistory.select')}
               style={{ margin: 0 }}
             />
           </span>
@@ -291,7 +291,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
       <WindowsContainer>
         <StyledWindow $show={showChat} style={{ maxWidth: '30%' }}>
           <WindowHeading>
-            <span>{t('ai_designer_chat_history')}</span>
+            <span>{t('sections.chatHistory.heading')}</span>
           </WindowHeading>
           <ChatHistory />
         </StyledWindow>
@@ -300,14 +300,14 @@ const AiPDFDesigner = ({ bookTitle }) => {
         <StyledWindow $show={showEditor}>
           <WindowHeading>
             <span>
-              {t('ai_designer_content_selection')}
-              {bookTitle ? ` for: "${bookTitle}"` : ':'}
+              {t('sections.content.heading')}
+              {bookTitle ? ` "${bookTitle}"` : null}
             </span>
             <span>
-              {t('selection')}:{' '}
+              {t('sections.content.selection')}:{' '}
               {selectedCtx?.node && selectedCtx.node !== htmlSrc
                 ? htmlTagNames[selectedCtx.tagName]
-                : t('book')}
+                : t('sections.content.selection.book')}
             </span>
           </WindowHeading>
           <EditorContainer onScroll={handleScroll}>
@@ -321,19 +321,21 @@ const AiPDFDesigner = ({ bookTitle }) => {
         {showEditor && showPreview && <WindowDivision />}
         <StyledWindow $show={showPreview}>
           <WindowHeading>
-            <span>{t('ai_designer_preview')}</span>
-            <span>{bookTitle ? ` for: "${bookTitle}"` : ':'}</span>
+            <span>
+              {t('sections.bookPreview.heading')}
+              {bookTitle ? ` for: "${bookTitle}"` : ':'}
+            </span>
             <StyledRefreshButton>
               <button
                 onClick={updatePreview}
-                title={t('ai_designer_preview_update')}
+                title={t('sections.actions.updatePreview')}
                 type="button"
               >
                 <InteractionOutlined />
               </button>
               <button
                 onClick={() => previewRef?.current?.contentWindow?.print()}
-                title={t('print')}
+                title={t('sections.actions.print')}
                 type="button"
               >
                 <PrinterOutlined />
@@ -342,7 +344,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
                 checked={livePreview}
                 handleChange={() => setLivePreview(!livePreview)}
                 id="livePreview"
-                label={t('ai_designer_live_preview')}
+                label={t('sections.livePreview.select')}
                 style={{ margin: 0 }}
               />
             </StyledRefreshButton>
@@ -351,7 +353,7 @@ const AiPDFDesigner = ({ bookTitle }) => {
             onLoad={updatePreview}
             ref={previewRef}
             srcDoc={previewSource}
-            title="Book preview"
+            title={t('sections.bookPreview.heading')}
           />
         </StyledWindow>
       </WindowsContainer>

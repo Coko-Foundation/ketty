@@ -102,7 +102,7 @@ const MessageContent = styled.div`
 const ChatHistory = () => {
   const { selectedCtx, htmlSrc, feedback } = useContext(CssAssistantContext)
   const threadRef = useRef(null)
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner' })
 
   useEffect(() => {
     const observer = new MutationObserver(mutations => {
@@ -152,7 +152,7 @@ const ChatHistory = () => {
                       >
                         Y
                       </span>
-                      <strong>@{t('you')}</strong>
+                      <strong>@You</strong>
                     </>
                   ) : (
                     <>
@@ -163,9 +163,9 @@ const ChatHistory = () => {
                           textAlign: 'center',
                         }}
                       >
-                        {t('ai')}
+                        {t('chat.bubble')}
                       </span>
-                      <strong>{t('ai_designer_name')}:</strong>
+                      <strong>{t('chat.title')}:</strong>
                     </>
                   )}
                 </MessageHeader>
@@ -185,11 +185,11 @@ const ChatHistory = () => {
           }}
         >
           {selectedCtx?.node === htmlSrc
-            ? t('ai_designer_chat_empty_1')
-            : `${t('ai_designer_chat_empty_2')} ${
+            ? t('sections.chatHistory.empty', { context: 'book' })
+            : `${t('sections.chatHistory.empty')} ${
                 selectedCtx?.tagName
                   ? htmlTagNames[selectedCtx?.tagName]
-                  : 'selected'
+                  : t('sections.content.selection')
               }`}
         </span>
       )}
