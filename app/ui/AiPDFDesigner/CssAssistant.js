@@ -114,10 +114,10 @@ const CssAssistant = ({
     getValidSelectors,
   } = useContext(CssAssistantContext)
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner.chat' })
 
   const responses = {
-    error1: t('ai_designer_error'),
+    error1: t('notifications.error.message'),
   }
 
   const [callOpenAi, { loading }] = useLazyQuery(USE_CHATGPT, {
@@ -230,7 +230,7 @@ const CssAssistant = ({
   const handleSend = async e => {
     if (loading) return
     e.preventDefault()
-    userPrompt && setFeedback(t('ai_designer_loading'))
+    userPrompt && setFeedback(t('notifications.loading.message'))
     userPrompt
       ? callOpenAi({
           variables: {
@@ -247,7 +247,7 @@ const CssAssistant = ({
             },
           },
         })
-      : setFeedback(t('ai_designer_asking'))
+      : setFeedback(t('prompt.errors.noValue'))
     selectedCtx.history.push({ role: 'user', content: userPrompt })
   }
 

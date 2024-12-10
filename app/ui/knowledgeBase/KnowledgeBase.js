@@ -79,7 +79,7 @@ const Header = styled.div`
 const KnowledgeBase = props => {
   const { bookId, docs, createDocument, deleteDocument } = props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.knowledgeBase' })
 
   const {
     filesToUpload,
@@ -158,7 +158,7 @@ const KnowledgeBase = props => {
   return (
     <Wrapper>
       <Header>
-        <h2>{t('knowledge_base')}</h2>
+        <h2>{t('title')}</h2>
       </Header>
       <FileList
         bulkActions={bulkActions}
