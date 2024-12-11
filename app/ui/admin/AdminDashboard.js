@@ -3,6 +3,8 @@
 /* stylelint-disable declaration-no-important */
 /* stylelint-disable string-quotes */
 /* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/control-has-associated-label */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -10,7 +12,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { Form, Upload, Collapse } from 'antd'
 import { grid, serverUrl, th, uuid } from '@coko/client'
 import { Wax } from 'wax-prosemirror-core'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 
 import {
   Button,
@@ -391,16 +393,18 @@ const AdminDashboard = props => {
                 />
               </Form.Item>
               <DescriptionParagraph id={`desc-flag-code-${l.flagCode}`}>
-                {t('availableLanguages.customised.flagCode.explanation')}
-                {/* {t('see')}{' '}
-                <a
-                  href="https://www.iso.org/obp/ui/#search/code/"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {t('this_list')}
-                </a>{' '}
-                {t('for_reference')}. */}
+                <Trans
+                  components={{
+                    ref: (
+                      <a
+                        href="https://www.iso.org/obp/ui/#search/code/"
+                        rel="noreferrer"
+                        target="_blank"
+                      />
+                    ),
+                  }}
+                  i18nKey="pages.admin.availableLanguages.customised.flagCode.explanation"
+                />
               </DescriptionParagraph>
             </StyledControlWrapper>
             <StyledControlWrapper>
@@ -665,16 +669,18 @@ const AdminDashboard = props => {
                     />
                   </Form.Item>
                   <DescriptionParagraph id="desc-flag-code-new">
-                    {t('availableLanguages.customised.flagCode.explanation')}
-                    {/* . {t('see')}{' '}
-                    <a
-                      href="https://www.iso.org/obp/ui/#search/code/"
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {t('this_list')}
-                    </a>{' '}
-                    {t('for_reference')}. */}
+                    <Trans
+                      components={{
+                        ref: (
+                          <a
+                            href="https://www.iso.org/obp/ui/#search/code/"
+                            rel="noreferrer"
+                            target="_blank"
+                          />
+                        ),
+                      }}
+                      i18nKey="pages.admin.availableLanguages.customised.flagCode.explanation"
+                    />
                   </DescriptionParagraph>
                 </StyledControlWrapper>
                 <StyledControlWrapper>
