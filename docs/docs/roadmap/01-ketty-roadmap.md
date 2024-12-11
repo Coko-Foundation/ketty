@@ -9,19 +9,22 @@ At Ketty, we’re constantly improving our platform to make modern book publishi
 ### Localisation support
 We’re enabling support for multiple languages, so your team can work in the language that suits them best. This includes tools to customise translations and adapt Ketty to diverse audiences.
 
+### Template manager (V1)
+We’re introducing tools that allow you to upload and manage custom templates within your Ketty instance. 
+
 ### Maintenance
 We’re making behind-the-scenes upgrades to improve performance and fix bugs, ensuring Ketty remains fast and reliable.
 
 ## What’s coming up next
 Here’s a sneak peek at some features on the horizon. Timelines and release order may shift based on user needs and community support, but these are the projects we’re excited about:
 
-### Collaborative editing
-Multiple collaborators will soon be able to edit the same chapter simultaneously. This will make teamwork seamless, with tools to track and manage comments as you work.
-
 ### Customisable editing tools
 You’ll be able to adjust the editing toolbar to suit your project needs, turning on only the tools you need and hiding the rest. This feature will help simplify workflows, maintain design consistency, and empower you to create professional-quality content with ease and flexibility.
 
 This includes reintroducing several **advanced editor features** including tables, footnotes and endnotes, textbook block elements, highlighting, superscript and subscript, MathJax for scientific notation, and code blocks. We’re **updating all existing templates** to support new styles, ensuring consistency across all publishing formats.
+
+### Collaborative editing
+Multiple collaborators will soon be able to edit the same chapter simultaneously. This will make teamwork seamless, with tools to track and manage comments as you work.
 
 ### User management
 Admins will have more control, with the ability to view and manage user accounts, including approving sign-ups or deactivating accounts when needed.
@@ -37,8 +40,8 @@ You’ll have more control over book design, including numbering chapters or par
 ### Updated version of the AI Book Designer
 You’ll be able to use AI to adjust your book’s layout directly from an existing template to fine-tune your print-ready PDFs. 
 
-### Template manager
-We’re introducing tools that allow you to upload and manage custom templates within your Ketty instance. You’ll also be able to create custom inline and block-level styles directly in the editor, giving you more flexibility and control over your book’s design.
+### Template manager (V2)
+Extending the template manager to support custome styles (associated to custom inline and block-level styles applied in the editor) giving you more flexibility and control over your book’s design.
 
 ### Asset manager
 The Asset Manager will let you organise and manage all the images in your book from one place. This feature includes AI-powered tools to generate alternative text for images, improving accessibility and making it easier to meet publishing standards.
