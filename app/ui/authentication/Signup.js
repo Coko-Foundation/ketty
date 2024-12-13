@@ -1,9 +1,9 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
@@ -42,6 +42,7 @@ const Signup = props => {
   const { t } = useTranslation(null, { keyPrefix: 'pages.signup' })
 
   const [modal, contextHolder] = Modal.useModal()
+  const [error, setError] = useState()
 
   const [form] = Form.useForm()
 
@@ -72,6 +73,22 @@ const Signup = props => {
     })
   }
 
+  useEffect(() => {
+    if (errorMessage) {
+      switch (errorMessage) {
+        case 'Username already exists':
+          setError(t('errors.usernameExists'))
+          break
+        case 'A user with this email already exists':
+          setError(t('errors.emailExists'))
+          break
+        default:
+          setError(t('errors.generic'))
+          break
+      }
+    }
+  }, [errorMessage])
+
   return (
     <Page maxWidth={600}>
       <Suspense fallback={<div>Loading...</div>}>
@@ -83,17 +100,8 @@ const Signup = props => {
               <Result
                 className={className}
                 status="success"
-                subTitle={
-                  <Paragraph>
-                    <Trans i18nKey={"we've_sent_you_a_verification_email"}>
-                      {/* We & apos;ve sent you a verification email. Click on the link in
-                      the email to activate your account. */}
-                      We&apos;ve sent you a verification email. Click on the
-                      link in the email to activate your account.
-                    </Trans>
-                  </Paragraph>
-                }
-                title={t('Signup successful!'.toLowerCase().replace(/ /g, '_'))}
+                subTitle={<Paragraph>{t('success.details')}</Paragraph>}
+                title={t('success')}
               />
             </div>
           )}
@@ -102,7 +110,7 @@ const Signup = props => {
             <AuthenticationForm
               alternativeActionLabel={t('links.login')}
               alternativeActionLink="/login"
-              errorMessage={errorMessage}
+              errorMessage={error}
               form={form}
               hasError={hasError}
               loading={loading}

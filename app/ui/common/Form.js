@@ -4,11 +4,9 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
-
 import { Form as AntForm } from 'antd'
 import { grid, th } from '@coko/client'
 
-import { useTranslation } from 'react-i18next'
 import UIRibbon from './Ribbon'
 
 const FormWrapper = styled.div`
@@ -74,8 +72,6 @@ const Form = props => {
     ...rest
   } = props
 
-  const { t } = useTranslation()
-
   const showRibbon = !!submissionStatus && !!ribbonMessage
   const [internalForm] = AntForm.useForm()
   const form = propsForm || internalForm
@@ -90,15 +86,9 @@ const Form = props => {
 
   const FeedbackElement = showRibbon && (
     <FeedbackComponent role="alert" status={submissionStatus}>
-      {t(ribbonMessage.replace(/ /g, '_').toLowerCase())}
+      {ribbonMessage}
     </FeedbackComponent>
   )
-
-  // const FeedbackElement = (
-  //   <FeedbackComponent hide={!showRibbon} status={submissionStatus}>
-  //     {ribbonMessage}
-  //   </FeedbackComponent>
-  // )
 
   // if form validation fails, scroll to first error field (if applicable) and focus
   const focusErrorField = errorFields => {

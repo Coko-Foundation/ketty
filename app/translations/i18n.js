@@ -23,7 +23,7 @@ i18next
     // Good idea to provide a fallback when loading
     // translations from a back-end, to avoid unsuccessful
     // attempts to load default fallbackLng ("dev").
-    fallbackLng: 'en',
+    fallbackLng: 'en-GB',
 
     // Back-end config
     backend: {

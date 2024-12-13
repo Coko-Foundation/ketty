@@ -254,7 +254,7 @@ const FilesMap = ({
   xlFileExtensions,
   fileIcons,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.knowledgeBase' })
 
   const select = id => {
     setSelectedFiles(prev => {

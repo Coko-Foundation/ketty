@@ -1,5 +1,5 @@
 /* stylelint-disable declaration-no-important */
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import 'flag-icon-css/css/flag-icon.min.css'
 import cookies from 'js-cookie'
@@ -46,11 +46,16 @@ const FlagIcon = styled.span`
 
 const LanguageSwitcher = props => {
   const { languages } = props
+  const languageCode = useRef()
 
-  const currentLanguageCode =
+  languageCode.current =
     languages.findIndex(l => l.code === cookies.get('i18next')) !== -1
       ? cookies.get('i18next')
       : languages[0]?.code
+
+  useEffect(() => {
+    languageCode.current && i18n.changeLanguage(languageCode.current)
+  }, [languageCode.current])
 
   const selectLanguage = language => {
     i18n.changeLanguage(language)
@@ -60,7 +65,7 @@ const LanguageSwitcher = props => {
     <Wrapper>
       <FlagIcon
         className={`flag-icon flag-icon-${
-          languages.find(l => l.code === currentLanguageCode)?.flagCode
+          languages.find(l => l.code === languageCode.current)?.flagCode
         }`}
       />
       <StyledSelect
@@ -72,7 +77,7 @@ const LanguageSwitcher = props => {
           value: l.code,
         }))}
         popupMatchSelectWidth={100}
-        value={currentLanguageCode}
+        value={languageCode.current}
       />
     </Wrapper>
   ) : null

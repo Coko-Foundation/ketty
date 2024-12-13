@@ -263,7 +263,7 @@ const BookMetadataForm = ({
               <TextArea
                 disabled={!canChangeMetadata}
                 placeholder={t(
-                  'sections.copyrightPage.pageContent.top.placeholder',
+                  'sections.copyrightPage.pageContent.bottom.placeholder',
                 )}
               />
             </Form.Item>
