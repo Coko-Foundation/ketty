@@ -70,6 +70,12 @@ const config = {
           },
           {
             type: 'docSidebar',
+            sidebarId: 'contributorSidebar',
+            position: 'left',
+            label: 'Get Involved',
+          },
+          {
+            type: 'docSidebar',
             sidebarId: 'userSidebar',
             position: 'left',
             label: 'User Guide',
