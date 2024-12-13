@@ -66,3 +66,4 @@ services:
     volumes:
       - ./config/local.js:/home/node/server/config/local.js
       - ./config/termsAndConditions.md:/home/node/server/config/termsAndConditions.md
+      - ./config/languages:/home/node/server/config/languages
