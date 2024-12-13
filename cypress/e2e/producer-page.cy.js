@@ -30,7 +30,7 @@ describe('Checking Producer Page', () => {
       cy.get('button[title="Create a chapter"]').should('exist')
       cy.getByData('producer-chapterTitle').should(
         'have.text',
-        'Untitled Chapter',
+        'Untitled chapter',
       )
     })
 
@@ -100,7 +100,7 @@ describe('Checking Producer Page', () => {
 
       // Add another chapter and try to dnd in part
       cy.get('.anticon-plus').click()
-      cy.contains('Untitled Chapter')
+      cy.contains('Untitled chapter')
         .parent()
         .should('have.attr', 'data-selected', 'true')
       cy.get('.ProseMirror').click()
@@ -206,7 +206,7 @@ describe('Checking Producer Page', () => {
       cy.get('h2:nth(1)').should('have.text', 'Title page')
       cy.get('#title').should('have.value', 'Test Book')
       checkDefaultFieldValues('Subtitle', '#subtitle', 'Optional')
-      checkDefaultFieldValues('Authors', '#authors', 'Jhon, Smith')
+      checkDefaultFieldValues('Authors', '#authors', 'John, Smith')
 
       // Checking default values for copyright page section
       cy.get('h2').last().should('have.text', 'Copyright page')
@@ -228,11 +228,7 @@ describe('Checking Producer Page', () => {
         .should('be.empty')
 
       cy.get('#isbns_0_isbn')
-        .should(
-          'have.attr',
-          'placeholder',
-          'ISBN: update this value before exporting versions requiring unique identifier',
-        )
+        .should('have.attr', 'placeholder', 'The registered 13-digit ISBN')
         .should('be.empty')
 
       checkDefaultFieldValues(
@@ -247,9 +243,9 @@ describe('Checking Producer Page', () => {
       )
 
       // Checking copyright license section
-      cy.get('label[title="Copyright License"]').should(
+      cy.get('label[title="Copyright license"]').should(
         'have.text',
-        'Copyright License',
+        'Copyright license',
       )
 
       // All Rights Reserved - Standard Copyright License option
@@ -302,18 +298,14 @@ describe('Checking Producer Page', () => {
 
       // Adding multiple ISBNs
       cy.contains('button', ' Add ISBN').should('not.exist')
-      cy.contains('button', 'Add Another ISBN').should('exist').click()
+      cy.contains('button', 'Add another ISBN').should('exist').click()
 
       cy.get('#isbns_1_label')
         .should('have.attr', 'placeholder', 'Label')
         .should('be.empty')
 
       cy.get('#isbns_1_isbn')
-        .should(
-          'have.attr',
-          'placeholder',
-          'ISBN: update this value before exporting versions requiring unique identifier',
-        )
+        .should('have.attr', 'placeholder', 'The registered 13-digit ISBN')
         .should('be.empty')
 
       cy.setValue('#isbns_1_label', 'Paperback')
@@ -422,7 +414,7 @@ describe('Checking Producer Page', () => {
         {
           value: 'public',
           description:
-            'No Known Copyright (Public Domain)By selecting this option, you certify that, to the best of your knowledge, the work is free of copyright worldwide.',
+            'No Known Copyright (Public Domain)No rights are reserved and the work is freely available for anyone to use, distribute, and alter in any way.',
         },
       ]
 

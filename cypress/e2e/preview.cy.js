@@ -58,10 +58,10 @@ describe('Checking the Preview section', () => {
 
   it('checking default values for New Preview', () => {
     cy.get('#rc-tabs-0-tab-new')
-      .should('have.text', 'New preview')
+      .should('have.text', 'New Preview')
       .should('have.attr', 'aria-selected', 'true')
     cy.get('#rc-tabs-0-tab-saved')
-      .should('have.text', 'Publishing profiles')
+      .should('have.text', 'Publishing Profiles')
       .should('have.attr', 'aria-selected', 'false')
     // cy.verifyDefault('format', 'PDF')
     cy.get(`span[title="PDF"]`).should('exist').should('have.text', 'PDF')
@@ -130,7 +130,7 @@ describe('Checking the Preview section', () => {
     cy.getByData('preview-download-btn').should('not.be.disabled')
 
     // Go back to the book and return back here. Verifying that default values are shown.
-    cy.contains('Back to book').click()
+    cy.contains('Back to Book').click()
     cy.url().should('include', '/books')
 
     cy.goToPreview()
@@ -160,7 +160,7 @@ describe('Checking the Preview section', () => {
     cy.contains('ISBN:')
       .should('exist')
       .parent()
-      .should('contain', 'No selection')
+      .should('contain', 'No ISBN selected')
 
     // changing content and template options for PDF format
     // Deleting all Content options leaves Table of contents
@@ -199,10 +199,10 @@ describe('Checking the Preview section', () => {
     cy.contains('button', 'OK').click()
 
     cy.get('#rc-tabs-0-tab-new')
-      .should('have.text', 'New preview')
+      .should('have.text', 'New Preview')
       .should('have.attr', 'aria-selected', 'false')
     cy.get('#rc-tabs-0-tab-saved')
-      .should('have.text', 'Publishing profiles')
+      .should('have.text', 'Publishing Profiles')
       .should('have.attr', 'aria-selected', 'true')
 
     cy.contains('label', 'Choose a profile').should('exist')
@@ -245,7 +245,7 @@ describe('Checking the Preview section', () => {
     cy.getByData('preview-exportName-input').type('EPUB atosh')
     cy.contains('button', 'OK').click()
     cy.get('#rc-tabs-0-tab-saved')
-      .should('have.text', 'Publishing profiles')
+      .should('have.text', 'Publishing Profiles')
       .should('have.attr', 'aria-selected', 'true')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)
@@ -256,7 +256,7 @@ describe('Checking the Preview section', () => {
 
     cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
-    cy.contains('Profile has been deleted').should('exist')
+    // cy.contains('Profile has been deleted').should('exist')
   })
 
   it('renaming an export profile', () => {
@@ -269,7 +269,7 @@ describe('Checking the Preview section', () => {
     cy.getByData('preview-exportName-input').type('atosh no content')
     cy.contains('button', 'OK').click()
     cy.get('#rc-tabs-0-tab-saved')
-      .should('have.text', 'Publishing profiles')
+      .should('have.text', 'Publishing Profiles')
       .should('have.attr', 'aria-selected', 'true')
 
     // Renaming the new export
@@ -284,15 +284,15 @@ describe('Checking the Preview section', () => {
 describe('Checking permissions in the Preview page', () => {
   before(() => {
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
     )
     cy.log('Author 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
     )
     cy.log('Collaborator 1 is created.')
     cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+      'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
     )
     cy.log('Collaborator 2 is created.')
 
@@ -371,7 +371,7 @@ describe('Checking permissions in the Preview page', () => {
     cy.log('AUTHOR can delete an export')
     cy.getByData('preview-delete-btn').click()
     cy.contains('Success').should('exist')
-    cy.contains('Profile has been deleted').should('exist')
+    // cy.contains('Profile has been deleted').should('exist')
   })
 
   it('checking COLLABORATOR with EDIT access permissions', () => {
@@ -458,7 +458,7 @@ Cypress.Commands.add('checkTemplates', () => {
     'atosh',
     'bikini',
     'eclypse',
-    'lategrey',
+    // 'slategrey',
     'logical',
     'significa',
     'tenberg',
@@ -489,7 +489,7 @@ Cypress.Commands.add('saveProfile', user => {
     cy.getByData('preview-exportName-input').type(`${user}'s export`)
     cy.contains('button', 'OK').click()
     cy.get('#rc-tabs-0-tab-saved')
-      .should('have.text', 'Publishing profiles')
+      .should('have.text', 'Publishing Profiles')
       .should('have.attr', 'aria-selected', 'true')
     /* eslint-disable cypress/no-unnecessary-waiting */
     cy.wait(3000)

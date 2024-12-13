@@ -28,7 +28,7 @@ describe('Start writing', () => {
       'Start your book with a blank slate using the built-in Editor.',
     ).should('exist')
     cy.getByData('createBook-startWriting-button')
-      .should('contain', 'Start writing')
+      .should('contain', 'Start Writing')
       .should('exist')
     cy.getByData('createBook-startWriting-button').click()
 
@@ -43,7 +43,7 @@ describe('Start writing', () => {
       .find('p')
       .should(
         'have.text',
-        "Don't overthink it, you can change your title at any time",
+        "Don't overthink it, you can change your title at any time.",
       )
 
     cy.get('form')
@@ -57,7 +57,7 @@ describe('Start writing', () => {
     cy.contains('Book One').click()
     cy.contains('Book Metadata').should('exist')
     cy.contains('Book One').should('exist')
-    cy.contains('Untitled Chapter').should('exist')
+    cy.contains('Untitled chapter').should('exist')
 
     cy.get('.ProseMirror').should('be.visible')
     cy.get('.ProseMirror').click()
@@ -94,7 +94,7 @@ describe('Start writing', () => {
     cy.contains('h2', 'Upload your files')
     cy.contains('p', 'Start your book with .docx files.')
     cy.getByData('createBook-selectFiles-button')
-      .should('contain', 'Select files')
+      .should('contain', 'Select Files')
       .should('exist')
     cy.getByData('createBook-selectFiles-button').click()
 
@@ -111,7 +111,7 @@ describe('Start writing', () => {
 
     cy.get('.ant-upload-drag').should(
       'have.text',
-      'Drag and drop files, or Browse',
+      'Drag and drop files, or browse',
     )
 
     cy.getByData('import-continue-button').should('be.disabled')
@@ -141,7 +141,7 @@ describe('Start writing', () => {
       .find('p')
       .should(
         'have.text',
-        "Don't overthink it, you can change your title at any time",
+        "Don't overthink it, you can change your title at any time.",
       )
 
     cy.getByData('rename-continue-button').should('be.disabled')
@@ -190,7 +190,7 @@ describe('Adding many books quickly', () => {
   it('adding 100 books by clicking "start writing" button', () => {
     for (let i = 1; i <= 100; i++) {
       cy.contains('Start writing your book').click()
-      cy.contains("Don't overthink it, you can change your title at any time")
+      cy.contains("Don't overthink it, you can change your title at any time.")
       cy.log(`Book ${i} was created`)
       cy.get('a[href="/dashboard"]').last().click()
       cy.location('pathname').should('equal', '/dashboard')

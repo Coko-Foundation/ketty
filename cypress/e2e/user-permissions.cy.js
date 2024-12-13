@@ -191,7 +191,7 @@ describe('Checking permissions for dashboard', () => {
       // Reorder chapters
 
       cy.log('Author can delete unlocked chapters in the book he/she is owner.')
-      cy.deleteChapter('Untitled Chapter')
+      cy.deleteChapter('Untitled chapter')
 
       cy.log('Author can access Metadata')
       cy.contains('button', 'Book Metadata', { timeout: 6000 }).click()
@@ -232,7 +232,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         'COLLABORATOR with EDIT access can delete unlocked chapters in the book he/she is collaborator.',
       )
-      cy.deleteChapter('Untitled Chapter')
+      cy.deleteChapter('Untitled chapter')
 
       cy.log(
         'COLLABORATOR with EDIT access can access Metadata in the book he/she is collaborator.',
@@ -286,7 +286,7 @@ describe('Checking permissions for dashboard', () => {
       cy.log(
         'COLLABORATOR with VIEW access can NOT delete unlocked chapters in the book he/she is collaborator.',
       )
-      cy.contains('Untitled Chapter')
+      cy.contains('Untitled chapter')
         .parent()
         .parent()
         .find('[data-icon="more"]')
@@ -370,7 +370,7 @@ Cypress.Commands.add('createImportedBook', bookTitle => {
   cy.location('pathname').should('equal', '/dashboard')
   cy.contains('[href="/create-book"]', 'New Book').click()
   cy.location('pathname').should('equal', '/create-book')
-  cy.contains('button', 'Select files').click()
+  cy.contains('button', 'Select Files').click()
   cy.location('pathname').should('contain', '/import')
   cy.get('input[type="file"]').selectFile(
     'cypress/fixtures/docs/test_document.docx',
@@ -577,9 +577,7 @@ Cypress.Commands.add('canChangeAccess', status => {
       .should('contain', 'Can edit')
     // Removing access of Collaborator 2
     cy.contains('Collaborator 2').parent().parent().find('.ant-select').click()
-    cy.get('[role="option"]:nth(2)')
-      .should('have.text', 'Remove access')
-      .click()
+    cy.get('[role="option"]:nth(2)').should('have.text', 'Remove').click()
 
     cy.log(`Author and admin can give members's access.`)
 

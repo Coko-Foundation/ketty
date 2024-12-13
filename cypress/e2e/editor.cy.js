@@ -69,7 +69,7 @@ describe('Book editor', () => {
   })
 
   it('Adding content', () => {
-    cy.contains('Untitled Chapter', { timeout: 6000 })
+    cy.contains('Untitled chapter', { timeout: 6000 })
 
     cy.get('.ProseMirror').click()
 
@@ -211,7 +211,7 @@ describe('Book editor', () => {
   })
 
   it('Checking find and replace', () => {
-    cy.contains('Untitled Chapter').click()
+    cy.contains('Untitled chapter').click()
     cy.wait(6000)
     cy.get('.ProseMirror').clear()
     cy.get('.ProseMirror').type(

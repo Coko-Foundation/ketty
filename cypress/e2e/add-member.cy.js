@@ -8,20 +8,20 @@ const {
 
 describe('Checking "Share" modal', () => {
   before(() => {
-    // cy.exec('docker exec kdk_server_1 node ./scripts/seeds/truncateDB.js')
+    // cy.exec('docker exec kdk-server-1 node ./scripts/seeds/truncateDB.js')
 
-    cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
-    )
-    cy.log('Author 1 is created.')
-    cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
-    )
-    cy.log('Collaborator 1 is created.')
-    cy.exec(
-      'docker exec kdk_server_1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
-    )
-    cy.log('Collaborator 2 is created.')
+    // cy.exec(
+    //   'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js author.1@example.com Author 1 author.1',
+    // )
+    // cy.log('Author 1 is created.')
+    // cy.exec(
+    //   'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.1@example.com Collaborator 1 collaborator.1',
+    // )
+    // cy.log('Collaborator 1 is created.')
+    // cy.exec(
+    //   'docker exec kdk-server-1 node ./scripts/seeds/createVerifiedUser.js collaborator.2@example.com Collaborator 2 collaborator.2',
+    // )
+    // cy.log('Collaborator 2 is created.')
     cy.login(author)
     cy.addBook('Test Book')
     cy.logout()
@@ -30,8 +30,8 @@ describe('Checking "Share" modal', () => {
     cy.login(author)
     cy.goToBook('Test Book')
     cy.reload()
-    cy.contains('Untitled Chapter', { timeout: 8000 })
-    cy.contains('Untitled Chapter').click()
+    cy.contains('Untitled chapter', { timeout: 8000 })
+    cy.contains('Untitled chapter').click()
     cy.contains('Create or select a chapter on the left to start writing.', {
       timeout: 6000,
     })
@@ -147,7 +147,7 @@ describe('Checking "Share" modal', () => {
     cy.get('.ant-list-item').contains('Can edit').click()
     cy.get('[role="option"]:nth(0)').should('have.text', 'Can view')
     cy.get('[role="option"]:nth(1)').should('have.text', 'Can edit')
-    cy.get('[role="option"]:nth(2)').should('have.text', 'Remove access')
+    cy.get('[role="option"]:nth(2)').should('have.text', 'Remove')
 
     cy.log('changing permission to Can view')
     cy.get('[role="option"]:nth(0)').click()
@@ -156,7 +156,7 @@ describe('Checking "Share" modal', () => {
     // deleting this user
     cy.get('.ant-list-item').contains('Can view').click({ force: true })
     cy.get('[role="option"]:nth(2)')
-      .should('have.text', 'Remove access')
+      .should('have.text', 'Remove')
       .click({ force: true })
   })
 
@@ -189,9 +189,7 @@ describe('Checking "Share" modal', () => {
 
     cy.log('Removing acess for user')
     cy.get('.ant-list-item').contains('Can view').click()
-    cy.get('[role="option"]:nth(2)')
-      .should('have.text', 'Remove access')
-      .click()
+    cy.get('[role="option"]:nth(2)').should('have.text', 'Remove').click()
     cy.contains('Collaborator 1').should('not.exist')
   })
 
@@ -228,9 +226,7 @@ describe('Checking "Share" modal', () => {
     // deleting collaborator
     cy.log('Removing acess for user')
     cy.get('.ant-list-item').contains('Can view').click()
-    cy.get('[role="option"]:nth(2)')
-      .should('have.text', 'Remove access')
-      .click()
+    cy.get('[role="option"]:nth(2)').should('have.text', 'Remove').click()
 
     // closing the modal
     cy.get('.ant-modal-close').click()

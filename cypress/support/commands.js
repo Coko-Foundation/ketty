@@ -60,10 +60,10 @@ Cypress.Commands.add('deleteBook', title => {
 })
 
 Cypress.Commands.add('logout', () => {
-  cy.get('[aria-haspopup="dialog"]').first().click()
+  // cy.get('[aria-haspopup="dialog"]').first().click()
   // cy.get('.ant-avatar-string', { timeout: 10000 }).click()
-  cy.contains('Logout', { timeout: 10000 }).should('exist')
-  cy.contains('Logout', { timeout: 10000 }).click({ force: true })
+  cy.contains('Log Out', { timeout: 10000 }).should('exist')
+  cy.contains('Log Out', { timeout: 10000 }).click({ force: true })
   cy.location('pathname').should('equal', '/login', { timeout: 10000 })
 })
 
@@ -104,12 +104,12 @@ Cypress.Commands.add('signup', user => {
 Cypress.Commands.add('createUntitledChapter', () => {
   cy.url().should('include', '/producer')
   cy.getByData('producer-createChapter-btn').click()
-  cy.contains('Untitled Chapter', { timeout: 8000 })
+  cy.contains('Untitled chapter', { timeout: 8000 })
 })
 
 Cypress.Commands.add('createChapter', chapterTitle => {
   cy.get('.anticon-plus').click()
-  cy.contains('Untitled Chapter')
+  cy.contains('Untitled chapter')
     .parent()
     .should('have.attr', 'data-selected', 'true')
   cy.get('.ProseMirror').click()
@@ -122,8 +122,8 @@ Cypress.Commands.add('createChapter', chapterTitle => {
 })
 
 Cypress.Commands.add('addMember', (collaborator, access) => {
-  cy.contains('Untitled Chapter', { timeout: 8000 }).should('exist')
-  cy.contains('Untitled Chapter').click()
+  cy.contains('Untitled chapter', { timeout: 8000 }).should('exist')
+  cy.contains('Untitled chapter').click()
   cy.contains('Create or select a chapter on the left to start writing.', {
     timeout: 6000,
   })

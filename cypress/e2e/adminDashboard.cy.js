@@ -42,7 +42,7 @@ describe('checking AI integration', () => {
   it('checking default values for AI integration (ON)', () => {
     cy.checkSwitchStatus('span', 'AI supplier integration', 'ai', 'true')
 
-    cy.get('form').should('contain', 'API Key')
+    cy.get('form').should('contain', 'API key')
 
     // Checking that there is an API key
     // cy.getByData('admindb-aikey-input').invoke('val').should('not.be.empty')
@@ -98,7 +98,7 @@ describe('checking Publishing and downloads section', () => {
     cy.login(admin)
     cy.addBook('Export Book')
     cy.goToAdminDashboard()
-    const switches = ['dwEPUB', 'pubWeb', 'pubPDF', 'pubEPUB']
+    const switches = ['dwPDF', 'dwEPUB', 'pubWeb', 'pubPDF', 'pubEPUB']
     switches.forEach(switchId => {
       cy.turnSwitchOn(switchId)
       cy.wait(3000)
@@ -112,7 +112,7 @@ describe('checking Publishing and downloads section', () => {
 
   it('Checking that all options are ON by default', () => {
     // By default, all switches are ON
-    cy.checkHeading('h2', '1', 'Publishing, downloads and integration')
+    cy.checkHeading('h2', '1', 'Publishing')
 
     // Downloads section
     cy.checkHeading('h3', '0', 'Downloads')
@@ -120,7 +120,7 @@ describe('checking Publishing and downloads section', () => {
     cy.checkSwitchStatus('span', 'EPUB', 'dwEPUB', 'true')
 
     // Publishing integrations section
-    cy.checkHeading('h3', '1', 'Publishing integrations')
+    cy.checkHeading('h3', '1', 'Integrations')
     cy.checkSwitchStatus('span', 'Publish online with Flax', 'pubWeb', 'true')
     cy.contains(
       'p',
@@ -249,7 +249,7 @@ describe('checking Available Languages section', () => {
     cy.contains('span', 'English').should('exist')
     cy.contains('span', '(enabled)').should('exist')
     cy.getByData('admindb-addNewLang-btn')
-      .should('have.text', 'Add new language')
+      .should('have.text', 'Add New Language')
       .should('be.enabled')
 
     // Expanding the section about English
@@ -268,7 +268,7 @@ describe('checking Available Languages section', () => {
     )
     cy.get('#std-wrapper').should(
       'contain',
-      'Turning the standardised version off will allow you to upload your own translation strings, but this may come at the cost of having to update it manually when the UI updates. To contribute to the standardised translation check out our contributors guide.',
+      "See the Contributor's Guide to contribute translations for the standardised version. If you turn off the standardised version, you can upload customised translation strings.",
     )
     cy.contains('a', 'Download translation strings for this language').should(
       'exist',
@@ -290,9 +290,9 @@ describe('checking Available Languages section', () => {
     cy.contains('label', 'Flag code').should('exist')
     cy.get('#desc-flag-code-gb').should(
       'contain',
-      'Flag for the selected language in the language dropdown. see this_list for_reference.',
+      'The code for the selected language in the language dropdown. See this list for reference.',
     )
-    cy.get('label[title="Upload a new translations file"]').should('exist')
+    cy.get('label[title="Upload a new translations file:"]').should('exist')
 
     cy.getByData('admindb-engName-input').should('have.value', 'English')
     cy.getByData('admindb-engFlag-input').should('have.value', 'gb')
@@ -325,9 +325,9 @@ describe('checking Available Languages section', () => {
 
     cy.get('#desc-flag-code-new').should(
       'contain',
-      'Flag for the selected language in the language dropdown. see this_list for_reference.',
+      'The code for the selected language in the language dropdown. See this list for reference.',
     )
-    cy.get('label[title="Upload a new translations file"]').should('exist')
+    cy.get('label[title="Upload a new translations file:"]').should('exist')
     cy.getByData('admindb-newLangName-input').should('be.empty')
     cy.getByData('admindb-newLangFlag-input').should('be.empty')
 
@@ -370,7 +370,7 @@ describe('checking Terms & Conditions', () => {
   beforeEach(() => {
     cy.login(admin)
     cy.goToAdminDashboard()
-    cy.checkHeading('h2', '3', 'terms and conditions')
+    cy.checkHeading('h2', '3', 'Terms and conditions')
   })
 
   it('checking default content in T&C section', () => {
