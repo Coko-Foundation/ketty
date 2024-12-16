@@ -4,11 +4,11 @@ title: 'Ketty Interface Editorial Style Guide'
 
 Follow this style guide if you're contributing to the **stardardised English (UK) Ketty interface**.
 
-All UI text is stored in the lanagage file `en.json` in [ketty/server/cofig/languages](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/tree/main/config/languages?ref_type=heads). Refer to the [Localisation section](../contributorGuide/0x-contrib-localisation.md) which describles how the language file is structured.
+All UI text is stored in the lanagage file `en-GB.json` in [ketty/server/cofig/languages](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/tree/main/config/languages?ref_type=heads). Refer to the [Localisation section](../getInvolved/04-Localising%20Ketty's%20Interface.md) which describles how the language file is structured.
 
 ## Updating the stardardised English (UK) Ketty interface
 
-1. Download the **Standardised Enlish (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en.json?ref_type=heads).
+1. Download the **Standardised Enlish (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en-GB.json?ref_type=heads).
 2. Make the text updates following the style guidelines below.
 3. Submit an MR or send the file by email to the Ketty team.
 
@@ -38,7 +38,7 @@ List of pages using title case:
 Any reference to these pages within the UI should also use **Title Case**.
 
 :::tip
-Search for the following "types" in the `en.json` file to check the capitalisation consistency:
+Search for the following "types" in the `en-GB.json` file to check the capitalisation consistency:
 
 - "title"
 - "heading"
