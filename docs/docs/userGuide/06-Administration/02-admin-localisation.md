@@ -52,7 +52,7 @@ If you use a customised language, you will need to update this file manually whe
 3. Click "Save New Language" to complete the process
 
 :::info
-When you add a new language, it functions as a customised language. If other Ketty users would benefit from this language, please consider **contributing a new standardised language** by referring to the ['Localisation' section](../../contributorGuide/0x-contrib-localisation.md) of the Contributor's Guide.
+When you add a new language, it functions as a customised language. If other Ketty users would benefit from this language, please consider **contributing a new standardised language** by referring to the ['Localisation' section](../../getInvolved/04-Localising%20Ketty's%20Interface.md) of the Contributor's Guide.
 :::
 
 ## Managing translation files
