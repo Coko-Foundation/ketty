@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { DeleteOutlined } from '@ant-design/icons'
 import { notification } from 'antd'
-
+import { useTranslation } from 'react-i18next'
 import { grid } from '@coko/client'
 
 import { Button, Select } from '../common'
@@ -29,6 +29,10 @@ const ProfileRow = props => {
     loadingPreview,
     updateProfile,
   } = props
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
 
   const [updateLoading, setUpdateLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
@@ -57,13 +61,10 @@ const ProfileRow = props => {
 
     updateProfile()
       .then(() => {
-        notify('success', 'Profile saved')
+        notify('success', t('profile_saved'))
       })
       .catch(() => {
-        notify(
-          'error',
-          'Something went wrong while trying to save this profile',
-        )
+        notify('error', t('profile_save_error'))
       })
       .finally(() => {
         setUpdateLoading(false)
@@ -77,13 +78,10 @@ const ProfileRow = props => {
 
     onClickDelete()
       .then(() => {
-        notify('success', 'Profile has been deleted')
+        notify('success')
       })
       .catch(() => {
-        notify(
-          'error',
-          'Something went wrong while trying to delete this profile',
-        )
+        notify('error', t('profile_delete_error'))
       })
       .finally(() => {
         setDeleteLoading(false)
@@ -94,7 +92,7 @@ const ProfileRow = props => {
     <Wrapper className={className}>
       {notificationContextHolder}
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label htmlFor="select-profile">Choose a profile</label>
+      <label htmlFor="select-profile">{t('profile.select')}</label>
       <div style={{ display: 'flex', gap: '1ch' }}>
         <Select
           disabled={loadingPreview}
@@ -116,7 +114,7 @@ const ProfileRow = props => {
           loading={updateLoading}
           onClick={handleUpdate}
         >
-          Update
+          {t('profile.actions.update')}
         </Button>
 
         <Button
@@ -127,7 +125,7 @@ const ProfileRow = props => {
           onClick={handleClickDelete}
           status="danger"
         >
-          Delete
+          {t('profile.actions.delete')}
         </Button>
       </div>
     </Wrapper>

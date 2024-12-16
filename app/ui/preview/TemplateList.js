@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 import { grid, th } from '@coko/client'
 
@@ -38,8 +39,10 @@ const TemplateList = props => {
   const { className, onTemplateClick, templates, selectedTemplate, disabled } =
     props
 
+  const { t } = useTranslation()
+
   const handleKeydown = event => {
-    var flag = false
+    let flag = false
 
     if (disabled || !templates.length) {
       return
@@ -57,7 +60,7 @@ const TemplateList = props => {
       case 'ArrowLeft':
         onTemplateClick(
           templates[
-            (templates.findIndex(t => t.id === selectedTemplate) -
+            (templates.findIndex(temp => temp.id === selectedTemplate) -
               1 +
               templates.length) %
               templates.length
@@ -72,7 +75,7 @@ const TemplateList = props => {
       case 'ArrowRight':
         onTemplateClick(
           templates[
-            (templates.findIndex(t => t.id === selectedTemplate) +
+            (templates.findIndex(temp => temp.id === selectedTemplate) +
               1 +
               templates.length) %
               templates.length
@@ -120,7 +123,7 @@ const TemplateList = props => {
           ))}
       </Wrapper>{' '}
       {templates.length === 0 && (
-        <EmptyMessage>No templates available</EmptyMessage>
+        <EmptyMessage>{t('no_available_templates')}</EmptyMessage>
       )}
     </>
   )

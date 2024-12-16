@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, Redirect, useHistory } from 'react-router-dom'
-
+import { useTranslation } from 'react-i18next'
 import { useMutation } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 
@@ -11,6 +11,7 @@ const LoginPage = () => {
   const { search } = useLocation()
   const { setCurrentUser } = useCurrentUser()
   const history = useHistory()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.common' })
 
   const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
 
@@ -29,10 +30,10 @@ const LoginPage = () => {
   const existingToken = localStorage.getItem('token')
   if (existingToken) return <Redirect to={redirectUrl} />
 
-  let errorMessage = 'Something went wrong!'
+  let errorMessage = t('notifications.error.messages.general')
 
   if (error?.message.includes('username or password'))
-    errorMessage = 'Invalid credentials'
+    errorMessage = t('form.password.errors.invalidCredentials')
 
   if (data) {
     const token = data.ketidaLogin?.token

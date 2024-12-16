@@ -7,7 +7,7 @@ import {
   CheckCircleTwoTone,
   WarningTwoTone,
 } from '@ant-design/icons'
-
+import { useTranslation } from 'react-i18next'
 import { grid, th } from '@coko/client'
 
 import { Button, Cluster, Input, Modal, Spin } from '../common'
@@ -61,6 +61,10 @@ const Footer = props => {
   const [isUploading, setUploading] = useState(false)
   const [createInput, setCreateInput] = useState(null)
   const inputRef = useRef(null)
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections',
+  })
 
   useEffect(() => {
     if (isCreateModalOpen && inputRef && inputRef.current) {
@@ -153,59 +157,47 @@ const Footer = props => {
 
   const publishingModalContent = (missingPdf, missingEpub, loading) => {
     if (missingPdf) {
-      return (
-        <p>
-          You need to select a PDF profile if you want to include a PDF in your
-          website
-        </p>
-      )
+      return <p>{t('tabs.publishingProfiles.publishModal.missingPDF')}</p>
     }
 
     if (missingEpub) {
-      return (
-        <p>
-          You need to select an EPUB profile if you want to include an EPUB in
-          your website
-        </p>
-      )
+      return <p>{t('tabs.publishingProfiles.publishModal.missingEPUB')}</p>
     }
 
     return loading ? (
       <div style={{ textAlign: 'center' }}>
         <Spin />
-        <p>Publishing</p>
+        <p>
+          {t('tabs.publishingProfiles.publishModal.actions.publish.loading')}
+        </p>
       </div>
     ) : (
       <>
-        <p>
-          Your book will be published at a unique URL. You can update and
-          republish it anytime.
-        </p>
+        <p>{t('tabs.publishingProfiles.publishModal.content_1')}</p>
 
+        <p>{t('tabs.publishingProfiles.publishModal.content_2')}</p>
         <p>
-          Publishing may take a few minutes. Once complete, the book will open
-          in a new browser tab.
-        </p>
-        <p>
-          Selected template:{' '}
+          {t('tabs.publishingProfiles.publishModal.template')}{' '}
           <span style={{ textTransform: 'capitalize' }}>
             {selectedTemplate?.name}
           </span>
         </p>
         {includePdf && (
           <p>
-            <CheckCircleTwoTone twoToneColor="green" /> Includes PDF download
+            <CheckCircleTwoTone twoToneColor="green" />{' '}
+            {t('tabs.publishingProfiles.publishModal.includesPDF')}
           </p>
         )}
         {includeEpub && (
           <p>
-            <CheckCircleTwoTone twoToneColor="green" /> Includes EPUB download
+            <CheckCircleTwoTone twoToneColor="green" />{' '}
+            {t('tabs.publishingProfiles.publishModal.includesEPUB')}
           </p>
         )}
         {publishedBefore && (
           <p>
-            <WarningTwoTone twoToneColor="#ffc300" /> Careful: Publishing again
-            will overwrite the previously published book.
+            <WarningTwoTone twoToneColor="#ffc300" />{' '}
+            {t('tabs.publishingProfiles.publishModal.warning')}
           </p>
         )}
       </>
@@ -223,7 +215,7 @@ const Footer = props => {
           key="save-profile"
           onClick={handleClickSave}
         >
-          Save Publishing Profile
+          {t('tabs.newPreview.actions.save')}
         </Button>,
       )
     } else if (selectedFormat === 'web') {
@@ -234,7 +226,9 @@ const Footer = props => {
           onClick={() => setPublishModalOpen(true)}
           type="primary"
         >
-          {publishedBefore ? 'Publish Again' : 'Publish'}
+          {publishedBefore
+            ? t('tabs.publishingProfiles.flax.actions.publishAgain')
+            : t('tabs.publishingProfiles.flax.actions.publish')}
         </Button>,
       )
     } else if (isConnected && !isInLulu && canUploadToProvider) {
@@ -244,10 +238,10 @@ const Footer = props => {
           key="upload-to-lulu"
           loading={isUploading}
           onClick={handleClickSendToLulu}
-          type="primary"
           style={{ textTransform: 'none' }}
+          type="primary"
         >
-          Upload to Lulu
+          {t('tabs.publishingProfiles.lulu.actions.upload')}
         </Button>,
       )
     } else if (isConnected && isInLulu && !isSynced) {
@@ -257,10 +251,10 @@ const Footer = props => {
           key="lulu-sync"
           loading={isUploading}
           onClick={handleClickSendToLulu}
-          type="primary"
           style={{ textTransform: 'none' }}
+          type="primary"
         >
-          Sync with Lulu
+          {t('tabs.publishingProfiles.lulu.actions.sync')}
         </Button>,
       )
     }
@@ -275,7 +269,7 @@ const Footer = props => {
           loading={downloadLoading}
           onClick={handleClickDownload}
         >
-          Download
+          {t('download', { keyPrefix: 'pages.common.actions' })}
         </Button>,
       )
     }
@@ -294,7 +288,7 @@ const Footer = props => {
         onCancel={closeCreateModal}
         onOk={handleCreate}
         open={isCreateModalOpen}
-        title="Save Publishing Profile"
+        title={t('tabs.newPreview.actions.save')}
       >
         <Input
           data-test="preview-exportName-input"
@@ -310,11 +304,11 @@ const Footer = props => {
         okButtonProps={{
           disabled: missingPdfProfile || missingEpubProfile || publishing,
         }}
-        okText="Publish"
+        okText={t('tabs.publishingProfiles.publishModal.actions.publish')}
         onCancel={() => setPublishModalOpen(false)}
         onOk={handlePublish}
         open={isPublishModalOpen}
-        title="Publish Online"
+        title={t('tabs.publishingProfiles.publishModal.title')}
       >
         {publishingModalContent(
           missingPdfProfile,

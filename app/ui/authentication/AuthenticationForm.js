@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { grid } from '@coko/client'
 
+import { useTranslation } from 'react-i18next'
 import { Form, Button, Link } from '../common'
 
 const Wrapper = styled.div``
@@ -50,6 +51,8 @@ const AuthenticationForm = props => {
     form,
   } = props
 
+  const { t } = useTranslation()
+
   return (
     <Wrapper className={className}>
       <Form
@@ -70,7 +73,9 @@ const AuthenticationForm = props => {
         <Footer showForgotPassword={showForgotPassword}>
           {showForgotPassword && (
             <ForgotPassword>
-              <Link to={forgotPasswordUrl}>Forgot your password?</Link>
+              <Link to={forgotPasswordUrl}>
+                {t('pages.login.links.forgotPassword')}
+              </Link>
             </ForgotPassword>
           )}
 

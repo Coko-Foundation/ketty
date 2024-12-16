@@ -8,6 +8,7 @@ import { HolderOutlined, MoreOutlined } from '@ant-design/icons'
 import styled, { keyframes } from 'styled-components'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../common'
 
 const animation = keyframes`
@@ -257,6 +258,10 @@ const ChapterItem = forwardRef(
   ) => {
     const chapterRef = useRef(null)
 
+    const { t } = useTranslation(null, {
+      keyPrefix: 'pages.producer.bookBodySidebar.chapter',
+    })
+
     useEffect(() => {
       // apply focus if current element recieves `focused=true`
       // and the focus is within the chapter list (current element's parent's parent)
@@ -312,10 +317,10 @@ const ChapterItem = forwardRef(
             />
             <ChapterTitle
               data-status={status}
-              onClick={() => onChapterClick(id)}
               data-test="producer-chapterTitle"
+              onClick={() => onChapterClick(id)}
             >
-              {!uploading ? title || 'Untitled Chapter' : 'Processing'}
+              {!uploading ? title || t('new') : t('processing')}
             </ChapterTitle>
             {lock ? (
               <UserAvatar data-test="producer-userAvatar">
@@ -327,10 +332,10 @@ const ChapterItem = forwardRef(
               position="inline-start"
               toggle={
                 <MoreActions
+                  data-test="producer-more-btn"
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   onKeyUp={e => e.key === 'Enter' && e.stopPropagation()}
                   tabIndex={focused ? 0 : -1}
-                  data-test="producer-more-btn"
                 >
                   <MoreOutlined />
                 </MoreActions>
@@ -348,15 +353,17 @@ const ChapterItem = forwardRef(
                     }}
                     onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                   >
-                    Convert to {isPart ? 'chapter' : 'part'}
+                    {isPart
+                      ? t('menu.options.convertToChapter')
+                      : t('menu.options.convertToPart')}
                   </Button>
                 )}
                 <Button
+                  data-test="producer-deleteChapter"
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
-                  data-test="producer-deleteChapter"
                 >
-                  Delete
+                  {t('menu.options.delete')}
                 </Button>
               </PopupContentWrapper>
             </StyledPopup>

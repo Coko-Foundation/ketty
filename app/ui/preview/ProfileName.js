@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Button, Modal, Input } from '../common'
 
 const StyledButton = styled(Button)`
@@ -34,6 +35,10 @@ const StyledButton = styled(Button)`
 
 const ProfileName = props => {
   const { selectedProfile, canModifyProfiles, onProfileRename } = props
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs',
+  })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRenaming, setIsRenaming] = useState(false)
@@ -96,7 +101,7 @@ const ProfileName = props => {
         onCancel={closeModal}
         onOk={handleRename}
         open={isModalOpen}
-        title="Edit profile name"
+        title={t('publishingProfiles.profile.rename')}
       >
         <Input
           onChange={handleRenameInputChange}

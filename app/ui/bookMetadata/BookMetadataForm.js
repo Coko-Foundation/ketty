@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { th } from '@coko/client'
 import { PlusOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import mapValues from 'lodash/mapValues'
 import { Form, Upload, Image } from 'antd'
@@ -22,6 +23,11 @@ const BookMetadataForm = ({
   onUploadBookCover,
 }) => {
   const [form] = Form.useForm()
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab',
+  })
+
   const { coverUrl, ...rest } = initialValues
 
   const transformedInitialValues = mapValues(rest, (value, key) => {
@@ -131,15 +137,12 @@ const BookMetadataForm = ({
           onValuesChange={handleFormUpdate}
           preserve={false}
         >
-          <h1>Book Metadata</h1>
-          <p>
-            This information will be used for optional front matter pages. View
-            these pages in the book&apos;s preview.
-          </p>
+          <h1>{t('title')}</h1>
+          <p>{t('introduction')}</p>
           <FormSection>
-            <h2>Cover page</h2>
+            <h2>{t('sections.coverPage.heading')}</h2>
             <Form.Item
-              label="Upload cover image"
+              label={t('sections.coverPage.upload.instructions')}
               labelCol={{ span: 24 }}
               valuePropName="fileList"
             >
@@ -160,7 +163,9 @@ const BookMetadataForm = ({
                     type="button"
                   >
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>Upload</div>
+                    <div style={{ marginTop: 8 }}>
+                      {t('sections.coverPage.upload.button')}
+                    </div>
                   </button>
                 ) : null}
               </Upload>
@@ -178,7 +183,7 @@ const BookMetadataForm = ({
             </Form.Item>
             {cover?.length > 0 ? (
               <Form.Item
-                label="Alt text for cover image"
+                label={t('sections.coverPage.altText')}
                 labelCol={{ span: 24 }}
                 name="coverAlt"
               >
@@ -187,42 +192,49 @@ const BookMetadataForm = ({
             ) : null}
           </FormSection>
           <FormSection>
-            <h2>Title page</h2>
+            <h2>{t('sections.titlePage.heading')}</h2>
             <Form.Item
-              label="Title"
+              label={t('sections.titlePage.title')}
               labelCol={{ span: 24 }}
               name="title"
-              rules={[{ required: true, message: 'Title is required' }]}
+              rules={[
+                {
+                  required: true,
+                  message: t('sections.titlePage.title.errors.noValue'),
+                },
+              ]}
               wrapperCol={{ span: 24 }}
             >
-              <Input
-                disabled={!canChangeMetadata}
-                // placeholder="The history of future past"
-              />
+              <Input disabled={!canChangeMetadata} />
             </Form.Item>
             <Form.Item
-              label="Subtitle"
+              label={t('sections.titlePage.subtitle')}
               labelCol={{ span: 24 }}
               name="subtitle"
               wrapperCol={{ span: 24 }}
             >
-              <Input disabled={!canChangeMetadata} placeholder="Optional" />
+              <Input
+                disabled={!canChangeMetadata}
+                placeholder={t('sections.titlePage.subtitle.placeholder')}
+              />
             </Form.Item>
             <Form.Item
-              label="Authors"
+              label={t('sections.titlePage.authors')}
               labelCol={{ span: 24 }}
               name="authors"
-              // rules={[{ required: true, message: 'Authors is required' }]}
               wrapperCol={{ span: 24 }}
             >
-              <Input disabled={!canChangeMetadata} placeholder="Jhon, Smith" />
+              <Input
+                disabled={!canChangeMetadata}
+                placeholder={t('sections.titlePage.authors.placeholder')}
+              />
             </Form.Item>
           </FormSection>
 
           <FormSection>
-            <h2>Copyright page</h2>
+            <h2>{t('sections.copyrightPage.heading')}</h2>
             <Form.Item
-              label="ISBN List"
+              label={t('sections.copyrightPage.isbnList')}
               labelCol={{ span: 24 }}
               style={{ marginBottom: '0px' }}
               wrapperCol={{ span: 24 }}
@@ -230,29 +242,33 @@ const BookMetadataForm = ({
               <ISBNList canChangeMetadata={canChangeMetadata} name="isbns" />
             </Form.Item>
             <Form.Item
-              label="Top of the page"
+              label={t('sections.copyrightPage.pageContent.top')}
               labelCol={{ span: 24 }}
               name="topPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder="Optional - Provide additional description that will appear on the top of the Copyright page"
+                placeholder={t(
+                  'sections.copyrightPage.pageContent.top.placeholder',
+                )}
               />
             </Form.Item>
             <Form.Item
-              label="Bottom of the page"
+              label={t('sections.copyrightPage.pageContent.bottom')}
               labelCol={{ span: 24 }}
               name="bottomPage"
               wrapperCol={{ span: 24 }}
             >
               <TextArea
                 disabled={!canChangeMetadata}
-                placeholder="Optional - Provide additional description that will appear on the top of the Copyright page"
+                placeholder={t(
+                  'sections.copyrightPage.pageContent.bottom.placeholder',
+                )}
               />
             </Form.Item>
             <Form.Item
-              label="Copyright License"
+              label={t('sections.copyrightPage.license')}
               labelCol={{ span: 24 }}
               name="copyrightLicense"
               wrapperCol={{ span: 24 }}

@@ -16,19 +16,18 @@ The following steps must be performed in order for a new release to happen.
 
 :::note
 For the time being, Ketty client releases do not have versions. This means that images published in dockerhub will have tags that reflect the last commit in the repo at the time.
-::: 
+:::
 
 ## Announce a new release
 
 In Gitlab, from the [Releases page](https://gitlab.coko.foundation/coko-org/products/ketty/ketty/-/releases)
 
-* Select 'New release'
-* Create a tag for the release number
-* Use the release number as the title
-* Link the release milestone
-* Add the release notes which should include a description of: new features, improved features, bug fixes, breaking changes (if any), known issues with the release (if any).
-* Link all the relevant images on dockerhub
-* Link the homepage of these docs. 
+- Select 'New release'
+- Create a tag for the release number
+- Use the release number as the title
+- Link the release milestone
+- Add the release notes which should include a description of: new features, improved features, bug fixes, breaking changes (if any), known issues with the release (if any).
+- Link all the relevant images on dockerhub
+- Link the homepage of these docs.
 
-Remember to update the [Roadmap](../roadmap/01-ketty-roadmap.md) following a release. 
-
+Remember to update the [Roadmap](../roadmap/01-ketty-roadmap.md) following a release.

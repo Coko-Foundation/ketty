@@ -3,6 +3,7 @@
 import React from 'react'
 import { WarningTwoTone } from '@ant-design/icons'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { CheckboxGroup, Select, Stack } from '../common'
 
 const StyledSelect = styled(Select)`
@@ -28,10 +29,14 @@ const WebDownloadsSelection = props => {
     })
   }
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.format',
+  })
+
   return (
     <Stack style={{ '--space': '1em' }}>
       <div>
-        <p>Include the following downloads in your website</p>
+        <p>{t('webDownload.description')}</p>
         <CheckboxGroup
           defaultValue={[
             ...(includePdf ? ['pdf'] : []),
@@ -49,7 +54,7 @@ const WebDownloadsSelection = props => {
           {profiles.filter(p => p.format === 'pdf').length > 0 ? (
             <>
               <label htmlFor="pdf-profile">
-                Choose a saved PDF profile for the PDF you want to include:
+                {t('webDownload.options.pdf.selectProfile')}
               </label>
               <StyledSelect
                 disabled={previewLoading}
@@ -67,8 +72,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              You don&apos;t have a saved PDF profile. Please create one in
-              order to be able to inlcude a PDF in your website.
+              {t('webDownload.options.pdf.noProfileAvailable')}
             </p>
           )}
         </div>
@@ -78,7 +82,7 @@ const WebDownloadsSelection = props => {
           {profiles.filter(p => p.format === 'epub').length > 0 ? (
             <>
               <label htmlFor="epub-profile">
-                Choose a saved EPUB profile for the EPUB you want to include
+                {t('webDownload.options.epub.selectProfile')}:
               </label>
               <StyledSelect
                 disabled={previewLoading}
@@ -96,8 +100,7 @@ const WebDownloadsSelection = props => {
             <p>
               <WarningTwoTone twoToneColor="red" />
               {'  '}
-              You don&apos;t have a saved EPUB profile. Please create one in
-              order to be able to inlcude an EPUB in your website.
+              {t('webDownload.options.epub.noProfileAvailable')}
             </p>
           )}
         </div>

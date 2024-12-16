@@ -1,26 +1,31 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '../common'
 
 const FlaxIntegration = props => {
   const { webPublishInfo, profiles } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
+
   return (
     <div>
-      <h3 style={{ marginBlock: 0 }}>Flax integration:</h3>
+      <h3 style={{ marginBlock: 0 }}>{t('flax.heading')}</h3>
       {webPublishInfo?.published ? (
         <>
           <p>
-            Last published:{' '}
+            {t('flax.status.published.yes')}{' '}
             {new Intl.DateTimeFormat('en-GB', {
               dateStyle: 'medium',
               timeStyle: 'long',
             }).format(new Date(webPublishInfo?.lastUpdated))}
           </p>
           <p>
-            Published with profile:{' '}
+            {t('flax.status.published.profile')}{' '}
             {profiles.find(p => p.value === webPublishInfo.profileId)?.label}
           </p>
           <div style={{ display: 'flex', gap: '2em' }}>
@@ -29,12 +34,12 @@ const FlaxIntegration = props => {
                 window.open(webPublishInfo?.publicUrl, '_blank', 'noreferrer')
               }
             >
-              Open Published Book
+              {t('flax.actions.open')}
             </Button>
           </div>
         </>
       ) : (
-        <p>Not published yet</p>
+        <p>{t('flax.status.published.no')}</p>
       )}
     </div>
   )

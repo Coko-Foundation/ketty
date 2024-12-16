@@ -46,7 +46,7 @@ const UPDATE_BOOK_COMPONENT_CONTENT = gql`
       id
       title
       divisionId
-      # content
+      content
       componentType
       trackChangesEnabled
       uploading
@@ -124,7 +124,7 @@ const DELETE_BOOK_COMPONENT = gql`
           id
           title
           divisionId
-          # content
+          content
           componentType
           trackChangesEnabled
           uploading
@@ -258,8 +258,8 @@ const SET_BOOK_COMPONENT_STATUS = gql`
 // `
 
 export {
-  GET_BOOK_COMPONENT,
   CREATE_BOOK_COMPONENT,
+  GET_BOOK_COMPONENT,
   UPDATE_BOOK_COMPONENT_CONTENT,
   RENAME_BOOK_COMPONENT,
   DELETE_BOOK_COMPONENT,

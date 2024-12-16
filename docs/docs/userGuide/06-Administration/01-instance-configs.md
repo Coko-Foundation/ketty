@@ -1,5 +1,5 @@
 ---
-title: 'Instance configurations'
+title: 'Instance Configurations'
 ---
 
 ## Overview 

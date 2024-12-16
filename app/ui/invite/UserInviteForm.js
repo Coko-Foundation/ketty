@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Space } from 'antd'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Button, Select, Form } from '../common'
 import SelectUsers from './SelectUsers'
 
@@ -32,14 +33,18 @@ const StyledFormItem = styled(Form.Item)`
 `
 
 const UserInviteForm = ({ form, fetchOptions, onInvite, canChangeAccess }) => {
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.shareModal',
+  })
+
   const accessOptions = [
     {
       value: 'read',
-      label: 'Can view',
+      label: t('permissions.options.view'),
     },
     {
       value: 'write',
-      label: 'Can edit',
+      label: t('permissions.options.edit'),
     },
   ]
 
@@ -71,12 +76,12 @@ const UserInviteForm = ({ form, fetchOptions, onInvite, canChangeAccess }) => {
             </StyledFormItem>
           </Space.Compact>
           <Button
+            data-test="modal-share-btn"
             disabled={noAvailableUsers || !canChangeAccess}
             htmlType="submit"
             type="primary"
-            data-test="modal-share-btn"
           >
-            Share
+            {t('actions.share')}
           </Button>
         </StyledSpace>
       </Form>

@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-// import styled from 'styled-components'
 
+import { useTranslation } from 'react-i18next'
 import { Form, Input, Page } from '../common'
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
@@ -11,56 +11,76 @@ import AuthenticationWrapper from './AuthenticationWrapper'
 const Login = props => {
   const { className, errorMessage, hasError, loading, onSubmit } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.login',
+    useSuspense: false,
+  })
+
   return (
     <Page maxWidth={600}>
       <AuthenticationWrapper className={className}>
-        <AuthenticationHeader>Login</AuthenticationHeader>
+        <AuthenticationHeader>{t('title')}</AuthenticationHeader>
 
         <AuthenticationForm
-          alternativeActionLabel="Do you want to sign up instead?"
+          alternativeActionLabel={t('links.signup')}
           alternativeActionLink="/signup"
           errorMessage={errorMessage}
           hasError={hasError}
           loading={loading}
           onSubmit={onSubmit}
           showForgotPassword
-          submitButtonLabel="Log In"
-          title="Login"
+          submitButtonLabel={t('actions.login')}
         >
           <Form.Item
-            label="Email"
+            label={t('form.email', { keyPrefix: 'pages.common' })}
             name="email"
             rules={[
               {
                 required: true,
-                message: 'Email is required',
+                message: () =>
+                  t('form.email.errors.noValue', { keyPrefix: 'pages.common' }),
               },
               {
                 type: 'email',
-                message: 'This is not a valid email address',
+                message: () =>
+                  t('form.email.errors.invalidEmail', {
+                    keyPrefix: 'pages.common',
+                  }),
               },
             ]}
           >
             <Input
               autoComplete="on"
-              placeholder="Please enter your email"
+              data-test="login-email-input"
+              placeholder={t('form.email.placeholder', {
+                keyPrefix: 'pages.common',
+              })}
               prefix={<UserOutlined className="site-form-item-icon" />}
               type="email"
-              data-test="login-email-input"
             />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t('form.password', { keyPrefix: 'pages.common' })}
             name="password"
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[
+              {
+                required: true,
+                message: () =>
+                  t('form.password.errors.noValue', {
+                    keyPrefix: 'pages.common',
+                  }),
+              },
+            ]}
           >
             <Input
               autoComplete="on"
-              placeholder="Please enter your password"
+              data-test="login-password-input"
+              placeholder={t('form.password.placeholder', {
+                keyPrefix: 'pages.common',
+              })}
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              data-test="login-password-input"
             />
           </Form.Item>
         </AuthenticationForm>

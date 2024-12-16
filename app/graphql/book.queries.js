@@ -42,7 +42,7 @@ const GET_ENTIRE_BOOK = gql`
           id
           title
           divisionId
-          # content
+          content
           componentType
           trackChangesEnabled
           uploading
@@ -225,7 +225,7 @@ const INGEST_WORD_FILES = gql`
       id
       title
       divisionId
-      # content
+      content
       componentType
       trackChangesEnabled
       uploading
@@ -276,7 +276,7 @@ const UPDATE_BOOK_POD_METADATA = gql`
           id
           title
           divisionId
-          # content
+          content
           componentType
           trackChangesEnabled
           uploading
@@ -380,7 +380,7 @@ const LOCK_BOOK_COMPONENT_POD = gql`
           id
           title
           divisionId
-          # content
+          content
           componentType
           trackChangesEnabled
           uploading

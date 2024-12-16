@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Checkbox } from '../common'
 
 const Wrapper = styled.div`
@@ -9,6 +10,10 @@ const Wrapper = styled.div`
 
 const LicenseTypes = props => {
   const { value, onChange, canChangeMetadata } = props
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookMetadataTab.sections.copyrightPage.options',
+  })
 
   const [currentValue, setCurrentValue] = useState(value)
 
@@ -39,21 +44,21 @@ const LicenseTypes = props => {
         disabled={!canChangeMetadata}
         onChange={handleNcChange}
       >
-        NonCommercial (NC)
+        {t('creativeCommons.restrictions.nonCommercial')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.SA}
         disabled={currentValue?.ND || !canChangeMetadata}
         onChange={handleSaChange}
       >
-        ShareAlike (SA)
+        {t('creativeCommons.restrictions.shareAlike')}
       </Checkbox>
       <Checkbox
         checked={currentValue?.ND}
         disabled={currentValue?.SA || !canChangeMetadata}
         onChange={handleNdChange}
       >
-        NoDerivatives (ND)
+        {t('creativeCommons.restrictions.noDerivatives')}
       </Checkbox>
     </Wrapper>
   )

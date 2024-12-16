@@ -93,7 +93,6 @@ const StyledButton = styled(AntButton)`
     `
   }}
   padding: ${grid(1)};
-  text-transform: capitalize;
 `
 
 /**

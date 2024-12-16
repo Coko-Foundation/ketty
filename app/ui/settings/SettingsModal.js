@@ -5,6 +5,7 @@ import { Switch, Form } from 'antd'
 import { useMutation, useSubscription } from '@apollo/client'
 import { useCurrentUser, grid } from '@coko/client'
 import { DeleteOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import {
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   UPDATE_SETTINGS,
@@ -98,6 +99,10 @@ const SettingsModal = ({
   closeModal,
   refetchBookSettings,
 }) => {
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.common.header.bookSettingsModal',
+  })
+
   const [form] = Form.useForm()
   form.validateTrigger = ['onSubmit']
 
@@ -145,7 +150,7 @@ const SettingsModal = ({
       form.setFields([
         {
           name: 'prompt',
-          errors: ['Click "Add prompt" then save'],
+          errors: [t('add_prompt_missing')],
         },
       ])
       return
@@ -190,7 +195,7 @@ const SettingsModal = ({
       form.setFields([
         {
           name: 'prompt',
-          errors: ['This is a duplicate prompt'],
+          errors: [t('add_prompt_duplicate')],
         },
       ])
       return
@@ -243,14 +248,12 @@ const SettingsModal = ({
     <Stack>
       <SettingsWrapper style={{ marginTop: '24px' }}>
         <div>
-          <SettingTitle>AI writing prompt use</SettingTitle>
-          <SettingInfo>
-            Users with edit access to this book can use AI writing prompts.
-          </SettingInfo>
+          <SettingTitle>{t('aiWriting.promptUse')}</SettingTitle>
+          <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
         </div>
         <Switch
-          data-test="settings-toggleAI-switch"
           checked={isAiOn}
+          data-test="settings-toggleAI-switch"
           disabled={updateLoading || !canChangeSettings}
           onChange={toggleAiOn}
         />
@@ -261,11 +264,11 @@ const SettingsModal = ({
           <Stack>
             <SettingsWrapper>
               <SettingInfo>
-                <SettingTitle>Free-text writing prompts</SettingTitle>
+                <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
               </SettingInfo>
               <Switch
-                data-test="settings-freeTextPrompt-switch"
                 checked={isFreeTextPromptsOn}
+                data-test="settings-freeTextPrompt-switch"
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleFreePromptSwitch(e)}
               />
@@ -273,11 +276,11 @@ const SettingsModal = ({
 
             <SettingsWrapper>
               <SettingInfo>
-                <SettingTitle>Customize AI writing prompts</SettingTitle>
+                <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
               </SettingInfo>
               <Switch
-                data-test="settings-customPrompt-switch"
                 checked={isCustomPromptsOn}
+                data-test="settings-customPrompt-switch"
                 disabled={updateLoading || !canChangeSettings}
                 onChange={e => toggleCustomPromptsSwitch(e)}
               />
@@ -291,7 +294,9 @@ const SettingsModal = ({
                         rules={[
                           {
                             required: true,
-                            message: 'Please input a prompt',
+                            message: t(
+                              'aiWriting.customPrompts.input.errors.noValue',
+                            ),
                             validator: (_, value) => {
                               if (!value.trim().length) {
                                 return Promise.reject()
@@ -302,13 +307,15 @@ const SettingsModal = ({
                           },
                         ]}
                       >
-                        <Input placeholder="Add prompt" />
+                        <Input
+                          placeholder={t('aiWriting.customPrompts.input')}
+                        />
                       </StyledFormItem>
                       <StyledFormButton
                         disabled={updateLoading || !canChangeSettings}
                         htmlType="submit"
                       >
-                        Add Prompt
+                        {t('aiWriting.customPrompts.actions.add')}
                       </StyledFormButton>
                     </StyledForm>
                   )}
@@ -336,14 +343,12 @@ const SettingsModal = ({
 
       <SettingsWrapper>
         <div>
-          <SettingTitle>AI Book Designer (Beta)</SettingTitle>
-          <SettingInfo>
-            Users with edit access to this book can use the AI Book Designer.
-          </SettingInfo>
+          <SettingTitle>{t('aiDesigner')}</SettingTitle>
+          <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
         </div>
         <Switch
-          data-test="settings-AIDesigner-switch"
           checked={isAiPdfOn}
+          data-test="settings-AIDesigner-switch"
           disabled={updateLoading || !canChangeSettings}
           onChange={e => setIsAiPdfOn(e)}
         />
@@ -351,16 +356,16 @@ const SettingsModal = ({
 
       <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
         <div>
-          <SettingTitle>Knowledge Base</SettingTitle>
+          <SettingTitle>{t('knowledgeBase')}</SettingTitle>
           <SettingInfo>
-            Users with edit access to this book can create and query a knowledge
-            base. <br /> Requires AI writing prompts and free-text prompts to be
-            on.
+            {t('knowledgeBase.detail')}
+            {/* <br />
+            {t('knowledge_base_info_2')} */}
           </SettingInfo>
         </div>
         <Switch
-          data-test="settings-kb-switch"
           checked={isKnowledgeBaseOn}
+          data-test="settings-kb-switch"
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleKnowledgeBase(e)}
         />
@@ -372,7 +377,7 @@ const SettingsModal = ({
           htmlType="reset"
           onClick={closeModal}
         >
-          Cancel
+          {t('cancel', { keyPrefix: 'pages.common.actions' })}
         </StyledButton>
 
         <StyledButton
@@ -383,7 +388,7 @@ const SettingsModal = ({
           onClick={handleUpdateBookSettings}
           type="primary"
         >
-          Save
+          {t('save', { keyPrefix: 'pages.common.actions' })}
         </StyledButton>
       </ButtonsContainer>
     </Stack>

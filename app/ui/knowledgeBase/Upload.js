@@ -3,6 +3,7 @@ import React from 'react'
 import { Upload } from 'antd'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 const { Dragger } = Upload
 
@@ -43,11 +44,12 @@ const StyledDragger = styled(Dragger)`
 `
 
 const UploadHiddenDropZone = props => {
+  const { t } = useTranslation()
   return (
     <StyledDragger
       {...props}
       action=""
-      aria-label="Drop files here to upload"
+      aria-label={t('pages.knowledgeBase.files.uploadZone')}
       openFileDialogOnClick={false}
       showUploadList={false}
     />

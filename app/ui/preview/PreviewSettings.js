@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import pick from 'lodash/pick'
 import { isEqualWith, isNil } from 'lodash'
 import { VerticalAlignTopOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import { grid } from '@coko/client'
 import { Button, Stack, TabsStyled as Tabs } from '../common'
 import NewProfileTab from './NewProfileTab'
@@ -139,6 +140,10 @@ const PreviewSettings = props => {
     hasCover,
   } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs',
+  })
+
   // #region functions
   const findProfile = profileValue => {
     return profiles?.find(p => p.value === profileValue)
@@ -200,7 +205,7 @@ const PreviewSettings = props => {
         destroyInactiveTabPane
         items={[
           {
-            label: 'New preview',
+            label: t('newPreview.title'),
             key: 'new',
             children: (
               <StyledStack>
@@ -227,7 +232,7 @@ const PreviewSettings = props => {
             ),
           },
           {
-            label: 'Publishing profiles',
+            label: t('publishingProfiles.title'),
             key: 'saved',
             children: (
               <StyledStack>
@@ -275,6 +280,7 @@ const PreviewSettings = props => {
       />
       <div style={{ zIndex: '9', backgroundColor: 'white' }}>
         <Button
+          aria-label={t('collapse')}
           icon={<CollapseArrow $isCollapsed={isCollapsed} />}
           onClick={handleClickCollapse}
           type="text"

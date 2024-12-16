@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { CloseOutlined } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 
 const Wrapper = styled.span`
@@ -118,15 +119,16 @@ export const ChatBox = ({
       <MessageContent $onBottom={$onBottom}>
         {children || (
           <>
-            <span
+            {/* <span
               style={{
                 display: 'flex',
                 width: '100%',
                 justifyContent: 'space-between',
               }}
             >
-              {header}
-            </span>
+              
+            </span> */}
+            <div>{header}</div>
             <PaddedContent>{content}</PaddedContent>
           </>
         )}
@@ -157,6 +159,7 @@ const OptionsTemplate = ({ content }) => {
 const ChatBubble = ({ forceHide }) => {
   const { feedback } = useContext(CssAssistantContext)
   const [hideMessage, setHideMessage] = useState(false)
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner' })
 
   useEffect(() => {
     setHideMessage(false)
@@ -179,7 +182,7 @@ const ChatBubble = ({ forceHide }) => {
           color: '#fff',
         }}
       >
-        AI
+        {t('chat.bubble')}
       </UnStyledButton>
       <ChatBox hide={forceHide || (!forceHide && hideMessage)}>
         <span
@@ -189,7 +192,7 @@ const ChatBubble = ({ forceHide }) => {
             justifyContent: 'space-between',
           }}
         >
-          <SmallText>Coko AI Book Designer:</SmallText>
+          <SmallText>{t('chat.title')}:</SmallText>
           <UnStyledButton
             onClick={() => setHideMessage(!hideMessage)}
             style={{ objectFit: 'contain', width: '18px', height: '18px' }}
@@ -200,17 +203,13 @@ const ChatBubble = ({ forceHide }) => {
         <PaddedContent>
           {feedback || (
             <>
-              <span>Hello there!</span>
-              <span>{`I'm here to help with your book's design`}</span>
-              <span>You can also ask for the current property values</span>
-              <span>for example: What is the page size of the book?</span>
-              <span style={{ marginBottom: '8px' }}>
-                Here are some suggestions to get started:
-              </span>
-              <ul>
-                <OptionsTemplate content="Change the page size 5 x 8 inches" />
-                <OptionsTemplate content="Change the title font to sans serif" />
-                <OptionsTemplate content="Make all the headings blue" />
+              {t('chat.welcome').map((s, i) =>
+                i < 5 ? <span>{s}</span> : null,
+              )}
+              <ul style={{ marginTop: '20px' }}>
+                {t('chat.welcome').map((s, i) =>
+                  i >= 5 ? <OptionsTemplate content={s} /> : null,
+                )}
               </ul>
             </>
           )}

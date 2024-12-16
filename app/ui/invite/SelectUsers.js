@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Spin, Select } from '../common'
 
 const StyledSelect = styled(Select)`
@@ -21,6 +22,7 @@ const SelectUsers = ({
   const [fetching, setFetching] = useState(false)
   const [options, setOptions] = useState([])
   const fetchRef = useRef(0)
+  const { t } = useTranslation()
 
   const debounceFetcher = useMemo(() => {
     const loadOptions = v => {
@@ -77,7 +79,7 @@ const SelectUsers = ({
       }}
       onSearch={debounceFetcher}
       options={options}
-      placeholder="Enter email addresses, separated by commas"
+      placeholder={t('pages.common.header.shareModal.emailInput')}
       value={value}
     />
   )

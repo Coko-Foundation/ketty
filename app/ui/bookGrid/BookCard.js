@@ -10,8 +10,9 @@ import { Card } from 'antd'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import Popup from '@coko/client/dist/ui/common/Popup'
-import { Button, LinkWithoutStyles } from '../common'
+import { LinkWithoutStyles, Button } from '../common'
 import BookCover from './BookCover'
 
 const { Meta } = Card
@@ -134,6 +135,8 @@ const BookCard = ({
   canUploadBookThumbnail,
   gridView,
 }) => {
+  const { t } = useTranslation(null, { keyPrefix: 'pages.dash.book' })
+
   return (
     <StyledCard
       cover={<BookCover src={cover && cover[0]?.coverUrl} title={title} />}
@@ -143,7 +146,7 @@ const BookCard = ({
     >
       <TitleAndActionsWrapper>
         <StyledLink to={`/books/${id}/producer`}>
-          <Meta title={title || 'Untitled'} />
+          <Meta title={title || t('untitled')} />
         </StyledLink>
         {showActions && (
           <MoreActions>
@@ -162,11 +165,11 @@ const BookCard = ({
                       style={{}}
                       to={`/books/${id}/producer#metadata`}
                     >
-                      Manage cover and metadata
+                      {t('menu.options.manageMetadata')}
                     </StyledLink>
                   ) : (
                     <DisabledPlaceholder>
-                      Manage cover and metadata
+                      {t('menu.options.manageMetadata')}
                     </DisabledPlaceholder>
                   )}
                 </div>
@@ -182,7 +185,7 @@ const BookCard = ({
                     }}
                     type="text"
                   >
-                    Delete book
+                    {t('menu.options.delete')}
                   </Button>
                 </div>
               </PopupContentWrapper>
@@ -193,7 +196,6 @@ const BookCard = ({
     </StyledCard>
   )
 }
-// </LinkWithoutStyles>
 
 BookCard.propTypes = {
   id: PropTypes.string.isRequired,

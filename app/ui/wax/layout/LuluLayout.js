@@ -5,6 +5,7 @@ import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
 import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import BookMetadataForm from '../../bookMetadata/BookMetadataForm'
@@ -12,7 +13,6 @@ import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
-import 'wax-table-service/dist/index.css'
 
 const Wrapper = styled.div`
   background: ${th('colorBackground')};
@@ -211,6 +211,7 @@ const RightArea = ComponentPlugin('rightArea')
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const { options } = useContext(WaxContext)
+  const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   let fullScreenStyles = {}
 
@@ -287,7 +288,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
           {!options.fullScreen && (
             <LeftPanelWrapper>
               <TitleArea data-test="producer-bookTitle">
-                {title || 'Untitled Book'}
+                {title || t('untitledBook')}
               </TitleArea>
               <MetadataArea>
                 <Button
@@ -296,7 +297,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   onClick={toggleMetadata}
                   type="text"
                 >
-                  Book Metadata
+                  {t('bookMetadataTab.title')}
                 </Button>
               </MetadataArea>
               <BookPanel
@@ -332,10 +333,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
             />
           ) : (
             <EditorArea isFullscreen={options.fullScreen}>
-              <WaxSurfaceScroll
-                id="wax-surface-scroll"
-                style={{ position: 'relative' }}
-              >
+              <WaxSurfaceScroll id="wax-surface-scroll">
                 <EditorContainer selectedChapterId={selectedChapterId}>
                   {editorLoading ? (
                     <StyledSpin spinning={editorLoading} />
@@ -345,8 +343,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                         <WaxView {...rest} />
                       ) : (
                         <NoSelectedChapterWrapper>
-                          Create or select a chapter on the left to start
-                          writing.
+                          {t('editor.noChapterSelected')}
                         </NoSelectedChapterWrapper>
                       )}
                       <CommentsContainer>

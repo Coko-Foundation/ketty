@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { fadeIn } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { CssAssistantContext } from './hooks/CssAssistantContext'
 import { htmlTagNames } from './utils'
 
@@ -101,6 +102,7 @@ const MessageContent = styled.div`
 const ChatHistory = () => {
   const { selectedCtx, htmlSrc, feedback } = useContext(CssAssistantContext)
   const threadRef = useRef(null)
+  const { t } = useTranslation(null, { keyPrefix: 'pages.aiBookDesigner' })
 
   useEffect(() => {
     const observer = new MutationObserver(mutations => {
@@ -161,9 +163,9 @@ const ChatHistory = () => {
                           textAlign: 'center',
                         }}
                       >
-                        AI
+                        {t('chat.bubble')}
                       </span>
-                      <strong>Coko AI Book designer:</strong>
+                      <strong>{t('chat.title')}:</strong>
                     </>
                   )}
                 </MessageHeader>
@@ -182,15 +184,13 @@ const ChatHistory = () => {
             textAlign: 'center',
           }}
         >
-          {`Make your first prompt related to ${
-            selectedCtx?.node === htmlSrc
-              ? 'the Book'
-              : `this ${
-                  selectedCtx?.tagName
-                    ? htmlTagNames[selectedCtx?.tagName]
-                    : 'selected'
-                }`
-          }`}
+          {selectedCtx?.node === htmlSrc
+            ? t('sections.chatHistory.empty', { context: 'book' })
+            : `${t('sections.chatHistory.empty')} ${
+                selectedCtx?.tagName
+                  ? htmlTagNames[selectedCtx?.tagName]
+                  : t('sections.content.selection')
+              }`}
         </span>
       )}
     </ChatHistoryContainer>

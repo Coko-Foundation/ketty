@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 
 dayjs.extend(relativeTime)
 
@@ -36,15 +37,25 @@ const Synced = props => {
   const { className, isSynced, lastSynced } = props
   const dateString = dayjs(lastSynced).fromNow()
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.tabs.publishingProfiles',
+  })
+
   return (
     <Wrapper className={className} synced={isSynced}>
       <IconWrapper>
         {isSynced ? <CheckCircleFilled /> : <WarningFilled />}
       </IconWrapper>
 
-      <Message>{!isSynced && 'not'} synced with Lulu</Message>
+      <Message>
+        {isSynced
+          ? t('lulu.status.states.synced')
+          : t('lulu.status.states.notSynced')}{' '}
+      </Message>
 
-      <DateText>(last synced {dateString})</DateText>
+      <DateText>
+        ({t('lulu.status.syncTime')} {dateString})
+      </DateText>
     </Wrapper>
   )
 }

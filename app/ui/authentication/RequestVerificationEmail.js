@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
@@ -11,6 +12,7 @@ const RequestVerificationEmailForm = props => {
   // disable prop types that will be checked in the exported component anyway
   // eslint-disable-next-line react/prop-types
   const { hasError, loading, onSubmit } = props
+  const { t } = useTranslation()
 
   return (
     <AuthenticationForm
@@ -21,18 +23,35 @@ const RequestVerificationEmailForm = props => {
       submitButtonLabel="Send"
     >
       <Paragraph>
-        Please enter the email address connected to your account.
+        {t(
+          'Please enter the email address connected to your account.'
+            .toLowerCase()
+            .replace(/ /g, '_'),
+        )}
       </Paragraph>
 
       <Form.Item
-        label="Email"
+        label={t('Email'.toLowerCase().replace(/ /g, '_'))}
         name="email"
         rules={[
-          { required: true, message: 'Email is required' },
-          { type: 'email', message: "Doesn't look like a valid email" },
+          {
+            required: true,
+            message: () => t('Email is required'.toLowerCase().replace('_')),
+          },
+          {
+            type: 'email',
+            message: () =>
+              t(
+                "Doesn't look like a valid email"
+                  .toLowerCase()
+                  .replace(/ /g, '_'),
+              ),
+          },
         ]}
       >
-        <Input placeholder="Enter your email" />
+        <Input
+          placeholder={t('Enter your email'.toLowerCase().replace(/ /g, '_'))}
+        />
       </Form.Item>
     </AuthenticationForm>
   )
@@ -42,10 +61,13 @@ const RequestVerificationEmail = props => {
   const { className, hasError, hasSuccess, loading, onSubmit, userEmail } =
     props
 
+  const { t } = useTranslation()
   return (
     <Page maxWidth={600}>
       <AuthenticationWrapper className={className}>
-        <AuthenticationHeader>Request verification email</AuthenticationHeader>
+        <AuthenticationHeader>
+          {t('Request verification email'.toLowerCase().replace(/ /g, '_'))}
+        </AuthenticationHeader>
 
         {hasSuccess && (
           <div role="alert">
@@ -53,12 +75,14 @@ const RequestVerificationEmail = props => {
               data-testid="result-request-verification-email-success"
               extra={[
                 <Link key={1} to="/login">
-                  Return to the login form
+                  {t(
+                    'Return to the login form'.toLowerCase().replace(/ /g, '_'),
+                  )}
                 </Link>,
               ]}
               status="success"
               subTitle={<SuccessSubTitle userEmail={userEmail} />}
-              title="Request successful!"
+              title={t('Request successful!'.lowerCase().replace(/ /g, '_'))}
             />
           </div>
         )}

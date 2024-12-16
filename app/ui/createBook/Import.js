@@ -3,6 +3,7 @@ import { Button, Col, Row, Space } from 'antd'
 import { grid } from '@coko/client'
 import { InfoCircleFilled } from '@ant-design/icons'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import PropTypes from 'prop-types'
 import { Upload, Page } from '../common'
 
@@ -16,42 +17,41 @@ const Wrapper = styled.div`
 
 const Import = ({ onClickContinue, canImport, loading }) => {
   const [filesToImport, setFilesToImport] = useState([])
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.importPage' })
 
   return (
     <Page maxWidth={1200}>
       <Wrapper>
-        <h1>Import</h1>
+        <h1>{t('title')}</h1>
         <Row gutter={[24, 12]}>
           <Col md={12} xs={24}>
             <p>
-              Files supported: <strong>.docx</strong>
+              {t('info')} <strong>.docx</strong>
             </p>
             <p>
-              <InfoCircleFilled /> Each file you upload will be a separate
-              chapter in your book. You can reorder chapters and import more
-              chapters later.
+              <InfoCircleFilled /> {t('info.details')}
             </p>
           </Col>
           <Col md={12} xs={24}>
             <Space direction="vertical" style={{ display: 'flex' }}>
               <Upload
                 accept=".docx"
+                data-test="import-upload-button"
                 disabled={!canImport}
                 multiple
                 onFilesChange={setFilesToImport}
-                data-test="import-upload-button"
               />
 
               <Row justify="end">
                 <Button
+                  data-test="import-continue-button"
                   disabled={!filesToImport.length || !canImport || loading}
                   loading={loading}
                   onClick={() => onClickContinue(filesToImport)}
                   size="large"
                   type="primary"
-                  data-test="import-continue-button"
                 >
-                  Continue
+                  {t('continue', { keyPrefix: 'pages.common.actions' })}
                 </Button>
               </Row>
             </Space>

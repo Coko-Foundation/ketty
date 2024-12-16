@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Card } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { grid, th } from '@coko/client'
 import { Button } from '../common'
 
@@ -121,6 +122,7 @@ const StyledButton = styled(Button)`
 
 const InitBook = props => {
   const { onCreateBook, onImportBook } = props
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.sections' })
 
   const [loadingCreateBook, setLoadingCreateBook] = useState(false)
   const [loadingImportBook, setLoadingImportBook] = useState(false)
@@ -146,18 +148,16 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>Write from scratch</h2>
-                <p>
-                  Start your book with a blank slate using the built-in Editor.
-                </p>
+                <h2>{t('write.heading')}</h2>
+                <p>{t('write.description')}.</p>
                 <StyledButton
+                  data-test="createBook-startWriting-button"
                   disabled={loadingCreateBook || loadingImportBook}
                   onClick={handleCreateBook}
                   size="large"
                   type="primary"
-                  data-test="createBook-startWriting-button"
                 >
-                  Start writing
+                  {t('write.action')}
                 </StyledButton>
               </Stack>
             }
@@ -167,16 +167,16 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>Upload your files</h2>
-                <p>Start your book with .docx files.</p>
+                <h2>{t('upload.heading')}</h2>
+                <p>{t('upload.description')}.</p>
                 <StyledButton
+                  data-test="createBook-selectFiles-button"
                   disabled={loadingCreateBook || loadingImportBook}
                   onClick={handleImportBook}
                   size="large"
                   type="primary"
-                  data-test="createBook-selectFiles-button"
                 >
-                  Select files
+                  {t('upload.action')}
                 </StyledButton>
               </Stack>
             }

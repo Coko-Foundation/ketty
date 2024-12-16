@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { grid } from '@coko/client'
 import { Button } from 'antd'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 import { Form, Page } from '../common'
 
 const StyledInput = styled.input`
@@ -24,6 +25,8 @@ const Wrapper = styled.div`
 `
 
 const BookTitle = ({ onClickContinue, title, canRename }) => {
+  const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.titlePage' })
+
   const [form] = Form.useForm()
   const bookTitle = Form.useWatch('bookTitle', form)
 
@@ -43,17 +46,17 @@ const BookTitle = ({ onClickContinue, title, canRename }) => {
           initialValues={{ bookTitle: title }}
           onFinish={handleContinue}
         >
-          <Form.Item name="bookTitle" data-test="rename-bookTitle">
-            <StyledInput autoFocus placeholder="Book title" type="text" />
+          <Form.Item data-test="rename-bookTitle" name="bookTitle">
+            <StyledInput autoFocus placeholder={t('input')} type="text" />
           </Form.Item>
-          <p>Don&apos;t overthink it, you can change your title at any time</p>
+          <p>{t('description')}</p>
           <Button
+            data-test="rename-continue-button"
             disabled={!bookTitle || !canRename}
             onClick={handleContinue}
             type="primary"
-            data-test="rename-continue-button"
           >
-            Continue
+            {t('continue', { keyPrefix: 'pages.common.actions' })}
           </Button>
         </Form>
       </Wrapper>

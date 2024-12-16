@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { debounce } from 'lodash'
-
 import { Form as AntForm } from 'antd'
 import { grid, th } from '@coko/client'
 
@@ -90,12 +89,6 @@ const Form = props => {
       {ribbonMessage}
     </FeedbackComponent>
   )
-
-  // const FeedbackElement = (
-  //   <FeedbackComponent hide={!showRibbon} status={submissionStatus}>
-  //     {ribbonMessage}
-  //   </FeedbackComponent>
-  // )
 
   // if form validation fails, scroll to first error field (if applicable) and focus
   const focusErrorField = errorFields => {

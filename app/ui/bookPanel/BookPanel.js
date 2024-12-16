@@ -4,6 +4,7 @@ import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 import { Space } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import ChapterList from './ChapterList'
 import { Button } from '../common'
@@ -57,28 +58,31 @@ const BookPanel = props => {
     onBookComponentParentIdChange,
   } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.producer.bookBodySidebar',
+  })
   // TO RE-DO: Do no show meta data form if chapters are being processed
 
   return (
     <ChaptersArea className={className}>
       <ChaptersHeader>
-        <StyledHeading>Book Body</StyledHeading>
+        <StyledHeading>{t('title')}</StyledHeading>
         <ChaptersActions>
           <IconWrapper
-            aria-label="Upload a chapter"
+            aria-label={t('actions.upload')}
             disabled={!canEdit}
             icon={<CloudUploadOutlined />}
             onClick={onUploadChapter}
-            title="Upload a chapter"
+            title={t('actions.upload')}
             type="text"
           />
           <IconWrapper
-            aria-label="Create a chapter"
+            aria-label={t('actions.create')}
             data-test="producer-createChapter-btn"
             disabled={!canEdit}
             icon={<PlusOutlined />}
             onClick={onAddChapter}
-            title="Create a chapter"
+            title={t('actions.create')}
             type="text"
           />
         </ChaptersActions>
