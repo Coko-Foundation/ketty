@@ -53,6 +53,8 @@ const UnstyledLink = styled(Link)`
   border-radius: ${th('borderRadius')};
   color: inherit;
   display: inline-flex;
+  justify-content: center;
+  min-block-size: 32px;
   padding: 4px;
   text-decoration: none;
 
@@ -282,7 +284,6 @@ const Header = props => {
                       onClick={() => {
                         document.querySelector('#main-content').focus()
                       }}
-                      style={{ justifyContent: 'center', height: '32px' }}
                       to="/admin"
                     >
                       {t('admin')}

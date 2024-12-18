@@ -7,6 +7,7 @@ import ExportOptionsSection from './ExportOptionsSection'
 import Footer from './Footer'
 import LuluIntegration from './LuluIntegration'
 import FlaxIntegration from './FlaxIntegration'
+import FlaxTemplateCustomization from './FlaxTemplateCustomization'
 import { Ribbon } from '../common'
 
 const SavedProfilesTab = props => {
@@ -133,6 +134,18 @@ const SavedProfilesTab = props => {
             selectedTemplate={currentOptions.template}
             templates={templates}
           />
+
+          {currentOptions.format === 'web' &&
+            exportsConfig.webCustomHTML.enabled && (
+              <FlaxTemplateCustomization
+                customParts={{
+                  customHeader: currentOptions.customHeader,
+                  customFooter: currentOptions.customFooter,
+                }}
+                loading={loadingPreview}
+                onApplyChanges={handleOptionsChange}
+              />
+            )}
 
           <Footer
             canModify={canModify}

@@ -61,10 +61,10 @@ const ProfileRow = props => {
 
     updateProfile()
       .then(() => {
-        notify('success', t('profile_saved'))
+        notify('success', t('profile.actions.update.status.success'))
       })
       .catch(() => {
-        notify('error', t('profile_save_error'))
+        notify('error', t('profile.actions.update.status.error'))
       })
       .finally(() => {
         setUpdateLoading(false)
@@ -78,10 +78,10 @@ const ProfileRow = props => {
 
     onClickDelete()
       .then(() => {
-        notify('success')
+        notify('profile.actions.delete.status.success')
       })
       .catch(() => {
-        notify('error', t('profile_delete_error'))
+        notify('error', t('profile.actions.delete.status.success'))
       })
       .finally(() => {
         setDeleteLoading(false)

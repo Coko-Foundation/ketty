@@ -48,6 +48,10 @@ const GET_EXPORT_PROFILES = gql`
           pdfProfileId
           epubProfileId
         }
+        runningBlocks {
+          customHeader
+          customFooter
+        }
       }
     }
   }
@@ -80,6 +84,10 @@ const CREATE_EXPORT_PROFILE = gql`
         epub
         pdfProfileId
         epubProfileId
+      }
+      runningBlocks {
+        customHeader
+        customFooter
       }
     }
   }

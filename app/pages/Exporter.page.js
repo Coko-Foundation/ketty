@@ -98,6 +98,8 @@ const optionKeys = [
   'includeEpub',
   'pdfProfileId',
   'epubProfileId',
+  'customHeader',
+  'customFooter',
 ]
 
 const getProfileExportOptions = profile => {
@@ -421,6 +423,8 @@ const PreviewerPage = () => {
       includePdf,
       pdfProfileId,
       epubProfileId,
+      customHeader,
+      customFooter,
     } = newProfileOptions
     // } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
@@ -442,6 +446,10 @@ const PreviewerPage = () => {
         pdf: includePdf,
         pdfProfileId,
         epubProfileId,
+      },
+      runningBlocks: {
+        customHeader,
+        customFooter,
       },
     }
 
@@ -495,6 +503,8 @@ const PreviewerPage = () => {
       includeEpub,
       pdfProfileId,
       epubProfileId,
+      customHeader,
+      customFooter,
     } = activeTabKey === 'saved' ? currentOptions : newProfileOptions
 
     const data = {
@@ -513,6 +523,10 @@ const PreviewerPage = () => {
         epub: includeEpub,
         pdfProfileId: includePdf ? pdfProfileId : null,
         epubProfileId: includeEpub ? epubProfileId : null,
+      },
+      runningBlocks: {
+        customHeader,
+        customFooter,
       },
     }
 
@@ -547,8 +561,15 @@ const PreviewerPage = () => {
   }
 
   const handlePublish = () => {
-    const { template, includePdf, includeEpub, pdfProfileId, epubProfileId } =
-      currentOptions
+    const {
+      template,
+      includePdf,
+      includeEpub,
+      pdfProfileId,
+      epubProfileId,
+      customHeader,
+      customFooter,
+    } = currentOptions
 
     return publish({
       variables: {
@@ -560,6 +581,8 @@ const PreviewerPage = () => {
             includeEpub,
             pdfProfileId,
             epubProfileId,
+            customHeader,
+            customFooter,
           },
         },
         profileId: selectedProfile,
@@ -614,6 +637,8 @@ const PreviewerPage = () => {
           ? {
               includePdf: options.includePdf,
               includeEpub: options.includeEpub,
+              customHeader: options.customHeader,
+              customFooter: options.customFooter,
             }
           : {
               includeTOC: options.content.includes('includeTOC'),
@@ -634,6 +659,8 @@ const PreviewerPage = () => {
         includeEpub: options.includeEpub,
         pdfProfileId: options.pdfProfileId,
         epubProfileId: options.epubProfileId,
+        customHeader: options.customHeader,
+        customFooter: options.customFooter,
       })
     } else {
       setNewProfileOptions({
@@ -645,6 +672,8 @@ const PreviewerPage = () => {
         includeEpub: options.includeEpub,
         pdfProfileId: options.pdfProfileId,
         epubProfileId: options.epubProfileId,
+        customHeader: options.customHeader,
+        customFooter: options.customFooter,
       })
     }
 
@@ -709,6 +738,7 @@ const PreviewerPage = () => {
 
     if (options.format === 'web' && current.format === 'web') {
       setCreatingPreview(true)
+
       handleCreatePreview(templatesData.getSpecificTemplates, options, 'web')
     } else {
       handleRefetchTemplates(options)
@@ -866,6 +896,8 @@ const PreviewerPage = () => {
           includeEpub: !!p.downloadableAssets?.epub,
           pdfProfileId: p.downloadableAssets?.pdfProfileId,
           epubProfileId: p.downloadableAssets?.epubProfileId,
+          customHeader: p.runningBlocks?.customHeader,
+          customFooter: p.runningBlocks?.customFooter,
         }
       })
       .filter(p => {
@@ -924,6 +956,7 @@ const PreviewerPage = () => {
       loadingPreview={creatingPreview}
       luluConfig={luluConfig}
       newProfileOptions={newProfileOptions}
+      // onCustomHTMLChanges={onCustomHTMLChanges}
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
       onPublish={userIsOwner ? handlePublish : null}
