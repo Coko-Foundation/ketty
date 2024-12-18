@@ -54,7 +54,7 @@ const StyledTabs = styled(Tabs)`
 
 const StyledStack = styled(Stack)`
   --space: 1em;
-  height: 100%;
+  /* height: 100%; */
 `
 
 const CollapseArrow = styled(VerticalAlignTopOutlined)`
@@ -77,6 +77,8 @@ const optionKeys = [
   'includeEpub',
   'pdfProfileId',
   'epubProfileId',
+  'customHeader',
+  'customFooter',
 ]
 
 const contentOrder = [

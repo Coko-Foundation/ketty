@@ -589,6 +589,21 @@ const AdminDashboard = props => {
                   onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
                 />
               </StyledControlWrapper>
+              <p style={{ gridColumn: 'span 2' }}>
+                {/* {t('integrations.flax.explanation')} */}
+                Allow inserting custom HTML as header and footer for published
+                books:
+              </p>
+              <StyledControlWrapper>
+                {/* <span>{t('integrations.flax.downloadOptions.epub')}</span> */}
+                <span>Custom HTML (experimental)</span>
+                <Switch
+                  checked={exportOptions?.webCustomHTML?.enabled}
+                  data-test="admindb-pubEPUB-switch"
+                  loading={paramsLoading}
+                  onChange={val => exportConfigUpdate(val, 'webCustomHTML')}
+                />
+              </StyledControlWrapper>
             </Stack>
           )}
         </StyledControlWrapper>
