@@ -42,6 +42,7 @@ import {
   AdminPage,
   CreateBook,
   KnowledgeBasePage,
+  TemplateMananger,
 } from './pages'
 
 import { GET_BOOK_SETTINGS, APPLICATION_PARAMETERS } from './graphql'
@@ -398,6 +399,11 @@ const routes = (
                   <Route exact path="/admin">
                     <Authenticated>
                       <AdminPage />
+                    </Authenticated>
+                  </Route>
+                  <Route exact path="/template-manager">
+                    <Authenticated>
+                      <TemplateMananger />
                     </Authenticated>
                   </Route>
                 </Switch>

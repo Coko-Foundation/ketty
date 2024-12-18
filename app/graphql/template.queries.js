@@ -5,16 +5,20 @@ const GET_TEMPLATES = gql`
     getTemplates(ascending: $ascending, sortKey: $sortKey) {
       id
       name
+      lastUpdated
       thumbnail {
         name
-        mimetype
+        # mimetype
         id
-        source
+        # source
       }
       author
       trimSize
       target
       notes
+      url
+      enabled
+      canBeDeleted
     }
   }
 `
@@ -43,6 +47,36 @@ const GET_SPECIFIC_TEMPLATES = gql`
 const TEMPLATE_UPDATED_SUBSCRIPTION = gql`
   subscription TemplatedUpdated($id: ID!) {
     templateUpdated(id: $id)
+  }
+`
+
+const ADD_TEMPLATE = gql`
+  mutation AddTemplate($url: String) {
+    addTemplate(url: $url)
+  }
+`
+
+const REFRESH_TEMPLATE = gql`
+  mutation RefreshTemplate($url: String) {
+    refreshTemplate(url: $url)
+  }
+`
+
+const DISABLE_TEMPLATE = gql`
+  mutation DisableTemplate($url: String) {
+    disableTemplate(url: $url)
+  }
+`
+
+const ENABLE_TEMPLATE = gql`
+  mutation EnableTemplate($url: String) {
+    enableTemplate(url: $url)
+  }
+`
+
+const REMOVE_TEMPLATE = gql`
+  mutation RemoveTemplate($url: String) {
+    removeTemplate(url: $url)
   }
 `
 
@@ -110,4 +144,9 @@ export {
   GET_SPECIFIC_TEMPLATES,
   TEMPLATE_UPDATED_SUBSCRIPTION,
   UPDATE_ASSOCIATED_TEMPLATES,
+  ADD_TEMPLATE,
+  REFRESH_TEMPLATE,
+  DISABLE_TEMPLATE,
+  ENABLE_TEMPLATE,
+  REMOVE_TEMPLATE,
 }
