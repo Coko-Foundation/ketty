@@ -317,6 +317,8 @@ const PreviewerPage = () => {
         includeEpub: created.downloadableAssets.epub,
         pdfProfileId: created.downloadableAssets.pdfProfileId,
         epubProfileId: created.downloadableAssets.epubProfileId,
+        customHeader: created.runningBlocks.customHeader,
+        customFooter: created.runningBlocks.customFooter,
       })
 
       setActiveTabKey('saved')
