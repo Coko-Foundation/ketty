@@ -136,11 +136,11 @@ const SavedProfilesTab = props => {
           />
 
           {currentOptions.format === 'web' &&
-            exportsConfig.webCustomHTML.enabled && (
+            exportsConfig.webCustomHTML?.enabled && (
               <FlaxTemplateCustomization
-                customParts={{
-                  customHeader: currentOptions.customHeader,
-                  customFooter: currentOptions.customFooter,
+                runningBlocks={{
+                  header: currentOptions.customHeader,
+                  footer: currentOptions.customFooter,
                 }}
                 loading={loadingPreview}
                 onApplyChanges={handleOptionsChange}
