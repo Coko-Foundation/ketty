@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../common'
 
 const Wrapper = styled.header`
@@ -11,10 +12,12 @@ const Wrapper = styled.header`
 
 const TemplateManagerHeader = props => {
   const { openNewTemplateModal } = props
+  const { t } = useTranslation(null, { keyPrefix: 'pages.templateManager' })
+
   return (
     <Wrapper>
-      <h1>Template manager</h1>
-      <Button onClick={openNewTemplateModal}>+ Add template</Button>
+      <h1>{t('title')}</h1>
+      <Button onClick={openNewTemplateModal}>{t('actions.add')}</Button>
     </Wrapper>
   )
 }

@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Divider } from 'antd'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { grid, th } from '@coko/client'
 import { Modal, Button, Stack } from '../common'
 
@@ -23,6 +24,10 @@ const FlaxTemplateCustomization = props => {
     loading,
   } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections.flaxCustomization',
+  })
+
   const [openModal, setOpenModal] = useState(false)
   const headerRef = useRef()
   const footerRef = useRef()
@@ -40,35 +45,33 @@ const FlaxTemplateCustomization = props => {
     <>
       <Divider />
       <StyledButton disabled={loading} onClick={() => setOpenModal(true)}>
-        {!!header || !!footer
-          ? 'Edit custom header & footer'
-          : 'Add custom header & footer'}
+        {!!header || !!footer ? t('edit') : t('add')}
       </StyledButton>
 
       <Modal
-        okText="Apply changes"
+        okText={t('modal.submit')}
         onCancel={() => setOpenModal(false)}
         onOk={handleApplyChanges}
         open={openModal}
-        title="Flax template customisation"
+        title={t('modal.title')}
       >
         <Stack>
           <Stack>
-            <label htmlFor="customHeader">Custom header</label>
+            <label htmlFor="customHeader">{t('modal.customHeader')}</label>
             <StyledTextarea
               defaultValue={header}
               id="customHeader"
-              placeholder="HTML that will appear on top of the web page"
+              placeholder={t('modal.customHeader.placeholder')}
               ref={headerRef}
               rows={7}
             />
           </Stack>
           <Stack>
-            <label htmlFor="customFooter">Custom footer</label>
+            <label htmlFor="customFooter">{t('modal.customFooter')}</label>
             <StyledTextarea
               defaultValue={footer}
               id="customFooter"
-              placeholder="HTML that will appear at the bootom of the web page"
+              placeholder={t('modal.customFooter.placeholder')}
               ref={footerRef}
               rows={7}
             />

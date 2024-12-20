@@ -1,6 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import styled from 'styled-components'
+import { Trans, useTranslation } from 'react-i18next'
 import { Modal, Form, Input } from '../common'
+
+const Strong = styled.strong`
+  text-transform: capitalize;
+`
 
 const Modals = props => {
   const {
@@ -20,6 +26,10 @@ const Modals = props => {
     templateToDelete,
     setTemplateToDelete,
   } = props
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.templateManager.modals',
+  })
 
   const [newTemplateForm] = Form.useForm()
 
@@ -68,17 +78,20 @@ const Modals = props => {
         onCancel={() => setAddNewModal(false)}
         onOk={handleAddTemplate}
         open={addNewModal}
-        title="Add new template"
+        title={t('new.title')}
       >
         <Form form={newTemplateForm} layout="vertical">
           <Form.Item
-            label="Template URL"
+            label={t('new.input.label')}
             name="tempalteUrl"
-            rules={[{ required: true }, { type: 'url' }]}
+            rules={[
+              { required: true, message: t('new.input.errors.empty') },
+              { type: 'url', message: t('new.input.errors.invalid') },
+            ]}
           >
             <Input
               pattern="https://.*"
-              placeholder="URL of your template's repository"
+              placeholder={t('new.input.placeholder')}
               type="url"
             />
           </Form.Item>
@@ -87,29 +100,34 @@ const Modals = props => {
       {/* Disable template modal */}
       <Modal
         confirmLoading={disableLoading}
-        okText="Disable"
+        okText={t('actions.disable', { keyPrefix: 'pages.templateManager' })}
         okType="danger"
         onCancel={() => setDisableTemplateModal(false)}
         onOk={handleDisableTemplate}
         open={disableTemplateModal}
-        title="Disable template"
+        title={t('disable.title')}
       >
-        Are you sure you want to disable the{' '}
-        <strong>{templateToDisable?.name}</strong> template? The template will
-        not be available for users in the Preview & Publish page.
+        <Trans
+          components={[<Strong />]}
+          i18nKey="pages.templateManager.modals.disable.body"
+          values={{ templateName: templateToDisable?.name }}
+        />
       </Modal>
       {/* Delete template modal */}
       <Modal
         confirmLoading={disableLoading}
-        okText="Delete"
+        okText={t('actions.delete', { keyPrefix: 'pages.templateManager' })}
         okType="danger"
         onCancel={() => setDeleteTemplateModal(false)}
         onOk={handleDeleteTemplate}
         open={deleteTemplateModal}
-        title="Delete template"
+        title={t('delete.title')}
       >
-        Are you sure you want to delete the{' '}
-        <strong>{templateToDelete?.name}</strong> template?.
+        <Trans
+          components={[<Strong />]}
+          i18nKey="pages.templateManager.modals.delete.body"
+          values={{ templateName: templateToDelete?.name }}
+        />
       </Modal>
     </>
   )
@@ -124,7 +142,10 @@ Modals.propTypes = {
   setDisableTemplateModal: PropTypes.func,
   disableTemplate: PropTypes.func,
   disableLoading: PropTypes.bool,
-  templateToDisable: PropTypes.string,
+  templateToDisable: PropTypes.shape({
+    name: PropTypes.string,
+    url: PropTypes.string,
+  }),
   setTemplateToDisable: PropTypes.func,
   deleteTemplateModal: PropTypes.bool,
   setDeleteTemplateModal: PropTypes.func,
@@ -145,7 +166,7 @@ Modals.defaultProps = {
   setDisableTemplateModal: null,
   disableTemplate: null,
   disableLoading: false,
-  templateToDisable: '',
+  templateToDisable: null,
   setTemplateToDisable: null,
   deleteTemplateModal: false,
   setDeleteTemplateModal: null,
