@@ -54,7 +54,7 @@ const FrontmatterOption = styled(ExportOption)`
 `
 
 const TemplateOption = styled(ExportOption)`
-  &::after {
+  &:nth-last-child(2)::after {
     content: '';
     inline-size: 100%;
     min-block-size: 64px;

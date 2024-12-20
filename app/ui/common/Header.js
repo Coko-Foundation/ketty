@@ -53,6 +53,8 @@ const UnstyledLink = styled(Link)`
   border-radius: ${th('borderRadius')};
   color: inherit;
   display: inline-flex;
+  justify-content: center;
+  min-block-size: 32px;
   padding: 4px;
   text-decoration: none;
 
@@ -276,16 +278,26 @@ const Header = props => {
               <PopupContentWrapper>
                 <LanguageSwitcher languages={languages} />
                 {canAccessAdminPage && (
-                  <UnstyledLink
-                    data-test="header-admin-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    style={{ justifyContent: 'center', height: '32px' }}
-                    to="/admin"
-                  >
-                    {t('admin')}
-                  </UnstyledLink>
+                  <>
+                    <UnstyledLink
+                      data-test="header-admin-link"
+                      onClick={() => {
+                        document.querySelector('#main-content').focus()
+                      }}
+                      to="/admin"
+                    >
+                      {t('admin')}
+                    </UnstyledLink>
+                    <UnstyledLink
+                      data-test="header-admin-link"
+                      onClick={() => {
+                        document.querySelector('#main-content').focus()
+                      }}
+                      to="/template-manager"
+                    >
+                      Templates
+                    </UnstyledLink>
+                  </>
                 )}
                 <Button data-test="logout-button" onClick={onLogout}>
                   {t('logout')}

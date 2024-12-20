@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import ExportOptionsSection from './ExportOptionsSection'
+import FlaxTemplateCustomization from './FlaxTemplateCustomization'
 import Footer from './Footer'
 
 const allExportOptions = [
@@ -57,6 +58,18 @@ const NewProfileTab = props => {
         selectedTemplate={newProfileOptions.template}
         templates={templates}
       />
+
+      {newProfileOptions.format === 'web' &&
+        exportsConfig.webCustomHTML?.enabled && (
+          <FlaxTemplateCustomization
+            runningBlocks={{
+              header: newProfileOptions.customHeader,
+              footer: newProfileOptions.customFooter,
+            }}
+            loading={loadingPreview}
+            onApplyChanges={handleOptionsChange}
+          />
+        )}
 
       <Footer
         canModify={canModify}
