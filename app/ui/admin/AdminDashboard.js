@@ -590,13 +590,10 @@ const AdminDashboard = props => {
                 />
               </StyledControlWrapper>
               <p style={{ gridColumn: 'span 2' }}>
-                {/* {t('integrations.flax.explanation')} */}
-                Allow inserting custom HTML as header and footer for published
-                books:
+                {t('integrations.flax.customize.info')}
               </p>
               <StyledControlWrapper>
-                {/* <span>{t('integrations.flax.downloadOptions.epub')}</span> */}
-                <span>Custom HTML (experimental)</span>
+                <span>{t('integrations.flax.customize.label')}</span>
                 <Switch
                   checked={exportOptions?.webCustomHTML?.enabled}
                   data-test="admindb-pubEPUB-switch"

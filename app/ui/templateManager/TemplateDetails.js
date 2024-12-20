@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../common'
 
 const TemplateDetailsWrapper = styled.div`
@@ -26,12 +27,6 @@ const StyledP = styled.p`
   white-space: nowrap;
 `
 
-const targetOptions = {
-  pagedjs: 'PDF (pagedjs)',
-  epub: 'EPUB',
-  web: 'Web',
-}
-
 const TemplateDetails = props => {
   const {
     record: {
@@ -47,18 +42,28 @@ const TemplateDetails = props => {
     },
   } = props
 
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.templateManager.details',
+  })
+
+  const targetOptions = {
+    pagedjs: t('formats.pdf'),
+    epub: t('formats.epub'),
+    web: t('formats.web'),
+  }
+
   return (
     <TemplateDetailsWrapper>
       <TemplateInner>
         <div>
           <p>
-            <strong>Name: </strong> {name}
+            <strong>{t('name')} </strong> {name}
           </p>
           <p>
-            <strong>Author: </strong> {author}
+            <strong>{t('author')} </strong> {author}
           </p>
           <StyledP>
-            <strong>URL: </strong>
+            <strong>{t('url')} </strong>
             <a href={url} rel="noreferrer" target="_blank">
               {url}
             </a>
@@ -66,13 +71,14 @@ const TemplateDetails = props => {
         </div>
         <div>
           <p>
-            <strong id={`${name}-template-list`}>Available formats:</strong>
+            <strong id={`${name}-template-list`}>{t('formats')}</strong>
           </p>
           <ul aria-labelledby={`${name}-template-list`}>
-            {formats.map(t => (
-              <li key={t.id}>
-                {targetOptions[t.target]}
-                {t.target === 'pagedjs' && `, dimensions ${t.trimSize}`}
+            {formats.map(format => (
+              <li key={format.id}>
+                {targetOptions[format.target]}
+                {format.target === 'pagedjs' &&
+                  `, dimensions ${format.trimSize}`}
               </li>
             ))}
           </ul>
@@ -81,19 +87,23 @@ const TemplateDetails = props => {
       <TemplateActions>
         {enabled ? (
           <Button onClick={disable} status="danger">
-            Disable
+            {t('actions.disable', { keyPrefix: 'pages.templateManager' })}
           </Button>
         ) : (
           <Button onClick={enable} status="success">
-            Enable
+            {t('actions.enable', { keyPrefix: 'pages.templateManager' })}
           </Button>
         )}
         {canBeDeleted ? (
           <Button onClick={deleteTemplate} status="danger">
-            Delete template
+            {t('actions.delete', { keyPrefix: 'pages.templateManager' })}
           </Button>
         ) : (
-          <span>This template cannot be deleted</span>
+          <span>
+            {t('actions.delete.blocked', {
+              keyPrefix: 'pages.templateManager',
+            })}
+          </span>
         )}
       </TemplateActions>
     </TemplateDetailsWrapper>

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import moment from 'moment'
+import { useTranslation } from 'react-i18next'
 import { ReloadOutlined } from '@ant-design/icons'
 import { Table, Button } from '../common'
 import TemplateManagerHeader from './TemplateManagerHeader'
@@ -37,6 +38,8 @@ const TemplateMananger = props => {
     refreshTemplate,
     refreshingTemplate,
   } = props
+
+  const { t } = useTranslation(null, { keyPrefix: 'pages.templateManager' })
 
   const [addNewModal, setAddNewModal] = useState(false)
   const [disableTemplateModal, setDisableTemplateModal] = useState(false)
@@ -94,21 +97,22 @@ const TemplateMananger = props => {
 
   const columns = [
     {
-      title: 'Name',
+      title: t('table.name'),
       dataIndex: 'name',
       key: 'name',
       render: (value, row) => {
-        return `${value} ${row.enabled ? '' : ' (disabled)'}`
+        /* eslint-disable-next-line prefer-template */
+        return `${value} ${row.enabled ? '' : ' ' + t('table.row.disabled')}`
       },
     },
     {
-      title: 'Last updated',
+      title: t('table.lastUpdated'),
       dataIndex: 'lastUpdated',
       key: 'lastUpdated',
       render: lastUpdated => moment(new Date(lastUpdated)).fromNow(),
     },
     {
-      title: 'Actions',
+      title: t('table.actions'),
       dataIndex: 'url',
       key: 'actions',
       render: url => {
@@ -121,7 +125,7 @@ const TemplateMananger = props => {
               onClick={() => handleRefreshTempalte(url)}
             >
               {!refreshing && <ReloadOutlined />}
-              Refresh
+              {t('actions.refresh')}
             </Button>
           </ButtonWrapper>
         )
@@ -161,15 +165,15 @@ const TemplateMananger = props => {
         pagination={false}
       />
       <Modals
-        addNewModal={addNewModal}
         addingTemplate={addingTemplate}
+        addNewModal={addNewModal}
         addTemplate={addTemplate}
-        setAddNewModal={setAddNewModal}
         deleteTemplateModal={deleteTemplateModal}
         disableLoading={disableLoading}
         disableTemplate={disableTemplate}
         disableTemplateModal={disableTemplateModal}
         removeTemplate={removeTemplate}
+        setAddNewModal={setAddNewModal}
         setDeleteTemplateModal={setDeleteTemplateModal}
         setDisableTemplateModal={setDisableTemplateModal}
         setTemplateToDelete={setTemplateToDelete}
