@@ -8,7 +8,7 @@ All UI text is stored in the lanagage file `en-GB.json` in [ketty/server/cofig/l
 
 ## Updating the stardardised English (UK) Ketty interface
 
-1. Download the **Standardised Enlish (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en-GB.json?ref_type=heads).
+1. Download the **Standardised English (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en-GB.json?ref_type=heads).
 2. Make the text updates following the style guidelines below.
 3. Submit an MR or send the file by email to the Ketty team.
 

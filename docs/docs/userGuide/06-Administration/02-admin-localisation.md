@@ -28,7 +28,7 @@ This section shows all languages currently supported. For each language, you'll 
 2. This will use the default translations provided by Ketty
 
 :::info
-To contribute improvements to the standardised version or **submit a new language**, refer to the ['Localisation' section](../../getInvolved/04-Localising%20Ketty's%20Interface.md) of the Contributor's Guide.
+To contribute improvements to the standardised version or **submit a new language**, refer to the ['Localisation' section](../../getInvolved/04-Localising%20Ketty's%20Interface.md) of the Get Involved Guide.
 :::
 
 #### Using customised versions
@@ -52,7 +52,7 @@ If you use a customised language, you will need to update this file manually whe
 3. Click "Save New Language" to complete the process
 
 :::info
-When you add a new language, it functions as a customised language. If other Ketty users would benefit from this language, please consider **contributing a new standardised language** by referring to the ['Localisation' section](../../getInvolved/04-Localising%20Ketty's%20Interface.md) of the Contributor's Guide.
+When you add a new language, it functions as a customised language. If other Ketty users would benefit from this language, please consider **contributing a new standardised language** by referring to the ['Localisation' section](../../getInvolved/04-Localising%20Ketty's%20Interface.md) of the Get Involved Guide.
 :::
 
 ## Managing translation files

@@ -4,9 +4,9 @@ title: "Localising Ketty's Interface"
 
 ## Introduction
 
-This guide will help you understand how to work with our user interface lanaguage file for translations and editorial consistency. While these files might look complex at first, you'll only need to focus on specific parts, and we'll show you exactly what to look for. We'll also share tips for maintaining consistent style and tone throughout the interface.
+This guide will help you understand how to work with our user interface language file for translations and editorial consistency. While these files might look complex at first, you'll only need to focus on specific parts, and we'll show you exactly what to look for. We'll also share tips for maintaining consistent style and tone throughout the interface.
 
-All UI text is stored in the lanagage files in [ketty/server/cofig/languages](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/tree/main/config/languages?ref_type=heads). The `en.json` file is for **Standardised Enlish (UK)** interface and is the source for all translations.
+All UI text is stored in the language files in [ketty/server/cofig/languages](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/tree/main/config/languages?ref_type=heads). The `en-GB.json` file is for the **Standardised English (UK)** interface and is the source for all translations.
 
 ## Understanding the language file
 
@@ -140,7 +140,7 @@ Each piece of text in our interface has a specific type that tells us how it's u
 To contibute a new langauge:
 
 1. First, get in touch with the Ketty team to make sure the language translation you'd like to add isn't already in progress.
-2. Download the **Standardised Enlish (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en.json?ref_type=heads).
+2. Download the **Standardised English (UK)** file from the Admin interface of your Ketty instance or from the source code [here](https://gitlab.coko.foundation/coko-org/products/ketty/server/-/blob/main/config/languages/en-GB.json).
 3. Name the file with the language code from [this list](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry).
 4. If it's necessary to distinguish the region, then append the region code from [this list](https://www.iso.org/obp/ui/#search).
 5. Translate the file following the guidelines above.

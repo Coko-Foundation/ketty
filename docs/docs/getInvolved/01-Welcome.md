@@ -1,4 +1,4 @@
-At Ketty, we’re building a vibrant open-source community to revolutionise book publishing. This guide is designed to help you contribute to the Ketty project, whether you’re a developer, designer, product manager, editor, translator, system administrator, or a Ketty user. No matter your skills, experience, or the nature of your contribution, we welcome you.
+At Ketty, we’re building a vibrant open-source community to revolutionise book publishing. This guide is designed to help you contribute to the Ketty project, whether you’re a designer, product manager, editor, translator, system administrator, or a Ketty user. No matter your skills, experience, or the nature of your contribution, we welcome you.
 
 :::info
 This guide is for contributions beyond development. If you're looking for information on contributing code, refer to
@@ -14,6 +14,6 @@ This guide provides structured information on how you can get involved. Below is
 - **Translators:** A guide on how to translate the interface and suggest new languages.
 - **QA Engineers:** Information on manual and automated testing with Cypress.
 
-We’re continually working on expanding this guide, so if you don’t see detailed instructions for your role let us know at ketty@coko.foundation.
+We’re continually working on expanding this guide, so if you don’t see detailed instructions for your role yet, let us know at ketty@coko.foundation.
 
 Thank you for being part of the Ketty community. Your contributions—large or small—help us build a better open-sourse publshing ecosystem, together.
