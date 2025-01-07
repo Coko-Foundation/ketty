@@ -8,11 +8,12 @@ import { grid, th } from '@coko/client'
 import Template from './Template'
 
 const Wrapper = styled.ul`
-  align-items: start;
+  align-items: center;
   border: 1px solid ${th('colorBorder')};
   border-radius: ${th('borderRadius')};
   display: flex;
   gap: ${grid(1)};
+  list-style-type: none;
   min-height: 100px;
   overflow-x: auto;
   padding: ${grid(2)};
@@ -39,7 +40,9 @@ const TemplateList = props => {
   const { className, onTemplateClick, templates, selectedTemplate, disabled } =
     props
 
-  const { t } = useTranslation()
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.previewAndPublish.sections',
+  })
 
   const handleKeydown = event => {
     let flag = false
@@ -95,37 +98,37 @@ const TemplateList = props => {
   }
 
   return (
-    <>
-      <Wrapper
-        aria-activedescendant={selectedTemplate}
-        aria-labelledby="templates"
-        className={className}
-        disabled={disabled}
-        onFocus={() => {
-          document
-            .getElementById(selectedTemplate)
-            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-        }}
-        onKeyDown={handleKeydown}
-        role="radiogroup"
-        tabIndex="0"
-      >
-        {templates.length > 0 &&
-          templates.map(template => (
-            <Template
-              id={template.id}
-              imageUrl={template.imageUrl}
-              isSelected={selectedTemplate === template.id}
-              key={template.id}
-              name={template.name}
-              onClick={onTemplateClick}
-            />
-          ))}
-      </Wrapper>{' '}
-      {templates.length === 0 && (
-        <EmptyMessage>{t('no_available_templates')}</EmptyMessage>
+    <Wrapper
+      aria-activedescendant={selectedTemplate}
+      aria-labelledby="templates"
+      className={className}
+      disabled={disabled}
+      onFocus={() => {
+        document
+          .getElementById(selectedTemplate)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }}
+      onKeyDown={handleKeydown}
+      role="radiogroup"
+      tabIndex="0"
+    >
+      {templates.length > 0 ? (
+        templates.map(template => (
+          <Template
+            id={template.id}
+            imageUrl={template.imageUrl}
+            isSelected={selectedTemplate === template.id}
+            key={template.id}
+            name={template.name}
+            onClick={onTemplateClick}
+          />
+        ))
+      ) : (
+        <li>
+          <EmptyMessage>{t('templates.empty')}</EmptyMessage>
+        </li>
       )}
-    </>
+    </Wrapper>
   )
 }
 

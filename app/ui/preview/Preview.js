@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 
   > div:last-child {
     min-width: 50px;
-    width: ${props => (props.$showSettings ? '550px' : '2%')};
+    width: ${({ $showSettings }) => ($showSettings ? '550px' : '0')};
   }
 `
 // #endregion styled

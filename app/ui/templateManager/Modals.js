@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Trans, useTranslation } from 'react-i18next'
@@ -6,6 +6,14 @@ import { Modal, Form, Input } from '../common'
 
 const Strong = styled.strong`
   text-transform: capitalize;
+`
+
+const Info = styled.div`
+  pre {
+    background: #eee;
+    display: inline;
+    padding-inline: 0.3ch;
+  }
 `
 
 const Modals = props => {
@@ -31,19 +39,39 @@ const Modals = props => {
     keyPrefix: 'pages.templateManager.modals',
   })
 
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const [newTemplateForm] = Form.useForm()
 
   const handleAddTemplate = () => {
-    newTemplateForm.validateFields().then(v => {
-      addTemplate({
-        variables: {
-          url: v.tempalteUrl,
-        },
-      }).then(() => {
-        // show message "Created x new templates" or smth
-        setAddNewModal(false)
+    newTemplateForm
+      .validateFields()
+      .then(v => {
+        const url = new URL(v.tempalteUrl)
+
+        addTemplate({
+          variables: {
+            url: url.origin + url.pathname,
+          },
+        })
+          .then(() => {
+            // show message "Created x new templates" or smth
+            setAddNewModal(false)
+            newTemplateForm.setFieldValue('tempalteUrl', '')
+          })
+          .catch(err => {
+            if (err.message.includes('Command failed: git clone')) {
+              setErrorMessage(t('error.cloning'))
+            } else if (err.message.includes('size: should be >= 1')) {
+              setErrorMessage(t('error.emptyFiles'))
+            } else if (err.message.includes('Stylesheet does not exist')) {
+              setErrorMessage(t('error.missingStylesheet'))
+            } else if (err.message.includes('Thumbnail image does not exist')) {
+              setErrorMessage(t('error.missingThumbnail'))
+            }
+          })
       })
-    })
+      .catch(e => console.error(e))
   }
 
   const handleDisableTemplate = () => {
@@ -81,6 +109,37 @@ const Modals = props => {
         title={t('new.title')}
       >
         <Form form={newTemplateForm} layout="vertical">
+          <Info>
+            {t('new.info0')}
+            <ul>
+              <li>
+                <Trans
+                  components={[<pre />]}
+                  i18nKey="pages.templateManager.modals.new.info1"
+                />
+              </li>
+              <li>
+                <Trans
+                  components={[<pre />]}
+                  i18nKey="pages.templateManager.modals.new.info2"
+                />
+              </li>
+            </ul>
+            <p>
+              <Trans
+                components={[
+                  <a
+                    href="https://gitlab.coko.foundation/coko-org/products/ketty/ketty-templates/vanilla"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    example
+                  </a>,
+                ]}
+                i18nKey="pages.templateManager.modals.new.info3"
+              />
+            </p>
+          </Info>
           <Form.Item
             label={t('new.input.label')}
             name="tempalteUrl"
@@ -128,6 +187,16 @@ const Modals = props => {
           i18nKey="pages.templateManager.modals.delete.body"
           values={{ templateName: templateToDelete?.name }}
         />
+      </Modal>
+      {/* error modal */}
+      <Modal
+        cancelButtonProps={{ hidden: true }}
+        onOk={() => setErrorMessage(null)}
+        open={!!errorMessage}
+        title={t('error.title')}
+        width={400}
+      >
+        {errorMessage}
       </Modal>
     </>
   )
