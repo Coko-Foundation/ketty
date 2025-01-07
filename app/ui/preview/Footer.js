@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   padding-block: ${grid(4)};
   position: absolute;
   width: 500px;
-  z-index: 9;
+  z-index: 2;
 `
 
 const Footer = props => {

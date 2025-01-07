@@ -59,6 +59,10 @@ const TemplateOption = styled(ExportOption)`
     inline-size: 100%;
     min-block-size: 64px;
   }
+
+  > div {
+    min-inline-size: 100%;
+  }
 `
 // #endregion styled
 

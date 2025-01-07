@@ -8,7 +8,7 @@ import pick from 'lodash/pick'
 import { isEqualWith, isNil } from 'lodash'
 import { VerticalAlignTopOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { Button, Stack, TabsStyled as Tabs } from '../common'
 import NewProfileTab from './NewProfileTab'
 import SavedProfilesTab from './SavedProfilesTab'
@@ -22,8 +22,14 @@ const Wrapper = styled.div`
   overflow-y: auto;
   padding: 0 ${grid(4)};
 
-  > * + * {
-    margin-block-start: ${grid(2)};
+  > :nth-child(2) {
+    background-color: ${th('colorBackground')};
+    padding-block-start: ${grid(2)};
+    z-index: 2;
+
+    button {
+      width: 34px;
+    }
   }
 `
 
@@ -54,7 +60,6 @@ const StyledTabs = styled(Tabs)`
 
 const StyledStack = styled(Stack)`
   --space: 1em;
-  /* height: 100%; */
 `
 
 const CollapseArrow = styled(VerticalAlignTopOutlined)`
@@ -280,7 +285,7 @@ const PreviewSettings = props => {
         ]}
         onChange={setActiveTabKey}
       />
-      <div style={{ zIndex: '9', backgroundColor: 'white' }}>
+      <div>
         <Button
           aria-label={t('collapse')}
           icon={<CollapseArrow $isCollapsed={isCollapsed} />}
