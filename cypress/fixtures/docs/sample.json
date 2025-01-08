@@ -1,0 +1,59 @@
+{
+  "store": {
+    "name": "The Book Nook",
+    "location": {
+      "address": "123 Elm Street",
+      "city": "Fictionville",
+      "state": "TX",
+      "zipcode": "75001"
+    },
+    "categories": [
+      {
+        "name": "Fiction",
+        "books": [
+          {
+            "title": "The Great Adventure",
+            "author": "John Doe",
+            "price": 15.99,
+            "available": true
+          },
+          {
+            "title": "Mystery of the Lost Island",
+            "author": "Jane Smith",
+            "price": 12.49,
+            "available": false
+          }
+        ]
+      },
+      {
+        "name": "Non-Fiction",
+        "books": [
+          {
+            "title": "The Art of Baking",
+            "author": "Emily Baker",
+            "price": 20.0,
+            "available": true
+          },
+          {
+            "title": "World History 101",
+            "author": "Richard Historian",
+            "price": 18.75,
+            "available": true
+          }
+        ]
+      }
+    ],
+    "staff": [
+      {
+        "name": "Alice Johnson",
+        "position": "Manager",
+        "email": "alice.johnson@booknook.com"
+      },
+      {
+        "name": "Bob Williams",
+        "position": "Cashier",
+        "email": "bob.williams@booknook.com"
+      }
+    ]
+  }
+}
