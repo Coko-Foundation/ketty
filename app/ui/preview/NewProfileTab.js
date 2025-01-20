@@ -62,12 +62,12 @@ const NewProfileTab = props => {
       {newProfileOptions.format === 'web' &&
         exportsConfig.webCustomHTML?.enabled && (
           <FlaxTemplateCustomization
+            loading={loadingPreview}
+            onApplyChanges={handleOptionsChange}
             runningBlocks={{
               header: newProfileOptions.customHeader,
               footer: newProfileOptions.customFooter,
             }}
-            loading={loadingPreview}
-            onApplyChanges={handleOptionsChange}
           />
         )}
 
