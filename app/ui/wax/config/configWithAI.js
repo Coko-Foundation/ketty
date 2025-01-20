@@ -47,6 +47,11 @@ const config = {
       ],
     },
   ],
+
+  AskAiContentService: {
+    AiOn: false,
+  },
+
   SchemaService: DefaultSchema,
   SpecialCharactersService: charactersList,
   PmPlugins: [
