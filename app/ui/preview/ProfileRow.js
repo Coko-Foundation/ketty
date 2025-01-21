@@ -81,7 +81,7 @@ const ProfileRow = props => {
         notify('profile.actions.delete.status.success')
       })
       .catch(() => {
-        notify('error', t('profile.actions.delete.status.success'))
+        notify('error', t('profile.actions.delete.status.error'))
       })
       .finally(() => {
         setDeleteLoading(false)

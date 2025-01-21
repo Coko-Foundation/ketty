@@ -79,10 +79,15 @@ const Modals = props => {
       variables: {
         url: templateToDisable?.url,
       },
-    }).then(() => {
-      setTemplateToDisable(null)
-      setDisableTemplateModal(false)
     })
+      .then(() => {
+        setDisableTemplateModal(false)
+      })
+      .catch(e => {
+        setErrorMessage(e.message)
+        setTemplateToDisable(null)
+        setDisableTemplateModal(false)
+      })
   }
 
   const handleDeleteTemplate = () => {
