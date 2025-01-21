@@ -100,8 +100,8 @@ const Footer = props => {
     setDownloadLoading(true)
 
     onClickDownload()
-      .catch(() => {
-        notify('error', 'Something went wrong while creating your file!')
+      .catch(error => {
+        notify('error', error.message)
       })
       .finally(() => {
         setDownloadLoading(false)
