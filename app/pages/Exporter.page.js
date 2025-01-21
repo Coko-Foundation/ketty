@@ -200,6 +200,7 @@ const PreviewerPage = () => {
     loading: templatesLoading,
     refetch: refetchTemplates,
   } = useQuery(GET_SPECIFIC_TEMPLATES, {
+    fetchPolicy: 'network-only',
     skip: !getApplicationParameters,
     variables: {
       where: {
@@ -806,9 +807,9 @@ const PreviewerPage = () => {
         })
       : undefined
 
-  const defaultTemplate = templatesData?.getSpecificTemplates.find(
-    t => t.default,
-  )
+  const defaultTemplate =
+    templatesData?.getSpecificTemplates.find(t => t.default) ||
+    templatesData?.getSpecificTemplates[0]
 
   const defaultProfileWithTemplate = {
     ...defaultProfile,
