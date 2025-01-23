@@ -152,6 +152,18 @@ const TemplateMananger = props => {
     })
   }
 
+  const handleDisableTemplate = data => {
+    if (templatesData.filter(temp => temp.enabled).length > 1) {
+      return disableTemplate(data)
+    }
+
+    return Promise.reject(
+      new Error(
+        'There is only one enabled template left, therefore it cannot be disabled.',
+      ),
+    )
+  }
+
   return (
     <Wrapper>
       <TemplateManagerHeader
@@ -170,7 +182,7 @@ const TemplateMananger = props => {
         addTemplate={addTemplate}
         deleteTemplateModal={deleteTemplateModal}
         disableLoading={disableLoading}
-        disableTemplate={disableTemplate}
+        disableTemplate={handleDisableTemplate}
         disableTemplateModal={disableTemplateModal}
         removeTemplate={removeTemplate}
         setAddNewModal={setAddNewModal}

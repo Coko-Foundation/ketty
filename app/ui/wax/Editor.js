@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import { Wax } from 'wax-prosemirror-core'
 import { LuluLayout } from './layout'
-import defaultConfig from './config/config'
 import configWithAi from './config/configWithAI'
 
 const EditorWrapper = ({
@@ -29,7 +28,7 @@ const EditorWrapper = ({
   bookMetadataValues,
   selectedChapterId,
   canEdit,
-  aiEnabled,
+  // aiEnabled, // most likely not needed. For Grigor to check
   aiOn,
   editorRef,
   freeTextPromptsOn,
@@ -73,7 +72,7 @@ const EditorWrapper = ({
     setViewMetadata,
   })
 
-  const selectedConfig = aiEnabled ? configWithAi : defaultConfig
+  const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
   useEffect(() => {
     return () => {
@@ -82,48 +81,32 @@ const EditorWrapper = ({
     }
   }, [])
 
-  if (aiEnabled) {
-    selectedConfig.AskAiContentService = {
-      AskAiContentTransformation: queryAI,
-      AiOn: aiOn,
-      FreeTextPromptsOn: freeTextPromptsOn,
-      CustomPromptsOn: customPromptsOn,
-      CustomPrompts: customPromptsOn ? customPrompts : [],
-      ...(kbOn ? { AskKb: true } : {}),
-    }
-  }
-
-  if (canInteractWithComments === false) {
-    const commentsServiceIndex = selectedConfig.services.findIndex(service =>
-      Object.prototype.hasOwnProperty.call(service, 'allCommentsFromStates'),
-    )
-
-    if (commentsServiceIndex !== -1) {
-      selectedConfig.services.splice(commentsServiceIndex, 1)
-    }
-  }
-
-  selectedConfig.TitleService = {
-    updateTitle: onPeriodicTitleChange,
-  }
-
-  selectedConfig.CommentsService = {
-    getComments: addComments,
-    setComments: () => {
-      return savedComments || []
-    },
-    userList: bookMembers,
-    getMentionedUsers: onMention,
-  }
-
+  // Used For Editor's reconfiguration
   useEffect(() => {
-    if (aiEnabled) {
-      selectedConfig.AskAiContentService = {
-        ...selectedConfig.AskAiContentService,
+    setSelectedWaxConfig({
+      ...selectedWaxConfig,
+      editorKey,
+      AskAiContentService: {
+        AskAiContentTransformation: queryAI,
+        FreeTextPromptsOn: freeTextPromptsOn,
+        CustomPromptsOn: customPromptsOn,
+        CustomPrompts: customPromptsOn ? customPrompts : [],
         AiOn: aiOn,
-      }
-      selectedConfig.editorKey = editorKey
-    }
+        ...(kbOn ? { AskKb: true } : {}),
+      },
+      TitleService: {
+        updateTitle: onPeriodicTitleChange,
+      },
+      CommentsService: {
+        readOnly: !canInteractWithComments,
+        getComments: addComments,
+        setComments: () => {
+          return savedComments || []
+        },
+        userList: bookMembers,
+        getMentionedUsers: onMention,
+      },
+    })
   }, [aiOn, editorKey])
 
   useEffect(() => {
@@ -176,12 +159,12 @@ const EditorWrapper = ({
     username: user.displayName,
   }
 
-  if (!selectedConfig || canInteractWithComments === null) return null
+  if (!selectedWaxConfig || canInteractWithComments === null) return null
 
   return (
     <Wax
       autoFocus
-      config={selectedConfig}
+      config={selectedWaxConfig}
       customProps={luluWax}
       fileUpload={onImageUpload}
       layout={LuluLayout}

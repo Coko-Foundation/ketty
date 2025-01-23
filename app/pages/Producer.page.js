@@ -1009,17 +1009,19 @@ const ProducerPage = () => {
   }
 
   const handleAddingComments = content => {
-    // update local copy of comments to show comment box
-    setSavedComments(JSON.stringify(content))
+    if (canInteractWithComments) {
+      // update local copy of comments to show comment box
+      setSavedComments(JSON.stringify(content))
 
-    if (content.length && JSON.stringify(content) !== savedComments) {
-      debouncedSaveComments({
-        commentData: {
-          bookId,
-          chapterId: selectedChapterId,
-          content: JSON.stringify(content),
-        },
-      })
+      if (content.length && JSON.stringify(content) !== savedComments) {
+        debouncedSaveComments({
+          commentData: {
+            bookId,
+            chapterId: selectedChapterId,
+            content: JSON.stringify(content),
+          },
+        })
+      }
     }
   }
 

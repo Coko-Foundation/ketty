@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   padding-block: ${grid(4)};
   position: absolute;
   width: 500px;
-  z-index: 9;
+  z-index: 2;
 `
 
 const Footer = props => {
@@ -100,8 +100,8 @@ const Footer = props => {
     setDownloadLoading(true)
 
     onClickDownload()
-      .catch(() => {
-        notify('error', 'Something went wrong while creating your file!')
+      .catch(error => {
+        notify('error', error.message)
       })
       .finally(() => {
         setDownloadLoading(false)
