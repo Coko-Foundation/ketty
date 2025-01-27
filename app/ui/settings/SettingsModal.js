@@ -6,6 +6,7 @@ import { useMutation, useSubscription } from '@apollo/client'
 import { useCurrentUser, grid } from '@coko/client'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
+
 import {
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   UPDATE_SETTINGS,
@@ -37,6 +38,12 @@ const Indented = styled.div`
 `
 
 const SettingsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+`
+
+const ConfigurableEditorContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -125,6 +132,10 @@ const SettingsModal = ({
     !!bookSettings.knowledgeBaseOn,
   )
 
+  const [isConfigurableEditorOn, setIsConfigurableEditorOn] = useState(
+    !!bookSettings.configurableEditorOn,
+  )
+
   // MUTATIONS SECTION START
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
     UPDATE_SETTINGS,
@@ -170,6 +181,8 @@ const SettingsModal = ({
         customPrompts: prompts,
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
+        // configurableEditorOn: isConfigurableEditorOn,
+        // configurableEditorTools: []
       },
     })
   }
@@ -240,6 +253,10 @@ const SettingsModal = ({
     if (value === true && !isFreeTextPromptsOn) {
       setIsFreeTextPromptsOn(true)
     }
+  }
+
+  const toggleConfigurableEditor = value => {
+    setIsConfigurableEditorOn(true)
   }
 
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
@@ -370,6 +387,18 @@ const SettingsModal = ({
           onChange={e => toggleKnowledgeBase(e)}
         />
       </SettingsWrapper>
+      <ConfigurableEditorContainer style={{ flexWrap: 'nowrap' }}>
+        <div>
+          <SettingTitle>{t('configurableEditor')}</SettingTitle>
+          <SettingInfo>{t('configurableEditor.detail')}</SettingInfo>
+        </div>
+        <Switch
+          checked={isConfigurableEditorOn}
+          data-test="configurable-editor-switch"
+          disabled={updateLoading || !canChangeSettings}
+          onChange={e => toggleConfigurableEditor(e)}
+        />
+      </ConfigurableEditorContainer>
       <ButtonsContainer>
         <StyledButton
           data-test="settings-cancel-btn"
@@ -404,6 +433,7 @@ SettingsModal.propTypes = {
     customPrompts: PropTypes.arrayOf(PropTypes.string),
     customPromptsOn: PropTypes.bool,
     knowledgeBaseOn: PropTypes.bool,
+    configurableEditorOn: PropTypes.bool,
   }),
   closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
