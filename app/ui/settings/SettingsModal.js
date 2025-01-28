@@ -181,7 +181,7 @@ const SettingsModal = ({
         customPrompts: prompts,
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
-        // configurableEditorOn: isConfigurableEditorOn,
+        configurableEditorOn: isConfigurableEditorOn,
         // configurableEditorTools: []
       },
     })
@@ -256,7 +256,7 @@ const SettingsModal = ({
   }
 
   const toggleConfigurableEditor = value => {
-    setIsConfigurableEditorOn(true)
+    setIsConfigurableEditorOn(!isConfigurableEditorOn)
   }
 
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
