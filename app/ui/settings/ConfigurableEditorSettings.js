@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Checkbox } from '../common'
+import configWithAI from '../wax/config/configWithAI'
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,10 +53,14 @@ const SingleTools = [
   { label: 'Find And Replace', value: 'FindAndReplaceTool', checked: true },
 ]
 
-const ConfigurableEditorSettings = () => {
+const ConfigurableEditorSettings = ({ saveWaxTools }) => {
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
+
+  const [waxMenuConfig, setWaxMenuConfig] = useState(
+    configWithAI.MenuService[0].toolGroups,
+  )
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -85,6 +91,11 @@ const ConfigurableEditorSettings = () => {
       }),
     )
   }
+
+  useEffect(() => {
+    setWaxMenuConfig(waxMenuConfig)
+    saveWaxTools([waxMenuConfig])
+  }, [checkedInline, checkedLists, checkedSingleTools])
 
   return (
     <Wrapper>
@@ -137,6 +148,10 @@ const ConfigurableEditorSettings = () => {
       })}
     </Wrapper>
   )
+}
+
+ConfigurableEditorSettings.propTypes = {
+  saveWaxTools: PropTypes.func.isRequired,
 }
 
 export default ConfigurableEditorSettings

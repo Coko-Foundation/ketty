@@ -14,6 +14,7 @@ import {
 import { isAdmin, isOwner } from '../../helpers/permissions'
 import { Button, Input } from '../common'
 import ConfigurableEditorSettings from './ConfigurableEditorSettings'
+import configWithAI from '../wax/config/configWithAI'
 
 const Stack = styled.div`
   --space: 24px;
@@ -131,6 +132,12 @@ const SettingsModal = ({
     !!bookSettings.configurableEditorOn,
   )
 
+  const [waxMenuConfig, setWaxMenuConfig] = useState(
+    bookSettings.configurableEditorTools.length > 0
+      ? JSON.parse(bookSettings.configurableEditorTools)
+      : [configWithAI.MenuService[0].toolGroups],
+  )
+
   // MUTATIONS SECTION START
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
     UPDATE_SETTINGS,
@@ -177,9 +184,13 @@ const SettingsModal = ({
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
         configurableEditorOn: isConfigurableEditorOn,
-        // configurableEditorTools: []
+        configurableEditorTools: JSON.stringify(waxMenuConfig),
       },
     })
+  }
+
+  const saveWaxTools = tools => {
+    setWaxMenuConfig(tools)
   }
 
   const toggleAiOn = toggle => {
@@ -395,7 +406,7 @@ const SettingsModal = ({
         />
         {isConfigurableEditorOn && (
           <Stack style={{ width: '100%' }}>
-            <ConfigurableEditorSettings />
+            <ConfigurableEditorSettings saveWaxTools={saveWaxTools} />
           </Stack>
         )}
       </SettingsWrapper>
@@ -434,6 +445,7 @@ SettingsModal.propTypes = {
     customPromptsOn: PropTypes.bool,
     knowledgeBaseOn: PropTypes.bool,
     configurableEditorOn: PropTypes.bool,
+    configurableEditorTools: PropTypes.arrayOf(PropTypes.string),
   }),
   closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
