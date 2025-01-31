@@ -13,6 +13,7 @@ import {
 } from '../../graphql'
 import { isAdmin, isOwner } from '../../helpers/permissions'
 import { Button, Input } from '../common'
+import ConfigurableEditorSettings from './ConfigurableEditorSettings'
 
 const Stack = styled.div`
   --space: 24px;
@@ -38,12 +39,6 @@ const Indented = styled.div`
 `
 
 const SettingsWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-`
-
-const ConfigurableEditorContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -387,7 +382,7 @@ const SettingsModal = ({
           onChange={e => toggleKnowledgeBase(e)}
         />
       </SettingsWrapper>
-      <ConfigurableEditorContainer style={{ flexWrap: 'nowrap' }}>
+      <SettingsWrapper>
         <div>
           <SettingTitle>{t('configurableEditor')}</SettingTitle>
           <SettingInfo>{t('configurableEditor.detail')}</SettingInfo>
@@ -398,7 +393,12 @@ const SettingsModal = ({
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleConfigurableEditor(e)}
         />
-      </ConfigurableEditorContainer>
+        {isConfigurableEditorOn && (
+          <Stack style={{ width: '100%' }}>
+            <ConfigurableEditorSettings />
+          </Stack>
+        )}
+      </SettingsWrapper>
       <ButtonsContainer>
         <StyledButton
           data-test="settings-cancel-btn"

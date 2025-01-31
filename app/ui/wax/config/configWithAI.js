@@ -32,7 +32,6 @@ const config = {
       toolGroups: [
         { name: 'Base', exclude: ['Save'] },
         'BlockDropDown',
-        // { name: 'BlockQuoteTool', exclude: ['Lift'] },
         { name: 'Lists', exclude: ['JoinUp'] },
         'Images',
         {
