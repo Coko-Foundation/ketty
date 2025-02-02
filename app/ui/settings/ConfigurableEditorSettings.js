@@ -1,8 +1,8 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Checkbox } from '../common'
-import configWithAI from '../wax/config/configWithAI'
 
 const Wrapper = styled.div`
   display: flex;
@@ -25,7 +25,7 @@ const Tool = styled.div`
   display: flex;
   flex-flow: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 `
 
 const inlineAnno = [
@@ -37,6 +37,7 @@ const inlineAnno = [
   { label: 'Subscript', value: 'Subscript', checked: false },
   { label: 'Superscript', value: 'Superscript', checked: false },
   { label: 'SmallCaps', value: 'SmallCaps', checked: false },
+  { label: 'Strike Through', value: 'StrikeThrough', checked: false },
 ]
 
 const lists = [
@@ -53,14 +54,12 @@ const SingleTools = [
   { label: 'Find And Replace', value: 'FindAndReplaceTool', checked: true },
 ]
 
-const ConfigurableEditorSettings = ({ saveWaxTools }) => {
+const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
+  // console.log(savedWaxMenuConfig)
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
-
-  const [waxMenuConfig, setWaxMenuConfig] = useState(
-    configWithAI.MenuService[0].toolGroups,
-  )
+  const [isFirstRun, setFirstRun] = useState(true)
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -92,9 +91,55 @@ const ConfigurableEditorSettings = ({ saveWaxTools }) => {
     )
   }
 
+  // create Wax menu config everytime a checkbox changes. (don't run the first time)
   useEffect(() => {
-    setWaxMenuConfig(waxMenuConfig)
-    saveWaxTools([waxMenuConfig])
+    let firstRunTimeout = () => true
+
+    if (isFirstRun) {
+      firstRunTimeout = setTimeout(() => {
+        setFirstRun(false)
+      }, 400)
+      return false
+    }
+
+    const excludeInline = []
+    const excludeLists = []
+    const excludeSingleTools = []
+
+    checkedInline.forEach(inline => {
+      if (!inline.checked) {
+        excludeInline.push(inline.value)
+      }
+    })
+
+    checkedLists.forEach(list => {
+      if (!list.checked) {
+        excludeLists.push(list.value)
+      }
+    })
+
+    checkedSingleTools.forEach(singleTool => {
+      if (!singleTool.checked) {
+        excludeSingleTools.push(singleTool.value)
+      }
+    })
+
+    savedWaxMenuConfig.find((item, i) => {
+      if (item.name === 'Annotations') {
+        savedWaxMenuConfig[i].exclude = excludeInline
+      }
+
+      if (item.name === 'Lists') {
+        savedWaxMenuConfig[i].exclude = excludeLists
+      }
+
+      return false
+    })
+
+    // console.log(savedWaxMenuConfig)
+    saveWaxTools(savedWaxMenuConfig)
+
+    return () => clearTimeout(firstRunTimeout)
   }, [checkedInline, checkedLists, checkedSingleTools])
 
   return (
@@ -151,6 +196,7 @@ const ConfigurableEditorSettings = ({ saveWaxTools }) => {
 }
 
 ConfigurableEditorSettings.propTypes = {
+  savedWaxMenuConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
   saveWaxTools: PropTypes.func.isRequired,
 }
 

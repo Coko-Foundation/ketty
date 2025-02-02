@@ -135,7 +135,7 @@ const SettingsModal = ({
   const [waxMenuConfig, setWaxMenuConfig] = useState(
     bookSettings.configurableEditorTools.length > 0
       ? JSON.parse(bookSettings.configurableEditorTools)
-      : [configWithAI.MenuService[0].toolGroups],
+      : configWithAI.MenuService[0].toolGroups,
   )
 
   // MUTATIONS SECTION START
@@ -406,7 +406,10 @@ const SettingsModal = ({
         />
         {isConfigurableEditorOn && (
           <Stack style={{ width: '100%' }}>
-            <ConfigurableEditorSettings saveWaxTools={saveWaxTools} />
+            <ConfigurableEditorSettings
+              savedWaxMenuConfig={waxMenuConfig}
+              saveWaxTools={saveWaxTools}
+            />
           </Stack>
         )}
       </SettingsWrapper>
