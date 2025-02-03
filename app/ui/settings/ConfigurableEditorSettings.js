@@ -56,10 +56,10 @@ const SingleTools = [
 ]
 
 const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
-  const [isFirstRun, setFirstRun] = useState(true)
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
+  const [waxMenuConfig, setWaxMenuConfig] = useState(savedWaxMenuConfig)
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -93,13 +93,13 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
 
   // create checkbox selection from saved menu
   useEffect(() => {
-    savedWaxMenuConfig.find((menuItem, i) => {
+    waxMenuConfig.find((menuItem, i) => {
       if (menuItem.name === 'Annotations') {
         setCheckedInline(prevState =>
           prevState.map(item =>
             menuItem.exclude.includes(item.value)
               ? { ...item, checked: false }
-              : item,
+              : { ...item, checked: true },
           ),
         )
       }
@@ -109,7 +109,7 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
           prevState.map(item =>
             menuItem.exclude.includes(item.value)
               ? { ...item, checked: false }
-              : item,
+              : { ...item, checked: true },
           ),
         )
       }
@@ -119,7 +119,7 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
           prevState.map(item =>
             menuItem === item.value && !item.checked
               ? { ...item, checked: false }
-              : item,
+              : { ...item, checked: true },
           ),
         )
       }
@@ -128,32 +128,9 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
     })
   }, [])
 
-  // create Wax menu config everytime a checkbox changes. (don't run the first time)
+  // create Wax menu config everytime a checkbox changes.
   useEffect(() => {
-    let firstRunTimeout = () => true
-
-    if (isFirstRun) {
-      firstRunTimeout = setTimeout(() => {
-        setFirstRun(false)
-      }, 400)
-      return false
-    }
-
-    const excludeInline = []
-    const excludeLists = []
     const excludeSingleTools = []
-
-    checkedInline.forEach(inline => {
-      if (!inline.checked) {
-        excludeInline.push(inline.value)
-      }
-    })
-
-    checkedLists.forEach(list => {
-      if (!list.checked) {
-        excludeLists.push(list.value)
-      }
-    })
 
     checkedSingleTools.forEach(singleTool => {
       if (!singleTool.checked) {
@@ -161,28 +138,36 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
       }
     })
 
-    savedWaxMenuConfig.find((menuItem, i) => {
-      if (menuItem.name === 'Annotations') {
-        savedWaxMenuConfig[i].exclude = excludeInline
-      }
+    setWaxMenuConfig(prevConfig =>
+      prevConfig.map(menuItem => {
+        if (typeof menuItem === 'object' && menuItem.name === 'Annotations') {
+          return {
+            ...menuItem,
+            exclude: checkedInline
+              .filter(inlineItem => !inlineItem.checked)
+              .map(inlineItem => inlineItem.value),
+          }
+        }
 
-      if (menuItem.name === 'Lists') {
-        savedWaxMenuConfig[i].exclude = excludeLists
-      }
+        if (typeof menuItem === 'object' && menuItem.name === 'Lists') {
+          return {
+            ...menuItem,
+            exclude: checkedLists
+              .filter(listItem => !listItem.checked)
+              .map(listItem => listItem.value),
+          }
+        }
 
-      // if (!isObject(menuItem)) {
-      // }
+        // if (!isObject(menuItem)) {
+        // }
 
-      // console.log(savedWaxMenuConfig, checkedSingleTools)
-
-      return false
-    })
-
-    // save to settings modal
-    saveWaxTools(savedWaxMenuConfig)
-
-    return () => clearTimeout(firstRunTimeout)
+        return menuItem
+      }),
+    )
   }, [checkedInline, checkedLists, checkedSingleTools])
+
+  // save to settings modal
+  saveWaxTools(waxMenuConfig)
 
   return (
     <Wrapper>
