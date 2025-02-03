@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import isObject from 'lodash/isObject'
 import { Checkbox } from '../common'
 
 const Wrapper = styled.div`
@@ -55,11 +56,10 @@ const SingleTools = [
 ]
 
 const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
-  // console.log(savedWaxMenuConfig)
+  const [isFirstRun, setFirstRun] = useState(true)
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
-  const [isFirstRun, setFirstRun] = useState(true)
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -90,6 +90,43 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
       }),
     )
   }
+
+  // create checkbox selection from saved menu
+  useEffect(() => {
+    savedWaxMenuConfig.find((menuItem, i) => {
+      if (menuItem.name === 'Annotations') {
+        setCheckedInline(prevState =>
+          prevState.map(item =>
+            menuItem.exclude.includes(item.value)
+              ? { ...item, checked: false }
+              : item,
+          ),
+        )
+      }
+
+      if (menuItem.name === 'Lists') {
+        setCheckedLists(prevState =>
+          prevState.map(item =>
+            menuItem.exclude.includes(item.value)
+              ? { ...item, checked: false }
+              : item,
+          ),
+        )
+      }
+
+      if (!isObject(menuItem)) {
+        setCheckedSingleTools(prevState =>
+          prevState.map(item =>
+            menuItem === item.value && !item.checked
+              ? { ...item, checked: false }
+              : item,
+          ),
+        )
+      }
+
+      return false
+    })
+  }, [])
 
   // create Wax menu config everytime a checkbox changes. (don't run the first time)
   useEffect(() => {
@@ -124,19 +161,24 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
       }
     })
 
-    savedWaxMenuConfig.find((item, i) => {
-      if (item.name === 'Annotations') {
+    savedWaxMenuConfig.find((menuItem, i) => {
+      if (menuItem.name === 'Annotations') {
         savedWaxMenuConfig[i].exclude = excludeInline
       }
 
-      if (item.name === 'Lists') {
+      if (menuItem.name === 'Lists') {
         savedWaxMenuConfig[i].exclude = excludeLists
       }
+
+      // if (!isObject(menuItem)) {
+      // }
+
+      // console.log(savedWaxMenuConfig, checkedSingleTools)
 
       return false
     })
 
-    // console.log(savedWaxMenuConfig)
+    // save to settings modal
     saveWaxTools(savedWaxMenuConfig)
 
     return () => clearTimeout(firstRunTimeout)
