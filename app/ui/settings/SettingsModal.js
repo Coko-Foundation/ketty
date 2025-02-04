@@ -6,12 +6,15 @@ import { useMutation, useSubscription } from '@apollo/client'
 import { useCurrentUser, grid } from '@coko/client'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
+
 import {
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   UPDATE_SETTINGS,
 } from '../../graphql'
 import { isAdmin, isOwner } from '../../helpers/permissions'
 import { Button, Input } from '../common'
+import ConfigurableEditorSettings from './ConfigurableEditorSettings'
+import configWithAI from '../wax/config/configWithAI'
 
 const Stack = styled.div`
   --space: 24px;
@@ -125,6 +128,16 @@ const SettingsModal = ({
     !!bookSettings.knowledgeBaseOn,
   )
 
+  const [isConfigurableEditorOn, setIsConfigurableEditorOn] = useState(
+    !!bookSettings.configurableEditorOn,
+  )
+
+  const [waxMenuConfig, setWaxMenuConfig] = useState(
+    bookSettings.configurableEditorTools?.length > 0
+      ? JSON.parse(bookSettings.configurableEditorTools)
+      : configWithAI.MenuService[0].toolGroups,
+  )
+
   // MUTATIONS SECTION START
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
     UPDATE_SETTINGS,
@@ -170,8 +183,14 @@ const SettingsModal = ({
         customPrompts: prompts,
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
+        configurableEditorOn: isConfigurableEditorOn,
+        configurableEditorTools: JSON.stringify(waxMenuConfig),
       },
     })
+  }
+
+  const saveWaxTools = tools => {
+    setWaxMenuConfig(tools)
   }
 
   const toggleAiOn = toggle => {
@@ -240,6 +259,10 @@ const SettingsModal = ({
     if (value === true && !isFreeTextPromptsOn) {
       setIsFreeTextPromptsOn(true)
     }
+  }
+
+  const toggleConfigurableEditor = value => {
+    setIsConfigurableEditorOn(!isConfigurableEditorOn)
   }
 
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
@@ -370,6 +393,26 @@ const SettingsModal = ({
           onChange={e => toggleKnowledgeBase(e)}
         />
       </SettingsWrapper>
+      <SettingsWrapper>
+        <div>
+          <SettingTitle>{t('configurableEditor')}</SettingTitle>
+          <SettingInfo>{t('configurableEditor.detail')}</SettingInfo>
+        </div>
+        <Switch
+          checked={isConfigurableEditorOn}
+          data-test="configurable-editor-switch"
+          disabled={updateLoading || !canChangeSettings}
+          onChange={e => toggleConfigurableEditor(e)}
+        />
+        {isConfigurableEditorOn && (
+          <Stack style={{ width: '100%' }}>
+            <ConfigurableEditorSettings
+              savedWaxMenuConfig={waxMenuConfig}
+              saveWaxTools={saveWaxTools}
+            />
+          </Stack>
+        )}
+      </SettingsWrapper>
       <ButtonsContainer>
         <StyledButton
           data-test="settings-cancel-btn"
@@ -404,6 +447,8 @@ SettingsModal.propTypes = {
     customPrompts: PropTypes.arrayOf(PropTypes.string),
     customPromptsOn: PropTypes.bool,
     knowledgeBaseOn: PropTypes.bool,
+    configurableEditorOn: PropTypes.bool,
+    configurableEditorTools: PropTypes.arrayOf(PropTypes.string),
   }),
   closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
