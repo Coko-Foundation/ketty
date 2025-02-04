@@ -115,12 +115,11 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
       }
 
       if (!isObject(menuItem)) {
-        setCheckedSingleTools(prevState =>
-          prevState.map(item =>
-            menuItem === item.value && !item.checked
-              ? { ...item, checked: false }
-              : { ...item, checked: true },
-          ),
+        setCheckedSingleTools(prevTools =>
+          prevTools.map(tool => ({
+            ...tool,
+            checked: waxMenuConfig.includes(tool.value),
+          })),
         )
       }
 
@@ -130,13 +129,9 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
 
   // create Wax menu config everytime a checkbox changes.
   useEffect(() => {
-    const excludeSingleTools = []
-
-    checkedSingleTools.forEach(singleTool => {
-      if (!singleTool.checked) {
-        excludeSingleTools.push(singleTool.value)
-      }
-    })
+    const excludeSingleTools = checkedSingleTools
+      .filter(singleItem => !singleItem.checked)
+      .map(singleItem => singleItem.value)
 
     setWaxMenuConfig(prevConfig =>
       prevConfig.map(menuItem => {
@@ -158,8 +153,21 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
           }
         }
 
-        // if (!isObject(menuItem)) {
-        // }
+        if (!isObject(menuItem)) {
+          setWaxMenuConfig(prevWaxConfig => {
+            const filteredConfig = prevWaxConfig.filter(
+              singleMenuItem => !excludeSingleTools.includes(singleMenuItem),
+            )
+
+            const newItems = checkedSingleTools
+              .filter(
+                tool => tool.checked && !filteredConfig.includes(tool.value),
+              )
+              .map(tool => tool.value)
+
+            return [...filteredConfig, ...newItems]
+          })
+        }
 
         return menuItem
       }),
