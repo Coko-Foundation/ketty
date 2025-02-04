@@ -133,7 +133,7 @@ const SettingsModal = ({
   )
 
   const [waxMenuConfig, setWaxMenuConfig] = useState(
-    bookSettings.configurableEditorTools.length > 0
+    bookSettings.configurableEditorTools?.length > 0
       ? JSON.parse(bookSettings.configurableEditorTools)
       : configWithAI.MenuService[0].toolGroups,
   )
