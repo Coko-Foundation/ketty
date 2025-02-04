@@ -1165,6 +1165,12 @@ const ProducerPage = () => {
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
       comments={savedComments ? JSON.parse(savedComments) : []}
+      configurableEditorOn={
+        bookQueryData?.getBook.bookSettings.configurableEditorOn
+      }
+      configurableEditorTools={
+        bookQueryData?.getBook.bookSettings.configurableEditorTools
+      }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       editorKey={key}
@@ -1195,7 +1201,6 @@ const ProducerPage = () => {
       title={bookQueryData?.getBook.title}
       user={currentUser}
       viewMetadata={viewMetadata}
-      // bookComponentContent={bookComponentData?.getBookComponent?.content}
     />
   )
 }

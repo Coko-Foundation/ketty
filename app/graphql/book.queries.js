@@ -67,6 +67,8 @@ const GET_ENTIRE_BOOK = gql`
         freeTextPromptsOn
         customPromptsOn
         knowledgeBaseOn
+        configurableEditorOn
+        configurableEditorTools
       }
       cover {
         coverUrl
@@ -105,6 +107,8 @@ const GET_BOOK_SETTINGS = gql`
         freeTextPromptsOn
         customPromptsOn
         knowledgeBaseOn
+        configurableEditorOn
+        configurableEditorTools
       }
     }
   }
@@ -180,6 +184,8 @@ const UPDATE_SETTINGS = gql`
     $customPrompts: [String]
     $customPromptsOn: Boolean
     $knowledgeBaseOn: Boolean
+    $configurableEditorOn: Boolean
+    $configurableEditorTools: [String]
   ) {
     updateBookSettings(
       bookId: $bookId
@@ -190,11 +196,15 @@ const UPDATE_SETTINGS = gql`
         customPrompts: $customPrompts
         customPromptsOn: $customPromptsOn
         knowledgeBaseOn: $knowledgeBaseOn
+        configurableEditorOn: $configurableEditorOn
+        configurableEditorTools: $configurableEditorTools
       }
     ) {
       aiOn
       aiPdfDesignerOn
       knowledgeBaseOn
+      configurableEditorOn
+      configurableEditorTools
       id
       customPrompts
       freeTextPromptsOn
