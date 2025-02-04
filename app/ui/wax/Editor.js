@@ -28,6 +28,7 @@ const EditorWrapper = ({
   bookMetadataValues,
   selectedChapterId,
   canEdit,
+  configurableEditorOn,
   configurableEditorTools,
   aiOn,
   editorRef,
@@ -74,9 +75,10 @@ const EditorWrapper = ({
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
-  const waxMenuConfig = configurableEditorTools?.length
-    ? JSON.parse(configurableEditorTools)
-    : configWithAi.MenuService[0].toolGroups
+  const waxMenuConfig =
+    configurableEditorOn && configurableEditorTools?.length
+      ? JSON.parse(configurableEditorTools)
+      : configWithAi.MenuService[0].toolGroups
 
   useEffect(() => {
     return () => {
