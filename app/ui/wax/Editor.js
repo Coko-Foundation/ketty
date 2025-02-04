@@ -28,7 +28,7 @@ const EditorWrapper = ({
   bookMetadataValues,
   selectedChapterId,
   canEdit,
-  // aiEnabled, // most likely not needed. For Grigor to check
+  configurableEditorTools,
   aiOn,
   editorRef,
   freeTextPromptsOn,
@@ -74,6 +74,10 @@ const EditorWrapper = ({
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
+  const waxMenuConfig = configurableEditorTools?.length
+    ? JSON.parse(configurableEditorTools)
+    : configWithAi.MenuService[0].toolGroups
+
   useEffect(() => {
     return () => {
       onPeriodicBookComponentContentChange.cancel()
@@ -86,6 +90,10 @@ const EditorWrapper = ({
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
+      MenuService: configWithAi.MenuService.map(service => ({
+        ...service,
+        toolGroups: waxMenuConfig,
+      })),
       AskAiContentService: {
         AskAiContentTransformation: queryAI,
         FreeTextPromptsOn: freeTextPromptsOn,
@@ -107,7 +115,7 @@ const EditorWrapper = ({
         getMentionedUsers: onMention,
       },
     })
-  }, [aiOn, editorKey])
+  }, [aiOn, editorKey, configurableEditorTools])
 
   useEffect(() => {
     setLuluWax({

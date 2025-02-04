@@ -135,7 +135,7 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
 
     setWaxMenuConfig(prevConfig =>
       prevConfig.map(menuItem => {
-        if (typeof menuItem === 'object' && menuItem.name === 'Annotations') {
+        if (isObject(menuItem) && menuItem.name === 'Annotations') {
           return {
             ...menuItem,
             exclude: checkedInline
@@ -144,7 +144,7 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
           }
         }
 
-        if (typeof menuItem === 'object' && menuItem.name === 'Lists') {
+        if (isObject(menuItem) && menuItem.name === 'Lists') {
           return {
             ...menuItem,
             exclude: checkedLists

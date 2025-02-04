@@ -1165,6 +1165,9 @@ const ProducerPage = () => {
       chapters={bookQueryData?.getBook?.divisions[1].bookComponents}
       chaptersActionInProgress={chaptersActionInProgress}
       comments={savedComments ? JSON.parse(savedComments) : []}
+      configurableEditorTools={
+        bookQueryData?.getBook.bookSettings.configurableEditorTools
+      }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       editorKey={key}
