@@ -380,11 +380,7 @@ const SettingsModal = ({
       <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
         <div>
           <SettingTitle>{t('knowledgeBase')}</SettingTitle>
-          <SettingInfo>
-            {t('knowledgeBase.detail')}
-            {/* <br />
-            {t('knowledge_base_info_2')} */}
-          </SettingInfo>
+          <SettingInfo>{t('knowledgeBase.detail')}</SettingInfo>
         </div>
         <Switch
           checked={isKnowledgeBaseOn}
@@ -404,15 +400,13 @@ const SettingsModal = ({
           disabled={updateLoading || !canChangeSettings}
           onChange={e => toggleConfigurableEditor(e)}
         />
-        {isConfigurableEditorOn && (
-          <Stack style={{ width: '100%' }}>
-            <ConfigurableEditorSettings
-              savedWaxMenuConfig={waxMenuConfig}
-              saveWaxTools={saveWaxTools}
-            />
-          </Stack>
-        )}
       </SettingsWrapper>
+      {isConfigurableEditorOn && (
+        <ConfigurableEditorSettings
+          savedWaxMenuConfig={waxMenuConfig}
+          saveWaxTools={saveWaxTools}
+        />
+      )}
       <ButtonsContainer>
         <StyledButton
           data-test="settings-cancel-btn"

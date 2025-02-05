@@ -1,6 +1,6 @@
-/* stylelint-disable string-quotes */
-/* eslint-disable react/prop-types */
+/* stylelint-disable no-descending-specificity */
 import React, { useContext, useState } from 'react'
+import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
@@ -15,6 +15,7 @@ import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
 
 const Wrapper = styled.div`
+  --top-menu-base: 48px;
   background: ${th('colorBackground')};
   display: flex;
   flex-direction: column;
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
 
 const Main = styled.div`
   display: flex;
-  height: calc(100% - 48px);
+  flex: 1 1 calc(100% - var(--top-menu-base));
   width: 100%;
 
   > :nth-child(2) {
@@ -41,7 +42,9 @@ const TopMenu = styled.div`
   background: ${th('colorBackgroundToolBar')};
   border-bottom: 1px solid lightgrey;
   display: flex;
-  height: 48px;
+  flex: 1 0 var(--top-menu-base);
+  flex-flow: wrap;
+  gap: ${grid(1)};
   justify-content: center;
 
   ${({ isHidden }) =>
@@ -53,7 +56,20 @@ const TopMenu = styled.div`
       }
     `};
 
+  padding: ${grid(2)} ${grid(4)};
   user-select: none;
+
+  > div {
+    display: contents;
+
+    > div {
+      text-align: center;
+    }
+
+    &:has(#block-level-options) {
+      display: flex;
+    }
+  }
 
   [aria-controls='block-level-options'] {
     width: 100px;
@@ -61,12 +77,19 @@ const TopMenu = styled.div`
 
   #block-level-options {
     width: 110px;
+    z-index: 3;
   }
 
   &[data-loading='true'] [aria-controls='block-level-options'] {
     > span {
       opacity: 0;
     }
+  }
+
+  @media (max-width: 720px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    row-gap: ${grid(3)};
   }
 `
 
@@ -359,6 +382,10 @@ const LuluLayout = ({ customProps, ...rest }) => {
       </Wrapper>
     </ThemeProvider>
   )
+}
+
+LuluLayout.propTypes = {
+  customProps: PropTypes.shape().isRequired,
 }
 
 export default LuluLayout
