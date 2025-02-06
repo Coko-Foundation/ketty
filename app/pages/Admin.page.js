@@ -80,6 +80,30 @@ const AdminPage = () => {
     updateApplicationParametersMutation({ variables })
   }
 
+  const updateLuluConfig = values => {
+    const config = getApplicationParameters?.find(
+      p => p.area === 'integrations',
+    ).config
+
+    const newConfig = {
+      ...config,
+      lulu: {
+        ...config.lulu,
+        ...values,
+      },
+    }
+
+    const variables = {
+      input: {
+        context: 'bookBuilder',
+        area: 'integrations',
+        config: JSON.stringify(newConfig),
+      },
+    }
+
+    return updateApplicationParametersMutation({ variables })
+  }
+
   const toggleAIFeatures = val => {
     const variables = {
       input: {
@@ -185,8 +209,9 @@ const AdminPage = () => {
       exportConfigUpdate={toggleExportsConfig}
       exportOptions={exportsConfig}
       languages={languages}
-      luluConfigEnabled={!luluConfig?.disabled}
+      luluConfig={luluConfig}
       luluToggleConfig={toggleLuluConfig}
+      luluUpdateConfig={updateLuluConfig}
       onChatGPTKeyUpdate={handleUpdateChatGPTApiKey}
       onLanguagesUpdate={handleLanguagesUpdate}
       onTCUpdate={handleTCUppdate}

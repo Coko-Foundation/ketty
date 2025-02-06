@@ -33,11 +33,15 @@ const StyledControlWrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  max-width: 400px;
+  max-width: 450px;
   row-gap: ${grid(1)};
 
   > .ant-form-item {
     margin-bottom: 0 !important;
+  }
+
+  button[type='submit'] {
+    padding-inline: 2ch;
   }
 `
 
@@ -78,6 +82,7 @@ const ChatGPTAPIKeyWrapper = styled.div`
   overflow: visible clip;
   padding-block: ${props => (props.$hidden ? 0 : grid(2))};
   transition: height 0.1s ease, padding-block 0.1s ease 0.1s;
+  width: 100%;
 
   form > div:last-child {
     align-items: center;
@@ -134,6 +139,15 @@ const StyledButtonGroup = styled(ButtonGroup)`
   align-items: flex-start;
 `
 
+const StyledCollapse = styled(Collapse)`
+  width: 100%;
+
+  .ant-collapse-content-box > ${Stack} {
+    --space: 1em;
+    padding-inline-start: 3ch;
+  }
+`
+
 const normFile = e => {
   if (Array.isArray(e)) {
     return e
@@ -148,8 +162,9 @@ const AdminDashboard = props => {
     aiToggleIntegration,
     chatGptApiKey,
     luluToggleConfig,
+    luluUpdateConfig,
+    luluConfig,
     paramsLoading,
-    luluConfigEnabled,
     termsAndConditions,
     onTCUpdate,
     onChatGPTKeyUpdate,
@@ -165,6 +180,8 @@ const AdminDashboard = props => {
 
   const [apiKeyForm] = Form.useForm()
   const [newLanguageForm] = Form.useForm()
+  const [luluConfigForm] = Form.useForm()
+  const [luluConfigUpdateResult, setLuluConfigUpdateResult] = useState()
   const [keyUpdateResult, setKeyUpdateResult] = useState()
   const [tcUpdateResult, setTCUpdateResult] = useState()
   const [newLanguage, setNewLanguage] = useState()
@@ -173,6 +190,14 @@ const AdminDashboard = props => {
   useEffect(() => {
     apiKeyForm.setFieldsValue({ apiKey: chatGptApiKey })
   }, [chatGptApiKey])
+
+  useEffect(() => {
+    luluConfig &&
+      luluConfigForm.setFieldsValue({
+        ...luluConfig,
+        redirectUri: new URL(luluConfig.redirectUri).pathname,
+      })
+  }, [luluConfig])
 
   const udpateTermsAndConditions = () => {
     setTCUpdateResult({ loading: true })
@@ -218,6 +243,36 @@ const AdminDashboard = props => {
           setKeyUpdateResult(null)
         }, 5000)
       })
+  }
+
+  const updateLuluConfig = () => {
+    const { location } = window
+    luluConfigForm.validateFields().then(vals => {
+      const data = {
+        ...vals,
+        redirectUri: `${location.protocol}//${location.host}${vals.redirectUri}`,
+      }
+
+      luluUpdateConfig(data)
+        .then(() => {
+          setLuluConfigUpdateResult({
+            success: true,
+            message: t('integrations.lulu.updateConfig.success'),
+          })
+          setTimeout(() => {
+            setLuluConfigUpdateResult(null)
+          }, 5000)
+        })
+        .catch(() => {
+          setLuluConfigUpdateResult({
+            success: false,
+            message: t('integrations.lulu.updateConfig.error'),
+          })
+          setTimeout(() => {
+            setLuluConfigUpdateResult(null)
+          }, 5000)
+        })
+    })
   }
 
   const addLanguage = () => {
@@ -432,7 +487,6 @@ const AdminDashboard = props => {
               {t('availableLanguages.actions.downloadStrings')}
             </a>
             <StyledControlWrapper id="lang-form-submit">
-              <span />
               <StyledButtonGroup>
                 {!l.standard ? (
                   <Button
@@ -444,11 +498,7 @@ const AdminDashboard = props => {
                   </Button>
                 ) : null}
                 <Form.Item>
-                  <Button
-                    data-test="admindb-update-btn"
-                    htmlType="submit"
-                    type="primary"
-                  >
+                  <Button data-test="admindb-update-btn" htmlType="submit">
                     {t('availableLanguages.actions.update')}
                   </Button>
                 </Form.Item>
@@ -562,63 +612,166 @@ const AdminDashboard = props => {
             onChange={val => exportConfigUpdate(val, 'webPublish')}
           />
           {exportOptions?.webPublish?.enabled && (
-            <Stack
-              style={{
-                '--space': '1em',
-                paddingInlineStart: '3ch',
-              }}
-            >
-              <p style={{ gridColumn: 'span 2' }}>
-                {t('integrations.flax.explanation')}
-              </p>
-              <StyledControlWrapper>
-                <span>{t('integrations.flax.downloadOptions.pdf')}</span>
-                <Switch
-                  checked={exportOptions?.webPdfDownload?.enabled}
-                  data-test="admindb-pubPDF-switch"
-                  loading={paramsLoading}
-                  onChange={val => exportConfigUpdate(val, 'webPdfDownload')}
-                />
-              </StyledControlWrapper>
-              <StyledControlWrapper>
-                <span>{t('integrations.flax.downloadOptions.epub')}</span>
-                <Switch
-                  checked={exportOptions?.webEpubDownload?.enabled}
-                  data-test="admindb-pubEPUB-switch"
-                  loading={paramsLoading}
-                  onChange={val => exportConfigUpdate(val, 'webEpubDownload')}
-                />
-              </StyledControlWrapper>
-              <p style={{ gridColumn: 'span 2' }}>
-                {t('integrations.flax.customize.info')}
-              </p>
-              <StyledControlWrapper>
-                <span>{t('integrations.flax.customize.label')}</span>
-                <Switch
-                  checked={exportOptions?.webCustomHTML?.enabled}
-                  data-test="admindb-pubEPUB-switch"
-                  loading={paramsLoading}
-                  onChange={val => exportConfigUpdate(val, 'webCustomHTML')}
-                />
-              </StyledControlWrapper>
-            </Stack>
+            <StyledCollapse
+              ghost
+              items={[
+                {
+                  key: '1',
+                  label: 'Flax settings',
+                  children: (
+                    <Stack>
+                      <p style={{ gridColumn: 'span 2' }}>
+                        {t('integrations.flax.explanation')}
+                      </p>
+                      <StyledControlWrapper>
+                        <span>
+                          {t('integrations.flax.downloadOptions.pdf')}
+                        </span>
+                        <Switch
+                          checked={exportOptions?.webPdfDownload?.enabled}
+                          data-test="admindb-pubPDF-switch"
+                          loading={paramsLoading}
+                          onChange={val =>
+                            exportConfigUpdate(val, 'webPdfDownload')
+                          }
+                        />
+                      </StyledControlWrapper>
+                      <StyledControlWrapper>
+                        <span>
+                          {t('integrations.flax.downloadOptions.epub')}
+                        </span>
+                        <Switch
+                          checked={exportOptions?.webEpubDownload?.enabled}
+                          data-test="admindb-pubEPUB-switch"
+                          loading={paramsLoading}
+                          onChange={val =>
+                            exportConfigUpdate(val, 'webEpubDownload')
+                          }
+                        />
+                      </StyledControlWrapper>
+                      <p style={{ gridColumn: 'span 2' }}>
+                        {t('integrations.flax.customize.info')}
+                      </p>
+                      <StyledControlWrapper>
+                        <span>{t('integrations.flax.customize.label')}</span>
+                        <Switch
+                          checked={exportOptions?.webCustomHTML?.enabled}
+                          data-test="admindb-pubEPUB-switch"
+                          loading={paramsLoading}
+                          onChange={val =>
+                            exportConfigUpdate(val, 'webCustomHTML')
+                          }
+                        />
+                      </StyledControlWrapper>
+                    </Stack>
+                  ),
+                },
+              ]}
+            />
           )}
         </StyledControlWrapper>
         <StyledControlWrapper>
           <span>{t('integrations.lulu')}</span>
           <Switch
-            checked={luluConfigEnabled}
+            checked={!luluConfig?.disabled}
             data-test="admindb-lulu-switch"
             loading={paramsLoading}
             onChange={luluToggleConfig}
           />
+          {!luluConfig?.disabled && (
+            <StyledCollapse
+              ghost
+              items={[
+                {
+                  key: '1',
+                  label: t('integrations.lulu.details'),
+                  children: (
+                    <Stack>
+                      <Form
+                        form={luluConfigForm}
+                        layout="vertical"
+                        onFinish={updateLuluConfig}
+                      >
+                        <Form.Item
+                          label={t('integrations.lulu.details.baseApiUrl')}
+                          name="baseAPIURL"
+                          rules={[{ required: true }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label={t('integrations.lulu.details.loginUrl')}
+                          name="loginUrl"
+                          rules={[{ required: true }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label={t('integrations.lulu.details.redirectUri')}
+                          name="redirectUri"
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            addonBefore={`${window.location.protocol}//${window.location.host}`}
+                            type="url"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          label={t('integrations.lulu.details.projectBaseUrl')}
+                          name="projectBaseUrl"
+                          rules={[{ required: true }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label={t('integrations.lulu.details.tokenUrl')}
+                          name="tokenUrl"
+                          rules={[{ required: true }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label={t('integrations.lulu.details.clientId')}
+                          name="clientId"
+                          rules={[{ required: true }]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <StyledControlWrapper>
+                          <Button htmlType="submit" loading={paramsLoading}>
+                            {t('integrations.lulu.updateConfig.update')}
+                          </Button>
+                          <UpdateResult
+                            $success={luluConfigUpdateResult?.success}
+                            role="status"
+                          >
+                            {luluConfigUpdateResult?.message && (
+                              <>
+                                {luluConfigUpdateResult?.success ? (
+                                  <CheckOutlined />
+                                ) : (
+                                  <CloseOutlined />
+                                )}
+
+                                {luluConfigUpdateResult?.message}
+                              </>
+                            )}
+                          </UpdateResult>
+                        </StyledControlWrapper>
+                      </Form>
+                    </Stack>
+                  ),
+                },
+              ]}
+            />
+          )}
         </StyledControlWrapper>
       </Stack>
       <Divider />
       {/* translations */}
       <h2>{t('availableLanguages.heading')}</h2>
       <Stack style={{ '--space': '1rem' }}>
-        <Collapse
+        <StyledCollapse
           accordion
           destroyInactivePanel
           ghost
@@ -786,8 +939,9 @@ AdminDashboard.propTypes = {
   aiEnabled: PropTypes.bool,
   aiToggleIntegration: PropTypes.func,
   luluToggleConfig: PropTypes.func,
+  luluUpdateConfig: PropTypes.func,
+  luluConfig: PropTypes.shape(),
   paramsLoading: PropTypes.bool,
-  luluConfigEnabled: PropTypes.bool,
   termsAndConditions: PropTypes.string,
   onTCUpdate: PropTypes.func,
   chatGptApiKey: PropTypes.string,
@@ -803,8 +957,9 @@ AdminDashboard.defaultProps = {
   aiEnabled: false,
   aiToggleIntegration: null,
   luluToggleConfig: null,
+  luluUpdateConfig: null,
+  luluConfig: null,
   paramsLoading: false,
-  luluConfigEnabled: false,
   termsAndConditions: '',
   onTCUpdate: null,
   chatGptApiKey: '',
