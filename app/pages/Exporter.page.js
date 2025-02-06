@@ -398,15 +398,13 @@ const PreviewerPage = () => {
   }
 
   const handleConnectToLulu = () => {
-    const { location } = window
-    const appURL = `${location.protocol}//${location.host}`
-    const redirectURL = `${appURL}/provider-redirect/lulu`
-    const encodedRedirectURL = encodeURIComponent(redirectURL)
     const baseLuluURL = getLuluConfigValue('loginUrl')
-    const luluURLParams = `response_type=code&client_id=ketida-editor&redirect_uri=${encodedRedirectURL}`
-    const luluURL = `${baseLuluURL}?${luluURLParams}`
+    const clientId = getLuluConfigValue('clientId')
+    const redirectURL = getLuluConfigValue('redirectUri')
+    const encodedRedirectURL = encodeURIComponent(redirectURL)
+    const luluURLParams = `?response_type=code&client_id=${clientId}&redirect_uri=${encodedRedirectURL}`
 
-    window.open(luluURL, null, 'width=600, height=600')
+    window.open(`${baseLuluURL}${luluURLParams}`, null, 'width=600, height=600')
   }
 
   const handleSendToLulu = () => {

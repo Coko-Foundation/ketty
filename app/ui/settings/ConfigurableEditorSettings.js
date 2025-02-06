@@ -3,30 +3,24 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import isObject from 'lodash/isObject'
-import { Checkbox } from '../common'
+import { Checkbox, Stack } from '../common'
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding-top: 15px;
+const Wrapper = styled(Stack)`
+  --space: 15px;
 `
 
 const ToolGroup = styled.div`
   display: flex;
-  flex-flow: ${props => (props.vertical ? 'column' : 'row')};
-  padding-bottom: 15px;
+  flex-flow: column;
 `
 
-const ToolName = styled.span`
-  font-weight: 600;
-  margin-right: 10px;
-`
+const ToolName = styled.strong``
 
 const Tool = styled.div`
-  display: flex;
-  flex-flow: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin-block-start: 8px;
+  row-gap: 8px;
 `
 
 const inlineAnno = [
@@ -55,11 +49,15 @@ const SingleTools = [
   { label: 'Find And Replace', value: 'FindAndReplaceTool', checked: true },
 ]
 
-const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
+const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
-  const [waxMenuConfig, setWaxMenuConfig] = useState(savedWaxMenuConfig)
+  const [waxConfig, setWaxConfig] = useState(savedWaxConfig)
+
+  const [waxMenuConfig, setWaxMenuConfig] = useState(
+    waxConfig.MenuService[0].toolGroups,
+  )
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -172,10 +170,23 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
         return menuItem
       }),
     )
-  }, [checkedInline, checkedLists, checkedSingleTools])
+
+    setWaxConfig({
+      ...waxConfig,
+      MenuService: waxConfig.MenuService.map(service => ({
+        ...service,
+        toolGroups: waxMenuConfig,
+      })),
+    })
+  }, [
+    checkedInline,
+    checkedLists,
+    checkedSingleTools,
+    JSON.stringify(waxMenuConfig),
+  ])
 
   // save to settings modal
-  saveWaxTools(waxMenuConfig)
+  saveWaxConfig(waxConfig)
 
   return (
     <Wrapper>
@@ -196,7 +207,7 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
         </Tool>
       </ToolGroup>
       <ToolGroup vertical>
-        <ToolName>Lists &amp; BlockQuote</ToolName>
+        <ToolName>Lists &amp; Blockquote</ToolName>
         <Tool>
           {checkedLists.map(listTool => {
             return (
@@ -211,28 +222,29 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
           })}
         </Tool>
       </ToolGroup>
-
-      {checkedSingleTools.map(singleTool => {
-        return (
-          <ToolGroup>
-            <ToolName>{singleTool.label}</ToolName>
-            <Tool>
+      <ToolGroup vertical>
+        <ToolName>Other tools</ToolName>
+        <Tool>
+          {checkedSingleTools.map(singleTool => {
+            return (
               <Checkbox
                 checked={singleTool.checked}
                 onChange={onChangeSingleTool}
                 value={singleTool.value}
-              />
-            </Tool>
-          </ToolGroup>
-        )
-      })}
+              >
+                {singleTool.label}
+              </Checkbox>
+            )
+          })}
+        </Tool>
+      </ToolGroup>
     </Wrapper>
   )
 }
 
 ConfigurableEditorSettings.propTypes = {
-  savedWaxMenuConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
-  saveWaxTools: PropTypes.func.isRequired,
+  savedWaxConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
+  saveWaxConfig: PropTypes.func.isRequired,
 }
 
 export default ConfigurableEditorSettings

@@ -29,7 +29,7 @@ const EditorWrapper = ({
   selectedChapterId,
   canEdit,
   configurableEditorOn,
-  configurableEditorTools,
+  configurableEditorConfig,
   aiOn,
   editorRef,
   freeTextPromptsOn,
@@ -76,9 +76,9 @@ const EditorWrapper = ({
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
   const waxMenuConfig =
-    configurableEditorOn && configurableEditorTools?.length
-      ? JSON.parse(configurableEditorTools)
-      : configWithAi.MenuService[0].toolGroups
+    configurableEditorOn && configurableEditorConfig?.length
+      ? JSON.parse(configurableEditorConfig)
+      : configWithAi
 
   useEffect(() => {
     return () => {
@@ -92,9 +92,9 @@ const EditorWrapper = ({
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
-      MenuService: configWithAi.MenuService.map(service => ({
+      MenuService: selectedWaxConfig.MenuService.map(service => ({
         ...service,
-        toolGroups: waxMenuConfig,
+        toolGroups: waxMenuConfig.MenuService[0].toolGroups,
       })),
       AskAiContentService: {
         AskAiContentTransformation: queryAI,
@@ -117,7 +117,7 @@ const EditorWrapper = ({
         getMentionedUsers: onMention,
       },
     })
-  }, [aiOn, editorKey, configurableEditorTools])
+  }, [aiOn, editorKey, configurableEditorConfig])
 
   useEffect(() => {
     setLuluWax({
