@@ -132,10 +132,10 @@ const SettingsModal = ({
     !!bookSettings.configurableEditorOn,
   )
 
-  const [waxMenuConfig, setWaxMenuConfig] = useState(
-    bookSettings.configurableEditorTools?.length > 0
-      ? JSON.parse(bookSettings.configurableEditorTools)
-      : configWithAI.MenuService[0].toolGroups,
+  const [waxConfig, setWaxConfig] = useState(
+    bookSettings.configurableEditorConfig?.length > 0
+      ? JSON.parse(bookSettings.configurableEditorConfig)
+      : configWithAI,
   )
 
   // MUTATIONS SECTION START
@@ -184,13 +184,13 @@ const SettingsModal = ({
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
         configurableEditorOn: isConfigurableEditorOn,
-        configurableEditorTools: JSON.stringify(waxMenuConfig),
+        configurableEditorConfig: JSON.stringify(waxConfig),
       },
     })
   }
 
-  const saveWaxTools = tools => {
-    setWaxMenuConfig(tools)
+  const saveWaxConfig = config => {
+    setWaxConfig(config)
   }
 
   const toggleAiOn = toggle => {
@@ -403,8 +403,8 @@ const SettingsModal = ({
       </SettingsWrapper>
       {isConfigurableEditorOn && (
         <ConfigurableEditorSettings
-          savedWaxMenuConfig={waxMenuConfig}
-          saveWaxTools={saveWaxTools}
+          savedWaxConfig={waxConfig}
+          saveWaxConfig={saveWaxConfig}
         />
       )}
       <ButtonsContainer>
@@ -442,7 +442,7 @@ SettingsModal.propTypes = {
     customPromptsOn: PropTypes.bool,
     knowledgeBaseOn: PropTypes.bool,
     configurableEditorOn: PropTypes.bool,
-    configurableEditorTools: PropTypes.arrayOf(PropTypes.string),
+    configurableEditorConfig: PropTypes.arrayOf(PropTypes.string),
   }),
   closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
