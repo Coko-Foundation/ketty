@@ -49,11 +49,15 @@ const SingleTools = [
   { label: 'Find And Replace', value: 'FindAndReplaceTool', checked: true },
 ]
 
-const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
+const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
   const [checkedInline, setCheckedInline] = useState(inlineAnno)
   const [checkedLists, setCheckedLists] = useState(lists)
   const [checkedSingleTools, setCheckedSingleTools] = useState(SingleTools)
-  const [waxMenuConfig, setWaxMenuConfig] = useState(savedWaxMenuConfig)
+  const [waxConfig, setWaxConfig] = useState(savedWaxConfig)
+
+  const [waxMenuConfig, setWaxMenuConfig] = useState(
+    waxConfig.MenuService[0].toolGroups,
+  )
 
   const onChangeInline = e => {
     setCheckedInline(
@@ -166,10 +170,23 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
         return menuItem
       }),
     )
-  }, [checkedInline, checkedLists, checkedSingleTools])
+
+    setWaxConfig({
+      ...waxConfig,
+      MenuService: waxConfig.MenuService.map(service => ({
+        ...service,
+        toolGroups: waxMenuConfig,
+      })),
+    })
+  }, [
+    checkedInline,
+    checkedLists,
+    checkedSingleTools,
+    JSON.stringify(waxMenuConfig),
+  ])
 
   // save to settings modal
-  saveWaxTools(waxMenuConfig)
+  saveWaxConfig(waxConfig)
 
   return (
     <Wrapper>
@@ -226,8 +243,8 @@ const ConfigurableEditorSettings = ({ savedWaxMenuConfig, saveWaxTools }) => {
 }
 
 ConfigurableEditorSettings.propTypes = {
-  savedWaxMenuConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
-  saveWaxTools: PropTypes.func.isRequired,
+  savedWaxConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
+  saveWaxConfig: PropTypes.func.isRequired,
 }
 
 export default ConfigurableEditorSettings
