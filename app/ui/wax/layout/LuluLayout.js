@@ -29,6 +29,7 @@ const Wrapper = styled.div`
 const Main = styled.div`
   display: flex;
   flex: 1 1 calc(100% - var(--top-menu-base));
+  overflow: hidden;
   width: 100%;
 
   > :nth-child(2) {
