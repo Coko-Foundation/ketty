@@ -92,10 +92,19 @@ const EditorWrapper = ({
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
-      MenuService: selectedWaxConfig.MenuService.map(service => ({
-        ...service,
-        toolGroups: waxMenuConfig.MenuService[0].toolGroups,
-      })),
+      MenuService: selectedWaxConfig.MenuService.map(service => {
+        // Find the matching service in waxMenuConfig based on templateArea
+        const matchingConfig = waxMenuConfig.MenuService.find(
+          config => config.templateArea === service.templateArea,
+        )
+
+        return {
+          ...service,
+          toolGroups: matchingConfig
+            ? matchingConfig.toolGroups
+            : service.toolGroups,
+        }
+      }),
       AskAiContentService: {
         AskAiContentTransformation: queryAI,
         FreeTextPromptsOn: freeTextPromptsOn,

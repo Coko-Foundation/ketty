@@ -15,9 +15,14 @@ import {
   // disallowPasteImagesPlugin,
   AskAiContentService,
   CommentsService,
+  HighlightService,
+  TransformService,
+  CodeBlockService,
+  TrackChangeService,
+  EditingSuggestingService,
 } from 'wax-prosemirror-services'
 
-import { TablesService, tableEditing } from 'wax-table-service'
+import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
 
 import disallowPasteImagesPlugin from '../disallowPasteImagesPlugin'
 
@@ -38,12 +43,15 @@ const config = {
           name: 'Annotations',
           exclude: ['SmallCaps', 'StrikeThrough', 'Subscript', 'Superscript'],
         },
-        // 'Tables',
         'SpecialCharacters',
-        'FindAndReplaceTool',
         'ToggleAi',
+        'FindAndReplaceTool',
         'FullScreen',
       ],
+    },
+    {
+      templateArea: 'commentTrackToolBar',
+      toolGroups: ['TrackCommentOptions'],
     },
   ],
 
@@ -54,7 +62,7 @@ const config = {
   SchemaService: DefaultSchema,
   SpecialCharactersService: charactersList,
   PmPlugins: [
-    // columnResizing(),
+    columnResizing(),
     tableEditing(),
     disallowPasteImagesPlugin(() => {
       if (!window.showInfo) {
@@ -71,8 +79,27 @@ const config = {
 
   ImageService: { showAlt: true },
 
+  EnableTrackChangeService: { enabled: false, toggle: true },
+  AcceptTrackChangeService: {
+    own: {
+      accept: true,
+    },
+    others: {
+      accept: true,
+    },
+  },
+  RejectTrackChangeService: {
+    own: {
+      reject: true,
+    },
+    others: {
+      reject: true,
+    },
+  },
+
   services: [
     new InlineAnnotationsService(),
+    new TrackChangeService(),
     new AskAiContentService(),
     new ImageService(),
     new LinkService(),
@@ -86,6 +113,10 @@ const config = {
     new FindAndReplaceService(),
     new FullScreenService(),
     new CommentsService(),
+    new HighlightService(),
+    new TransformService(),
+    new CodeBlockService(),
+    new EditingSuggestingService(),
   ],
 }
 
