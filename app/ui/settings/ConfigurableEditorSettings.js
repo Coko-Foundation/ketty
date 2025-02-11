@@ -47,6 +47,11 @@ const SingleTools = [
   { label: 'Images', value: 'Images', checked: true },
   { label: 'Special Characters', value: 'SpecialCharacters', checked: true },
   { label: 'Find And Replace', value: 'FindAndReplaceTool', checked: true },
+  { label: 'Tables', value: 'Tables', checked: false },
+  { label: 'Code Block', value: 'CodeBlock', checked: false },
+  { label: 'Text Highlighter', value: 'HighlightToolGroup', checked: false },
+  { label: 'Transform Case', value: 'TransformToolGroup', checked: false },
+  { label: 'Track Changes', value: 'TrackingAndEditing', checked: false },
 ]
 
 const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
@@ -163,7 +168,12 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
               )
               .map(tool => tool.value)
 
-            return [...filteredConfig, ...newItems]
+            const filteredWithFullScreenLast = [
+              ...filteredConfig.filter(item => item !== 'FullScreen'),
+              'FullScreen',
+            ]
+
+            return [...filteredWithFullScreenLast, ...newItems]
           })
         }
 

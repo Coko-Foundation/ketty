@@ -4,7 +4,13 @@ import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import {
+  ApplicationContext,
+  WaxContext,
+  ComponentPlugin,
+  WaxView,
+  DocumentHelpers,
+} from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
@@ -13,6 +19,7 @@ import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
+import 'wax-table-service/dist/index.css'
 
 const Wrapper = styled.div`
   --top-menu-base: 48px;
@@ -137,6 +144,29 @@ const CommentsContainer = styled.div`
   }
 `
 
+const TrackToolsContainer = styled.div`
+  border-bottom: 1px solid #a8a8a8;
+  display: flex;
+  padding-top: 5px;
+  position: fixed;
+  right: 30px;
+  width: 18%;
+`
+
+const TrackTools = styled.div`
+  display: flex;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+`
+
+const TrackOptions = styled.div`
+  bottom: 5px;
+  display: flex;
+  margin-left: 10px;
+  position: relative;
+`
+
 const EditorContainer = styled.div`
   display: flex;
   height: 100%;
@@ -232,10 +262,22 @@ const NoSelectedChapterWrapper = styled.div`
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 const RightArea = ComponentPlugin('rightArea')
+const CommentTrackToolBar = ComponentPlugin('commentTrackToolBar')
 
 const LuluLayout = ({ customProps, ...rest }) => {
-  const { options } = useContext(WaxContext)
+  const {
+    options,
+    pmViews: { main },
+  } = useContext(WaxContext)
+
+  const { app } = useContext(ApplicationContext)
+  const waxMenuConfig = app.config.get('config.MenuService')
+
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
+
+  const menuContainsTrackTools = !!waxMenuConfig[0].toolGroups.find(
+    menu => menu === 'TrackingAndEditing',
+  )
 
   let fullScreenStyles = {}
 
@@ -252,6 +294,15 @@ const LuluLayout = ({ customProps, ...rest }) => {
       zIndex: '99999',
     }
   }
+
+  const commentsTracksCount =
+    main && DocumentHelpers.getCommentsTracksCount(main)
+
+  const trackBlockNodesCount =
+    main && DocumentHelpers.getTrackBlockNodesCount(main)
+
+  const showTrackControls =
+    menuContainsTrackTools || commentsTracksCount + trackBlockNodesCount > 0
 
   const {
     chapters,
@@ -371,6 +422,18 @@ const LuluLayout = ({ customProps, ...rest }) => {
                         </NoSelectedChapterWrapper>
                       )}
                       <CommentsContainer>
+                        {showTrackControls && (
+                          <TrackToolsContainer>
+                            <TrackTools>
+                              {commentsTracksCount + trackBlockNodesCount}{' '}
+                              SUGGESTIONS
+                              <TrackOptions>
+                                <CommentTrackToolBar />
+                              </TrackOptions>
+                            </TrackTools>
+                          </TrackToolsContainer>
+                        )}
+
                         <RightArea area="main" />
                       </CommentsContainer>
                     </>
