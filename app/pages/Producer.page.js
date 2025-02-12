@@ -120,7 +120,7 @@ const ProducerPage = () => {
   const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
   const [key, setKey] = useState()
-  const [viewMetadata, setViewMetadata] = useState(false)
+  const [viewMetadata, setViewMetadata] = useState('')
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
@@ -1158,6 +1158,7 @@ const ProducerPage = () => {
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bookComponentContent={currentBookComponentContent}
+      bookId={bookId}
       bookMembers={members}
       bookMetadataValues={bookMetadataValues}
       canEdit={canModify}
@@ -1177,6 +1178,7 @@ const ProducerPage = () => {
       editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
+      getBookSettings={getBookSettings}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       onAddChapter={onAddChapter}
@@ -1196,6 +1198,7 @@ const ProducerPage = () => {
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}
+      settings={bookQueryData?.getBook.bookSettings}
       setViewMetadata={setViewMetadata}
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}

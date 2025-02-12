@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
-import { Collapse, Radio } from '../common'
+import { Collapse, Radio } from '../../common'
 
 const StyledPanel = styled(Collapse.Panel)`
   .ant-collapse-header {

@@ -5,6 +5,7 @@ import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
 
 const EditorWrapper = ({
+  bookId,
   title,
   subtitle,
   chapters,
@@ -47,6 +48,8 @@ const EditorWrapper = ({
   onUploadBookCover,
   viewMetadata,
   setViewMetadata,
+  settings,
+  getBookSettings,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -71,6 +74,9 @@ const EditorWrapper = ({
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
+    settings,
+    getBookSettings,
+    bookId,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -92,10 +98,19 @@ const EditorWrapper = ({
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
-      MenuService: selectedWaxConfig.MenuService.map(service => ({
-        ...service,
-        toolGroups: waxMenuConfig.MenuService[0].toolGroups,
-      })),
+      MenuService: selectedWaxConfig.MenuService.map(service => {
+        // Find the matching service in waxMenuConfig based on templateArea
+        const matchingConfig = waxMenuConfig.MenuService.find(
+          config => config.templateArea === service.templateArea,
+        )
+
+        return {
+          ...service,
+          toolGroups: matchingConfig
+            ? matchingConfig.toolGroups
+            : service.toolGroups,
+        }
+      }),
       AskAiContentService: {
         AskAiContentTransformation: queryAI,
         FreeTextPromptsOn: freeTextPromptsOn,
@@ -144,6 +159,9 @@ const EditorWrapper = ({
       onUploadBookCover,
       viewMetadata,
       setViewMetadata,
+      getBookSettings,
+      settings,
+      bookId,
     })
   }, [
     title,
@@ -158,6 +176,8 @@ const EditorWrapper = ({
     editorKey,
     savedComments,
     viewMetadata,
+    settings,
+    bookId,
   ])
 
   const userObject = {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Space } from 'antd'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { Button, Select, Form } from '../common'
+import { Button, Select, Form } from '../../common'
 import SelectUsers from './SelectUsers'
 
 const Wrapper = styled(Space)`

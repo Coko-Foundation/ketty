@@ -7,8 +7,6 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Avatar } from 'antd'
-import isEmpty from 'lodash/isEmpty'
-import { SettingOutlined } from '@ant-design/icons'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import { useTranslation } from 'react-i18next'
 import Button from './Button'
@@ -31,17 +29,24 @@ const Navigation = styled.nav`
   align-items: center;
   background-color: ${th('colorBody')};
   display: flex;
-  flex-grow: 1;
   height: 100%;
   justify-content: space-between;
+  width: calc(100vw - 56px);
 `
 
-const LinksContainer = styled.div`
-  align-items: stretch;
-  display: flex;
-  gap: ${grid(6)};
-  height: 100%;
-  padding-inline: ${grid(2)};
+const BookTitle = styled.h1`
+  flex-grow: 1;
+  font-size: ${th('fontSizeLarge')};
+  font-weight: bold;
+  overflow: hidden;
+  padding: ${grid(2)};
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-pad-left='true'] {
+    padding-inline-start: 90px;
+  }
 `
 
 const BrandingContainer = styled.div`
@@ -77,14 +82,16 @@ const BrandLabel = styled.div`
 `
 
 const StyledPopup = styled(Popup)`
-  border: medium;
+  border: 1px solid ${th('colorBorder')};
+  border-block-start: none;
   border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
-  margin-top: ${grid(3)};
+  margin-top: ${grid(1)};
   padding: 5px;
 
-  &::before {
+  &::before,
+  &::after {
     background-color: inherit;
     clip-path: polygon(50% 0, 100% 100%, 0 100%);
     content: '';
@@ -96,6 +103,11 @@ const StyledPopup = styled(Popup)`
     top: -7px;
     width: 16px;
     z-index: 1;
+  }
+
+  &::before {
+    background-color: ${th('colorBorder')};
+    top: -8px;
   }
 `
 
@@ -139,15 +151,11 @@ const Header = props => {
     dashboardURL,
     showBackToBook,
     backToBookURL,
-    showInvite,
-    showPreview,
-    showSettings,
     previewURL,
     dropdownItems,
-    showAiAssistantLink,
-    showKnowledgeBaseLink,
     bookId,
     languages,
+    bookTitle,
     ...rest
   } = props
 
@@ -156,93 +164,17 @@ const Header = props => {
   })
 
   const navItemsLeft = []
-  const navItemsRight = []
-
-  if (showDashboard) {
-    navItemsLeft.push(
-      <UnstyledLink
-        data-test="header-dashboard-link"
-        key="dashboard"
-        to="/dashboard"
-      >
-        {t('dashboard')}
-      </UnstyledLink>,
-    )
-  }
 
   if (showBackToBook) {
     navItemsLeft.push(
       <UnstyledLink
         data-test="header-back-link"
         key="back"
+        style={{ position: 'absolute' }}
         to={`/books/${bookId}/producer`}
       >
         {t('backToBook')}
       </UnstyledLink>,
-    )
-  }
-
-  if (showPreview) {
-    navItemsRight.push(
-      <UnstyledLink
-        data-test="header-preview-link"
-        key="preiew"
-        to={`/books/${bookId}/exporter`}
-      >
-        {t('previewAndPublish')}
-      </UnstyledLink>,
-    )
-  }
-
-  if (showInvite) {
-    navItemsRight.push(
-      <Button
-        data-test="header-share-btn"
-        key="share"
-        onClick={onInvite}
-        type="text"
-      >
-        {t('share')}
-      </Button>,
-    )
-  }
-
-  if (showKnowledgeBaseLink) {
-    navItemsRight.push(
-      <UnstyledLink
-        data-test="header-kb-link"
-        key="kb"
-        to={`/books/${bookId}/knowledge-base`}
-      >
-        {t('knowledgeBase')}
-      </UnstyledLink>,
-    )
-  }
-
-  if (showAiAssistantLink) {
-    navItemsRight.push(
-      <UnstyledLink
-        data-test="header-aiDesigner-link"
-        key="ai-designer"
-        to={`/books/${bookId}/ai-pdf`}
-      >
-        {t('aiBookDesigner')}
-      </UnstyledLink>,
-    )
-  }
-
-  if (showSettings) {
-    navItemsRight.push(
-      <Button
-        aria-label="Book settings"
-        data-test="header-bookSettings-btn"
-        key="settings"
-        onClick={onSettings}
-        title={t('bookSettings')}
-        type="text"
-      >
-        <SettingOutlined />
-      </Button>,
     )
   }
 
@@ -258,56 +190,53 @@ const Header = props => {
         </UnstyledLink>
       </BrandingContainer>
       <Navigation role="navigation">
-        <LinksContainer>
-          {!isEmpty(navItemsLeft) && navItemsLeft.map(item => item)}
-        </LinksContainer>
-        <LinksContainer>
-          {!isEmpty(navItemsRight) && navItemsRight.map(item => item)}
-          {userDisplayName ? (
-            <StyledPopup
-              alignment="end"
-              position="block-end"
-              toggle={
-                <Button type="text">
-                  <Avatar data-test="avatar-initials">
-                    {getInitials(userDisplayName)}
-                  </Avatar>
-                </Button>
-              }
-            >
-              <PopupContentWrapper>
-                <LanguageSwitcher languages={languages} />
-                {canAccessAdminPage && (
-                  <>
-                    <UnstyledLink
-                      data-test="header-admin-link"
-                      onClick={() => {
-                        document.querySelector('#main-content').focus()
-                      }}
-                      to="/admin"
-                    >
-                      {t('admin')}
-                    </UnstyledLink>
-                    <UnstyledLink
-                      data-test="header-admin-link"
-                      onClick={() => {
-                        document.querySelector('#main-content').focus()
-                      }}
-                      to="/template-manager"
-                    >
-                      Templates
-                    </UnstyledLink>
-                  </>
-                )}
-                <Button data-test="logout-button" onClick={onLogout}>
-                  {t('logout')}
-                </Button>
-              </PopupContentWrapper>
-            </StyledPopup>
-          ) : (
-            <LanguageSwitcher languages={languages} />
-          )}
-        </LinksContainer>
+        {navItemsLeft.map(el => el)}
+        <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
+        {userDisplayName ? (
+          <StyledPopup
+            alignment="end"
+            position="block-end"
+            toggle={
+              <Button type="text">
+                <Avatar data-test="avatar-initials">
+                  {getInitials(userDisplayName)}
+                </Avatar>
+              </Button>
+            }
+          >
+            <PopupContentWrapper>
+              <LanguageSwitcher languages={languages} />
+              <UnstyledLink to={homeURL}>Dashboard</UnstyledLink>
+              {canAccessAdminPage && (
+                <>
+                  <UnstyledLink
+                    data-test="header-admin-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/admin"
+                  >
+                    {t('admin')}
+                  </UnstyledLink>
+                  <UnstyledLink
+                    data-test="header-admin-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/template-manager"
+                  >
+                    Templates
+                  </UnstyledLink>
+                </>
+              )}
+              <Button data-test="logout-button" onClick={onLogout}>
+                {t('logout')}
+              </Button>
+            </PopupContentWrapper>
+          </StyledPopup>
+        ) : (
+          <LanguageSwitcher languages={languages} />
+        )}
       </Navigation>
     </StyledHeader>
   )
@@ -323,15 +252,11 @@ Header.propTypes = {
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
   showDashboard: PropTypes.bool,
-  showAiAssistantLink: PropTypes.bool,
-  showKnowledgeBaseLink: PropTypes.bool,
-  showInvite: PropTypes.bool.isRequired,
-  showSettings: PropTypes.bool.isRequired,
   onInvite: PropTypes.func.isRequired,
   onSettings: PropTypes.func.isRequired,
-  showPreview: PropTypes.bool.isRequired,
   dashboardURL: PropTypes.string,
   backToBookURL: PropTypes.string,
+  bookTitle: PropTypes.string,
   previewURL: PropTypes.string,
   dropdownItems: PropTypes.arrayOf(
     PropTypes.shape({
@@ -351,10 +276,9 @@ Header.defaultProps = {
   dashboardURL: null,
   backToBookURL: null,
   previewURL: null,
-  showAiAssistantLink: false,
-  showKnowledgeBaseLink: false,
   languages: [],
   showDashboard: true,
+  bookTitle: null,
 }
 
 export default Header

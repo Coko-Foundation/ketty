@@ -1,21 +1,35 @@
 /* stylelint-disable no-descending-specificity */
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
+import { ToTopOutlined } from '@ant-design/icons'
+import {
+  ApplicationContext,
+  WaxContext,
+  ComponentPlugin,
+  WaxView,
+  DocumentHelpers,
+} from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
-import BookMetadataForm from '../../bookMetadata/BookMetadataForm'
+import {
+  BookInformation,
+  BookMetadataForm,
+  SettingsForm,
+  UserInviteModal,
+} from '../../bookInformation'
 import theme from '../../../theme'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
+import 'wax-table-service/dist/index.css'
 
+// #region styled
 const Wrapper = styled.div`
-  --top-menu-base: 48px;
+  --top-menu-base: clamp(3rem, 4.3478rem + -1.7391vw, 4rem);
   background: ${th('colorBackground')};
   display: flex;
   flex-direction: column;
@@ -30,6 +44,7 @@ const Main = styled.div`
   display: flex;
   flex: 1 1 calc(100% - var(--top-menu-base));
   overflow: hidden;
+  position: relative;
   width: 100%;
 
   > :nth-child(2) {
@@ -38,13 +53,21 @@ const Main = styled.div`
   }
 `
 
+const StyledMetadataForm = styled(BookMetadataForm)`
+  padding-inline-start: calc(50px + var(--s1));
+
+  @media (min-width: 600px) {
+    padding-inline-start: var(--s1);
+  }
+`
+
 const TopMenu = styled.div`
   align-items: center;
-  background: ${th('colorBackgroundToolBar')};
+  background-color: ${th('colorBackground')};
   border-bottom: 1px solid lightgrey;
   display: flex;
   flex: 1 0 var(--top-menu-base);
-  flex-flow: wrap;
+  flex-flow: nowrap;
   gap: ${grid(1)};
   justify-content: center;
 
@@ -56,12 +79,29 @@ const TopMenu = styled.div`
         visibility: hidden;
       }
     `};
-
+  /* -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch; */
   padding: ${grid(2)} ${grid(4)};
   user-select: none;
 
+  &.scrollable {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    row-gap: ${grid(2)};
+
+    &::before {
+      content: '';
+      grid-column: 1 / -1;
+    }
+  }
+
   > div {
     display: contents;
+    justify-content: center;
+
+    &:has(button[title='Undo']) {
+      display: inline-flex;
+    }
 
     > div {
       text-align: center;
@@ -73,12 +113,46 @@ const TopMenu = styled.div`
   }
 
   [aria-controls='block-level-options'] {
-    width: 100px;
+    background-color: transparent;
+    width: 90px;
   }
 
   #block-level-options {
-    width: 110px;
-    z-index: 3;
+    width: 100px;
+    z-index: 1001;
+  }
+
+  .Dropdown-root {
+    display: contents;
+  }
+
+  .Dropdown-control {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    white-space: nowrap;
+    width: 120px;
+
+    .Dropdown-arrow {
+      position: unset;
+    }
+  }
+
+  .Dropdown-menu {
+    top: unset;
+    width: 120px;
+    z-index: 1001;
+  }
+
+  [aria-controls='table-options'] {
+    width: 120px;
+  }
+
+  #table-options {
+    span {
+      text-align: start;
+    }
   }
 
   &[data-loading='true'] [aria-controls='block-level-options'] {
@@ -86,11 +160,35 @@ const TopMenu = styled.div`
       opacity: 0;
     }
   }
+`
 
-  @media (max-width: 720px) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    row-gap: ${grid(3)};
+const CollapseContainer = styled.div`
+  background-color: transparent;
+  display: flex;
+  inset-inline-end: ${grid(3)};
+  justify-content: center;
+  padding-block-start: 9px;
+  position: absolute;
+  z-index: 9;
+
+  &[data-collapsed='true'] {
+    align-items: start;
+    background-color: white;
+    height: unset;
+    inset: 0;
+
+    button {
+      transform: rotate(90deg);
+    }
+  }
+
+  button {
+    transform: rotate(-90deg);
+    transition: transform 0.3s ease-out;
+  }
+
+  @media (min-width: 800px) {
+    display: none;
   }
 `
 
@@ -137,6 +235,29 @@ const CommentsContainer = styled.div`
   }
 `
 
+const TrackToolsContainer = styled.div`
+  border-bottom: 1px solid #a8a8a8;
+  display: flex;
+  padding-top: 5px;
+  position: fixed;
+  right: 30px;
+  width: 18%;
+`
+
+const TrackTools = styled.div`
+  display: flex;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+`
+
+const TrackOptions = styled.div`
+  bottom: 5px;
+  display: flex;
+  margin-left: 10px;
+  position: relative;
+`
+
 const EditorContainer = styled.div`
   display: flex;
   height: 100%;
@@ -146,16 +267,22 @@ const EditorContainer = styled.div`
   width: 1016px;
 
   > div:first-child {
-    width: 816px;
+    max-width: 816px;
+    width: 100%;
   }
 
   .ProseMirror {
+    --padding-inline: clamp(1.25rem, -0.4022rem + 8.2609vw, 6rem);
     background: ${({ selectedChapterId }) =>
       selectedChapterId ? '#fff' : '#e8e8e8'};
-    /* min-height: 100%; */
     min-height: calc(100vh - 104px);
-    padding: ${grid(20)} ${grid(24)};
+    padding: ${grid(20)} var(--padding-inline) ${grid(20)}
+      calc(50px + var(--padding-inline));
     width: 100%;
+
+    @media (min-width: 600px) {
+      padding: ${grid(20)} var(--padding-inline);
+    }
 
     table > caption {
       caption-side: top;
@@ -179,47 +306,47 @@ const StyledSpin = styled(Spin)`
 `
 
 const LeftPanelWrapper = styled.div`
+  background-color: ${th('colorBackground')};
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: ${grid(3)};
-  width: 32%;
+  padding-inline: ${grid(3)};
+  position: absolute;
+  transition: flex-basis 0.4s, width 0.4s;
+  width: 300px;
+  z-index: 1000; // hate it but it's the wax cursor's fault!
 
-  @media (min-width: 1200px) {
-    flex: 0 0 49ch;
+  &:has([data-collapsed='true']) {
+    flex: 0 0 50px;
+    width: 50px;
+  }
+
+  @media (min-width: 600px) {
+    flex: 0 0 300px;
+    position: relative;
+    width: unset;
+  }
+
+  @media (min-width: 800px) {
+    &:has([data-collapsed]) {
+      flex: 0 0 34%;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    &:has([data-collapsed]) {
+      flex: 0 0 380px;
+    }
   }
 `
 
-const TitleArea = styled.div`
-  flex-shrink: 0;
-  font-size: 26px;
-  margin-bottom: ${grid(4)};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-`
+const StyledSettingsForm = styled(SettingsForm)`
+  padding-inline-start: calc(50px + var(--s1));
 
-const MetadataArea = styled.div`
-  border-bottom: 1px solid ${th('colorBorder')};
-  border-top: 1px solid ${th('colorBorder')};
-  flex-shrink: 0;
-  margin-bottom: ${grid(4)};
-  padding: ${grid(2)} 0;
-  width: 100%;
-
-  > button[aria-pressed] {
-    border-radius: 0;
-    padding-inline-start: 10px;
-    text-align: left;
-    width: 100%;
-
-    &[aria-pressed='true'] {
-      background-color: rgb(63 133 198 / 33%);
-      border-inline-start: 2px solid rgb(63 133 198);
-    }
+  @media (min-width: 600px) {
+    padding-inline-start: var(--s1);
   }
 `
 
@@ -229,30 +356,13 @@ const NoSelectedChapterWrapper = styled.div`
   height: 80%;
   place-content: center;
 `
+// #endregion styled
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 const RightArea = ComponentPlugin('rightArea')
+const CommentTrackToolBar = ComponentPlugin('commentTrackToolBar')
 
 const LuluLayout = ({ customProps, ...rest }) => {
-  const { options } = useContext(WaxContext)
-  const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
-
-  let fullScreenStyles = {}
-
-  if (options.fullScreen) {
-    fullScreenStyles = {
-      backgroundColor: '#fff',
-      height: '100%',
-      left: '0',
-      margin: '0',
-      padding: '0',
-      position: 'fixed',
-      top: '0',
-      width: '100%',
-      zIndex: '99999',
-    }
-  }
-
   const {
     chapters,
     onDeleteChapter,
@@ -275,55 +385,155 @@ const LuluLayout = ({ customProps, ...rest }) => {
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
+    settings,
+    getBookSettings,
+    bookId,
   } = customProps
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
+  const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
+  const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
-  const toggleMetadata = () => {
-    if (viewMetadata) {
-      setViewMetadata(false)
+  const {
+    options,
+    pmViews: { main },
+  } = useContext(WaxContext)
 
-      if (lastSelectedChapter) {
-        onChapterClick(lastSelectedChapter)
-        setLastSelectedChapter(null)
+  const { app } = useContext(ApplicationContext)
+  const waxMenuConfig = app.config.get('config.MenuService')
+  let fullScreenStyles = {}
+
+  const menuContainsTrackTools = !!waxMenuConfig[0].toolGroups.find(
+    menu => menu === 'TrackingAndEditing',
+  )
+
+  if (options.fullScreen) {
+    fullScreenStyles = {
+      backgroundColor: '#fff',
+      height: '100%',
+      left: '0',
+      margin: '0',
+      padding: '0',
+      position: 'fixed',
+      top: '0',
+      width: '100%',
+      zIndex: '99999',
+    }
+  }
+
+  const commentsTracksCount =
+    main && DocumentHelpers.getCommentsTracksCount(main)
+
+  const trackBlockNodesCount =
+    main && DocumentHelpers.getTrackBlockNodesCount(main)
+
+  const showTrackControls =
+    menuContainsTrackTools || commentsTracksCount + trackBlockNodesCount > 0
+
+  useEffect(() => {
+    // Re-check on window resize
+    window.addEventListener('resize', checkOverflow)
+    return () => window.removeEventListener('resize', checkOverflow)
+  }, [])
+
+  useEffect(() => {
+    !editorLoading &&
+      setTimeout(() => {
+        checkOverflow()
+      }, 0)
+  }, [editorLoading])
+
+  const toggleMetadata = which => {
+    if (viewMetadata !== which) {
+      setViewMetadata(which)
+
+      if (selectedChapterId) {
+        onChapterClick(selectedChapterId)
+        setLastSelectedChapter(selectedChapterId)
       }
     } else {
-      if (selectedChapterId) {
+      if (lastSelectedChapter) {
         setLastSelectedChapter(selectedChapterId)
-        onChapterClick(selectedChapterId)
+        onChapterClick(lastSelectedChapter)
       }
 
-      setViewMetadata(true)
+      setViewMetadata('')
     }
   }
 
   const handleChapterClick = chapterId => {
-    if (viewMetadata) setViewMetadata(false)
+    if (viewMetadata !== '') setViewMetadata('')
     onChapterClick(chapterId)
+  }
+
+  const checkOverflow = () => {
+    const toolbar = document.getElementById('toolbar')
+    // Check if the content overflows the container
+
+    if (toolbar?.scrollWidth > toolbar?.clientWidth) {
+      toolbar?.classList.add('scrollable') // Add class to align items to the start
+    } else {
+      toolbar?.classList.remove('scrollable') // Remove class to center items
+    }
+  }
+
+  const renderInformationBox = () => {
+    switch (viewMetadata) {
+      case 'metadata':
+        return (
+          <StyledMetadataForm
+            canChangeMetadata={canEdit}
+            initialValues={bookMetadataValues}
+            onSubmitBookMetadata={onSubmitBookMetadata}
+            onUploadBookCover={onUploadBookCover}
+          />
+        )
+      case 'settings':
+        return (
+          <StyledSettingsForm
+            bookId={bookId}
+            bookSettings={settings}
+            refetchBookSettings={getBookSettings}
+          />
+        )
+
+      case 'members':
+        return <UserInviteModal bookId={bookId} />
+
+      default:
+        return null
+    }
   }
 
   return (
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
-        <TopMenu data-loading={editorLoading} isHidden={viewMetadata}>
+        <TopMenu
+          id="toolbar"
+          data-loading={editorLoading}
+          isHidden={viewMetadata}
+        >
           {!editorLoading ? <MainMenuToolBar /> : null}
         </TopMenu>
         <Main>
           {!options.fullScreen && (
             <LeftPanelWrapper>
-              <TitleArea data-test="producer-bookTitle">
-                {title || t('untitledBook')}
-              </TitleArea>
-              <MetadataArea>
+              <CollapseContainer data-collapsed={bookPanelCollapsed}>
                 <Button
-                  aria-pressed={viewMetadata}
-                  data-test="producer-metadata-btn"
-                  onClick={toggleMetadata}
+                  aria-label={t('collapse')}
+                  icon={<ToTopOutlined />}
+                  onClick={() => setBookPanelCollapsed(!bookPanelCollapsed)}
                   type="text"
-                >
-                  {t('bookMetadataTab.title')}
-                </Button>
-              </MetadataArea>
+                />
+              </CollapseContainer>
+              <BookInformation
+                bookId={bookId}
+                showAiAssistantLink={settings?.aiPdfDesignerOn}
+                showKnowledgeBaseLink={settings?.knowledgeBaseOn}
+                toggleInformation={toggleMetadata}
+                viewInformation={viewMetadata}
+              />
+
               <BookPanel
                 bookMetadataValues={bookMetadataValues}
                 canEdit={canEdit}
@@ -347,14 +557,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
               />
             </LeftPanelWrapper>
           )}
-
-          {viewMetadata ? (
-            <BookMetadataForm
-              canChangeMetadata={canEdit}
-              initialValues={bookMetadataValues}
-              onSubmitBookMetadata={onSubmitBookMetadata}
-              onUploadBookCover={onUploadBookCover}
-            />
+          {viewMetadata !== '' ? (
+            renderInformationBox()
           ) : (
             <EditorArea isFullscreen={options.fullScreen}>
               <WaxSurfaceScroll id="wax-surface-scroll">
@@ -371,6 +575,18 @@ const LuluLayout = ({ customProps, ...rest }) => {
                         </NoSelectedChapterWrapper>
                       )}
                       <CommentsContainer>
+                        {showTrackControls && (
+                          <TrackToolsContainer>
+                            <TrackTools>
+                              {commentsTracksCount + trackBlockNodesCount}{' '}
+                              SUGGESTIONS
+                              <TrackOptions>
+                                <CommentTrackToolBar />
+                              </TrackOptions>
+                            </TrackTools>
+                          </TrackToolsContainer>
+                        )}
+
                         <RightArea area="main" />
                       </CommentsContainer>
                     </>

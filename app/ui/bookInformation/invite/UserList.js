@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { List, Select } from '../common'
+import { List, Select } from '../../common'
 
 const StyledListItem = styled(List.Item)`
   width: 100%;

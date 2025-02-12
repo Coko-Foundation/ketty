@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { Spin, Select } from '../common'
+import { Spin, Select } from '../../common'
 
 const StyledSelect = styled(Select)`
   &.ant-select {
