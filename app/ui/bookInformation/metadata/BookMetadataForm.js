@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import dayjs from 'dayjs'
 import mapValues from 'lodash/mapValues'
 import { Form, Upload, Image } from 'antd'
-import { Box, Center, Input, TextArea, Spin } from '../common'
+import { Box, Center, Input, TextArea } from '../../common'
 import CopyrightLicenseInput from './CopyrightLicenseInput'
 import ISBNList from './ISBNList'
 
@@ -21,6 +21,7 @@ const BookMetadataForm = ({
   onSubmitBookMetadata,
   canChangeMetadata,
   onUploadBookCover,
+  className,
 }) => {
   const [form] = Form.useForm()
 
@@ -124,12 +125,12 @@ const BookMetadataForm = ({
     })
   }
 
-  if (!initialValues.title) {
-    return <Spin spinning style={{ display: 'grid', placeContent: 'center' }} />
-  }
+  // if (!initialValues.title) {
+  //   return <Spin spinning style={{ display: 'grid', placeContent: 'center' }} />
+  // }
 
   return (
-    <Box>
+    <Box className={className}>
       <Center>
         <Form
           form={form}

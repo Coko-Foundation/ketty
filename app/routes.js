@@ -1,8 +1,6 @@
 /* stylelint-disable no-descending-specificity */
 
 import React, { useState, useEffect, Suspense } from 'react'
-import { Modal, Tooltip } from 'antd'
-import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useApolloClient, useQuery } from '@apollo/client'
 import { Route, Switch, useHistory, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
@@ -12,18 +10,14 @@ import {
   Authenticate,
   PageLayout as Page,
   RequireAuth,
-  grid,
   th,
   useCurrentUser,
   ProviderConnectionPage,
 } from '@coko/client'
 
 import { CURRENT_USER } from '@coko/client/dist/helpers/currentUserQuery'
-import { isAdmin, hasEditAccess } from './helpers/permissions'
+import { isAdmin /*, hasEditAccess */ } from './helpers/permissions'
 import Header from './ui/common/Header'
-
-import UserInviteModal from './ui/invite/UserInviteModal'
-import SettingsModal from './ui/settings/SettingsModal'
 
 import {
   BookTitlePage,
@@ -45,7 +39,7 @@ import {
   TemplateMananger,
 } from './pages'
 
-import { GET_BOOK_SETTINGS, APPLICATION_PARAMETERS } from './graphql'
+import { GET_BOOK, APPLICATION_PARAMETERS } from './graphql'
 import { CssAssistantProvider } from './ui/AiPDFDesigner/hooks/CssAssistantContext'
 import { GlobalContextProvider } from './helpers/hooks/GlobalContext'
 
@@ -76,6 +70,10 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .ant-tooltip .ant-tooltip-arrow::before {
+    clip-path: polygon(0 100%, 50% 0%, 100% 100%);
+  }
+
   .ant-modal-confirm-content {
     /* stylelint-disable-next-line declaration-no-important */
     max-width: 100% !important;
@@ -96,20 +94,8 @@ const StyledPage = styled(Page)`
   }
 `
 
-const ModalHeader = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: flex-start;
-`
-
-const ModalTitle = styled.h4`
-  font-size: ${th('fontSizeLarge')};
-  margin: 0 ${grid(1)} 0 0;
-`
-
 const SiteHeader = () => {
   const { currentUser, setCurrentUser } = useCurrentUser()
-  const [modal, contextHolder] = Modal.useModal()
   const client = useApolloClient()
   const history = useHistory()
   const { t } = useTranslation(null, { keyPrefix: 'pages.common.header' })
@@ -132,132 +118,48 @@ const SiteHeader = () => {
     return currentPath.split('/')[2]
   }
 
-  // This can be placed in a custom hook
-  const { data: bookQueryData, refetch: refetchBookSettings } = useQuery(
-    GET_BOOK_SETTINGS,
-    {
-      fetchPolicy: 'network-only',
-      nextFetchPolicy: 'network-only',
-      variables: {
-        id: getBookId(),
-      },
-      skip: !getBookId(),
+  const { data: getBook } = useQuery(GET_BOOK, {
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'network-only',
+    variables: {
+      id: getBookId(),
     },
-  )
+    skip: !getBookId(),
+  })
 
   const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
   })
 
-  const isAIEnabled = applicationParametersData?.getApplicationParameters.find(
-    c => c.area === 'aiEnabled',
-  )
-
   const languages = applicationParametersData?.getApplicationParameters.find(
     c => c.area === 'languages',
   )
 
-  const triggerInviteModal = () => {
-    const inviteModal = modal.confirm()
-    return inviteModal.update({
-      title: (
-        <ModalHeader>
-          <ModalTitle>{t('shareModal.title')}</ModalTitle>
-          <Tooltip
-            arrow={false}
-            color="black"
-            overlayInnerStyle={{ width: '480px' }}
-            placement="right"
-            title={t('shareModal.info')}
-          >
-            <QuestionCircleOutlined />
-          </Tooltip>
-        </ModalHeader>
-      ),
-      content: (
-        <UserInviteModal
-          bookId={isProducerPage || isExporterPage ? getBookId() : undefined}
-        />
-      ),
-      maskClosable: true,
-      width: 680,
-      bodyStyle: {
-        textAlign: 'justify',
-      },
-      closable: true,
-      icon: null,
-      footer: null,
-    })
-  }
-
-  const triggerSettingsModal = () => {
-    const settingsModal = modal.confirm()
-    return settingsModal.update({
-      title: (
-        <ModalHeader>
-          <ModalTitle>{t('bookSettingsModal.title')}</ModalTitle>
-        </ModalHeader>
-      ),
-      content: (
-        <SettingsModal
-          bookId={isProducerPage || isExporterPage ? getBookId() : undefined}
-          bookSettings={bookQueryData?.getBook.bookSettings}
-          closeModal={() => settingsModal.destroy()}
-          refetchBookSettings={refetchBookSettings}
-        />
-      ),
-      maskClosable: false,
-      width: 680,
-      bodyStyle: {
-        textAlign: 'justify',
-      },
-      closable: true,
-      icon: null,
-      footer: null,
-    })
-  }
-
-  const isProducerPage = currentPath.includes('/producer')
   const isExporterPage = currentPath.includes('/exporter')
   const isAiAssistantPage = currentPath.includes('/ai-pdf')
   const isKnowledgeBasePage = currentPath.includes('/knowledge-base')
-  const canEdit = currentUser && hasEditAccess(getBookId(), currentUser)
+  // const canEdit = currentUser && hasEditAccess(getBookId(), currentUser)
+
+  const bookTitle =
+    getBook?.getBook.title !== undefined &&
+    (getBook?.getBook.title ||
+      t('untitledBook', { keyPrefix: 'pages.producer' }))
 
   return (
-    <>
-      <Header
-        bookId={getBookId()}
-        brandLabel="Lulu"
-        brandLogoURL="/ketida.png"
-        canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
-        homeURL="/dashboard"
-        languages={languages?.config.filter(l => l.enabled)}
-        onInvite={triggerInviteModal}
-        onLogout={logout}
-        onSettings={triggerSettingsModal}
-        showAiAssistantLink={
-          canEdit &&
-          isAIEnabled?.config &&
-          bookQueryData?.getBook.bookSettings.aiPdfDesignerOn &&
-          isProducerPage
-        }
-        showBackToBook={
-          isExporterPage || isAiAssistantPage || isKnowledgeBasePage
-        }
-        showDashboard={currentUser && currentPath !== '/dashboard'}
-        showInvite={isProducerPage}
-        showKnowledgeBaseLink={
-          canEdit &&
-          isAIEnabled?.config &&
-          bookQueryData?.getBook.bookSettings.knowledgeBaseOn &&
-          isProducerPage
-        }
-        showPreview={isProducerPage}
-        showSettings={isProducerPage && canEdit && isAIEnabled?.config}
-        userDisplayName={currentUser ? currentUser.displayName : ''}
-      />
-      {contextHolder}
-    </>
+    <Header
+      bookId={getBookId()}
+      bookTitle={bookTitle}
+      brandLabel="Ketty"
+      brandLogoURL="/ketida.png"
+      canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
+      homeURL="/dashboard"
+      languages={languages?.config.filter(l => l.enabled)}
+      onLogout={logout}
+      showBackToBook={
+        isExporterPage || isAiAssistantPage || isKnowledgeBasePage
+      }
+      userDisplayName={currentUser ? currentUser.displayName : ''}
+    />
   )
 }
 

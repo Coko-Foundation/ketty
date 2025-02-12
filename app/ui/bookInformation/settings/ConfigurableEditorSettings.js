@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import isObject from 'lodash/isObject'
-import { Checkbox, Stack } from '../common'
+import { Checkbox, Stack } from '../../common'
 
 const Wrapper = styled(Stack)`
   --space: 15px;
