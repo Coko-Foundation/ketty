@@ -10,30 +10,11 @@ import { useTranslation } from 'react-i18next'
 import {
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   UPDATE_SETTINGS,
-} from '../../graphql'
-import { isAdmin, isOwner } from '../../helpers/permissions'
-import { Button, Input } from '../common'
+} from '../../../graphql'
+import { isAdmin, isOwner } from '../../../helpers/permissions'
+import { Button, Center, Input, Stack, Box } from '../../common'
 import ConfigurableEditorSettings from './ConfigurableEditorSettings'
-import configWithAI from '../wax/config/configWithAI'
-
-const Stack = styled.div`
-  --space: 24px;
-  /* ↓ The flex context */
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: flex-start;
-
-  > * {
-    /* ↓ Any extant vertical margins are removed */
-    margin-block: 0;
-  }
-
-  > * + * {
-    /* ↓ Top margin is only applied to successive elements */
-    margin-block-start: var(--space, 2rem);
-  }
-`
+import configWithAI from '../../wax/config/configWithAI'
 
 const Indented = styled.div`
   padding-inline-start: ${grid(3)};
@@ -99,8 +80,8 @@ const StyledListButton = styled(Button)`
 const SettingsModal = ({
   bookId,
   bookSettings,
-  closeModal,
   refetchBookSettings,
+  className,
 }) => {
   const { t } = useTranslation(null, {
     keyPrefix: 'pages.common.header.bookSettingsModal',
@@ -142,7 +123,7 @@ const SettingsModal = ({
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
     UPDATE_SETTINGS,
     {
-      onCompleted: closeModal,
+      onCompleted: () => {},
     },
   )
 
@@ -268,167 +249,163 @@ const SettingsModal = ({
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
 
   return (
-    <Stack>
-      <SettingsWrapper style={{ marginTop: '24px' }}>
-        <div>
-          <SettingTitle>{t('aiWriting.promptUse')}</SettingTitle>
-          <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
-        </div>
-        <Switch
-          checked={isAiOn}
-          data-test="settings-toggleAI-switch"
-          disabled={updateLoading || !canChangeSettings}
-          onChange={toggleAiOn}
-        />
-      </SettingsWrapper>
+    <Box className={className}>
+      <Center>
+        <h1>Book Settings</h1>
+        <Stack>
+          <SettingsWrapper style={{ marginTop: '24px' }}>
+            <div>
+              <SettingTitle>{t('aiWriting.promptUse')}</SettingTitle>
+              <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
+            </div>
+            <Switch
+              checked={isAiOn}
+              data-test="settings-toggleAI-switch"
+              disabled={updateLoading || !canChangeSettings}
+              onChange={toggleAiOn}
+            />
+          </SettingsWrapper>
 
-      {isAiOn && (
-        <Indented>
-          <Stack>
-            <SettingsWrapper>
-              <SettingInfo>
-                <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
-              </SettingInfo>
-              <Switch
-                checked={isFreeTextPromptsOn}
-                data-test="settings-freeTextPrompt-switch"
-                disabled={updateLoading || !canChangeSettings}
-                onChange={e => toggleFreePromptSwitch(e)}
-              />
-            </SettingsWrapper>
+          {isAiOn && (
+            <Indented>
+              <Stack>
+                <SettingsWrapper>
+                  <SettingInfo>
+                    <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
+                  </SettingInfo>
+                  <Switch
+                    checked={isFreeTextPromptsOn}
+                    data-test="settings-freeTextPrompt-switch"
+                    disabled={updateLoading || !canChangeSettings}
+                    onChange={e => toggleFreePromptSwitch(e)}
+                  />
+                </SettingsWrapper>
 
-            <SettingsWrapper>
-              <SettingInfo>
-                <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
-              </SettingInfo>
-              <Switch
-                checked={isCustomPromptsOn}
-                data-test="settings-customPrompt-switch"
-                disabled={updateLoading || !canChangeSettings}
-                onChange={e => toggleCustomPromptsSwitch(e)}
-              />
+                <SettingsWrapper>
+                  <SettingInfo>
+                    <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
+                  </SettingInfo>
+                  <Switch
+                    checked={isCustomPromptsOn}
+                    data-test="settings-customPrompt-switch"
+                    disabled={updateLoading || !canChangeSettings}
+                    onChange={e => toggleCustomPromptsSwitch(e)}
+                  />
 
-              {isCustomPromptsOn && (
-                <Stack style={{ width: '100%' }}>
-                  {canChangeSettings && (
-                    <StyledForm form={form} onFinish={handleAddPrompt}>
-                      <StyledFormItem
-                        name="prompt"
-                        rules={[
-                          {
-                            required: true,
-                            message: t(
-                              'aiWriting.customPrompts.input.errors.noValue',
-                            ),
-                            validator: (_, value) => {
-                              if (!value.trim().length) {
-                                return Promise.reject()
-                              }
+                  {isCustomPromptsOn && (
+                    <Stack style={{ width: '100%' }}>
+                      {canChangeSettings && (
+                        <StyledForm form={form} onFinish={handleAddPrompt}>
+                          <StyledFormItem
+                            name="prompt"
+                            rules={[
+                              {
+                                required: true,
+                                message: t(
+                                  'aiWriting.customPrompts.input.errors.noValue',
+                                ),
+                                validator: (_, value) => {
+                                  if (!value.trim().length) {
+                                    return Promise.reject()
+                                  }
 
-                              return Promise.resolve()
-                            },
-                          },
-                        ]}
-                      >
-                        <Input
-                          placeholder={t('aiWriting.customPrompts.input')}
-                        />
-                      </StyledFormItem>
-                      <StyledFormButton
-                        disabled={updateLoading || !canChangeSettings}
-                        htmlType="submit"
-                      >
-                        {t('aiWriting.customPrompts.actions.add')}
-                      </StyledFormButton>
-                    </StyledForm>
+                                  return Promise.resolve()
+                                },
+                              },
+                            ]}
+                          >
+                            <Input
+                              placeholder={t('aiWriting.customPrompts.input')}
+                            />
+                          </StyledFormItem>
+                          <StyledFormButton
+                            disabled={updateLoading || !canChangeSettings}
+                            htmlType="submit"
+                          >
+                            {t('aiWriting.customPrompts.actions.add')}
+                          </StyledFormButton>
+                        </StyledForm>
+                      )}
+
+                      <StyledList>
+                        {prompts.map(prompt => (
+                          <StyledListItem key={prompt}>
+                            {prompt}
+                            <StyledListButton
+                              disabled={updateLoading || !canChangeSettings}
+                              htmlType="submit"
+                              onClick={() => handleDeletePrompt(prompt)}
+                            >
+                              <DeleteOutlined />
+                            </StyledListButton>
+                          </StyledListItem>
+                        ))}
+                      </StyledList>
+                    </Stack>
                   )}
+                </SettingsWrapper>
+              </Stack>
+            </Indented>
+          )}
 
-                  <StyledList>
-                    {prompts.map(prompt => (
-                      <StyledListItem key={prompt}>
-                        {prompt}
-                        <StyledListButton
-                          disabled={updateLoading || !canChangeSettings}
-                          htmlType="submit"
-                          onClick={() => handleDeletePrompt(prompt)}
-                        >
-                          <DeleteOutlined />
-                        </StyledListButton>
-                      </StyledListItem>
-                    ))}
-                  </StyledList>
-                </Stack>
-              )}
-            </SettingsWrapper>
-          </Stack>
-        </Indented>
-      )}
+          <SettingsWrapper>
+            <div>
+              <SettingTitle>{t('aiDesigner')}</SettingTitle>
+              <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
+            </div>
+            <Switch
+              checked={isAiPdfOn}
+              data-test="settings-AIDesigner-switch"
+              disabled={updateLoading || !canChangeSettings}
+              onChange={e => setIsAiPdfOn(e)}
+            />
+          </SettingsWrapper>
 
-      <SettingsWrapper>
-        <div>
-          <SettingTitle>{t('aiDesigner')}</SettingTitle>
-          <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
-        </div>
-        <Switch
-          checked={isAiPdfOn}
-          data-test="settings-AIDesigner-switch"
-          disabled={updateLoading || !canChangeSettings}
-          onChange={e => setIsAiPdfOn(e)}
-        />
-      </SettingsWrapper>
-
-      <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
-        <div>
-          <SettingTitle>{t('knowledgeBase')}</SettingTitle>
-          <SettingInfo>{t('knowledgeBase.detail')}</SettingInfo>
-        </div>
-        <Switch
-          checked={isKnowledgeBaseOn}
-          data-test="settings-kb-switch"
-          disabled={updateLoading || !canChangeSettings}
-          onChange={e => toggleKnowledgeBase(e)}
-        />
-      </SettingsWrapper>
-      <SettingsWrapper>
-        <div>
-          <SettingTitle>{t('configurableEditor')}</SettingTitle>
-          <SettingInfo>{t('configurableEditor.detail')}</SettingInfo>
-        </div>
-        <Switch
-          checked={isConfigurableEditorOn}
-          data-test="configurable-editor-switch"
-          disabled={updateLoading || !canChangeSettings}
-          onChange={e => toggleConfigurableEditor(e)}
-        />
-      </SettingsWrapper>
-      {isConfigurableEditorOn && (
-        <ConfigurableEditorSettings
-          savedWaxConfig={waxConfig}
-          saveWaxConfig={saveWaxConfig}
-        />
-      )}
-      <ButtonsContainer>
-        <StyledButton
-          data-test="settings-cancel-btn"
-          disabled={updateLoading}
-          htmlType="reset"
-          onClick={closeModal}
-        >
-          {t('cancel', { keyPrefix: 'pages.common.actions' })}
-        </StyledButton>
-
-        <StyledButton
-          data-test="settings-save-btn"
-          disabled={!canChangeSettings}
-          htmlType="submit"
-          loading={updateLoading}
-          onClick={handleUpdateBookSettings}
-          type="primary"
-        >
-          {t('save', { keyPrefix: 'pages.common.actions' })}
-        </StyledButton>
-      </ButtonsContainer>
-    </Stack>
+          <SettingsWrapper style={{ flexWrap: 'nowrap' }}>
+            <div>
+              <SettingTitle>{t('knowledgeBase')}</SettingTitle>
+              <SettingInfo>{t('knowledgeBase.detail')}</SettingInfo>
+            </div>
+            <Switch
+              checked={isKnowledgeBaseOn}
+              data-test="settings-kb-switch"
+              disabled={updateLoading || !canChangeSettings}
+              onChange={e => toggleKnowledgeBase(e)}
+            />
+          </SettingsWrapper>
+          <SettingsWrapper>
+            <div>
+              <SettingTitle>{t('configurableEditor')}</SettingTitle>
+              <SettingInfo>{t('configurableEditor.detail')}</SettingInfo>
+            </div>
+            <Switch
+              checked={isConfigurableEditorOn}
+              data-test="configurable-editor-switch"
+              disabled={updateLoading || !canChangeSettings}
+              onChange={e => toggleConfigurableEditor(e)}
+            />
+          </SettingsWrapper>
+          {isConfigurableEditorOn && (
+            <ConfigurableEditorSettings
+              savedWaxConfig={waxConfig}
+              saveWaxConfig={saveWaxConfig}
+            />
+          )}
+          <ButtonsContainer>
+            <StyledButton
+              data-test="settings-save-btn"
+              disabled={!canChangeSettings}
+              htmlType="submit"
+              loading={updateLoading}
+              onClick={handleUpdateBookSettings}
+              type="primary"
+            >
+              {t('save', { keyPrefix: 'pages.common.actions' })}
+            </StyledButton>
+          </ButtonsContainer>
+        </Stack>
+      </Center>
+    </Box>
   )
 }
 
@@ -444,7 +421,6 @@ SettingsModal.propTypes = {
     configurableEditorOn: PropTypes.bool,
     configurableEditorConfig: PropTypes.arrayOf(PropTypes.string),
   }),
-  closeModal: PropTypes.func.isRequired,
   refetchBookSettings: PropTypes.func.isRequired,
 }
 

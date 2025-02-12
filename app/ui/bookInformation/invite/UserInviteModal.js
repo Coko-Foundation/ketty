@@ -6,7 +6,7 @@ import { useCurrentUser, th, grid } from '@coko/client'
 import UserInviteForm from './UserInviteForm'
 import UserList from './UserList'
 // import UserStatus from './UserStatus'
-import { Form } from '../common'
+import { Form, Box, Center } from '../../common'
 import {
   SEARCH_USERS,
   ADD_TEAM_MEMBERS,
@@ -17,11 +17,9 @@ import {
   GET_INVITATIONS,
   DELETE_INVITATION,
   UPDATE_INVITATION,
-} from '../../graphql'
+} from '../../../graphql'
 
-import { isAdmin, isOwner } from '../../helpers/permissions'
-
-const Wrapper = styled.div``
+import { isAdmin, isOwner } from '../../../helpers/permissions'
 
 const ScrollWrapper = styled.div`
   border: 1px solid ${th('colorBorder')};
@@ -201,24 +199,27 @@ const UserInviteModal = ({ bookId }) => {
   const canChangeAccess = isAdmin(currentUser) || isOwner(bookId, currentUser)
 
   return (
-    <Wrapper>
-      <UserInviteForm
-        canChangeAccess={canChangeAccess}
-        fetchOptions={fetchUserList}
-        form={form}
-        onInvite={inviteUsers}
-      />
-
-      <ScrollWrapper>
-        <UserList
-          bookTeams={bookTeamsAndInvites}
+    <Box>
+      <Center>
+        <h1>Collaborators</h1>
+        <UserInviteForm
           canChangeAccess={canChangeAccess}
-          loading={loadingBookTeamsData || loadingInvitationsData}
-          onChangeAccess={handleUpdateTeamMemberStatus}
-          onRemoveAccess={handleRemoveTeamMember}
+          fetchOptions={fetchUserList}
+          form={form}
+          onInvite={inviteUsers}
         />
-      </ScrollWrapper>
-    </Wrapper>
+
+        <ScrollWrapper>
+          <UserList
+            bookTeams={bookTeamsAndInvites}
+            canChangeAccess={canChangeAccess}
+            loading={loadingBookTeamsData || loadingInvitationsData}
+            onChangeAccess={handleUpdateTeamMemberStatus}
+            onRemoveAccess={handleRemoveTeamMember}
+          />
+        </ScrollWrapper>
+      </Center>
+    </Box>
   )
 }
 

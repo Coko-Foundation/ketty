@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { Checkbox } from '../common'
+import { Checkbox } from '../../common'
 
 const Wrapper = styled.div`
   display: flex;

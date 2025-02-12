@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Col, Row, DatePicker } from 'antd'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { Form, Input } from '../common'
+import { Form, Input } from '../../common'
 
 const StyledDatePicker = styled(DatePicker)`
   width: 100%;

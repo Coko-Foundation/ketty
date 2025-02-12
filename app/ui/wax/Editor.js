@@ -5,6 +5,7 @@ import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
 
 const EditorWrapper = ({
+  bookId,
   title,
   subtitle,
   chapters,
@@ -47,6 +48,8 @@ const EditorWrapper = ({
   onUploadBookCover,
   viewMetadata,
   setViewMetadata,
+  settings,
+  getBookSettings,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -71,6 +74,9 @@ const EditorWrapper = ({
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
+    settings,
+    getBookSettings,
+    bookId,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -153,6 +159,9 @@ const EditorWrapper = ({
       onUploadBookCover,
       viewMetadata,
       setViewMetadata,
+      getBookSettings,
+      settings,
+      bookId,
     })
   }, [
     title,
@@ -167,6 +176,8 @@ const EditorWrapper = ({
     editorKey,
     savedComments,
     viewMetadata,
+    settings,
+    bookId,
   ])
 
   const userObject = {

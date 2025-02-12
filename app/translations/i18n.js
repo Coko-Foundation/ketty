@@ -33,9 +33,7 @@ i18next
       const { value } = object
       return value || `No translation value found for key ${key}`
     },
-    parseMissingKeyHandler: key => {
-      return `Missing translation string for ${key}`
-    },
+    parseMissingKeyHandler: key => key,
     debug: process.env.NODE_ENV === 'development',
   })
 
