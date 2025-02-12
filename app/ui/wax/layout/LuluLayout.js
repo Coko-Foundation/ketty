@@ -97,10 +97,10 @@ const TopMenu = styled.div`
 
   > div {
     display: contents;
+    justify-content: center;
 
     &:has(button[title='Undo']) {
-      display: inlline-flex;
-      justify-content: center;
+      display: inline-flex;
     }
 
     > div {
