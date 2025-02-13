@@ -126,7 +126,7 @@ const EditorWrapper = ({
         getMentionedUsers: onMention,
       },
     })
-  }, [aiOn, editorKey, configurableEditorConfig])
+  }, [aiOn, editorKey, JSON.stringify(configurableEditorConfig)])
 
   useEffect(() => {
     setLuluWax({
