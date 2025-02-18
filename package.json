@@ -65,7 +65,7 @@
     "@coko/lint": "^2.1.0",
     "@coko/storybook": "^1.6.0",
     "@faker-js/faker": "^7.6.0",
-    "cypress": "^12.1.0",
+    "cypress": "^13.17.0",
     "jest": "^29.3.1"
   }
 }
