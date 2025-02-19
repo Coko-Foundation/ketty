@@ -4,7 +4,11 @@ import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { ToTopOutlined } from '@ant-design/icons'
+import {
+  ToTopOutlined,
+  CaretUpFilled,
+  CaretDownFilled,
+} from '@ant-design/icons'
 import {
   ApplicationContext,
   WaxContext,
@@ -13,7 +17,7 @@ import {
   DocumentHelpers,
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../../common'
+import { Button, Checkbox } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
   BookInformation,
@@ -88,11 +92,12 @@ const TopMenu = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     row-gap: ${grid(2)};
+  }
 
-    &::before {
-      content: '';
-      grid-column: 1 / -1;
-    }
+  &.scrollable[data-expanded='false'] {
+    flex: unset;
+    height: 48px;
+    overflow: hidden;
   }
 
   > div {
@@ -160,6 +165,21 @@ const TopMenu = styled.div`
       opacity: 0;
     }
   }
+
+  #collapse {
+    align-items: center;
+    display: none;
+    flex-direction: row-reverse;
+    justify-content: center;
+
+    > .ant-btn-icon {
+      margin-inline: ${grid(2)} 0;
+    }
+  }
+
+  &.scrollable #collapse {
+    display: flex;
+  }
 `
 
 const CollapseContainer = styled.div`
@@ -212,11 +232,16 @@ const WaxSurfaceScroll = styled.div`
 
 const CommentsContainer = styled.div`
   display: flex;
-  flex-basis: 200px;
+  flex: 1 0 calc(205px + 1em);
   flex-direction: column;
   height: 100%;
   position: relative;
-  width: 300px;
+  width: calc(205px + 1em);
+
+  @media (max-width: 1400px) {
+    position: absolute;
+    right: ${grid(1)};
+  }
 
   > div {
     margin-inline-start: 1em;
@@ -236,26 +261,54 @@ const CommentsContainer = styled.div`
 `
 
 const TrackToolsContainer = styled.div`
-  border-bottom: 1px solid #a8a8a8;
-  display: flex;
-  padding-top: 5px;
+  border: 1px solid ${th('colorBorder')};
+  display: grid;
+  grid-auto-rows: 30px;
+  grid-template-columns: 1fr;
+  margin-inline-start: 0;
   position: fixed;
-  right: 30px;
-  width: 18%;
+  right: clamp(0rem, -0.2174rem + 1.087vw, 0.625rem);
+  z-index: 1;
+`
+
+const ToggleComments = styled.div`
+  align-items: center;
+  background-color: ${th('colorBackground')};
+  border-bottom: 1px solid ${th('colorBorder')};
+  display: inline-flex;
+  padding-inline: ${grid(2)};
+
+  > label {
+    flex-direction: row-reverse;
+
+    .ant-checkbox {
+      margin-inline: 6px;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    display: none;
+  }
 `
 
 const TrackTools = styled.div`
+  align-items: center;
+  background-color: ${th('colorBackground')};
   display: flex;
-  margin-left: auto;
+  justify-content: end;
+  padding-inline: ${grid(2)};
   position: relative;
   z-index: 1;
 `
 
 const TrackOptions = styled.div`
-  bottom: 5px;
   display: flex;
   margin-left: 10px;
   position: relative;
+
+  > div > button ~ div {
+    right: ${grid(-2)};
+  }
 `
 
 const EditorContainer = styled.div`
@@ -388,10 +441,13 @@ const LuluLayout = ({ customProps, ...rest }) => {
     settings,
     getBookSettings,
     bookId,
+    savedComments,
   } = customProps
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
+  const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
+  const [showComments, setShowComments] = useState(true)
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   const {
@@ -475,6 +531,17 @@ const LuluLayout = ({ customProps, ...rest }) => {
     } else {
       toolbar?.classList.remove('scrollable') // Remove class to center items
     }
+
+    if (window.innerWidth > 1400) {
+      if (
+        document.getElementById('commentToggle')?.classList.contains('hidden')
+      ) {
+        setShowComments(true)
+        document.getElementById('commentToggle')?.classList.remove('hidden')
+      }
+    } else {
+      document.getElementById('commentToggle')?.classList.add('hidden')
+    }
   }
 
   const renderInformationBox = () => {
@@ -510,9 +577,20 @@ const LuluLayout = ({ customProps, ...rest }) => {
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
           id="toolbar"
+          data-expanded={!mobileToolbarCollapsed}
           data-loading={editorLoading}
           isHidden={viewMetadata}
         >
+          <Button
+            id="collapse"
+            icon={
+              mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
+            }
+            iconPosition="end"
+            onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
+          >
+            {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
+          </Button>
           {!editorLoading ? <MainMenuToolBar /> : null}
         </TopMenu>
         <Main>
@@ -574,21 +652,34 @@ const LuluLayout = ({ customProps, ...rest }) => {
                           {t('editor.noChapterSelected')}
                         </NoSelectedChapterWrapper>
                       )}
-                      <CommentsContainer>
-                        {showTrackControls && (
-                          <TrackToolsContainer>
-                            <TrackTools>
-                              {commentsTracksCount + trackBlockNodesCount}{' '}
-                              SUGGESTIONS
-                              <TrackOptions>
-                                <CommentTrackToolBar />
-                              </TrackOptions>
-                            </TrackTools>
-                          </TrackToolsContainer>
-                        )}
-
-                        <RightArea area="main" />
-                      </CommentsContainer>
+                      {showTrackControls && (
+                        <TrackToolsContainer>
+                          {savedComments.length > 0 && (
+                            <ToggleComments id="commentToggle">
+                              <Checkbox
+                                checked={showComments}
+                                onChange={e =>
+                                  setShowComments(e.target.checked)
+                                }
+                              >
+                                SHOW COMMENTS
+                              </Checkbox>
+                            </ToggleComments>
+                          )}
+                          <TrackTools>
+                            {commentsTracksCount + trackBlockNodesCount}{' '}
+                            SUGGESTIONS
+                            <TrackOptions>
+                              <CommentTrackToolBar />
+                            </TrackOptions>
+                          </TrackTools>
+                        </TrackToolsContainer>
+                      )}
+                      {showComments && (
+                        <CommentsContainer>
+                          <RightArea area="main" />
+                        </CommentsContainer>
+                      )}
                     </>
                   )}
                 </EditorContainer>
