@@ -493,10 +493,13 @@ const LuluLayout = ({ customProps, ...rest }) => {
   }, [])
 
   useEffect(() => {
-    !editorLoading &&
+    if (editorLoading) {
+      document.getElementById('toolbar').classList.remove('scrollable')
+    } else {
       setTimeout(() => {
         checkOverflow()
-      }, 0)
+      }, 1)
+    }
   }, [editorLoading])
 
   const toggleMetadata = which => {
@@ -524,8 +527,9 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
   const checkOverflow = () => {
     const toolbar = document.getElementById('toolbar')
-    // Check if the content overflows the container
+    toolbar?.classList.remove('scrollable')
 
+    // Check if the content overflows the container
     if (toolbar?.scrollWidth > toolbar?.clientWidth) {
       toolbar?.classList.add('scrollable') // Add class to align items to the start
     } else {
@@ -598,7 +602,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
             <LeftPanelWrapper>
               <CollapseContainer data-collapsed={bookPanelCollapsed}>
                 <Button
-                  aria-label={t('collapse')}
+                  aria-label="Collapse"
                   icon={<ToTopOutlined />}
                   onClick={() => setBookPanelCollapsed(!bookPanelCollapsed)}
                   type="text"
@@ -652,20 +656,18 @@ const LuluLayout = ({ customProps, ...rest }) => {
                           {t('editor.noChapterSelected')}
                         </NoSelectedChapterWrapper>
                       )}
-                      {showTrackControls && (
-                        <TrackToolsContainer>
-                          {savedComments.length > 0 && (
-                            <ToggleComments id="commentToggle">
-                              <Checkbox
-                                checked={showComments}
-                                onChange={e =>
-                                  setShowComments(e.target.checked)
-                                }
-                              >
-                                SHOW COMMENTS
-                              </Checkbox>
-                            </ToggleComments>
-                          )}
+                      <TrackToolsContainer>
+                        {savedComments.length > 0 && (
+                          <ToggleComments id="commentToggle">
+                            <Checkbox
+                              checked={showComments}
+                              onChange={e => setShowComments(e.target.checked)}
+                            >
+                              SHOW COMMENTS
+                            </Checkbox>
+                          </ToggleComments>
+                        )}
+                        {showTrackControls && (
                           <TrackTools>
                             {commentsTracksCount + trackBlockNodesCount}{' '}
                             SUGGESTIONS
@@ -673,8 +675,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
                               <CommentTrackToolBar />
                             </TrackOptions>
                           </TrackTools>
-                        </TrackToolsContainer>
-                      )}
+                        )}
+                      </TrackToolsContainer>
                       {showComments && (
                         <CommentsContainer>
                           <RightArea area="main" />
