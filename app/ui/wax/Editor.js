@@ -22,6 +22,7 @@ const EditorWrapper = ({
   setMetadataModalOpen,
   onDeleteChapter,
   queryAI,
+  aiEnabled,
   chaptersActionInProgress,
   onReorderChapter,
   onUploadChapter,
@@ -77,6 +78,7 @@ const EditorWrapper = ({
     settings,
     getBookSettings,
     bookId,
+    aiEnabled,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -116,7 +118,7 @@ const EditorWrapper = ({
         FreeTextPromptsOn: freeTextPromptsOn,
         CustomPromptsOn: customPromptsOn,
         CustomPrompts: customPromptsOn ? customPrompts : [],
-        AiOn: aiOn,
+        AiOn: aiEnabled && aiOn,
         ...(kbOn ? { AskKb: true } : {}),
       },
       TitleService: {
@@ -162,6 +164,7 @@ const EditorWrapper = ({
       getBookSettings,
       settings,
       bookId,
+      aiEnabled,
     })
   }, [
     title,
@@ -178,6 +181,7 @@ const EditorWrapper = ({
     viewMetadata,
     settings,
     bookId,
+    aiEnabled,
   ])
 
   const userObject = {

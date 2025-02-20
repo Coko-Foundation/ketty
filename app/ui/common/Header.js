@@ -144,8 +144,6 @@ const Header = props => {
     brandLogoURL,
     canAccessAdminPage,
     onLogout,
-    onInvite,
-    onSettings,
     userDisplayName,
     showDashboard,
     dashboardURL,
@@ -198,7 +196,10 @@ const Header = props => {
             position="block-end"
             toggle={
               <Button type="text">
-                <Avatar data-test="avatar-initials">
+                <Avatar
+                  data-test="avatar-initials"
+                  style={{ display: 'grid', placeContent: 'center' }}
+                >
                   {getInitials(userDisplayName)}
                 </Avatar>
               </Button>
@@ -252,8 +253,6 @@ Header.propTypes = {
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
   showDashboard: PropTypes.bool,
-  onInvite: PropTypes.func.isRequired,
-  onSettings: PropTypes.func.isRequired,
   dashboardURL: PropTypes.string,
   backToBookURL: PropTypes.string,
   bookTitle: PropTypes.string,
@@ -278,7 +277,7 @@ Header.defaultProps = {
   previewURL: null,
   languages: [],
   showDashboard: true,
-  bookTitle: null,
+  bookTitle: '',
 }
 
 export default Header

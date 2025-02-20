@@ -441,6 +441,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     settings,
     getBookSettings,
     bookId,
+    aiEnabled,
     savedComments,
   } = customProps
 
@@ -562,6 +563,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
       case 'settings':
         return (
           <StyledSettingsForm
+            aiEnabled={aiEnabled}
             bookId={bookId}
             bookSettings={settings}
             refetchBookSettings={getBookSettings}
@@ -610,8 +612,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
               </CollapseContainer>
               <BookInformation
                 bookId={bookId}
-                showAiAssistantLink={settings?.aiPdfDesignerOn}
-                showKnowledgeBaseLink={settings?.knowledgeBaseOn}
+                showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
+                showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
                 toggleInformation={toggleMetadata}
                 viewInformation={viewMetadata}
               />

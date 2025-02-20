@@ -45,6 +45,16 @@ const StyledControlWrapper = styled.div`
   }
 `
 
+const StyledFormItem = styled(Form.Item)`
+  .ant-form-item-row {
+    justify-content: space-between;
+  }
+
+  .ant-form-item-control {
+    flex: 0 1 50px;
+  }
+`
+
 const LanguageWrapper = styled(Stack)`
   :has([role='switch'][aria-checked='false']) > :nth-child(2) {
     display: none;
@@ -159,7 +169,6 @@ const normFile = e => {
 const AdminDashboard = props => {
   const {
     aiEnabled,
-    aiToggleIntegration,
     chatGptApiKey,
     luluToggleConfig,
     luluUpdateConfig,
@@ -181,6 +190,7 @@ const AdminDashboard = props => {
   const [apiKeyForm] = Form.useForm()
   const [newLanguageForm] = Form.useForm()
   const [luluConfigForm] = Form.useForm()
+  const [enableAI, setEnableAI] = useState(aiEnabled)
   const [luluConfigUpdateResult, setLuluConfigUpdateResult] = useState()
   const [keyUpdateResult, setKeyUpdateResult] = useState()
   const [tcUpdateResult, setTCUpdateResult] = useState()
@@ -224,7 +234,8 @@ const AdminDashboard = props => {
 
   const handleChatGPTKeyUpdate = val => {
     setKeyUpdateResult({ loading: true })
-    onChatGPTKeyUpdate(val.apiKey)
+
+    onChatGPTKeyUpdate(val)
       .then(() => {
         setKeyUpdateResult({
           success: true,
@@ -522,33 +533,38 @@ const AdminDashboard = props => {
       {/* ai integration */}
       <h2>{t('aiIntegration.heading')}</h2>
       <StyledControlWrapper>
-        <span>{t('aiIntegration.supplier')}</span>
-        <Switch
-          checked={aiEnabled}
-          data-test="admindb-ai-switch"
-          loading={paramsLoading}
-          onChange={aiToggleIntegration}
-        />
-        <ChatGPTAPIKeyWrapper $hidden={!aiEnabled}>
+        <ChatGPTAPIKeyWrapper>
           <Form
-            disabled={!aiEnabled}
             form={apiKeyForm}
             layout="vertical"
             onFinish={handleChatGPTKeyUpdate}
             requiredMark={false}
           >
+            <StyledFormItem
+              label={t('aiIntegration.supplier')}
+              layout="horizontal"
+              name="aiOn"
+            >
+              <Switch
+                data-test="admindb-ai-switch"
+                defaultChecked={aiEnabled}
+                loading={paramsLoading}
+                onChange={setEnableAI}
+              />
+            </StyledFormItem>
             <Form.Item
               label={t('aiIntegration.apiKey')}
               name="apiKey"
               rules={[
                 {
-                  required: true,
+                  required: enableAI && true,
                   message: t('aiIntegration.apiKey.error.noValue'),
                 },
               ]}
             >
               <Input
                 data-test="admindb-aikey-input"
+                disabled={!enableAI}
                 placeholder={t('aiIntegration.apiKey.placeholder')}
               />
             </Form.Item>
@@ -937,7 +953,6 @@ const AdminDashboard = props => {
 
 AdminDashboard.propTypes = {
   aiEnabled: PropTypes.bool,
-  aiToggleIntegration: PropTypes.func,
   luluToggleConfig: PropTypes.func,
   luluUpdateConfig: PropTypes.func,
   luluConfig: PropTypes.shape(),
@@ -955,7 +970,6 @@ AdminDashboard.propTypes = {
 
 AdminDashboard.defaultProps = {
   aiEnabled: false,
-  aiToggleIntegration: null,
   luluToggleConfig: null,
   luluUpdateConfig: null,
   luluConfig: null,
