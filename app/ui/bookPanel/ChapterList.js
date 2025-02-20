@@ -96,7 +96,6 @@ const ChapterList = ({
   className,
   canEdit,
 }) => {
-  // const { t } = useTranslation()
   const indentationWidth = 33
 
   const [items, setItems] = useState(() =>
@@ -447,6 +446,7 @@ const ChapterList = ({
               {flattenedItems.map(
                 ({ id, children, depth, componentType, ...rest }, index) => (
                   <SortableTreeItem
+                    canEdit={canEdit}
                     childCount={children?.length}
                     collapseOtherParts={collapseOtherParts}
                     depth={

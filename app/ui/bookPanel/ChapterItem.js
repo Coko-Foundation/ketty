@@ -344,6 +344,7 @@ const ChapterItem = forwardRef(
               <PopupContentWrapper>
                 {depth === 0 && (
                   <Button
+                    disabled={!canEdit}
                     onClick={() => {
                       onChapterConvert(id, isPart ? 'chapter' : 'part')
 
@@ -360,6 +361,7 @@ const ChapterItem = forwardRef(
                 )}
                 <Button
                   data-test="producer-deleteChapter"
+                  disabled={!canEdit}
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                 >
