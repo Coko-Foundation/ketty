@@ -78,6 +78,7 @@ const StyledListButton = styled(Button)`
 `
 
 const SettingsModal = ({
+  aiEnabled,
   bookId,
   bookSettings,
   refetchBookSettings,
@@ -259,14 +260,14 @@ const SettingsModal = ({
               <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
             </div>
             <Switch
-              checked={isAiOn}
+              checked={aiEnabled && isAiOn}
               data-test="settings-toggleAI-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={toggleAiOn}
             />
           </SettingsWrapper>
 
-          {isAiOn && (
+          {isAiOn && aiEnabled && (
             <Indented>
               <Stack>
                 <SettingsWrapper>
@@ -274,9 +275,9 @@ const SettingsModal = ({
                     <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
                   </SettingInfo>
                   <Switch
-                    checked={isFreeTextPromptsOn}
+                    checked={aiEnabled && isFreeTextPromptsOn}
                     data-test="settings-freeTextPrompt-switch"
-                    disabled={updateLoading || !canChangeSettings}
+                    disabled={updateLoading || !canChangeSettings || !aiEnabled}
                     onChange={e => toggleFreePromptSwitch(e)}
                   />
                 </SettingsWrapper>
@@ -286,9 +287,9 @@ const SettingsModal = ({
                     <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
                   </SettingInfo>
                   <Switch
-                    checked={isCustomPromptsOn}
+                    checked={aiEnabled && isCustomPromptsOn}
                     data-test="settings-customPrompt-switch"
-                    disabled={updateLoading || !canChangeSettings}
+                    disabled={updateLoading || !canChangeSettings || !aiEnabled}
                     onChange={e => toggleCustomPromptsSwitch(e)}
                   />
 
@@ -354,9 +355,9 @@ const SettingsModal = ({
               <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
             </div>
             <Switch
-              checked={isAiPdfOn}
+              checked={aiEnabled && isAiPdfOn}
               data-test="settings-AIDesigner-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={e => setIsAiPdfOn(e)}
             />
           </SettingsWrapper>
@@ -367,9 +368,9 @@ const SettingsModal = ({
               <SettingInfo>{t('knowledgeBase.detail')}</SettingInfo>
             </div>
             <Switch
-              checked={isKnowledgeBaseOn}
+              checked={aiEnabled && isKnowledgeBaseOn}
               data-test="settings-kb-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={e => toggleKnowledgeBase(e)}
             />
           </SettingsWrapper>
@@ -410,6 +411,7 @@ const SettingsModal = ({
 }
 
 SettingsModal.propTypes = {
+  aiEnabled: PropTypes.bool,
   bookId: PropTypes.string.isRequired,
   bookSettings: PropTypes.shape({
     aiOn: PropTypes.bool,
@@ -425,6 +427,7 @@ SettingsModal.propTypes = {
 }
 
 SettingsModal.defaultProps = {
+  aiEnabled: false,
   bookSettings: {
     aiOn: false,
     aiPdfDesignerOn: false,
