@@ -17,6 +17,7 @@ import {
   DocumentHelpers,
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
+import { usePrevious } from '../../../utils'
 import { Button, Checkbox } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
@@ -83,8 +84,7 @@ const TopMenu = styled.div`
         visibility: hidden;
       }
     `};
-  /* -webkit-overflow-scrolling: touch;
-  overflow-scrolling: touch; */
+
   padding: ${grid(2)} ${grid(4)};
   user-select: none;
 
@@ -125,6 +125,10 @@ const TopMenu = styled.div`
   #block-level-options {
     width: 100px;
     z-index: 1001;
+  }
+
+  > div > div:has(#custom-block-level-options) button[aria-haspopup='true'] {
+    width: 120px;
   }
 
   .Dropdown-root {
@@ -168,6 +172,8 @@ const TopMenu = styled.div`
 
   #collapse {
     align-items: center;
+    border: none;
+    box-shadow: none;
     display: none;
     flex-direction: row-reverse;
     justify-content: center;
@@ -331,7 +337,7 @@ const EditorContainer = styled.div`
     min-height: calc(100vh - 104px);
     padding: ${grid(20)} var(--padding-inline) ${grid(20)}
       calc(50px + var(--padding-inline));
-    width: 100%;
+    width: calc(100% - 20px);
 
     @media (min-width: 600px) {
       padding: ${grid(20)} var(--padding-inline);
@@ -449,6 +455,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
   const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
   const [showComments, setShowComments] = useState(true)
+  const previousComments = usePrevious(savedComments)
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   const {
@@ -503,6 +510,13 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }, [editorLoading])
 
+  useEffect(() => {
+    // make comments visible when adding a new comment and they are hidden
+    if (previousComments?.length < savedComments?.length) {
+      setShowComments(true)
+    }
+  }, [savedComments])
+
   const toggleMetadata = which => {
     if (viewMetadata !== which) {
       setViewMetadata(which)
@@ -519,11 +533,19 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
       setViewMetadata('')
     }
+
+    if (window.innerWidth < 600) {
+      setBookPanelCollapsed(true)
+    }
   }
 
   const handleChapterClick = chapterId => {
     if (viewMetadata !== '') setViewMetadata('')
     onChapterClick(chapterId)
+
+    if (window.innerWidth < 600 && !bookPanelCollapsed) {
+      setBookPanelCollapsed(true)
+    }
   }
 
   const checkOverflow = () => {
@@ -582,17 +604,17 @@ const LuluLayout = ({ customProps, ...rest }) => {
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
-          id="toolbar"
           data-expanded={!mobileToolbarCollapsed}
           data-loading={editorLoading}
+          id="toolbar"
           isHidden={viewMetadata}
         >
           <Button
-            id="collapse"
             icon={
               mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
             }
             iconPosition="end"
+            id="collapse"
             onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
           >
             {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}

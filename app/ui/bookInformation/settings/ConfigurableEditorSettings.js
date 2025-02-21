@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -209,6 +208,7 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
             return (
               <Checkbox
                 checked={anno.checked}
+                key={anno.label}
                 onChange={onChangeInline}
                 value={anno.value}
               >
@@ -225,6 +225,7 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
             return (
               <Checkbox
                 checked={listTool.checked}
+                key={listTool.label}
                 onChange={onChangeLists}
                 value={listTool.value}
               >
@@ -241,6 +242,7 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
             return (
               <Checkbox
                 checked={singleTool.checked}
+                key={singleTool.label}
                 onChange={onChangeSingleTool}
                 value={singleTool.value}
               >
@@ -255,7 +257,7 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
 }
 
 ConfigurableEditorSettings.propTypes = {
-  savedWaxConfig: PropTypes.arrayOf(PropTypes.string).isRequired,
+  savedWaxConfig: PropTypes.shape().isRequired,
   saveWaxConfig: PropTypes.func.isRequired,
 }
 

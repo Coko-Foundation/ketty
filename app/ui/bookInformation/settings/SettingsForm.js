@@ -22,7 +22,7 @@ const Indented = styled.div`
 
 const SettingsWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-between;
 `
 
@@ -51,9 +51,24 @@ const StyledForm = styled(Form)`
   margin-top: 24px;
 `
 
+const StyledFormCustomTag = styled(Form)`
+  align-items: end;
+  display: flex;
+  gap: ${grid(4)};
+`
+
 const StyledFormItem = styled(Form.Item)`
   margin-block-end: 0;
   width: 100%;
+
+  label {
+    font-weight: bold;
+
+    &::before {
+      /* stylelint-disable-next-line declaration-no-important */
+      display: none !important;
+    }
+  }
 `
 
 const StyledFormButton = styled(Button)`
@@ -83,21 +98,6 @@ const CustomTagTypeWrapper = styled.div`
   width: 100%;
 `
 
-const CustomTagWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-
-  form {
-    margin-bottom: 10px;
-    margin-top: 0;
-  }
-`
-
-const CustomTagTitleType = styled.strong`
-  padding-bottom: 10px;
-`
-
 const CustomTagList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -106,6 +106,7 @@ const CustomTagList = styled.div`
 `
 
 const CustomTagItemWrapper = styled.div`
+  align-items: center;
   display: flex;
   flex-flow: row;
   margin-right: 10px;
@@ -115,7 +116,7 @@ const CustomTagItemLabel = styled.span`
   margin-right: 5px;
 `
 
-const SettingsModal = ({
+const SettingsForm = ({
   aiEnabled,
   bookId,
   bookSettings,
@@ -457,16 +458,17 @@ const SettingsModal = ({
           </SettingsWrapper>
 
           <SettingsWrapper>
-            <CustomTagWrapper>
-              <CustomTagTitleType>Custom Tags</CustomTagTitleType>
+            <Stack style={{ '--space': '16px', width: '100%' }}>
+              <SettingTitle>Custom Tags</SettingTitle>
               <CustomTagTypeWrapper>
-                <CustomTagTitleType>Custom Tag Block</CustomTagTitleType>
-                <Stack style={{ width: '100%' }}>
-                  <StyledForm
+                <Stack style={{ '--space': '8px' }}>
+                  <StyledFormCustomTag
                     form={blockForm}
+                    layout="vertical"
                     onFinish={handleAddCustomTagBlock}
                   >
                     <StyledFormItem
+                      label="Custom Tag Block"
                       name="block"
                       rules={[
                         {
@@ -493,34 +495,35 @@ const SettingsModal = ({
                     >
                       {t('customTagsBlock.actions.add')}
                     </StyledFormButton>
-                  </StyledForm>
+                  </StyledFormCustomTag>
+                  <CustomTagList>
+                    {blockTags.map(tag => {
+                      return (
+                        <CustomTagItemWrapper key={tag.label}>
+                          <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
+                          <StyledListButton
+                            disabled={updateLoading || !canChangeSettings}
+                            htmlType="submit"
+                            onClick={() => handleDeleteCustomTag(tag, 'block')}
+                          >
+                            <DeleteOutlined />
+                          </StyledListButton>
+                        </CustomTagItemWrapper>
+                      )
+                    })}
+                  </CustomTagList>
                 </Stack>
-                <CustomTagList>
-                  {blockTags.map(tag => {
-                    return (
-                      <CustomTagItemWrapper>
-                        <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
-                        <StyledListButton
-                          disabled={updateLoading || !canChangeSettings}
-                          htmlType="submit"
-                          onClick={() => handleDeleteCustomTag(tag, 'block')}
-                        >
-                          <DeleteOutlined />
-                        </StyledListButton>
-                      </CustomTagItemWrapper>
-                    )
-                  })}
-                </CustomTagList>
               </CustomTagTypeWrapper>
               <CustomTagTypeWrapper>
-                <CustomTagTitleType>Custom Tag Inline</CustomTagTitleType>
-                <Stack style={{ width: '100%' }}>
-                  <StyledForm
+                <Stack style={{ '--space': '8px' }}>
+                  <StyledFormCustomTag
                     form={inlineForm}
+                    layout="vertical"
                     onFinish={handleAddCustomTagInline}
                   >
                     <StyledFormItem
                       name="inline"
+                      label="Custom Tag Inline"
                       rules={[
                         {
                           required: true,
@@ -546,26 +549,26 @@ const SettingsModal = ({
                     >
                       {t('customTagsInline.actions.add')}
                     </StyledFormButton>
-                  </StyledForm>
+                  </StyledFormCustomTag>
+                  <CustomTagList>
+                    {inlineTags.map(tag => {
+                      return (
+                        <CustomTagItemWrapper key={tag.label}>
+                          <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
+                          <StyledListButton
+                            disabled={updateLoading || !canChangeSettings}
+                            htmlType="submit"
+                            onClick={() => handleDeleteCustomTag(tag, 'inline')}
+                          >
+                            <DeleteOutlined />
+                          </StyledListButton>
+                        </CustomTagItemWrapper>
+                      )
+                    })}
+                  </CustomTagList>
                 </Stack>
-                <CustomTagList>
-                  {inlineTags.map(tag => {
-                    return (
-                      <CustomTagItemWrapper>
-                        <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
-                        <StyledListButton
-                          disabled={updateLoading || !canChangeSettings}
-                          htmlType="submit"
-                          onClick={() => handleDeleteCustomTag(tag, 'inline')}
-                        >
-                          <DeleteOutlined />
-                        </StyledListButton>
-                      </CustomTagItemWrapper>
-                    )
-                  })}
-                </CustomTagList>
               </CustomTagTypeWrapper>
-            </CustomTagWrapper>
+            </Stack>
           </SettingsWrapper>
 
           <SettingsWrapper>
@@ -604,7 +607,7 @@ const SettingsModal = ({
   )
 }
 
-SettingsModal.propTypes = {
+SettingsForm.propTypes = {
   aiEnabled: PropTypes.bool,
   bookId: PropTypes.string.isRequired,
   bookSettings: PropTypes.shape({
@@ -621,7 +624,7 @@ SettingsModal.propTypes = {
   refetchBookSettings: PropTypes.func.isRequired,
 }
 
-SettingsModal.defaultProps = {
+SettingsForm.defaultProps = {
   aiEnabled: false,
   bookSettings: {
     aiOn: false,
@@ -631,4 +634,4 @@ SettingsModal.defaultProps = {
     knowledgeBaseOn: false,
   },
 }
-export default SettingsModal
+export default SettingsForm
