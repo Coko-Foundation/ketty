@@ -30,6 +30,7 @@ const EditorWrapper = ({
   bookMetadataValues,
   selectedChapterId,
   canEdit,
+  customTags,
   configurableEditorOn,
   configurableEditorConfig,
   aiOn,
@@ -83,6 +84,8 @@ const EditorWrapper = ({
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
+  const [waxCustomTags, setWaxCustomTags] = useState([])
+
   const waxMenuConfig =
     configurableEditorOn && configurableEditorConfig?.length
       ? JSON.parse(configurableEditorConfig)
@@ -97,6 +100,8 @@ const EditorWrapper = ({
 
   // Used For Editor's reconfiguration
   useEffect(() => {
+    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
+
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
@@ -133,8 +138,17 @@ const EditorWrapper = ({
         userList: bookMembers,
         getMentionedUsers: onMention,
       },
+      CustomTagService: {
+        tags: waxCustomTags,
+        updateTags: () => true,
+      },
     })
-  }, [aiOn, editorKey, configurableEditorConfig])
+  }, [
+    aiOn,
+    editorKey,
+    JSON.stringify(configurableEditorConfig),
+    JSON.stringify(waxCustomTags),
+  ])
 
   useEffect(() => {
     setLuluWax({

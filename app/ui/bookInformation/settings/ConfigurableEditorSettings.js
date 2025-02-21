@@ -52,6 +52,8 @@ const SingleTools = [
   { label: 'Text Highlighter', value: 'HighlightToolGroup', checked: false },
   { label: 'Transform Case', value: 'TransformToolGroup', checked: false },
   { label: 'Track Changes', value: 'TrackingAndEditing', checked: false },
+  { label: 'Custom Tags Block', value: 'CustomTagBlock', checked: false },
+  { label: 'Custom Tags Inline', value: 'CustomTagInline', checked: false },
 ]
 
 const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
