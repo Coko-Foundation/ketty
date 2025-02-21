@@ -1174,6 +1174,7 @@ const ProducerPage = () => {
       }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
+      customTags={bookQueryData?.getBook.bookSettings.customTags}
       editorKey={key}
       editorLoading={editorLoading}
       editorRef={editorRef}
