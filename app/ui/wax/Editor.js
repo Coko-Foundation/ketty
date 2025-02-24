@@ -22,6 +22,7 @@ const EditorWrapper = ({
   setMetadataModalOpen,
   onDeleteChapter,
   queryAI,
+  aiEnabled,
   chaptersActionInProgress,
   onReorderChapter,
   onUploadChapter,
@@ -29,6 +30,7 @@ const EditorWrapper = ({
   bookMetadataValues,
   selectedChapterId,
   canEdit,
+  customTags,
   configurableEditorOn,
   configurableEditorConfig,
   aiOn,
@@ -77,9 +79,12 @@ const EditorWrapper = ({
     settings,
     getBookSettings,
     bookId,
+    aiEnabled,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
+
+  const [waxCustomTags, setWaxCustomTags] = useState([])
 
   const waxMenuConfig =
     configurableEditorOn && configurableEditorConfig?.length
@@ -95,6 +100,8 @@ const EditorWrapper = ({
 
   // Used For Editor's reconfiguration
   useEffect(() => {
+    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
+
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
@@ -116,7 +123,7 @@ const EditorWrapper = ({
         FreeTextPromptsOn: freeTextPromptsOn,
         CustomPromptsOn: customPromptsOn,
         CustomPrompts: customPromptsOn ? customPrompts : [],
-        AiOn: aiOn,
+        AiOn: aiEnabled && aiOn,
         ...(kbOn ? { AskKb: true } : {}),
       },
       TitleService: {
@@ -131,8 +138,17 @@ const EditorWrapper = ({
         userList: bookMembers,
         getMentionedUsers: onMention,
       },
+      CustomTagService: {
+        tags: waxCustomTags,
+        updateTags: () => true,
+      },
     })
-  }, [aiOn, editorKey, configurableEditorConfig])
+  }, [
+    aiOn,
+    editorKey,
+    JSON.stringify(configurableEditorConfig),
+    JSON.stringify(waxCustomTags),
+  ])
 
   useEffect(() => {
     setLuluWax({
@@ -162,6 +178,7 @@ const EditorWrapper = ({
       getBookSettings,
       settings,
       bookId,
+      aiEnabled,
     })
   }, [
     title,
@@ -178,6 +195,7 @@ const EditorWrapper = ({
     viewMetadata,
     settings,
     bookId,
+    aiEnabled,
   ])
 
   const userObject = {

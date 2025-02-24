@@ -344,6 +344,7 @@ const ChapterItem = forwardRef(
               <PopupContentWrapper>
                 {depth === 0 && (
                   <Button
+                    disabled={!canEdit}
                     onClick={() => {
                       onChapterConvert(id, isPart ? 'chapter' : 'part')
 
@@ -360,6 +361,7 @@ const ChapterItem = forwardRef(
                 )}
                 <Button
                   data-test="producer-deleteChapter"
+                  disabled={!canEdit}
                   onClick={() => onClickDelete(id)}
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                 >
@@ -385,8 +387,8 @@ ChapterItem.propTypes = {
   selectedChapterId: PropTypes.string,
   isDragging: PropTypes.bool,
   status: PropTypes.number,
-  onClickDelete: PropTypes.func.isRequired,
-  onChapterClick: PropTypes.func.isRequired,
+  onClickDelete: PropTypes.func,
+  onChapterClick: PropTypes.func,
   onChapterConvert: PropTypes.func,
   canEdit: PropTypes.bool.isRequired,
   collapseOtherParts: PropTypes.func,
@@ -405,6 +407,8 @@ ChapterItem.defaultProps = {
   isPart: false,
   onChapterConvert: null,
   collapseOtherParts: null,
+  onClickDelete: null,
+  onChapterClick: null,
 }
 
 export default ChapterItem

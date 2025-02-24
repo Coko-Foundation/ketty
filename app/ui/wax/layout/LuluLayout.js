@@ -4,7 +4,11 @@ import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
-import { ToTopOutlined } from '@ant-design/icons'
+import {
+  ToTopOutlined,
+  CaretUpFilled,
+  CaretDownFilled,
+} from '@ant-design/icons'
 import {
   ApplicationContext,
   WaxContext,
@@ -13,7 +17,8 @@ import {
   DocumentHelpers,
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
-import { Button } from '../../common'
+import { usePrevious } from '../../../utils'
+import { Button, Checkbox } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
   BookInformation,
@@ -79,8 +84,7 @@ const TopMenu = styled.div`
         visibility: hidden;
       }
     `};
-  /* -webkit-overflow-scrolling: touch;
-  overflow-scrolling: touch; */
+
   padding: ${grid(2)} ${grid(4)};
   user-select: none;
 
@@ -88,11 +92,12 @@ const TopMenu = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     row-gap: ${grid(2)};
+  }
 
-    &::before {
-      content: '';
-      grid-column: 1 / -1;
-    }
+  &.scrollable[data-expanded='false'] {
+    flex: unset;
+    height: 48px;
+    overflow: hidden;
   }
 
   > div {
@@ -120,6 +125,10 @@ const TopMenu = styled.div`
   #block-level-options {
     width: 100px;
     z-index: 1001;
+  }
+
+  > div > div:has(#custom-block-level-options) button[aria-haspopup='true'] {
+    width: 120px;
   }
 
   .Dropdown-root {
@@ -159,6 +168,23 @@ const TopMenu = styled.div`
     > span {
       opacity: 0;
     }
+  }
+
+  #collapse {
+    align-items: center;
+    border: none;
+    box-shadow: none;
+    display: none;
+    flex-direction: row-reverse;
+    justify-content: center;
+
+    > .ant-btn-icon {
+      margin-inline: ${grid(2)} 0;
+    }
+  }
+
+  &.scrollable #collapse {
+    display: flex;
   }
 `
 
@@ -212,11 +238,16 @@ const WaxSurfaceScroll = styled.div`
 
 const CommentsContainer = styled.div`
   display: flex;
-  flex-basis: 200px;
+  flex: 1 0 calc(205px + 1em);
   flex-direction: column;
   height: 100%;
   position: relative;
-  width: 300px;
+  width: calc(205px + 1em);
+
+  @media (max-width: 1400px) {
+    position: absolute;
+    right: ${grid(1)};
+  }
 
   > div {
     margin-inline-start: 1em;
@@ -236,26 +267,54 @@ const CommentsContainer = styled.div`
 `
 
 const TrackToolsContainer = styled.div`
-  border-bottom: 1px solid #a8a8a8;
-  display: flex;
-  padding-top: 5px;
+  border: 1px solid ${th('colorBorder')};
+  display: grid;
+  grid-auto-rows: 30px;
+  grid-template-columns: 1fr;
+  margin-inline-start: 0;
   position: fixed;
-  right: 30px;
-  width: 18%;
+  right: clamp(0rem, -0.2174rem + 1.087vw, 0.625rem);
+  z-index: 1;
+`
+
+const ToggleComments = styled.div`
+  align-items: center;
+  background-color: ${th('colorBackground')};
+  border-bottom: 1px solid ${th('colorBorder')};
+  display: inline-flex;
+  padding-inline: ${grid(2)};
+
+  > label {
+    flex-direction: row-reverse;
+
+    .ant-checkbox {
+      margin-inline: 6px;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    display: none;
+  }
 `
 
 const TrackTools = styled.div`
+  align-items: center;
+  background-color: ${th('colorBackground')};
   display: flex;
-  margin-left: auto;
+  justify-content: end;
+  padding-inline: ${grid(2)};
   position: relative;
   z-index: 1;
 `
 
 const TrackOptions = styled.div`
-  bottom: 5px;
   display: flex;
   margin-left: 10px;
   position: relative;
+
+  > div > button ~ div {
+    right: ${grid(-2)};
+  }
 `
 
 const EditorContainer = styled.div`
@@ -278,7 +337,7 @@ const EditorContainer = styled.div`
     min-height: calc(100vh - 104px);
     padding: ${grid(20)} var(--padding-inline) ${grid(20)}
       calc(50px + var(--padding-inline));
-    width: 100%;
+    width: calc(100% - 20px);
 
     @media (min-width: 600px) {
       padding: ${grid(20)} var(--padding-inline);
@@ -388,10 +447,15 @@ const LuluLayout = ({ customProps, ...rest }) => {
     settings,
     getBookSettings,
     bookId,
+    aiEnabled,
+    savedComments,
   } = customProps
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
+  const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
+  const [showComments, setShowComments] = useState(true)
+  const previousComments = usePrevious(savedComments)
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   const {
@@ -437,11 +501,21 @@ const LuluLayout = ({ customProps, ...rest }) => {
   }, [])
 
   useEffect(() => {
-    !editorLoading &&
+    if (editorLoading) {
+      document.getElementById('toolbar').classList.remove('scrollable')
+    } else {
       setTimeout(() => {
         checkOverflow()
-      }, 0)
+      }, 1)
+    }
   }, [editorLoading])
+
+  useEffect(() => {
+    // make comments visible when adding a new comment and they are hidden
+    if (previousComments?.length < savedComments?.length) {
+      setShowComments(true)
+    }
+  }, [savedComments])
 
   const toggleMetadata = which => {
     if (viewMetadata !== which) {
@@ -459,21 +533,41 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
       setViewMetadata('')
     }
+
+    if (window.innerWidth < 600) {
+      setBookPanelCollapsed(true)
+    }
   }
 
   const handleChapterClick = chapterId => {
     if (viewMetadata !== '') setViewMetadata('')
     onChapterClick(chapterId)
+
+    if (window.innerWidth < 600 && !bookPanelCollapsed) {
+      setBookPanelCollapsed(true)
+    }
   }
 
   const checkOverflow = () => {
     const toolbar = document.getElementById('toolbar')
-    // Check if the content overflows the container
+    toolbar?.classList.remove('scrollable')
 
+    // Check if the content overflows the container
     if (toolbar?.scrollWidth > toolbar?.clientWidth) {
       toolbar?.classList.add('scrollable') // Add class to align items to the start
     } else {
       toolbar?.classList.remove('scrollable') // Remove class to center items
+    }
+
+    if (window.innerWidth > 1400) {
+      if (
+        document.getElementById('commentToggle')?.classList.contains('hidden')
+      ) {
+        setShowComments(true)
+        document.getElementById('commentToggle')?.classList.remove('hidden')
+      }
+    } else {
+      document.getElementById('commentToggle')?.classList.add('hidden')
     }
   }
 
@@ -491,6 +585,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
       case 'settings':
         return (
           <StyledSettingsForm
+            aiEnabled={aiEnabled}
             bookId={bookId}
             bookSettings={settings}
             refetchBookSettings={getBookSettings}
@@ -509,10 +604,21 @@ const LuluLayout = ({ customProps, ...rest }) => {
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
-          id="toolbar"
+          data-expanded={!mobileToolbarCollapsed}
           data-loading={editorLoading}
+          id="toolbar"
           isHidden={viewMetadata}
         >
+          <Button
+            icon={
+              mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
+            }
+            iconPosition="end"
+            id="collapse"
+            onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
+          >
+            {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
+          </Button>
           {!editorLoading ? <MainMenuToolBar /> : null}
         </TopMenu>
         <Main>
@@ -520,7 +626,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
             <LeftPanelWrapper>
               <CollapseContainer data-collapsed={bookPanelCollapsed}>
                 <Button
-                  aria-label={t('collapse')}
+                  aria-label="Collapse"
                   icon={<ToTopOutlined />}
                   onClick={() => setBookPanelCollapsed(!bookPanelCollapsed)}
                   type="text"
@@ -528,8 +634,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
               </CollapseContainer>
               <BookInformation
                 bookId={bookId}
-                showAiAssistantLink={settings?.aiPdfDesignerOn}
-                showKnowledgeBaseLink={settings?.knowledgeBaseOn}
+                showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
+                showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
                 toggleInformation={toggleMetadata}
                 viewInformation={viewMetadata}
               />
@@ -574,21 +680,32 @@ const LuluLayout = ({ customProps, ...rest }) => {
                           {t('editor.noChapterSelected')}
                         </NoSelectedChapterWrapper>
                       )}
-                      <CommentsContainer>
-                        {showTrackControls && (
-                          <TrackToolsContainer>
-                            <TrackTools>
-                              {commentsTracksCount + trackBlockNodesCount}{' '}
-                              SUGGESTIONS
-                              <TrackOptions>
-                                <CommentTrackToolBar />
-                              </TrackOptions>
-                            </TrackTools>
-                          </TrackToolsContainer>
+                      <TrackToolsContainer>
+                        {savedComments.length > 0 && (
+                          <ToggleComments id="commentToggle">
+                            <Checkbox
+                              checked={showComments}
+                              onChange={e => setShowComments(e.target.checked)}
+                            >
+                              SHOW COMMENTS
+                            </Checkbox>
+                          </ToggleComments>
                         )}
-
-                        <RightArea area="main" />
-                      </CommentsContainer>
+                        {showTrackControls && (
+                          <TrackTools>
+                            {commentsTracksCount + trackBlockNodesCount}{' '}
+                            SUGGESTIONS
+                            <TrackOptions>
+                              <CommentTrackToolBar />
+                            </TrackOptions>
+                          </TrackTools>
+                        )}
+                      </TrackToolsContainer>
+                      {showComments && (
+                        <CommentsContainer>
+                          <RightArea area="main" />
+                        </CommentsContainer>
+                      )}
                     </>
                   )}
                 </EditorContainer>

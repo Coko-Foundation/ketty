@@ -1013,7 +1013,7 @@ const ProducerPage = () => {
       // update local copy of comments to show comment box
       setSavedComments(JSON.stringify(content))
 
-      if (!editorLoading && JSON.stringify(content) !== savedComments) {
+      if (savedComments !== null && JSON.stringify(content) !== savedComments) {
         debouncedSaveComments({
           commentData: {
             bookId,
@@ -1174,6 +1174,7 @@ const ProducerPage = () => {
       }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
+      customTags={bookQueryData?.getBook.bookSettings.customTags}
       editorKey={key}
       editorLoading={editorLoading}
       editorRef={editorRef}

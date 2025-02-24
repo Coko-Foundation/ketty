@@ -20,6 +20,7 @@ import {
   CodeBlockService,
   TrackChangeService,
   EditingSuggestingService,
+  CustomTagService,
 } from 'wax-prosemirror-services'
 
 import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
@@ -117,6 +118,7 @@ const config = {
     new TransformService(),
     new CodeBlockService(),
     new EditingSuggestingService(),
+    new CustomTagService(),
   ],
 }
 

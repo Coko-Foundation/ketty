@@ -5,6 +5,8 @@ import { useApolloClient, useQuery } from '@apollo/client'
 import { Route, Switch, useHistory, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { ConfigProvider } from 'antd'
+import { CURRENT_USER } from '@coko/client/dist/helpers/currentUserQuery'
 
 import {
   Authenticate,
@@ -15,8 +17,8 @@ import {
   ProviderConnectionPage,
 } from '@coko/client'
 
-import { CURRENT_USER } from '@coko/client/dist/helpers/currentUserQuery'
-import { isAdmin /*, hasEditAccess */ } from './helpers/permissions'
+import theme from './theme'
+import { isAdmin } from './helpers/permissions'
 import Header from './ui/common/Header'
 
 import {
@@ -138,12 +140,12 @@ const SiteHeader = () => {
   const isExporterPage = currentPath.includes('/exporter')
   const isAiAssistantPage = currentPath.includes('/ai-pdf')
   const isKnowledgeBasePage = currentPath.includes('/knowledge-base')
-  // const canEdit = currentUser && hasEditAccess(getBookId(), currentUser)
 
   const bookTitle =
-    getBook?.getBook.title !== undefined &&
-    (getBook?.getBook.title ||
-      t('untitledBook', { keyPrefix: 'pages.producer' }))
+    getBook?.getBook.title !== undefined
+      ? getBook?.getBook.title ||
+        t('untitledBook', { keyPrefix: 'pages.producer' })
+      : ''
 
   return (
     <Header
@@ -188,134 +190,140 @@ const Authenticated = ({ children }) => {
 }
 
 const routes = (
-  <Authenticate currentUserQuery={CURRENT_USER}>
-    <GlobalStyle />
-    <LayoutWrapper>
-      <Wrapper>
-        <Suspense fallback={<div>Loading...</div>}>
-          <SiteHeader />
-          <StyledPage fadeInPages>
-            <StyledMain id="main-content" tabIndex="-1">
-              <GlobalContextProvider>
-                <Switch>
-                  <Redirect exact path="/" to="/dashboard" />
+  <ConfigProvider
+    theme={{
+      token: theme,
+    }}
+  >
+    <Authenticate currentUserQuery={CURRENT_USER}>
+      <GlobalStyle />
+      <LayoutWrapper>
+        <Wrapper>
+          <Suspense fallback={<div>Loading...</div>}>
+            <SiteHeader />
+            <StyledPage fadeInPages>
+              <StyledMain id="main-content" tabIndex="-1">
+                <GlobalContextProvider>
+                  <Switch>
+                    <Redirect exact path="/" to="/dashboard" />
 
-                  <Route component={SignupPage} exact path="/signup" />
-                  <Route component={LoginPage} exact path="/login" />
+                    <Route component={SignupPage} exact path="/signup" />
+                    <Route component={LoginPage} exact path="/login" />
 
-                  <Route
-                    component={RequestPasswordResetPage}
-                    exact
-                    path="/request-password-reset"
-                  />
-                  <Route
-                    component={ResetPasswordPage}
-                    exact
-                    path="/password-reset/:token"
-                  />
-                  <Route
-                    component={VerifyEmailPage}
-                    exact
-                    path="/email-verification/:token"
-                  />
-                  <Route
-                    component={UnverifiedUserPage}
-                    exact
-                    path="/unverified-user/"
-                  />
-                  <Route
-                    component={RequestVerificationEmailPage}
-                    exact
-                    path="/request-verification-email/"
-                  />
-                  <Route
-                    exact
-                    path="/dashboard"
-                    render={() => (
+                    <Route
+                      component={RequestPasswordResetPage}
+                      exact
+                      path="/request-password-reset"
+                    />
+                    <Route
+                      component={ResetPasswordPage}
+                      exact
+                      path="/password-reset/:token"
+                    />
+                    <Route
+                      component={VerifyEmailPage}
+                      exact
+                      path="/email-verification/:token"
+                    />
+                    <Route
+                      component={UnverifiedUserPage}
+                      exact
+                      path="/unverified-user/"
+                    />
+                    <Route
+                      component={RequestVerificationEmailPage}
+                      exact
+                      path="/request-verification-email/"
+                    />
+                    <Route
+                      exact
+                      path="/dashboard"
+                      render={() => (
+                        <Authenticated>
+                          <DashboardPage />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/create-book"
+                      render={() => (
+                        <Authenticated>
+                          <CreateBook />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/books/:bookId/rename"
+                      render={() => (
+                        <Authenticated>
+                          <BookTitlePage />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/books/:bookId/import"
+                      render={() => (
+                        <Authenticated>
+                          <ImportPage />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/books/:bookId/producer"
+                      render={() => (
+                        <Authenticated>
+                          <ProducerPage />
+                        </Authenticated>
+                      )}
+                    />
+
+                    <Route exact path="/books/:bookId/exporter">
                       <Authenticated>
-                        <DashboardPage />
+                        <ExporterPage />
                       </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/create-book"
-                    render={() => (
+                    </Route>
+
+                    <Route exact path="/books/:bookId/ai-pdf">
                       <Authenticated>
-                        <CreateBook />
+                        <CssAssistantProvider>
+                          <AiPDFDesignerPage />
+                        </CssAssistantProvider>
                       </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/books/:bookId/rename"
-                    render={() => (
+                    </Route>
+
+                    <Route exact path="/books/:bookId/knowledge-base">
                       <Authenticated>
-                        <BookTitlePage />
+                        <KnowledgeBasePage />
                       </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/books/:bookId/import"
-                    render={() => (
+                    </Route>
+
+                    <Route exact path="/provider-redirect/:provider">
+                      <ProviderConnectionPage closeOnSuccess />
+                    </Route>
+
+                    <Route exact path="/admin">
                       <Authenticated>
-                        <ImportPage />
+                        <AdminPage />
                       </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/books/:bookId/producer"
-                    render={() => (
+                    </Route>
+                    <Route exact path="/template-manager">
                       <Authenticated>
-                        <ProducerPage />
+                        <TemplateMananger />
                       </Authenticated>
-                    )}
-                  />
-
-                  <Route exact path="/books/:bookId/exporter">
-                    <Authenticated>
-                      <ExporterPage />
-                    </Authenticated>
-                  </Route>
-
-                  <Route exact path="/books/:bookId/ai-pdf">
-                    <Authenticated>
-                      <CssAssistantProvider>
-                        <AiPDFDesignerPage />
-                      </CssAssistantProvider>
-                    </Authenticated>
-                  </Route>
-
-                  <Route exact path="/books/:bookId/knowledge-base">
-                    <Authenticated>
-                      <KnowledgeBasePage />
-                    </Authenticated>
-                  </Route>
-
-                  <Route exact path="/provider-redirect/:provider">
-                    <ProviderConnectionPage closeOnSuccess />
-                  </Route>
-
-                  <Route exact path="/admin">
-                    <Authenticated>
-                      <AdminPage />
-                    </Authenticated>
-                  </Route>
-                  <Route exact path="/template-manager">
-                    <Authenticated>
-                      <TemplateMananger />
-                    </Authenticated>
-                  </Route>
-                </Switch>
-              </GlobalContextProvider>
-            </StyledMain>
-          </StyledPage>
-        </Suspense>
-      </Wrapper>
-    </LayoutWrapper>
-  </Authenticate>
+                    </Route>
+                  </Switch>
+                </GlobalContextProvider>
+              </StyledMain>
+            </StyledPage>
+          </Suspense>
+        </Wrapper>
+      </LayoutWrapper>
+    </Authenticate>
+  </ConfigProvider>
 )
 
 export default routes

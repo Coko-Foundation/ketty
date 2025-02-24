@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Switch, Form } from 'antd'
@@ -22,7 +22,7 @@ const Indented = styled.div`
 
 const SettingsWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: space-between;
 `
 
@@ -51,9 +51,24 @@ const StyledForm = styled(Form)`
   margin-top: 24px;
 `
 
+const StyledFormCustomTag = styled(Form)`
+  align-items: end;
+  display: flex;
+  gap: ${grid(4)};
+`
+
 const StyledFormItem = styled(Form.Item)`
   margin-block-end: 0;
   width: 100%;
+
+  label {
+    font-weight: bold;
+
+    &::before {
+      /* stylelint-disable-next-line declaration-no-important */
+      display: none !important;
+    }
+  }
 `
 
 const StyledFormButton = styled(Button)`
@@ -77,7 +92,32 @@ const StyledListButton = styled(Button)`
   color: red;
 `
 
-const SettingsModal = ({
+const CustomTagTypeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+const CustomTagList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin-block-start: 8px;
+  row-gap: 8px;
+`
+
+const CustomTagItemWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-flow: row;
+  margin-right: 10px;
+`
+
+const CustomTagItemLabel = styled.span`
+  margin-right: 5px;
+`
+
+const SettingsForm = ({
+  aiEnabled,
   bookId,
   bookSettings,
   refetchBookSettings,
@@ -88,6 +128,9 @@ const SettingsModal = ({
   })
 
   const [form] = Form.useForm()
+  const [blockForm] = Form.useForm()
+  const [inlineForm] = Form.useForm()
+
   form.validateTrigger = ['onSubmit']
 
   const { currentUser } = useCurrentUser()
@@ -118,6 +161,15 @@ const SettingsModal = ({
       ? JSON.parse(bookSettings.configurableEditorConfig)
       : configWithAI,
   )
+
+  const [customTags, setCustomTags] = useState(
+    bookSettings.customTags?.length > 0
+      ? JSON.parse(bookSettings.customTags)
+      : [],
+  )
+
+  const blockInput = useRef(null)
+  const inlineInput = useRef(null)
 
   // MUTATIONS SECTION START
   const [updateBookSettings, { loading: updateLoading }] = useMutation(
@@ -164,6 +216,7 @@ const SettingsModal = ({
         customPrompts: prompts,
         customPromptsOn: isCustomPromptsOn,
         knowledgeBaseOn: isKnowledgeBaseOn,
+        customTags: JSON.stringify(customTags),
         configurableEditorOn: isConfigurableEditorOn,
         configurableEditorConfig: JSON.stringify(waxConfig),
       },
@@ -208,6 +261,28 @@ const SettingsModal = ({
     form.setFieldsValue({ prompt: '' })
   }
 
+  const handleAddCustomTagBlock = values => {
+    const { block } = values
+    setCustomTags([...customTags, { label: block, tagType: 'block' }])
+    blockForm.setFieldsValue({ block: '' })
+    blockInput?.current?.focus()
+  }
+
+  const handleAddCustomTagInline = values => {
+    const { inline } = values
+    setCustomTags([...customTags, { label: inline, tagType: 'inline' }])
+    inlineForm.setFieldsValue({ inline: '' })
+    inlineInput?.current?.focus()
+  }
+
+  const handleDeleteCustomTag = (tag, type) => {
+    setCustomTags(
+      customTags.filter(customTag => {
+        return !(customTag.label === tag.label && customTag.tagType === type)
+      }),
+    )
+  }
+
   const toggleFreePromptSwitch = toggle => {
     setIsFreeTextPromptsOn(toggle)
 
@@ -248,6 +323,14 @@ const SettingsModal = ({
 
   const canChangeSettings = isAdmin(currentUser) || isOwner(bookId, currentUser)
 
+  const blockTags = customTags.filter(tag => {
+    return tag.tagType === 'block'
+  })
+
+  const inlineTags = customTags.filter(tag => {
+    return tag.tagType === 'inline'
+  })
+
   return (
     <Box className={className}>
       <Center>
@@ -259,14 +342,14 @@ const SettingsModal = ({
               <SettingInfo>{t('aiWriting.promptUse.detail')}</SettingInfo>
             </div>
             <Switch
-              checked={isAiOn}
+              checked={aiEnabled && isAiOn}
               data-test="settings-toggleAI-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={toggleAiOn}
             />
           </SettingsWrapper>
 
-          {isAiOn && (
+          {isAiOn && aiEnabled && (
             <Indented>
               <Stack>
                 <SettingsWrapper>
@@ -274,9 +357,9 @@ const SettingsModal = ({
                     <SettingTitle>{t('aiWriting.freeText')}</SettingTitle>
                   </SettingInfo>
                   <Switch
-                    checked={isFreeTextPromptsOn}
+                    checked={aiEnabled && isFreeTextPromptsOn}
                     data-test="settings-freeTextPrompt-switch"
-                    disabled={updateLoading || !canChangeSettings}
+                    disabled={updateLoading || !canChangeSettings || !aiEnabled}
                     onChange={e => toggleFreePromptSwitch(e)}
                   />
                 </SettingsWrapper>
@@ -286,9 +369,9 @@ const SettingsModal = ({
                     <SettingTitle>{t('aiWriting.customPrompts')}</SettingTitle>
                   </SettingInfo>
                   <Switch
-                    checked={isCustomPromptsOn}
+                    checked={aiEnabled && isCustomPromptsOn}
                     data-test="settings-customPrompt-switch"
-                    disabled={updateLoading || !canChangeSettings}
+                    disabled={updateLoading || !canChangeSettings || !aiEnabled}
                     onChange={e => toggleCustomPromptsSwitch(e)}
                   />
 
@@ -354,9 +437,9 @@ const SettingsModal = ({
               <SettingInfo>{t('aiDesigner.detail')}.</SettingInfo>
             </div>
             <Switch
-              checked={isAiPdfOn}
+              checked={aiEnabled && isAiPdfOn}
               data-test="settings-AIDesigner-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={e => setIsAiPdfOn(e)}
             />
           </SettingsWrapper>
@@ -367,12 +450,127 @@ const SettingsModal = ({
               <SettingInfo>{t('knowledgeBase.detail')}</SettingInfo>
             </div>
             <Switch
-              checked={isKnowledgeBaseOn}
+              checked={aiEnabled && isKnowledgeBaseOn}
               data-test="settings-kb-switch"
-              disabled={updateLoading || !canChangeSettings}
+              disabled={updateLoading || !canChangeSettings || !aiEnabled}
               onChange={e => toggleKnowledgeBase(e)}
             />
           </SettingsWrapper>
+
+          <SettingsWrapper>
+            <Stack style={{ '--space': '16px', width: '100%' }}>
+              <SettingTitle>Custom Tags</SettingTitle>
+              <CustomTagTypeWrapper>
+                <Stack style={{ '--space': '8px' }}>
+                  <StyledFormCustomTag
+                    form={blockForm}
+                    layout="vertical"
+                    onFinish={handleAddCustomTagBlock}
+                  >
+                    <StyledFormItem
+                      label="Custom Tag Block"
+                      name="block"
+                      rules={[
+                        {
+                          required: true,
+                          message: t('customTagsBlock.input.errors.noValue'),
+                          validator: (_, value) => {
+                            if (!value.trim().length) {
+                              return Promise.reject()
+                            }
+
+                            return Promise.resolve()
+                          },
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder={t('customTagsBlock.input')}
+                        ref={blockInput}
+                      />
+                    </StyledFormItem>
+                    <StyledFormButton
+                      disabled={updateLoading || !canChangeSettings}
+                      htmlType="submit"
+                    >
+                      {t('customTagsBlock.actions.add')}
+                    </StyledFormButton>
+                  </StyledFormCustomTag>
+                  <CustomTagList>
+                    {blockTags.map(tag => {
+                      return (
+                        <CustomTagItemWrapper key={tag.label}>
+                          <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
+                          <StyledListButton
+                            disabled={updateLoading || !canChangeSettings}
+                            htmlType="submit"
+                            onClick={() => handleDeleteCustomTag(tag, 'block')}
+                          >
+                            <DeleteOutlined />
+                          </StyledListButton>
+                        </CustomTagItemWrapper>
+                      )
+                    })}
+                  </CustomTagList>
+                </Stack>
+              </CustomTagTypeWrapper>
+              <CustomTagTypeWrapper>
+                <Stack style={{ '--space': '8px' }}>
+                  <StyledFormCustomTag
+                    form={inlineForm}
+                    layout="vertical"
+                    onFinish={handleAddCustomTagInline}
+                  >
+                    <StyledFormItem
+                      name="inline"
+                      label="Custom Tag Inline"
+                      rules={[
+                        {
+                          required: true,
+                          message: t('customTagsInline.input.errors.noValue'),
+                          validator: (_, value) => {
+                            if (!value.trim().length) {
+                              return Promise.reject()
+                            }
+
+                            return Promise.resolve()
+                          },
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder={t('customTagsInline.input')}
+                        ref={inlineInput}
+                      />
+                    </StyledFormItem>
+                    <StyledFormButton
+                      disabled={updateLoading || !canChangeSettings}
+                      htmlType="submit"
+                    >
+                      {t('customTagsInline.actions.add')}
+                    </StyledFormButton>
+                  </StyledFormCustomTag>
+                  <CustomTagList>
+                    {inlineTags.map(tag => {
+                      return (
+                        <CustomTagItemWrapper key={tag.label}>
+                          <CustomTagItemLabel>{tag.label}</CustomTagItemLabel>
+                          <StyledListButton
+                            disabled={updateLoading || !canChangeSettings}
+                            htmlType="submit"
+                            onClick={() => handleDeleteCustomTag(tag, 'inline')}
+                          >
+                            <DeleteOutlined />
+                          </StyledListButton>
+                        </CustomTagItemWrapper>
+                      )
+                    })}
+                  </CustomTagList>
+                </Stack>
+              </CustomTagTypeWrapper>
+            </Stack>
+          </SettingsWrapper>
+
           <SettingsWrapper>
             <div>
               <SettingTitle>{t('configurableEditor')}</SettingTitle>
@@ -409,7 +607,8 @@ const SettingsModal = ({
   )
 }
 
-SettingsModal.propTypes = {
+SettingsForm.propTypes = {
+  aiEnabled: PropTypes.bool,
   bookId: PropTypes.string.isRequired,
   bookSettings: PropTypes.shape({
     aiOn: PropTypes.bool,
@@ -420,11 +619,13 @@ SettingsModal.propTypes = {
     knowledgeBaseOn: PropTypes.bool,
     configurableEditorOn: PropTypes.bool,
     configurableEditorConfig: PropTypes.arrayOf(PropTypes.string),
+    customTags: PropTypes.arrayOf(PropTypes.string),
   }),
   refetchBookSettings: PropTypes.func.isRequired,
 }
 
-SettingsModal.defaultProps = {
+SettingsForm.defaultProps = {
+  aiEnabled: false,
   bookSettings: {
     aiOn: false,
     aiPdfDesignerOn: false,
@@ -433,4 +634,4 @@ SettingsModal.defaultProps = {
     knowledgeBaseOn: false,
   },
 }
-export default SettingsModal
+export default SettingsForm

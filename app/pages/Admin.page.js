@@ -104,7 +104,7 @@ const AdminPage = () => {
     return updateApplicationParametersMutation({ variables })
   }
 
-  const toggleAIFeatures = val => {
+  const toggleAIFeatures = async val => {
     const variables = {
       input: {
         context: 'bookBuilder',
@@ -132,33 +132,41 @@ const AdminPage = () => {
     updateApplicationParametersMutation({ variables })
   }
 
-  const handleUpdateChatGPTApiKey = val => {
-    const headers = new Headers()
-    headers.append('Authorization', `Bearer ${val}`)
-    headers.append('Content-Type', 'application/json')
-    return new Promise((resolve, reject) => {
-      // validate API key before saving
-      fetch(`https://api.openai.com/v1/engines`, {
-        method: 'GET',
-        headers,
-        muteHttpExceptions: true,
-      }).then(async ({ status }) => {
-        if (status === 200) {
-          const variables = {
-            input: {
-              context: 'bookBuilder',
-              area: 'chatGptApiKey',
-              config: JSON.stringify(val),
-            },
-          }
+  const handleUpdateChatGPTApiKey = async val => {
+    await toggleAIFeatures(val.aiOn)
 
-          await updateApplicationParametersMutation({ variables })
-          resolve()
-        } else if (status === 401) {
-          // console.log('invalid api key')
-          reject()
-        }
+    if (val.aiOn) {
+      const headers = new Headers()
+      headers.append('Authorization', `Bearer ${val.apiKey}`)
+      headers.append('Content-Type', 'application/json')
+      return new Promise((resolve, reject) => {
+        // validate API key before saving
+        fetch(`https://api.openai.com/v1/engines`, {
+          method: 'GET',
+          headers,
+          muteHttpExceptions: true,
+        }).then(async ({ status }) => {
+          if (status === 200) {
+            await updateApplicationParametersMutation({
+              variables: {
+                input: {
+                  context: 'bookBuilder',
+                  area: 'chatGptApiKey',
+                  config: JSON.stringify(val.apiKey),
+                },
+              },
+            })
+
+            resolve()
+          } else if (status === 401) {
+            reject()
+          }
+        })
       })
+    }
+
+    return new Promise(resolve => {
+      resolve()
     })
   }
 

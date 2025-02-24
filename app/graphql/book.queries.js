@@ -67,6 +67,7 @@ const GET_ENTIRE_BOOK = gql`
         freeTextPromptsOn
         customPromptsOn
         knowledgeBaseOn
+        customTags
         configurableEditorOn
         configurableEditorConfig
       }
@@ -107,6 +108,7 @@ const GET_BOOK_SETTINGS = gql`
         freeTextPromptsOn
         customPromptsOn
         knowledgeBaseOn
+        customTags
         configurableEditorOn
         configurableEditorConfig
       }
@@ -184,6 +186,7 @@ const UPDATE_SETTINGS = gql`
     $customPrompts: [String]
     $customPromptsOn: Boolean
     $knowledgeBaseOn: Boolean
+    $customTags: [String]
     $configurableEditorOn: Boolean
     $configurableEditorConfig: [String]
   ) {
@@ -196,6 +199,7 @@ const UPDATE_SETTINGS = gql`
         customPrompts: $customPrompts
         customPromptsOn: $customPromptsOn
         knowledgeBaseOn: $knowledgeBaseOn
+        customTags: $customTags
         configurableEditorOn: $configurableEditorOn
         configurableEditorConfig: $configurableEditorConfig
       }
@@ -203,6 +207,7 @@ const UPDATE_SETTINGS = gql`
       aiOn
       aiPdfDesignerOn
       knowledgeBaseOn
+      customTags
       configurableEditorOn
       configurableEditorConfig
       id
