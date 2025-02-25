@@ -5,15 +5,24 @@ import styled from 'styled-components'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import { ReloadOutlined } from '@ant-design/icons'
+import { th } from '@coko/client'
 import { Table, Button } from '../common'
 import TemplateManagerHeader from './TemplateManagerHeader'
 import TemplateDetails from './TemplateDetails'
 import Modals from './Modals'
 
+const AdminWrapper = styled.div`
+  background-color: #e8e8e8;
+  min-height: 100vh;
+  padding-block: 1rem 3rem;
+`
+
 const Wrapper = styled.section`
+  background-color: ${th('colorBackground')};
   margin-inline: auto;
   max-inline-size: 1100px;
-  padding-inline: 12px;
+  padding-block-end: 24px;
+  padding-inline: 32px;
 `
 
 const ButtonWrapper = styled.div`
@@ -165,35 +174,37 @@ const TemplateMananger = props => {
   }
 
   return (
-    <Wrapper>
-      <TemplateManagerHeader
-        openNewTemplateModal={() => setAddNewModal(true)}
-      />
-      <Table
-        columns={columns}
-        dataSource={parseTempaltes(templatesData)}
-        expandable={details}
-        loading={loading}
-        pagination={false}
-      />
-      <Modals
-        addingTemplate={addingTemplate}
-        addNewModal={addNewModal}
-        addTemplate={addTemplate}
-        deleteTemplateModal={deleteTemplateModal}
-        disableLoading={disableLoading}
-        disableTemplate={handleDisableTemplate}
-        disableTemplateModal={disableTemplateModal}
-        removeTemplate={removeTemplate}
-        setAddNewModal={setAddNewModal}
-        setDeleteTemplateModal={setDeleteTemplateModal}
-        setDisableTemplateModal={setDisableTemplateModal}
-        setTemplateToDelete={setTemplateToDelete}
-        setTemplateToDisable={setTemplateToDisable}
-        templateToDelete={templateToDelete}
-        templateToDisable={templateToDisable}
-      />
-    </Wrapper>
+    <AdminWrapper>
+      <Wrapper>
+        <TemplateManagerHeader
+          openNewTemplateModal={() => setAddNewModal(true)}
+        />
+        <Table
+          columns={columns}
+          dataSource={parseTempaltes(templatesData)}
+          expandable={details}
+          loading={loading}
+          pagination={false}
+        />
+        <Modals
+          addingTemplate={addingTemplate}
+          addNewModal={addNewModal}
+          addTemplate={addTemplate}
+          deleteTemplateModal={deleteTemplateModal}
+          disableLoading={disableLoading}
+          disableTemplate={handleDisableTemplate}
+          disableTemplateModal={disableTemplateModal}
+          removeTemplate={removeTemplate}
+          setAddNewModal={setAddNewModal}
+          setDeleteTemplateModal={setDeleteTemplateModal}
+          setDisableTemplateModal={setDisableTemplateModal}
+          setTemplateToDelete={setTemplateToDelete}
+          setTemplateToDisable={setTemplateToDisable}
+          templateToDelete={templateToDelete}
+          templateToDisable={templateToDisable}
+        />
+      </Wrapper>
+    </AdminWrapper>
   )
 }
 

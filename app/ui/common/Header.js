@@ -111,6 +111,12 @@ const StyledPopup = styled(Popup)`
   }
 `
 
+const StyledAvatar = styled(Avatar)`
+  display: grid;
+  font-weight: bold;
+  place-content: center;
+`
+
 const PopupContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -196,18 +202,22 @@ const Header = props => {
             position="block-end"
             toggle={
               <Button type="text">
-                <Avatar
-                  data-test="avatar-initials"
-                  style={{ display: 'grid', placeContent: 'center' }}
-                >
+                <StyledAvatar data-test="avatar-initials">
                   {getInitials(userDisplayName)}
-                </Avatar>
+                </StyledAvatar>
               </Button>
             }
           >
             <PopupContentWrapper>
               <LanguageSwitcher languages={languages} />
-              <UnstyledLink to={homeURL}>Dashboard</UnstyledLink>
+              <UnstyledLink
+                to={homeURL}
+                onClick={() => {
+                  document.querySelector('#main-content').focus()
+                }}
+              >
+                Dashboard
+              </UnstyledLink>
               {canAccessAdminPage && (
                 <>
                   <UnstyledLink
