@@ -501,6 +501,17 @@ const LuluLayout = ({ customProps, ...rest }) => {
   }, [])
 
   useEffect(() => {
+    const backToEditor = e => {
+      if (e.key === 'Escape') {
+        toggleMetadata(viewMetadata)
+      }
+    }
+
+    window.addEventListener('keydown', backToEditor)
+    return () => window.removeEventListener('keydown', backToEditor)
+  }, [viewMetadata])
+
+  useEffect(() => {
     if (editorLoading) {
       document.getElementById('toolbar').classList.remove('scrollable')
     } else {
