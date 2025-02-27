@@ -54,6 +54,8 @@ const EditorWrapper = ({
   getBookSettings,
   updateBookSettings,
   updateLoading,
+  wsProvider,
+  ydoc,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -102,58 +104,80 @@ const EditorWrapper = ({
     }
   }, [])
 
+  console.log(selectedChapterId)
+
   // Used For Editor's reconfiguration
   useEffect(() => {
-    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
-
+    // setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
+    console.log(wsProvider, ydoc)
     setSelectedWaxConfig({
       ...selectedWaxConfig,
-      editorKey,
-      MenuService: selectedWaxConfig.MenuService.map(service => {
-        // Find the matching service in waxMenuConfig based on templateArea
-        const matchingConfig = waxMenuConfig.MenuService.find(
-          config => config?.templateArea === service.templateArea,
-        )
+      // editorKey,
+      // MenuService: selectedWaxConfig.MenuService.map(service => {
+      //   // Find the matching service in waxMenuConfig based on templateArea
+      //   const matchingConfig = waxMenuConfig.MenuService.find(
+      //     config => config.templateArea === service.templateArea,
+      //   )
 
-        return {
-          ...service,
-          toolGroups: matchingConfig
-            ? matchingConfig.toolGroups
-            : service.toolGroups,
-        }
-      }),
-      AskAiContentService: {
-        AskAiContentTransformation: queryAI,
-        FreeTextPromptsOn: freeTextPromptsOn,
-        CustomPromptsOn: customPromptsOn,
-        CustomPrompts: customPromptsOn ? customPrompts : [],
-        AiOn: aiEnabled && aiOn,
-        ...(kbOn ? { AskKb: true } : {}),
+      //   return {
+      //     ...service,
+      //     toolGroups: matchingConfig
+      //       ? matchingConfig.toolGroups
+      //       : service.toolGroups,
+      //   }
+      // }),
+      YjsService: {
+        provider: () => wsProvider,
+        ydoc: () => ydoc,
+        yjsType: 'prosemirror',
+        // cursorBuilder: user => {
+        //   if (user) {
+        //     const cursor = document.createElement('span')
+        //     cursor.classList.add('ProseMirror-yjs-cursor')
+        //     cursor.setAttribute('style', `border-color: ${user.color}`)
+        //     const userDiv = document.createElement('div')
+        //     userDiv.setAttribute('style', `background-color: ${user.color}`)
+        //     userDiv.insertBefore(
+        //       document.createTextNode(user.displayName),
+        //       null,
+        //     )
+        //     cursor.insertBefore(userDiv, null)
+        //     return cursor
+        //   }
+
+        //   return ''
+        // },
       },
-      TitleService: {
-        updateTitle: onPeriodicTitleChange,
-      },
-      CommentsService: {
-        // readOnly: !canInteractWithComments,
-        readOnlyPost: false,
-        readOnlyResolve: !canInteractWithComments,
-        getComments: addComments,
-        setComments: () => {
-          return savedComments || []
-        },
-        userList: bookMembers,
-        getMentionedUsers: onMention,
-      },
-      CustomTagService: {
-        tags: waxCustomTags,
-        updateTags: () => true,
-      },
+      // AskAiContentService: {
+      //   AskAiContentTransformation: queryAI,
+      //   FreeTextPromptsOn: freeTextPromptsOn,
+      //   CustomPromptsOn: customPromptsOn,
+      //   CustomPrompts: customPromptsOn ? customPrompts : [],
+      //   AiOn: aiEnabled && aiOn,
+      //   ...(kbOn ? { AskKb: true } : {}),
+      // },
+      // TitleService: {
+      //   updateTitle: onPeriodicTitleChange,
+      // },
+      // CommentsService: {
+      //   readOnly: !canInteractWithComments,
+      //   getComments: addComments,
+      //   setComments: () => {
+      //     return savedComments || []
+      //   },
+      //   userList: bookMembers,
+      //   getMentionedUsers: onMention,
+      // },
+      // CustomTagService: {
+      //   tags: waxCustomTags,
+      //   updateTags: () => true,
+      // },
     })
   }, [
-    aiOn,
-    editorKey,
+    // aiOn,
+    // editorKey,
     JSON.stringify(configurableEditorConfig),
-    JSON.stringify(waxCustomTags),
+    // JSON.stringify(waxCustomTags),
   ])
 
   useEffect(() => {

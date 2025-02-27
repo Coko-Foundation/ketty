@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import useWebSocket from 'react-use-websocket'
 import { useHistory, useParams } from 'react-router-dom'
@@ -65,6 +65,7 @@ import {
 
 import { Editor, Modal, Paragraph, Spin } from '../ui'
 import { waxAiToolRagSystem, waxAiToolSystem } from '../helpers/openAi'
+import YjsContext from '../ui/provider-yjs/YjsProvider'
 
 const StyledSpin = styled(Spin)`
   display: grid;
@@ -104,6 +105,7 @@ let issueInCommunicationModal
 
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
+  const { createYjsProvider, wsProvider, ydoc } = useContext(YjsContext)
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
@@ -1057,54 +1059,68 @@ const ProducerPage = () => {
   // HANDLERS SECTION END
 
   // WEBSOCKET SECTION START
-  useWebSocket(
-    `${webSocketServerUrl}/locks`,
-    {
-      onOpen: () => {
-        if (editorMode && editorMode !== 'preview') {
-          if (!reconnecting) {
-            onBookComponentLock()
-          }
+  // useWebSocket(
+  //   `${webSocketServerUrl}/locks`,
+  //   {
+  //     onOpen: () => {
+  //       if (editorMode && editorMode !== 'preview') {
+  //         if (!reconnecting) {
+  //           onBookComponentLock()
+  //         }
 
-          if (reconnecting) {
-            if (selectedChapterId) {
-              const tempChapterId = selectedChapterId
-              setSelectedChapterId(null)
-              setSelectedChapterId(tempChapterId)
-            }
+  //         if (reconnecting) {
+  //           if (selectedChapterId) {
+  //             const tempChapterId = selectedChapterId
+  //             setSelectedChapterId(null)
+  //             setSelectedChapterId(tempChapterId)
+  //           }
 
-            if (issueInCommunicationModal) {
-              issueInCommunicationModal.destroy()
-              issueInCommunicationModal = undefined
-            }
+  //           if (issueInCommunicationModal) {
+  //             issueInCommunicationModal.destroy()
+  //             issueInCommunicationModal = undefined
+  //           }
 
-            setReconnecting(false)
-          }
-        }
-      },
-      onError: () => {
-        if (!reconnecting) {
-          issueInCommunicationModal = communicationDownModal()
-          setReconnecting(true)
-        }
-      },
-      shouldReconnect: () => {
-        return selectedChapterId && editorMode && editorMode !== 'preview'
-      },
-      onReconnectStop: () => {
-        showOfflineModal()
-      },
-      queryParams: {
-        token,
-        bookComponentId: selectedChapterId,
-        tabId,
-      },
-      share: true,
-      reconnectAttempts: 5000,
-      reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
-    },
-    selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
-  )
+  //           setReconnecting(false)
+  //         }
+  //       }
+  //     },
+  //     onError: () => {
+  //       if (!reconnecting) {
+  //         issueInCommunicationModal = communicationDownModal()
+  //         setReconnecting(true)
+  //       }
+  //     },
+  //     shouldReconnect: () => {
+  //       return selectedChapterId && editorMode && editorMode !== 'preview'
+  //     },
+  //     onReconnectStop: () => {
+  //       showOfflineModal()
+  //     },
+  //     queryParams: {
+  //       token,
+  //       bookComponentId: selectedChapterId,
+  //       tabId,
+  //     },
+  //     share: true,
+  //     reconnectAttempts: 5000,
+  //     reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
+  //   },
+  //   selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
+  // )
+
+  useEffect(() => {
+    if (selectedChapterId) {
+      createYjsProvider({
+        currentUser,
+        identifier: selectedChapterId,
+        object: {
+          bookComponentId: selectedChapterId,
+        },
+      })
+    }
+
+    return () => wsProvider?.disconnect()
+  }, [selectedChapterId])
 
   // WEBSOCKET SECTION END
 
@@ -1217,6 +1233,8 @@ const ProducerPage = () => {
       updateLoading={updateSettingsLoading}
       user={currentUser}
       viewMetadata={viewMetadata}
+      wsProvider={wsProvider}
+      ydoc={ydoc}
     />
   )
 }

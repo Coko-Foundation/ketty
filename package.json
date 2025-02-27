@@ -62,7 +62,12 @@
     "wax-prosemirror-core": "0.9.71",
     "wax-prosemirror-services": "0.9.71",
     "wax-questions-service": "^0.9.71",
-    "wax-table-service": "0.9.71"
+    "wax-table-service": "0.9.71",
+    "y-prosemirror": "1.2.0",
+    "y-protocols": "1.0.5",
+    "y-webrtc": "10.2.0",
+    "y-websocket": "1.4.5",
+    "yjs": "13.5.38"
   },
   "devDependencies": {
     "@coko/lint": "^2.1.0",

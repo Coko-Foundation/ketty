@@ -25,6 +25,8 @@ import charactersList from './charactersList'
 
 import { onInfoModal } from '../../../helpers/commonModals'
 
+import YjsService from './YjsService'
+
 const config = {
   MenuService: [
     {
@@ -78,6 +80,7 @@ const config = {
   ImageService: { showAlt: true },
 
   services: [
+    new YjsService(),
     new CommentsService(),
     new InlineAnnotationsService(),
     new ImageService(),
