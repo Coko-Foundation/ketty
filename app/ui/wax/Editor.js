@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Wax } from 'wax-prosemirror-core'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
+import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
   bookId,
@@ -40,7 +41,6 @@ const EditorWrapper = ({
   customPromptsOn,
   editorLoading,
   kbOn,
-  editorKey,
   canInteractWithComments,
   comments: savedComments,
   addComments,
@@ -104,80 +104,78 @@ const EditorWrapper = ({
     }
   }, [])
 
-  console.log(selectedChapterId)
-
   // Used For Editor's reconfiguration
   useEffect(() => {
-    // setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
-    console.log(wsProvider, ydoc)
+    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
     setSelectedWaxConfig({
       ...selectedWaxConfig,
-      // editorKey,
-      // MenuService: selectedWaxConfig.MenuService.map(service => {
-      //   // Find the matching service in waxMenuConfig based on templateArea
-      //   const matchingConfig = waxMenuConfig.MenuService.find(
-      //     config => config.templateArea === service.templateArea,
-      //   )
+      MenuService: selectedWaxConfig.MenuService.map(service => {
+        // Find the matching service in waxMenuConfig based on templateArea
+        const matchingConfig = waxMenuConfig.MenuService.find(
+          config => config.templateArea === service.templateArea,
+        )
 
-      //   return {
-      //     ...service,
-      //     toolGroups: matchingConfig
-      //       ? matchingConfig.toolGroups
-      //       : service.toolGroups,
-      //   }
-      // }),
+        return {
+          ...service,
+          toolGroups: matchingConfig
+            ? matchingConfig.toolGroups
+            : service.toolGroups,
+        }
+      }),
       YjsService: {
+        ...selectedWaxConfig.YjsService,
         provider: () => wsProvider,
         ydoc: () => ydoc,
         yjsType: 'prosemirror',
-        // cursorBuilder: user => {
-        //   if (user) {
-        //     const cursor = document.createElement('span')
-        //     cursor.classList.add('ProseMirror-yjs-cursor')
-        //     cursor.setAttribute('style', `border-color: ${user.color}`)
-        //     const userDiv = document.createElement('div')
-        //     userDiv.setAttribute('style', `background-color: ${user.color}`)
-        //     userDiv.insertBefore(
-        //       document.createTextNode(user.displayName),
-        //       null,
-        //     )
-        //     cursor.insertBefore(userDiv, null)
-        //     return cursor
-        //   }
+        cursorBuilder: () => {
+          if (user) {
+            const cursor = document.createElement('span')
+            cursor.classList.add('ProseMirror-yjs-cursor')
+            cursor.setAttribute('style', `border-color: ${user.color}`)
+            const userDiv = document.createElement('div')
+            userDiv.setAttribute('style', `background-color: ${user.color}`)
+            userDiv.insertBefore(
+              document.createTextNode(user.displayName),
+              null,
+            )
+            cursor.insertBefore(userDiv, null)
+            return cursor
+          }
 
-        //   return ''
-        // },
+          return ''
+        },
       },
-      // AskAiContentService: {
-      //   AskAiContentTransformation: queryAI,
-      //   FreeTextPromptsOn: freeTextPromptsOn,
-      //   CustomPromptsOn: customPromptsOn,
-      //   CustomPrompts: customPromptsOn ? customPrompts : [],
-      //   AiOn: aiEnabled && aiOn,
-      //   ...(kbOn ? { AskKb: true } : {}),
-      // },
-      // TitleService: {
-      //   updateTitle: onPeriodicTitleChange,
-      // },
-      // CommentsService: {
-      //   readOnly: !canInteractWithComments,
-      //   getComments: addComments,
-      //   setComments: () => {
-      //     return savedComments || []
-      //   },
-      //   userList: bookMembers,
-      //   getMentionedUsers: onMention,
-      // },
-      // CustomTagService: {
-      //   tags: waxCustomTags,
-      //   updateTags: () => true,
-      // },
+      AskAiContentService: {
+        AskAiContentTransformation: queryAI,
+        FreeTextPromptsOn: freeTextPromptsOn,
+        CustomPromptsOn: customPromptsOn,
+        CustomPrompts: customPromptsOn ? customPrompts : [],
+        AiOn: aiEnabled && aiOn,
+        ...(kbOn ? { AskKb: true } : {}),
+      },
+      TitleService: {
+        updateTitle: onPeriodicTitleChange,
+      },
+      CommentsService: {
+        readOnly: !canInteractWithComments,
+        getComments: addComments,
+        setComments: () => {
+          return savedComments || []
+        },
+        userList: bookMembers,
+        getMentionedUsers: onMention,
+      },
+      CustomTagService: {
+        tags: waxCustomTags,
+        updateTags: () => true,
+      },
+      services: [...selectedWaxConfig.services, new YjsService()],
     })
   }, [
-    // aiOn,
-    // editorKey,
+    aiOn,
+    JSON.stringify(wsProvider),
     JSON.stringify(configurableEditorConfig),
-    // JSON.stringify(waxCustomTags),
+    JSON.stringify(waxCustomTags),
   ])
 
   useEffect(() => {
@@ -200,7 +198,6 @@ const EditorWrapper = ({
       onBookComponentTypeChange,
       onBookComponentParentIdChange,
       editorLoading,
-      editorKey,
       savedComments,
       onUploadBookCover,
       viewMetadata,
@@ -222,7 +219,6 @@ const EditorWrapper = ({
     canEdit,
     metadataModalOpen,
     editorLoading,
-    editorKey,
     savedComments,
     viewMetadata,
     settings,
@@ -249,7 +245,7 @@ const EditorWrapper = ({
       customProps={luluWax}
       fileUpload={onImageUpload}
       layout={LuluLayout}
-      onChange={onPeriodicBookComponentContentChange}
+      // onChange={onPeriodicBookComponentContentChange}
       readonly={isReadOnly}
       ref={editorRef}
       user={userObject}
