@@ -22,10 +22,8 @@ class YjsService extends Service {
     if (!configProvider || !configYdoc) {
       ydoc = new Y.Doc()
       provider = new WebsocketProvider(connectionUrl, docIdentifier, ydoc)
-      //   this.app.context.setOption({ currentYdoc: ydoc })
     }
 
-    // Without this the review page is crashing locally!
     this.app.context.setOption({ currentYdoc: ydoc })
 
     provider.on('sync', args => {
@@ -46,12 +44,12 @@ class YjsService extends Service {
     this.app.PmPlugins.add('ySyncPlugin', ySyncPlugin(type))
 
     if (cursorBuilder) {
-      // this.app.PmPlugins.add(
-      //   'yCursorPlugin',
-      //   yCursorPlugin(provider.awareness, { cursorBuilder }),
-      // )
+      this.app.PmPlugins.add(
+        'yCursorPlugin',
+        yCursorPlugin(provider.awareness, { cursorBuilder }),
+      )
     } else {
-      this.app.PmPlugins.add('yCursorPlugin', yCursorPlugin(provider.awareness))
+      // this.app.PmPlugins.add('yCursorPlugin', yCursorPlugin(provider.awareness))
     }
 
     this.app.PmPlugins.add('yUndoPlugin', yUndoPlugin())
