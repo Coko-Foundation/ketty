@@ -120,7 +120,7 @@ const ProducerPage = () => {
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
-  const [editorLoading, setEditorLoading] = useState(false)
+  // const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
   // const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
@@ -1127,15 +1127,15 @@ const ProducerPage = () => {
     return <StyledSpin spinning />
   }
 
-  useEffect(() => {
-    if (applicationParametersLoading || loading || bookComponentLoading) {
-      setEditorLoading(true)
-    } else if (!bookComponentLoading) {
-      setTimeout(() => {
-        setEditorLoading(false)
-      }, 500)
-    }
-  }, [applicationParametersLoading, loading, bookComponentLoading])
+  // useEffect(() => {
+  //   if (applicationParametersLoading || loading || bookComponentLoading) {
+  //     setEditorLoading(true)
+  //   } else if (!bookComponentLoading) {
+  //     setTimeout(() => {
+  //       setEditorLoading(false)
+  //     }, 500)
+  //   }
+  // }, [applicationParametersLoading, loading, bookComponentLoading])
 
   const chaptersActionInProgress =
     changeOrderInProgress ||
@@ -1195,7 +1195,7 @@ const ProducerPage = () => {
       customPromptsOn={customPromptsOn}
       customTags={bookQueryData?.getBook.bookSettings.customTags}
       // editorKey={key}
-      editorLoading={editorLoading}
+      // editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}

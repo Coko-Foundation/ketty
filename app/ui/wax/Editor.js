@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
 import React, { useEffect, useState } from 'react'
 import { Wax } from 'wax-prosemirror-core'
+import { CommentsService, CodeBlockService } from 'wax-prosemirror-services'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
 import YjsService from './config/YjsService'
@@ -43,7 +44,8 @@ const EditorWrapper = ({
   kbOn,
   canInteractWithComments,
   comments: savedComments,
-  addComments,
+  // addComments,
+  editorKey,
   user,
   bookMembers,
   onMention,
@@ -119,7 +121,6 @@ const EditorWrapper = ({
         }
       }),
       YjsService: {
-        ...selectedWaxConfig.YjsService,
         provider: () => wsProvider,
         ydoc: () => ydoc,
         yjsType: 'prosemirror',
@@ -154,9 +155,9 @@ const EditorWrapper = ({
       },
       CommentsService: {
         readOnly: !canInteractWithComments,
-        getComments: addComments,
+        // getComments: addComments,
         setComments: () => {
-          return savedComments || []
+          return []
         },
         userList: bookMembers,
         getMentionedUsers: onMention,
@@ -165,7 +166,12 @@ const EditorWrapper = ({
         tags: waxCustomTags,
         updateTags: () => true,
       },
-      services: [...selectedWaxConfig.services, new YjsService()],
+      services: [
+        ...selectedWaxConfig.services,
+        new YjsService(),
+        new CommentsService(),
+        new CodeBlockService(),
+      ],
     })
   }, [
     aiOn,

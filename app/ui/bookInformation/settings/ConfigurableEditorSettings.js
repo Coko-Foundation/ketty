@@ -184,10 +184,16 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
 
     setWaxConfig({
       ...waxConfig,
-      MenuService: waxConfig.MenuService.map(service => ({
-        ...service,
-        toolGroups: waxMenuConfig,
-      })),
+      MenuService: waxConfig.MenuService.map(service => {
+        if (service.templateArea === 'mainMenuToolBar') {
+          return {
+            ...service,
+            toolGroups: waxMenuConfig,
+          }
+        }
+
+        return service
+      }),
     })
   }, [
     checkedInline,
