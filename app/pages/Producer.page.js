@@ -1100,6 +1100,10 @@ const ProducerPage = () => {
   // )
 
   useEffect(() => {
+    if (wsProvider) {
+      wsProvider?.disconnect()
+    }
+
     if (selectedChapterId) {
       createYjsProvider({
         currentUser,
