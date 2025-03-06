@@ -21,6 +21,8 @@ import {
   CustomTagService,
   MathService,
   NoteService,
+  CommentsService,
+  CodeBlockService,
 } from 'wax-prosemirror-services'
 
 import { QuestionsService } from 'wax-questions-service'
@@ -132,6 +134,8 @@ const config = {
     new CustomTagService(),
     new QuestionsService(),
     new MathService(),
+    new CommentsService(),
+    new CodeBlockService(),
   ],
 }
 

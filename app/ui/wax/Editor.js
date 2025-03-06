@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
 import React, { useEffect, useState } from 'react'
 import { Wax } from 'wax-prosemirror-core'
-import { CommentsService, CodeBlockService } from 'wax-prosemirror-services'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
 import YjsService from './config/YjsService'
@@ -170,12 +169,7 @@ const EditorWrapper = ({
         tags: waxCustomTags,
         updateTags: () => true,
       },
-      services: [
-        ...selectedWaxConfig.services,
-        new YjsService(),
-        new CommentsService(),
-        new CodeBlockService(),
-      ],
+      services: [new YjsService(), ...selectedWaxConfig.services],
     })
   }, [
     aiOn,
