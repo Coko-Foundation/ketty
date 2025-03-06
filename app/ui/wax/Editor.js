@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { Wax } from 'wax-prosemirror-core'
+import { isEqual } from 'lodash'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
 import YjsService from './config/YjsService'
@@ -91,8 +92,6 @@ const EditorWrapper = ({
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
-  const [waxCustomTags, setWaxCustomTags] = useState([])
-
   const waxMenuConfig =
     configurableEditorOn && configurableEditorConfig?.length
       ? JSON.parse(configurableEditorConfig)
@@ -105,24 +104,60 @@ const EditorWrapper = ({
     }
   }, [])
 
+  const previousRefEditorConfig = useRef(configurableEditorConfig)
+  const memoizedProvider = useMemo(() => wsProvider)
+
   // Used For Editor's reconfiguration
   useEffect(() => {
-    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
     setSelectedWaxConfig({
       ...selectedWaxConfig,
-      MenuService: selectedWaxConfig.MenuService.map(service => {
-        // Find the matching service in waxMenuConfig based on templateArea
-        const matchingConfig = waxMenuConfig.MenuService.find(
-          config => config.templateArea === service.templateArea,
-        )
+      CustomTagService: {
+        tags: customTags?.length > 0 ? JSON.parse(customTags) : [],
+        updateTags: () => true,
+      },
+    })
+  }, [customTags?.length])
 
-        return {
-          ...service,
-          toolGroups: matchingConfig
-            ? matchingConfig.toolGroups
-            : service.toolGroups,
-        }
-      }),
+  useEffect(() => {
+    if (!isEqual(previousRefEditorConfig.current, configurableEditorConfig)) {
+      // previousRefWsProvider.current = wsProvider
+      previousRefEditorConfig.current = configurableEditorConfig
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        MenuService: selectedWaxConfig.MenuService.map(service => {
+          // Find the matching service in waxMenuConfig based on templateArea
+          const matchingConfig = waxMenuConfig.MenuService.find(
+            config => config.templateArea === service.templateArea,
+          )
+
+          return {
+            ...service,
+            toolGroups: matchingConfig
+              ? matchingConfig.toolGroups
+              : service.toolGroups,
+          }
+        }),
+      })
+    }
+  }, [configurableEditorConfig])
+
+  useEffect(() => {
+    setSelectedWaxConfig({
+      ...selectedWaxConfig,
+      AskAiContentService: {
+        AskAiContentTransformation: queryAI,
+        FreeTextPromptsOn: freeTextPromptsOn,
+        CustomPromptsOn: customPromptsOn,
+        CustomPrompts: customPromptsOn ? customPrompts : [],
+        AiOn: aiEnabled && aiOn,
+        ...(kbOn ? { AskKb: true } : {}),
+      },
+    })
+  }, [aiOn])
+
+  useEffect(() => {
+    setSelectedWaxConfig({
+      ...selectedWaxConfig,
       YjsService: {
         provider: () => wsProvider,
         ydoc: () => ydoc,
@@ -145,14 +180,6 @@ const EditorWrapper = ({
         //   return ''
         // },
       },
-      AskAiContentService: {
-        AskAiContentTransformation: queryAI,
-        FreeTextPromptsOn: freeTextPromptsOn,
-        CustomPromptsOn: customPromptsOn,
-        CustomPrompts: customPromptsOn ? customPrompts : [],
-        AiOn: aiEnabled && aiOn,
-        ...(kbOn ? { AskKb: true } : {}),
-      },
       TitleService: {
         updateTitle: onPeriodicTitleChange,
       },
@@ -165,18 +192,10 @@ const EditorWrapper = ({
         userList: bookMembers,
         getMentionedUsers: onMention,
       },
-      CustomTagService: {
-        tags: waxCustomTags,
-        updateTags: () => true,
-      },
+
       services: [new YjsService(), ...selectedWaxConfig.services],
     })
-  }, [
-    aiOn,
-    JSON.stringify(wsProvider),
-    JSON.stringify(configurableEditorConfig),
-    JSON.stringify(waxCustomTags),
-  ])
+  }, [memoizedProvider])
 
   useEffect(() => {
     setLuluWax({
