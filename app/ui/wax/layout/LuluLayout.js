@@ -692,10 +692,11 @@ const LuluLayout = ({ customProps, ...rest }) => {
                       </TrackTools>
                     )}
                   </TrackToolsContainer>
-
-                  <CommentsContainer>
-                    <RightArea area="main" />
-                  </CommentsContainer>
+                  {showComments && (
+                    <CommentsContainer>
+                      <RightArea area="main" />
+                    </CommentsContainer>
+                  )}
                 </EditorContainer>
               </WaxSurfaceScroll>
             </EditorArea>

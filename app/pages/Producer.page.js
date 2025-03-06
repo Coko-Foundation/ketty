@@ -116,6 +116,7 @@ const ProducerPage = () => {
 
   // const [reconnecting, setReconnecting] = useState(false)
   const reconnecting = false
+  const [customTags, setCustomTags] = useState([])
   const [aiOn, setAiOn] = useState(false)
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
@@ -168,6 +169,7 @@ const ProducerPage = () => {
       setCustomPrompts(data?.getBook?.bookSettings?.customPrompts)
       setFreeTextPromptsOn(data?.getBook?.bookSettings?.freeTextPromptsOn)
       setCustomPromptsOn(data?.getBook?.bookSettings?.customPromptsOn)
+      setCustomTags(data?.getBook?.bookSettings?.customTags)
 
       // if loading page the first time and no chapter is preselected, select the first one
       if (selectedChapterId === undefined) {
@@ -1197,7 +1199,7 @@ const ProducerPage = () => {
       }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
-      customTags={bookQueryData?.getBook.bookSettings.customTags}
+      customTags={customTags}
       // editorKey={key}
       // editorLoading={editorLoading}
       editorRef={editorRef}
