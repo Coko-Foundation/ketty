@@ -92,6 +92,19 @@ const TopMenu = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     row-gap: ${grid(2)};
+
+    > div:has(#questions-list) {
+      grid-column: span 2;
+
+      [aria-controls='questions-list'] {
+        width: 150px;
+      }
+
+      #questions-list {
+        margin-left: 40px;
+        width: 211px;
+      }
+    }
   }
 
   &.scrollable[data-expanded='false'] {
@@ -112,7 +125,8 @@ const TopMenu = styled.div`
       text-align: center;
     }
 
-    &:has(#block-level-options) {
+    &:has(#block-level-options),
+    &:has(#questions-list) {
       display: flex;
     }
   }
@@ -122,8 +136,22 @@ const TopMenu = styled.div`
     width: 90px;
   }
 
+  [aria-controls='questions-list'] {
+    padding-inline: 1ch;
+
+    span,
+    svg {
+      top: 0;
+    }
+  }
+
   #block-level-options {
     width: 100px;
+    z-index: 1001;
+  }
+
+  #questions-list {
+    margin: 32px auto auto;
     z-index: 1001;
   }
 
@@ -209,6 +237,8 @@ const CollapseContainer = styled.div`
   }
 
   button {
+    block-size: 34px;
+    inline-size: 34px;
     transform: rotate(-90deg);
     transition: transform 0.3s ease-out;
   }
@@ -347,8 +377,37 @@ const EditorContainer = styled.div`
       caption-side: top;
     }
 
-    figcaption {
-      width: 624px;
+    .ProseMirror {
+      min-height: unset;
+      padding: unset;
+    }
+
+    .multiple-choice,
+    .true-false,
+    .true-false-single-correct,
+    .multiple-choice-single-correct,
+    .essay {
+      border: 2px solid rgb(245 245 247);
+    }
+
+    .essay {
+      > div:first-child {
+        min-block-size: 10em;
+
+        .ProseMirror {
+          padding: 1ch;
+        }
+      }
+
+      > div:nth-child(2) {
+        min-block-size: 10em;
+        padding: 1ch;
+      }
+    }
+
+    [aria-controls='numerical-answer-list'] {
+      min-inline-size: 235px;
+      width: unset;
     }
   }
 `
@@ -374,7 +433,7 @@ const LeftPanelWrapper = styled.div`
   padding-inline: ${grid(3)};
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
-  width: 300px;
+  width: 320px;
   z-index: 1000; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
@@ -383,7 +442,7 @@ const LeftPanelWrapper = styled.div`
   }
 
   @media (min-width: 600px) {
-    flex: 0 0 300px;
+    flex: 0 0 320px;
     position: relative;
     width: unset;
   }
