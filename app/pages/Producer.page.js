@@ -554,7 +554,7 @@ const ProducerPage = () => {
     if (editorMode && editorMode === 'full') {
       onBookComponentContentChange(changedContent)
     }
-  }, 50)
+  }, 500)
 
   const onBookComponentTypeChange = (componentId, componentType) => {
     if (componentId && componentType && canModify) {

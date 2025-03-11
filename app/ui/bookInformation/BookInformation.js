@@ -63,12 +63,23 @@ const Wrapper = styled.div`
 
 const Tooltip = props => <AntTooltip trigger={['hover', 'focus']} {...props} />
 
+const StyledButton = styled(Button)`
+  block-size: 34px;
+  inline-size: 34px;
+
+  svg {
+    font-size: 18px;
+  }
+`
+
 const StyledLink = styled(Link)`
+  block-size: 34px;
   border: 1px solid ${th('colorBorder')};
   color: inherit;
   display: grid;
+  font-size: 18px;
+  inline-size: 34px;
   place-content: center;
-  width: 32px;
 
   &:hover {
     color: inherit;
@@ -87,7 +98,7 @@ const BookInformation = props => {
   return (
     <Wrapper>
       <Tooltip placement="bottomLeft" title="Metadata">
-        <Button
+        <StyledButton
           aria-label="Toggle book metadata"
           aria-pressed={viewInformation === 'metadata'}
           data-test="producer-metadata-btn"
@@ -96,7 +107,7 @@ const BookInformation = props => {
         />
       </Tooltip>
       <Tooltip placement="bottom" title="Settings">
-        <Button
+        <StyledButton
           aria-label="Toggle book settings"
           aria-pressed={viewInformation === 'settings'}
           icon={<SettingOutlined />}
@@ -104,7 +115,7 @@ const BookInformation = props => {
         />
       </Tooltip>
       <Tooltip placement="bottom" title="Share">
-        <Button
+        <StyledButton
           aria-label="Toggle book collaborators"
           aria-pressed={viewInformation === 'members'}
           icon={<UsergroupAddOutlined />}

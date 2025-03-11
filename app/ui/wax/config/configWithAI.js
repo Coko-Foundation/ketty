@@ -23,6 +23,8 @@ import {
   CustomTagService,
 } from 'wax-prosemirror-services'
 
+import { QuestionsService } from 'wax-questions-service'
+
 import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
 
 import disallowPasteImagesPlugin from '../disallowPasteImagesPlugin'
@@ -53,6 +55,14 @@ const config = {
     {
       templateArea: 'commentTrackToolBar',
       toolGroups: ['TrackCommentOptions'],
+    },
+    {
+      templateArea: 'fillTheGap',
+      toolGroups: ['FillTheGap'],
+    },
+    {
+      templateArea: 'MultipleDropDown',
+      toolGroups: ['MultipleDropDown'],
     },
   ],
 
@@ -119,6 +129,7 @@ const config = {
     new CodeBlockService(),
     new EditingSuggestingService(),
     new CustomTagService(),
+    new QuestionsService(),
   ],
 }
 
