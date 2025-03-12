@@ -27,6 +27,20 @@ import {
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
 
+const AdminWrapper = styled.div`
+  background-color: #e8e8e8;
+  min-height: 100vh;
+  padding-block: 1rem 3rem;
+`
+
+const StyledCenter = styled(Center)`
+  --max-width: 80ch;
+  --s1: 32px;
+  background-color: ${th('colorBackground')};
+  margin-bottom: 3rem;
+  padding-block: calc(var(--s1) / 2) var(--s1);
+`
+
 const StyledControlWrapper = styled.div`
   align-items: center;
   column-gap: ${grid(4)};
@@ -525,429 +539,434 @@ const AdminDashboard = props => {
   })
 
   return (
-    <Center
-      style={{ '--max-width': '90ch', '--s1': '16px', marginBottom: '3rem' }}
-    >
-      <h1>{t('title')}</h1>
-      <Divider />
-      {/* ai integration */}
-      <h2>{t('aiIntegration.heading')}</h2>
-      <StyledControlWrapper>
-        <ChatGPTAPIKeyWrapper>
-          <Form
-            form={apiKeyForm}
-            layout="vertical"
-            onFinish={handleChatGPTKeyUpdate}
-            requiredMark={false}
-          >
-            <StyledFormItem
-              label={t('aiIntegration.supplier')}
-              layout="horizontal"
-              name="aiOn"
+    <AdminWrapper>
+      <StyledCenter>
+        <h1>{t('title')}</h1>
+        <Divider />
+        {/* ai integration */}
+        <h2>{t('aiIntegration.heading')}</h2>
+        <StyledControlWrapper>
+          <ChatGPTAPIKeyWrapper>
+            <Form
+              form={apiKeyForm}
+              layout="vertical"
+              onFinish={handleChatGPTKeyUpdate}
+              requiredMark={false}
             >
-              <Switch
-                data-test="admindb-ai-switch"
-                defaultChecked={aiEnabled}
-                loading={paramsLoading}
-                onChange={setEnableAI}
-              />
-            </StyledFormItem>
-            <Form.Item
-              label={t('aiIntegration.apiKey')}
-              name="apiKey"
-              rules={[
-                {
-                  required: enableAI && true,
-                  message: t('aiIntegration.apiKey.error.noValue'),
-                },
-              ]}
-            >
-              <Input
-                data-test="admindb-aikey-input"
-                disabled={!enableAI}
-                placeholder={t('aiIntegration.apiKey.placeholder')}
-              />
-            </Form.Item>
-            <div>
-              <Button
-                data-test="admindb-updateKey-btn"
-                htmlType="submit"
-                loading={keyUpdateResult?.loading}
+              <StyledFormItem
+                label={t('aiIntegration.supplier')}
+                layout="horizontal"
+                name="aiOn"
               >
-                {t('aiIntegration.updateKey')}
-              </Button>
-              <UpdateResult $success={keyUpdateResult?.success} role="status">
-                {keyUpdateResult?.message && (
-                  <>
-                    {keyUpdateResult?.success ? (
-                      <CheckOutlined />
-                    ) : (
-                      <CloseOutlined />
-                    )}
+                <Switch
+                  data-test="admindb-ai-switch"
+                  defaultChecked={aiEnabled}
+                  loading={paramsLoading}
+                  onChange={setEnableAI}
+                />
+              </StyledFormItem>
+              <Form.Item
+                label={t('aiIntegration.apiKey')}
+                name="apiKey"
+                rules={[
+                  {
+                    required: enableAI && true,
+                    message: t('aiIntegration.apiKey.error.noValue'),
+                  },
+                ]}
+              >
+                <Input
+                  data-test="admindb-aikey-input"
+                  disabled={!enableAI}
+                  placeholder={t('aiIntegration.apiKey.placeholder')}
+                />
+              </Form.Item>
+              <div>
+                <Button
+                  data-test="admindb-updateKey-btn"
+                  htmlType="submit"
+                  loading={keyUpdateResult?.loading}
+                >
+                  {t('aiIntegration.updateKey')}
+                </Button>
+                <UpdateResult $success={keyUpdateResult?.success} role="status">
+                  {keyUpdateResult?.message && (
+                    <>
+                      {keyUpdateResult?.success ? (
+                        <CheckOutlined />
+                      ) : (
+                        <CloseOutlined />
+                      )}
 
-                    {keyUpdateResult?.message}
-                  </>
-                )}
-              </UpdateResult>
-            </div>
-          </Form>
-        </ChatGPTAPIKeyWrapper>
-      </StyledControlWrapper>
-      <Divider />
-      {/* downloads, flax and lulu integrations */}
-      <h2>{t('publishing.heading')}</h2>
-      <Stack style={{ '--space': '2rem' }}>
-        <h3>{t('downloads.heading')}</h3>
-        <Stack style={{ '--space': '1rem' }}>
+                      {keyUpdateResult?.message}
+                    </>
+                  )}
+                </UpdateResult>
+              </div>
+            </Form>
+          </ChatGPTAPIKeyWrapper>
+        </StyledControlWrapper>
+        <Divider />
+        {/* downloads, flax and lulu integrations */}
+        <h2>{t('publishing.heading')}</h2>
+        <Stack style={{ '--space': '2rem' }}>
+          <h3>{t('downloads.heading')}</h3>
+          <Stack style={{ '--space': '1rem' }}>
+            <StyledControlWrapper>
+              <span>{t('downloads.pdf')}</span>
+              <Switch
+                checked={exportOptions?.pdfDownload?.enabled}
+                data-test="admindb-dwPDF-switch"
+                loading={paramsLoading}
+                onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+              />
+            </StyledControlWrapper>
+            <StyledControlWrapper>
+              <span>{t('downloads.epub')}</span>
+              <Switch
+                checked={exportOptions?.epubDownload?.enabled}
+                data-test="admindb-dwEPUB-switch"
+                loading={paramsLoading}
+                onChange={val => exportConfigUpdate(val, 'epubDownload')}
+              />
+            </StyledControlWrapper>
+          </Stack>
+          <h3>{t('integrations.heading')}</h3>
           <StyledControlWrapper>
-            <span>{t('downloads.pdf')}</span>
+            <span>{t('integrations.flax')}</span>
             <Switch
-              checked={exportOptions?.pdfDownload?.enabled}
-              data-test="admindb-dwPDF-switch"
+              checked={exportOptions?.webPublish?.enabled}
+              data-test="admindb-pubWeb-switch"
               loading={paramsLoading}
-              onChange={val => exportConfigUpdate(val, 'pdfDownload')}
+              onChange={val => exportConfigUpdate(val, 'webPublish')}
             />
+            {exportOptions?.webPublish?.enabled && (
+              <StyledCollapse
+                ghost
+                items={[
+                  {
+                    key: '1',
+                    label: 'Flax settings',
+                    children: (
+                      <Stack>
+                        <p style={{ gridColumn: 'span 2' }}>
+                          {t('integrations.flax.explanation')}
+                        </p>
+                        <StyledControlWrapper>
+                          <span>
+                            {t('integrations.flax.downloadOptions.pdf')}
+                          </span>
+                          <Switch
+                            checked={exportOptions?.webPdfDownload?.enabled}
+                            data-test="admindb-pubPDF-switch"
+                            loading={paramsLoading}
+                            onChange={val =>
+                              exportConfigUpdate(val, 'webPdfDownload')
+                            }
+                          />
+                        </StyledControlWrapper>
+                        <StyledControlWrapper>
+                          <span>
+                            {t('integrations.flax.downloadOptions.epub')}
+                          </span>
+                          <Switch
+                            checked={exportOptions?.webEpubDownload?.enabled}
+                            data-test="admindb-pubEPUB-switch"
+                            loading={paramsLoading}
+                            onChange={val =>
+                              exportConfigUpdate(val, 'webEpubDownload')
+                            }
+                          />
+                        </StyledControlWrapper>
+                        <p style={{ gridColumn: 'span 2' }}>
+                          {t('integrations.flax.customize.info')}
+                        </p>
+                        <StyledControlWrapper>
+                          <span>{t('integrations.flax.customize.label')}</span>
+                          <Switch
+                            checked={exportOptions?.webCustomHTML?.enabled}
+                            data-test="admindb-pubEPUB-switch"
+                            loading={paramsLoading}
+                            onChange={val =>
+                              exportConfigUpdate(val, 'webCustomHTML')
+                            }
+                          />
+                        </StyledControlWrapper>
+                      </Stack>
+                    ),
+                  },
+                ]}
+              />
+            )}
           </StyledControlWrapper>
           <StyledControlWrapper>
-            <span>{t('downloads.epub')}</span>
+            <span>{t('integrations.lulu')}</span>
             <Switch
-              checked={exportOptions?.epubDownload?.enabled}
-              data-test="admindb-dwEPUB-switch"
+              checked={!luluConfig?.disabled}
+              data-test="admindb-lulu-switch"
               loading={paramsLoading}
-              onChange={val => exportConfigUpdate(val, 'epubDownload')}
+              onChange={luluToggleConfig}
             />
+            {!luluConfig?.disabled && (
+              <StyledCollapse
+                ghost
+                items={[
+                  {
+                    key: '1',
+                    label: t('integrations.lulu.details'),
+                    children: (
+                      <Stack>
+                        <Form
+                          form={luluConfigForm}
+                          layout="vertical"
+                          onFinish={updateLuluConfig}
+                        >
+                          <Form.Item
+                            label={t('integrations.lulu.details.baseApiUrl')}
+                            name="baseAPIURL"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            label={t('integrations.lulu.details.loginUrl')}
+                            name="loginUrl"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            label={t('integrations.lulu.details.redirectUri')}
+                            name="redirectUri"
+                            rules={[{ required: true }]}
+                          >
+                            <Input
+                              addonBefore={`${window.location.protocol}//${window.location.host}`}
+                              type="url"
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            label={t(
+                              'integrations.lulu.details.projectBaseUrl',
+                            )}
+                            name="projectBaseUrl"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            label={t('integrations.lulu.details.tokenUrl')}
+                            name="tokenUrl"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Form.Item
+                            label={t('integrations.lulu.details.clientId')}
+                            name="clientId"
+                            rules={[{ required: true }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <StyledControlWrapper>
+                            <Button htmlType="submit" loading={paramsLoading}>
+                              {t('integrations.lulu.updateConfig.update')}
+                            </Button>
+                            <UpdateResult
+                              $success={luluConfigUpdateResult?.success}
+                              role="status"
+                            >
+                              {luluConfigUpdateResult?.message && (
+                                <>
+                                  {luluConfigUpdateResult?.success ? (
+                                    <CheckOutlined />
+                                  ) : (
+                                    <CloseOutlined />
+                                  )}
+
+                                  {luluConfigUpdateResult?.message}
+                                </>
+                              )}
+                            </UpdateResult>
+                          </StyledControlWrapper>
+                        </Form>
+                      </Stack>
+                    ),
+                  },
+                ]}
+              />
+            )}
           </StyledControlWrapper>
         </Stack>
-        <h3>{t('integrations.heading')}</h3>
-        <StyledControlWrapper>
-          <span>{t('integrations.flax')}</span>
-          <Switch
-            checked={exportOptions?.webPublish?.enabled}
-            data-test="admindb-pubWeb-switch"
-            loading={paramsLoading}
-            onChange={val => exportConfigUpdate(val, 'webPublish')}
+        <Divider />
+        {/* translations */}
+        <h2>{t('availableLanguages.heading')}</h2>
+        <Stack style={{ '--space': '1rem' }}>
+          <StyledCollapse
+            accordion
+            destroyInactivePanel
+            ghost
+            items={languageItems}
+            key={JSON.stringify(languages)}
           />
-          {exportOptions?.webPublish?.enabled && (
-            <StyledCollapse
-              ghost
-              items={[
-                {
-                  key: '1',
-                  label: 'Flax settings',
-                  children: (
-                    <Stack>
-                      <p style={{ gridColumn: 'span 2' }}>
-                        {t('integrations.flax.explanation')}
-                      </p>
-                      <StyledControlWrapper>
-                        <span>
-                          {t('integrations.flax.downloadOptions.pdf')}
-                        </span>
-                        <Switch
-                          checked={exportOptions?.webPdfDownload?.enabled}
-                          data-test="admindb-pubPDF-switch"
-                          loading={paramsLoading}
-                          onChange={val =>
-                            exportConfigUpdate(val, 'webPdfDownload')
-                          }
-                        />
-                      </StyledControlWrapper>
-                      <StyledControlWrapper>
-                        <span>
-                          {t('integrations.flax.downloadOptions.epub')}
-                        </span>
-                        <Switch
-                          checked={exportOptions?.webEpubDownload?.enabled}
-                          data-test="admindb-pubEPUB-switch"
-                          loading={paramsLoading}
-                          onChange={val =>
-                            exportConfigUpdate(val, 'webEpubDownload')
-                          }
-                        />
-                      </StyledControlWrapper>
-                      <p style={{ gridColumn: 'span 2' }}>
-                        {t('integrations.flax.customize.info')}
-                      </p>
-                      <StyledControlWrapper>
-                        <span>{t('integrations.flax.customize.label')}</span>
-                        <Switch
-                          checked={exportOptions?.webCustomHTML?.enabled}
-                          data-test="admindb-pubEPUB-switch"
-                          loading={paramsLoading}
-                          onChange={val =>
-                            exportConfigUpdate(val, 'webCustomHTML')
-                          }
-                        />
-                      </StyledControlWrapper>
-                    </Stack>
-                  ),
-                },
-              ]}
-            />
-          )}
-        </StyledControlWrapper>
-        <StyledControlWrapper>
-          <span>{t('integrations.lulu')}</span>
-          <Switch
-            checked={!luluConfig?.disabled}
-            data-test="admindb-lulu-switch"
-            loading={paramsLoading}
-            onChange={luluToggleConfig}
-          />
-          {!luluConfig?.disabled && (
-            <StyledCollapse
-              ghost
-              items={[
-                {
-                  key: '1',
-                  label: t('integrations.lulu.details'),
-                  children: (
-                    <Stack>
-                      <Form
-                        form={luluConfigForm}
-                        layout="vertical"
-                        onFinish={updateLuluConfig}
-                      >
-                        <Form.Item
-                          label={t('integrations.lulu.details.baseApiUrl')}
-                          name="baseAPIURL"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label={t('integrations.lulu.details.loginUrl')}
-                          name="loginUrl"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label={t('integrations.lulu.details.redirectUri')}
-                          name="redirectUri"
-                          rules={[{ required: true }]}
-                        >
-                          <Input
-                            addonBefore={`${window.location.protocol}//${window.location.host}`}
-                            type="url"
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          label={t('integrations.lulu.details.projectBaseUrl')}
-                          name="projectBaseUrl"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label={t('integrations.lulu.details.tokenUrl')}
-                          name="tokenUrl"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          label={t('integrations.lulu.details.clientId')}
-                          name="clientId"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <StyledControlWrapper>
-                          <Button htmlType="submit" loading={paramsLoading}>
-                            {t('integrations.lulu.updateConfig.update')}
-                          </Button>
-                          <UpdateResult
-                            $success={luluConfigUpdateResult?.success}
-                            role="status"
-                          >
-                            {luluConfigUpdateResult?.message && (
-                              <>
-                                {luluConfigUpdateResult?.success ? (
-                                  <CheckOutlined />
-                                ) : (
-                                  <CloseOutlined />
-                                )}
 
-                                {luluConfigUpdateResult?.message}
-                              </>
-                            )}
-                          </UpdateResult>
-                        </StyledControlWrapper>
-                      </Form>
-                    </Stack>
-                  ),
-                },
-              ]}
-            />
-          )}
-        </StyledControlWrapper>
-      </Stack>
-      <Divider />
-      {/* translations */}
-      <h2>{t('availableLanguages.heading')}</h2>
-      <Stack style={{ '--space': '1rem' }}>
-        <StyledCollapse
-          accordion
-          destroyInactivePanel
-          ghost
-          items={languageItems}
-          key={JSON.stringify(languages)}
-        />
-
-        {newLanguage ? (
-          <LanguageWrapper id="new">
-            <Form form={newLanguageForm}>
-              <StyledLanguageStack>
-                <StyledControlWrapper>
-                  <label htmlFor="name-new">
-                    {t('availableLanguages.customised.languageLabel')}:
-                  </label>
-                  <Form.Item
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                        message: t(
-                          'availableLanguages.customised.languageLabel.error.noValue',
-                        ),
-                      },
-                    ]}
-                  >
-                    <Input
-                      aria-describedby="desc-name-new"
-                      data-test="admindb-newLangName-input"
-                      id="name-new"
-                      type="text"
-                    />
-                  </Form.Item>
-                  <DescriptionParagraph id="desc-name-new">
-                    {t(
-                      'availableLanguages.customised.languageLabel.explanation',
-                    )}
-                  </DescriptionParagraph>
-                </StyledControlWrapper>
-                <StyledControlWrapper>
-                  <label htmlFor="flag-code-new">
-                    {t('availableLanguages.customised.flagCode')}:
-                  </label>
-                  <Form.Item
-                    name="flagCode"
-                    rules={[
-                      {
-                        required: true,
-                        message: t(
-                          'availableLanguages.customised.flagCode.error.noValue',
-                        ),
-                      },
-                    ]}
-                  >
-                    <Input
-                      aria-describedby="desc-flag-code-new"
-                      data-test="admindb-newLangFlag-input"
-                      id="flag-code-new"
-                      type="text"
-                    />
-                  </Form.Item>
-                  <DescriptionParagraph id="desc-flag-code-new">
-                    <Trans
-                      components={{
-                        ref: (
-                          <a
-                            href="https://www.iso.org/obp/ui/#search/code/"
-                            rel="noreferrer"
-                            target="_blank"
-                          />
-                        ),
-                      }}
-                      i18nKey="pages.admin.availableLanguages.customised.flagCode.explanation"
-                    />
-                  </DescriptionParagraph>
-                </StyledControlWrapper>
-                <StyledControlWrapper>
-                  <Form.Item
-                    getValueFromEvent={normFile}
-                    label={t(
-                      'availableLanguages.customised.uploadInstructions',
-                    )}
-                    valuePropName="fileList"
-                  >
-                    <StyledUpload
-                      accept=".json"
-                      beforeUpload={() => false}
-                      data-test="admindb-uploadStrings-btn"
-                      maxCount={1}
-                      onChange={({ file }) => setTranslationFile(file)}
+          {newLanguage ? (
+            <LanguageWrapper id="new">
+              <Form form={newLanguageForm}>
+                <StyledLanguageStack>
+                  <StyledControlWrapper>
+                    <label htmlFor="name-new">
+                      {t('availableLanguages.customised.languageLabel')}:
+                    </label>
+                    <Form.Item
+                      name="name"
+                      rules={[
+                        {
+                          required: true,
+                          message: t(
+                            'availableLanguages.customised.languageLabel.error.noValue',
+                          ),
+                        },
+                      ]}
                     >
-                      <UploadBtn>+</UploadBtn>
-                    </StyledUpload>
-                  </Form.Item>
-                </StyledControlWrapper>
-              </StyledLanguageStack>
-            </Form>
-          </LanguageWrapper>
-        ) : null}
-        <div>
-          {!newLanguage ? (
-            <Button
-              data-test="admindb-addNewLang-btn"
-              onClick={() => setNewLanguage(true)}
-            >
-              {t('availableLanguages.actions.addNew')}
-            </Button>
-          ) : (
-            <>
+                      <Input
+                        aria-describedby="desc-name-new"
+                        data-test="admindb-newLangName-input"
+                        id="name-new"
+                        type="text"
+                      />
+                    </Form.Item>
+                    <DescriptionParagraph id="desc-name-new">
+                      {t(
+                        'availableLanguages.customised.languageLabel.explanation',
+                      )}
+                    </DescriptionParagraph>
+                  </StyledControlWrapper>
+                  <StyledControlWrapper>
+                    <label htmlFor="flag-code-new">
+                      {t('availableLanguages.customised.flagCode')}:
+                    </label>
+                    <Form.Item
+                      name="flagCode"
+                      rules={[
+                        {
+                          required: true,
+                          message: t(
+                            'availableLanguages.customised.flagCode.error.noValue',
+                          ),
+                        },
+                      ]}
+                    >
+                      <Input
+                        aria-describedby="desc-flag-code-new"
+                        data-test="admindb-newLangFlag-input"
+                        id="flag-code-new"
+                        type="text"
+                      />
+                    </Form.Item>
+                    <DescriptionParagraph id="desc-flag-code-new">
+                      <Trans
+                        components={{
+                          ref: (
+                            <a
+                              href="https://www.iso.org/obp/ui/#search/code/"
+                              rel="noreferrer"
+                              target="_blank"
+                            />
+                          ),
+                        }}
+                        i18nKey="pages.admin.availableLanguages.customised.flagCode.explanation"
+                      />
+                    </DescriptionParagraph>
+                  </StyledControlWrapper>
+                  <StyledControlWrapper>
+                    <Form.Item
+                      getValueFromEvent={normFile}
+                      label={t(
+                        'availableLanguages.customised.uploadInstructions',
+                      )}
+                      valuePropName="fileList"
+                    >
+                      <StyledUpload
+                        accept=".json"
+                        beforeUpload={() => false}
+                        data-test="admindb-uploadStrings-btn"
+                        maxCount={1}
+                        onChange={({ file }) => setTranslationFile(file)}
+                      >
+                        <UploadBtn>+</UploadBtn>
+                      </StyledUpload>
+                    </Form.Item>
+                  </StyledControlWrapper>
+                </StyledLanguageStack>
+              </Form>
+            </LanguageWrapper>
+          ) : null}
+          <div>
+            {!newLanguage ? (
               <Button
-                data-test="admindb-cancelNewLang-btn"
-                onClick={() => setNewLanguage(false)}
+                data-test="admindb-addNewLang-btn"
+                onClick={() => setNewLanguage(true)}
               >
-                {t('cancel', { keyPrefix: 'pages.common.actions' })}
-              </Button>{' '}
-              <Button data-test="admindb-saveNewLang-btn" onClick={addLanguage}>
-                {' '}
-                {t('availableLanguages.actions.save')}
+                {t('availableLanguages.actions.addNew')}
               </Button>
-            </>
-          )}
-        </div>
-      </Stack>
-      <Divider />
-      {/* terms and conditions */}
-      <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
-      <p>{t('termsAndConditions.explanation')}</p>
-      <TCWrapper>
-        <Wax
-          autoFocus={false}
-          config={simpleConfig}
-          id="termsAndConditionsEditor"
-          key={termsAndConditions}
-          layout={SimpleLayout}
-          ref={waxRef}
-          value={termsAndConditions}
-        />
-        <div>
-          <Button
-            data-test="admindb-updateTC-btn"
-            onClick={udpateTermsAndConditions}
-          >
-            {t('termsAndConditions.update')}
-          </Button>
-          <UpdateResult $success={tcUpdateResult?.success} role="status">
-            {tcUpdateResult?.message && (
+            ) : (
               <>
-                {tcUpdateResult?.success ? (
-                  <CheckOutlined />
-                ) : (
-                  <CloseOutlined />
-                )}
-
-                {tcUpdateResult?.message}
+                <Button
+                  data-test="admindb-cancelNewLang-btn"
+                  onClick={() => setNewLanguage(false)}
+                >
+                  {t('cancel', { keyPrefix: 'pages.common.actions' })}
+                </Button>{' '}
+                <Button
+                  data-test="admindb-saveNewLang-btn"
+                  onClick={addLanguage}
+                >
+                  {' '}
+                  {t('availableLanguages.actions.save')}
+                </Button>
               </>
             )}
-          </UpdateResult>
-        </div>
-      </TCWrapper>
-    </Center>
+          </div>
+        </Stack>
+        <Divider />
+        {/* terms and conditions */}
+        <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
+        <p>{t('termsAndConditions.explanation')}</p>
+        <TCWrapper>
+          <Wax
+            autoFocus={false}
+            config={simpleConfig}
+            id="termsAndConditionsEditor"
+            key={termsAndConditions}
+            layout={SimpleLayout}
+            ref={waxRef}
+            value={termsAndConditions}
+          />
+          <div>
+            <Button
+              data-test="admindb-updateTC-btn"
+              onClick={udpateTermsAndConditions}
+            >
+              {t('termsAndConditions.update')}
+            </Button>
+            <UpdateResult $success={tcUpdateResult?.success} role="status">
+              {tcUpdateResult?.message && (
+                <>
+                  {tcUpdateResult?.success ? (
+                    <CheckOutlined />
+                  ) : (
+                    <CloseOutlined />
+                  )}
+
+                  {tcUpdateResult?.message}
+                </>
+              )}
+            </UpdateResult>
+          </div>
+        </TCWrapper>
+      </StyledCenter>
+    </AdminWrapper>
   )
 }
 

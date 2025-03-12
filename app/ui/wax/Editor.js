@@ -108,7 +108,7 @@ const EditorWrapper = ({
       MenuService: selectedWaxConfig.MenuService.map(service => {
         // Find the matching service in waxMenuConfig based on templateArea
         const matchingConfig = waxMenuConfig.MenuService.find(
-          config => config.templateArea === service.templateArea,
+          config => config?.templateArea === service.templateArea,
         )
 
         return {

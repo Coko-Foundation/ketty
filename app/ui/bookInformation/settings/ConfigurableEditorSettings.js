@@ -53,6 +53,7 @@ const SingleTools = [
   { label: 'Track Changes', value: 'TrackingAndEditing', checked: false },
   { label: 'Custom Tags Block', value: 'CustomTagBlock', checked: false },
   { label: 'Custom Tags Inline', value: 'CustomTagInline', checked: false },
+  { label: 'Question Types', value: 'QuestionsDropDown', checked: false },
 ]
 
 const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
@@ -184,10 +185,16 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
 
     setWaxConfig({
       ...waxConfig,
-      MenuService: waxConfig.MenuService.map(service => ({
-        ...service,
-        toolGroups: waxMenuConfig,
-      })),
+      MenuService: waxConfig.MenuService.map(service => {
+        if (service?.templateArea === 'mainMenuToolBar') {
+          return {
+            ...service,
+            toolGroups: waxMenuConfig,
+          }
+        }
+
+        return null
+      }),
     })
   }, [
     checkedInline,
