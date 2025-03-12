@@ -97,6 +97,8 @@ const EditorWrapper = ({
       ? JSON.parse(configurableEditorConfig)
       : configWithAi
 
+  const tags = customTags?.length > 0 ? JSON.parse(customTags) : []
+
   useEffect(() => {
     return () => {
       onPeriodicBookComponentContentChange.cancel()
@@ -105,18 +107,22 @@ const EditorWrapper = ({
   }, [])
 
   const previousRefEditorConfig = useRef(configurableEditorConfig)
+  const previousRefEditorTags = useRef(tags)
   const memoizedProvider = useMemo(() => wsProvider)
 
   // Used For Editor's reconfiguration
   useEffect(() => {
-    setSelectedWaxConfig({
-      ...selectedWaxConfig,
-      CustomTagService: {
-        tags: customTags?.length > 0 ? JSON.parse(customTags) : [],
-        updateTags: () => true,
-      },
-    })
-  }, [customTags?.length])
+    if (!isEqual(previousRefEditorTags.current, tags)) {
+      previousRefEditorTags.current = tags
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        CustomTagService: {
+          tags,
+          updateTags: () => true,
+        },
+      })
+    }
+  }, [JSON.stringify(tags)])
 
   useEffect(() => {
     if (!isEqual(previousRefEditorConfig.current, configurableEditorConfig)) {
