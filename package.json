@@ -1,7 +1,7 @@
 {
   "name": "ketida",
   "version": "2.1.3",
-  "repository": "https://gitlab.coko.foundation/ketida/ketida.git",
+  "repository": "https://gitlab.coko.foundation/coko-org/products/ketty/ketty.git",
   "license": "MIT",
   "author": "Yannis Barlas, Alexandros Georgantas",
   "main": "index.js",
