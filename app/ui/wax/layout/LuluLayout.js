@@ -18,7 +18,7 @@ import {
   WaxView,
   DocumentHelpers,
 } from 'wax-prosemirror-core'
-// import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { usePrevious } from '../../../utils'
 import { Button, Checkbox } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
@@ -466,17 +466,6 @@ const EditorContainer = styled.div`
   }
 `
 
-// const StyledSpin = styled(Spin)`
-//   background-color: white;
-//   display: grid;
-//   height: 100vh;
-//   inset: 0;
-//   justify-content: center;
-//   margin-inline: auto;
-//   padding-block-start: 20%;
-//   position: absolute;
-// `
-
 const LeftPanelWrapper = styled.div`
   background-color: ${th('colorBackground')};
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
@@ -522,12 +511,12 @@ const StyledSettingsForm = styled(SettingsForm)`
   }
 `
 
-// const NoSelectedChapterWrapper = styled.div`
-//   display: grid;
-//   font-size: 16px;
-//   height: 80%;
-//   place-content: center;
-// `
+const NoSelectedChapterWrapper = styled.div`
+  display: grid;
+  font-size: 16px;
+  height: 80%;
+  place-content: center;
+`
 // #endregion styled
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
@@ -572,7 +561,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     canEdit,
     metadataModalOpen,
     setMetadataModalOpen,
-    editorLoading,
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
@@ -590,7 +578,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
   const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
   const [showComments, setShowComments] = useState(true)
   const previousComments = usePrevious(savedComments)
-  // const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
+  const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
   const {
     options,
@@ -707,28 +695,28 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }
 
-  // const checkOverflow = () => {
-  //   const toolbar = document.getElementById('toolbar')
-  //   toolbar?.classList.remove('scrollable')
+  const checkOverflow = () => {
+    const toolbar = document.getElementById('toolbar')
+    toolbar?.classList.remove('scrollable')
 
-  //   // Check if the content overflows the container
-  //   if (toolbar?.scrollWidth > toolbar?.clientWidth) {
-  //     toolbar?.classList.add('scrollable') // Add class to align items to the start
-  //   } else {
-  //     toolbar?.classList.remove('scrollable') // Remove class to center items
-  //   }
+    // Check if the content overflows the container
+    if (toolbar?.scrollWidth > toolbar?.clientWidth) {
+      toolbar?.classList.add('scrollable') // Add class to align items to the start
+    } else {
+      toolbar?.classList.remove('scrollable') // Remove class to center items
+    }
 
-  //   if (window.innerWidth > 1400) {
-  //     if (
-  //       document.getElementById('commentToggle')?.classList.contains('hidden')
-  //     ) {
-  //       setShowComments(true)
-  //       document.getElementById('commentToggle')?.classList.remove('hidden')
-  //     }
-  //   } else {
-  //     document.getElementById('commentToggle')?.classList.add('hidden')
-  //   }
-  // }
+    if (window.innerWidth > 1400) {
+      if (
+        document.getElementById('commentToggle')?.classList.contains('hidden')
+      ) {
+        setShowComments(true)
+        document.getElementById('commentToggle')?.classList.remove('hidden')
+      }
+    } else {
+      document.getElementById('commentToggle')?.classList.add('hidden')
+    }
+  }
 
   const [panelWidths, setPanelWidth] = useState([
     { size: surfaceHeight, resize: 'stretch' },
@@ -793,7 +781,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
           data-expanded={!mobileToolbarCollapsed}
-          data-loading={editorLoading}
           id="toolbar"
           isHidden={viewMetadata}
         >
@@ -808,7 +795,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
             {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
           </Button>
           <MainMenuToolBar />
-          {/* {!editorLoading ? <MainMenuToolBar /> : null} */}
         </TopMenu>
         <Main>
           {!options.fullScreen && (
@@ -863,10 +849,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
               >
                 <WaxSurfaceScroll id="wax-surface-scroll">
                   <EditorContainer selectedChapterId={selectedChapterId}>
-                    {/* {editorLoading ? (
-                      <StyledSpin spinning={editorLoading} />
-                    ) : (
-                      <> */}
                     {selectedChapterId ? (
                       <WaxView {...rest} />
                     ) : (

@@ -120,7 +120,6 @@ const EditorWrapper = ({
 
   useEffect(() => {
     if (!isEqual(previousRefEditorConfig.current, configurableEditorConfig)) {
-      // previousRefWsProvider.current = wsProvider
       previousRefEditorConfig.current = configurableEditorConfig
       setSelectedWaxConfig({
         ...selectedWaxConfig,
@@ -264,11 +263,9 @@ const EditorWrapper = ({
       customProps={luluWax}
       fileUpload={onImageUpload}
       layout={LuluLayout}
-      // onChange={onPeriodicBookComponentContentChange}
       readonly={isReadOnly}
       ref={editorRef}
       user={userObject}
-      // value={bookComponentContent || ''}
     />
   )
 }
