@@ -193,7 +193,7 @@ const ConfigurableEditorSettings = ({ savedWaxConfig, saveWaxConfig }) => {
           }
         }
 
-        return null
+        return service
       }),
     })
   }, [
