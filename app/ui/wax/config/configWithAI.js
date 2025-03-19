@@ -21,6 +21,7 @@ import {
   TrackChangeService,
   EditingSuggestingService,
   CustomTagService,
+  MathService,
 } from 'wax-prosemirror-services'
 
 import { QuestionsService } from 'wax-questions-service'
@@ -130,6 +131,7 @@ const config = {
     new EditingSuggestingService(),
     new CustomTagService(),
     new QuestionsService(),
+    new MathService(),
   ],
 }
 
