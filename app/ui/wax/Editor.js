@@ -130,7 +130,9 @@ const EditorWrapper = ({
         updateTitle: onPeriodicTitleChange,
       },
       CommentsService: {
-        readOnly: !canInteractWithComments,
+        // readOnly: !canInteractWithComments,
+        readOnlyPost: false,
+        readOnlyResolve: !canInteractWithComments,
         getComments: addComments,
         setComments: () => {
           return savedComments || []
