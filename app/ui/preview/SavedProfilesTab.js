@@ -32,6 +32,7 @@ const SavedProfilesTab = props => {
     onClickDelete,
     exportsConfig,
     onPublish,
+    onUnpublish,
     // lulu integration
     luluConfig,
     canUploadToProvider,
@@ -161,6 +162,7 @@ const SavedProfilesTab = props => {
             }}
             onClickDownload={onClickDownload}
             onPublish={onPublish}
+            onUnpublish={onUnpublish}
             publishing={publishing}
             publishingAssets={{
               missingPdfProfile: includePdf && !pdfProfileId,
