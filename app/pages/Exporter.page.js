@@ -28,6 +28,7 @@ import {
   UPLOAD_TO_LULU,
   UPDATE_EXPORT_PROFILE_OPTIONS,
   PUBLISH_ONLINE,
+  UNPUBLISH_ONLINE,
   GET_BOOK_WEB_PUBLISH_INFO,
 } from '../graphql'
 
@@ -377,6 +378,15 @@ const PreviewerPage = () => {
     ],
   })
 
+  const [unpublish, { loading: unpublishing }] = useMutation(UNPUBLISH_ONLINE, {
+    refetchQueries: [
+      {
+        query: GET_BOOK_WEB_PUBLISH_INFO,
+        variables: { id: bookId },
+      },
+    ],
+  })
+
   const [uploadToLulu] = useMutation(UPLOAD_TO_LULU)
 
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
@@ -591,10 +601,12 @@ const PreviewerPage = () => {
     })
   }
 
-  const handleUnpulbish = () => {
-    // return unpublish({
-    //   bookId,
-    // })
+  const handleUnpublish = () => {
+    return unpublish({
+      variables: {
+        bookId,
+      },
+    })
   }
 
   const handleCreatePreview = (templates, options, target) => {
@@ -961,7 +973,7 @@ const PreviewerPage = () => {
       onOptionsChange={handleOptionsChange}
       onProfileChange={handleProfileChange}
       onPublish={userIsOwner ? handlePublish : null}
-      onUnpulbish={handleUnpulbish}
+      onUnpublish={userIsOwner ? handleUnpublish : null}
       previewLink={previewLink}
       profiles={allProfiles}
       publishing={publishing}
@@ -970,6 +982,7 @@ const PreviewerPage = () => {
       sendToLulu={handleSendToLulu}
       setActiveTabKey={handleTabChange}
       templates={templates}
+      unpublishing={unpublishing}
       updateProfileOptions={handleUpdateProfileOptions}
       webPublishInfo={webPublishInfo}
     />
