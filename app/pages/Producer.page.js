@@ -1009,7 +1009,7 @@ const ProducerPage = () => {
   }
 
   const handleAddingComments = content => {
-    if (canInteractWithComments) {
+    if (isOwner(bookId, currentUser) || isCollaborator(bookId, currentUser)) {
       // update local copy of comments to show comment box
       setSavedComments(JSON.stringify(content))
 

@@ -32,6 +32,7 @@ const Footer = props => {
     onClickDownload,
     selectedFormat,
     onPublish,
+    onUnpublish,
     publishing,
     publishingAssets,
     luluInformation,
@@ -58,6 +59,7 @@ const Footer = props => {
   const [downloadLoading, setDownloadLoading] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isPublishModalOpen, setPublishModalOpen] = useState(false)
+  const [isUnpublishModalOpen, setUnpublishModalOpen] = useState(false)
   const [isUploading, setUploading] = useState(false)
   const [createInput, setCreateInput] = useState(null)
   const inputRef = useRef(null)
@@ -147,6 +149,12 @@ const Footer = props => {
     })
   }
 
+  const handleUnpublish = () => {
+    onUnpublish().finally(() => {
+      setUnpublishModalOpen(false)
+    })
+  }
+
   const handleClickSendToLulu = () => {
     setUploading(true)
 
@@ -231,6 +239,17 @@ const Footer = props => {
             : t('tabs.publishingProfiles.flax.actions.publish')}
         </Button>,
       )
+      publishedBefore &&
+        actions.push(
+          <Button
+            disabled={loadingPreview || !onPublish}
+            key="unpublish-online"
+            onClick={() => setUnpublishModalOpen(true)}
+            status="danger"
+          >
+            Unpublish
+          </Button>,
+        )
     } else if (isConnected && !isInLulu && canUploadToProvider) {
       actions.push(
         <Button
@@ -316,6 +335,19 @@ const Footer = props => {
           publishing,
         )}
       </Modal>
+      <Modal
+        maskClosable={!publishing}
+        // okText={t('tabs.publishingProfiles.publishModal.actions.unpublish')}
+        okText="Unpublish"
+        onCancel={() => setUnpublishModalOpen(false)}
+        onOk={handleUnpublish}
+        open={isUnpublishModalOpen}
+        // title={t('tabs.publishingProfiles.unpublishModal.title')}
+        title="Unpublish book"
+      >
+        Are you sure you want to unpublish this book? This will make the
+        published web version unavailable.
+      </Modal>
     </Wrapper>
   )
 }
@@ -327,6 +359,7 @@ Footer.propTypes = {
   loadingPreview: PropTypes.bool.isRequired,
   onClickDownload: PropTypes.func.isRequired,
   onPublish: PropTypes.func,
+  onUnpublish: PropTypes.func,
   selectedFormat: PropTypes.string,
   publishingAssets: PropTypes.shape(),
   publishing: PropTypes.bool,
@@ -337,6 +370,7 @@ Footer.propTypes = {
 Footer.defaultProps = {
   selectedFormat: 'pdf',
   onPublish: null,
+  onUnpublish: null,
   publishing: false,
   publishingAssets: {
     missingPdfProfile: false,
