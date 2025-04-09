@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
-import useWebSocket from 'react-use-websocket'
+// import useWebSocket from 'react-use-websocket'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useQuery,
@@ -11,7 +11,7 @@ import {
 import find from 'lodash/find'
 import debounce from 'lodash/debounce'
 import { uuid, useCurrentUser } from '@coko/client'
-import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
+// import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
 import styled from 'styled-components'
 import {
   GET_ENTIRE_BOOK,
@@ -25,7 +25,7 @@ import {
   UPDATE_BOOK_POD_METADATA,
   UPDATE_BOOK_COMPONENTS_ORDER,
   UPLOAD_FILES,
-  LOCK_BOOK_COMPONENT_POD,
+  // LOCK_BOOK_COMPONENT_POD,
   RENAME_BOOK,
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
@@ -64,6 +64,7 @@ import {
 
 import { Editor, Modal, Paragraph, Spin } from '../ui'
 import { waxAiToolRagSystem, waxAiToolSystem } from '../helpers/openAi'
+import YjsContext from '../ui/provider-yjs/YjsProvider'
 
 const StyledSpin = styled(Spin)`
   display: grid;
@@ -99,10 +100,11 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
   }
 }
 
-let issueInCommunicationModal
+// let issueInCommunicationModal
 
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
+  const { createYjsProvider, wsProvider, ydoc } = useContext(YjsContext)
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
@@ -112,21 +114,23 @@ const ProducerPage = () => {
     () => localStorage.getItem(`${bookId}-selected-chapter`) || undefined,
   )
 
-  const [reconnecting, setReconnecting] = useState(false)
+  // const [reconnecting, setReconnecting] = useState(false)
+  const reconnecting = false
+  const [customTags, setCustomTags] = useState([])
   const [aiOn, setAiOn] = useState(false)
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
-  const [editorLoading, setEditorLoading] = useState(false)
+  // const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
-  const [key, setKey] = useState()
+  // const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
 
   const { currentUser } = useCurrentUser()
-  const token = localStorage.getItem('token')
+  // const token = localStorage.getItem('token')
 
   const canModify =
     isAdmin(currentUser) ||
@@ -165,6 +169,7 @@ const ProducerPage = () => {
       setCustomPrompts(data?.getBook?.bookSettings?.customPrompts)
       setFreeTextPromptsOn(data?.getBook?.bookSettings?.freeTextPromptsOn)
       setCustomPromptsOn(data?.getBook?.bookSettings?.customPromptsOn)
+      setCustomTags(data?.getBook?.bookSettings?.customTags)
 
       // if loading page the first time and no chapter is preselected, select the first one
       if (selectedChapterId === undefined) {
@@ -330,11 +335,11 @@ const ProducerPage = () => {
     setSavedComments(null)
   }, [selectedChapterId])
 
-  useEffect(() => {
-    if (!bookComponentLoading) {
-      setKey(uuid())
-    }
-  }, [editorLoading, bookComponentLoading, isReadOnly])
+  // useEffect(() => {
+  //   if (!bookComponentLoading) {
+  //     setKey(uuid())
+  //   }
+  // }, [editorLoading, bookComponentLoading, isReadOnly])
 
   // SUBSCRIPTIONS SECTION START
 
@@ -356,7 +361,7 @@ const ProducerPage = () => {
         await refetchBookComponent()
       }
 
-      setKey(uuid())
+      // setKey(uuid())
     },
   })
   // SUBSCRIPTIONS SECTION END
@@ -499,10 +504,10 @@ const ProducerPage = () => {
     },
   })
 
-  const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
-    refetchQueries: [GET_ENTIRE_BOOK],
-    onError: () => {},
-  })
+  // const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
+  //   refetchQueries: [GET_ENTIRE_BOOK],
+  //   onError: () => {},
+  // })
 
   const [upload] = useMutation(UPLOAD_FILES)
 
@@ -704,51 +709,51 @@ const ProducerPage = () => {
     updatePODMetadata({ variables: { bookId, metadata: rest } })
   }, 1000)
 
-  const showOfflineModal = () => {
-    const warningModal = Modal.error()
-    return warningModal.update({
-      title: 'Server is unreachable',
-      content: (
-        <Paragraph>
-          {`Unfortunately, we couldn't re-establish communication with our server! Currently we don't
-          support offline mode. Please return to this page when your network
-          issue is resolved.`}
-        </Paragraph>
-      ),
-      maskClosable: false,
-      onOk() {
-        history.push('/dashboard')
-        warningModal.destroy()
-      },
-      okButtonProps: { style: { backgroundColor: 'black' } },
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-  }
+  // const showOfflineModal = () => {
+  //   const warningModal = Modal.error()
+  //   return warningModal.update({
+  //     title: 'Server is unreachable',
+  //     content: (
+  //       <Paragraph>
+  //         {`Unfortunately, we couldn't re-establish communication with our server! Currently we don't
+  //         support offline mode. Please return to this page when your network
+  //         issue is resolved.`}
+  //       </Paragraph>
+  //     ),
+  //     maskClosable: false,
+  //     onOk() {
+  //       history.push('/dashboard')
+  //       warningModal.destroy()
+  //     },
+  //     okButtonProps: { style: { backgroundColor: 'black' } },
+  //     width: 570,
+  //     bodyStyle: {
+  //       marginRight: 38,
+  //       textAlign: 'justify',
+  //     },
+  //   })
+  // }
 
-  const communicationDownModal = () => {
-    const warningModal = Modal.warn()
-    warningModal.update({
-      title: 'Something went wrong!',
-      content: (
-        <Paragraph>
-          Please wait while we are trying resolve the issue. Make sure your
-          internet connection is working.
-        </Paragraph>
-      ),
-      maskClosable: false,
-      footer: null,
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-    return warningModal
-  }
+  // const communicationDownModal = () => {
+  //   const warningModal = Modal.warn()
+  //   warningModal.update({
+  //     title: 'Something went wrong!',
+  //     content: (
+  //       <Paragraph>
+  //         Please wait while we are trying resolve the issue. Make sure your
+  //         internet connection is working.
+  //       </Paragraph>
+  //     ),
+  //     maskClosable: false,
+  //     footer: null,
+  //     width: 570,
+  //     bodyStyle: {
+  //       marginRight: 38,
+  //       textAlign: 'justify',
+  //     },
+  //   })
+  //   return warningModal
+  // }
 
   const showUploadingModal = () => {
     const warningModal = Modal.warn()
@@ -823,18 +828,18 @@ const ProducerPage = () => {
     })
   }
 
-  const onBookComponentLock = () => {
-    if (selectedChapterId && canModify) {
-      const userAgent = window.navigator.userAgent || null
-      lockBookComponent({
-        variables: {
-          id: selectedChapterId,
-          tabId,
-          userAgent,
-        },
-      })
-    }
-  }
+  // const onBookComponentLock = () => {
+  //   if (selectedChapterId && canModify) {
+  //     const userAgent = window.navigator.userAgent || null
+  //     lockBookComponent({
+  //       variables: {
+  //         id: selectedChapterId,
+  //         tabId,
+  //         userAgent,
+  //       },
+  //     })
+  //   }
+  // }
 
   const queryAI = async (input, { askKb }) => {
     const settings = await getBookSettings()
@@ -889,10 +894,10 @@ const ProducerPage = () => {
     })
   }
 
-  const heartbeatInterval = find(
-    applicationParametersData?.getApplicationParameters,
-    { area: 'heartbeatInterval' },
-  )
+  // const heartbeatInterval = find(
+  //   applicationParametersData?.getApplicationParameters,
+  //   { area: 'heartbeatInterval' },
+  // )
 
   const onReorderChapter = newChapterList => {
     if (!canModify) {
@@ -1047,54 +1052,72 @@ const ProducerPage = () => {
   // HANDLERS SECTION END
 
   // WEBSOCKET SECTION START
-  useWebSocket(
-    `${webSocketServerUrl}/locks`,
-    {
-      onOpen: () => {
-        if (editorMode && editorMode !== 'preview') {
-          if (!reconnecting) {
-            onBookComponentLock()
-          }
+  // useWebSocket(
+  //   `${webSocketServerUrl}/locks`,
+  //   {
+  //     onOpen: () => {
+  //       if (editorMode && editorMode !== 'preview') {
+  //         if (!reconnecting) {
+  //           onBookComponentLock()
+  //         }
 
-          if (reconnecting) {
-            if (selectedChapterId) {
-              const tempChapterId = selectedChapterId
-              setSelectedChapterId(null)
-              setSelectedChapterId(tempChapterId)
-            }
+  //         if (reconnecting) {
+  //           if (selectedChapterId) {
+  //             const tempChapterId = selectedChapterId
+  //             setSelectedChapterId(null)
+  //             setSelectedChapterId(tempChapterId)
+  //           }
 
-            if (issueInCommunicationModal) {
-              issueInCommunicationModal.destroy()
-              issueInCommunicationModal = undefined
-            }
+  //           if (issueInCommunicationModal) {
+  //             issueInCommunicationModal.destroy()
+  //             issueInCommunicationModal = undefined
+  //           }
 
-            setReconnecting(false)
-          }
-        }
-      },
-      onError: () => {
-        if (!reconnecting) {
-          issueInCommunicationModal = communicationDownModal()
-          setReconnecting(true)
-        }
-      },
-      shouldReconnect: () => {
-        return selectedChapterId && editorMode && editorMode !== 'preview'
-      },
-      onReconnectStop: () => {
-        showOfflineModal()
-      },
-      queryParams: {
-        token,
-        bookComponentId: selectedChapterId,
-        tabId,
-      },
-      share: true,
-      reconnectAttempts: 5000,
-      reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
-    },
-    selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
-  )
+  //           setReconnecting(false)
+  //         }
+  //       }
+  //     },
+  //     onError: () => {
+  //       if (!reconnecting) {
+  //         issueInCommunicationModal = communicationDownModal()
+  //         setReconnecting(true)
+  //       }
+  //     },
+  //     shouldReconnect: () => {
+  //       return selectedChapterId && editorMode && editorMode !== 'preview'
+  //     },
+  //     onReconnectStop: () => {
+  //       showOfflineModal()
+  //     },
+  //     queryParams: {
+  //       token,
+  //       bookComponentId: selectedChapterId,
+  //       tabId,
+  //     },
+  //     share: true,
+  //     reconnectAttempts: 5000,
+  //     reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
+  //   },
+  //   selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
+  // )
+
+  useEffect(() => {
+    if (wsProvider) {
+      wsProvider?.disconnect()
+    }
+
+    if (selectedChapterId) {
+      createYjsProvider({
+        currentUser,
+        identifier: selectedChapterId,
+        object: {
+          bookComponentId: selectedChapterId,
+        },
+      })
+    }
+
+    return () => wsProvider?.disconnect()
+  }, [selectedChapterId])
 
   // WEBSOCKET SECTION END
 
@@ -1110,15 +1133,15 @@ const ProducerPage = () => {
     return <StyledSpin spinning />
   }
 
-  useEffect(() => {
-    if (applicationParametersLoading || loading || bookComponentLoading) {
-      setEditorLoading(true)
-    } else if (!bookComponentLoading) {
-      setTimeout(() => {
-        setEditorLoading(false)
-      }, 500)
-    }
-  }, [applicationParametersLoading, loading, bookComponentLoading])
+  // useEffect(() => {
+  //   if (applicationParametersLoading || loading || bookComponentLoading) {
+  //     setEditorLoading(true)
+  //   } else if (!bookComponentLoading) {
+  //     setTimeout(() => {
+  //       setEditorLoading(false)
+  //     }, 500)
+  //   }
+  // }, [applicationParametersLoading, loading, bookComponentLoading])
 
   const chaptersActionInProgress =
     changeOrderInProgress ||
@@ -1152,6 +1175,8 @@ const ProducerPage = () => {
     .flat()
     .filter(member => !!member)
 
+  if (!wsProvider) return null
+
   return (
     <Editor
       addComments={handleAddingComments}
@@ -1174,9 +1199,9 @@ const ProducerPage = () => {
       }
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
-      customTags={bookQueryData?.getBook.bookSettings.customTags}
-      editorKey={key}
-      editorLoading={editorLoading}
+      customTags={customTags}
+      // editorKey={key}
+      // editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}
@@ -1205,6 +1230,8 @@ const ProducerPage = () => {
       title={bookQueryData?.getBook.title}
       user={currentUser}
       viewMetadata={viewMetadata}
+      wsProvider={wsProvider}
+      ydoc={ydoc}
     />
   )
 }

@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { Wax } from 'wax-prosemirror-core'
+import { isEqual } from 'lodash'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
+import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
   bookId,
@@ -40,10 +42,10 @@ const EditorWrapper = ({
   customPromptsOn,
   editorLoading,
   kbOn,
-  editorKey,
   canInteractWithComments,
   comments: savedComments,
-  addComments,
+  // addComments,
+  editorKey,
   user,
   bookMembers,
   onMention,
@@ -52,6 +54,8 @@ const EditorWrapper = ({
   setViewMetadata,
   settings,
   getBookSettings,
+  wsProvider,
+  ydoc,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -84,12 +88,12 @@ const EditorWrapper = ({
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
-  const [waxCustomTags, setWaxCustomTags] = useState([])
-
   const waxMenuConfig =
     configurableEditorOn && configurableEditorConfig?.length
       ? JSON.parse(configurableEditorConfig)
       : configWithAi
+
+  const tags = customTags?.length > 0 ? JSON.parse(customTags) : []
 
   useEffect(() => {
     return () => {
@@ -98,10 +102,47 @@ const EditorWrapper = ({
     }
   }, [])
 
+  const previousRefEditorConfig = useRef(configurableEditorConfig)
+  const previousRefEditorTags = useRef(tags)
+  const memoizedProvider = useMemo(() => wsProvider)
+
   // Used For Editor's reconfiguration
   useEffect(() => {
-    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
+    if (!isEqual(previousRefEditorTags.current, tags)) {
+      previousRefEditorTags.current = tags
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        CustomTagService: {
+          tags,
+          updateTags: () => true,
+        },
+      })
+    }
+  }, [JSON.stringify(tags)])
 
+  useEffect(() => {
+    if (!isEqual(previousRefEditorConfig.current, configurableEditorConfig)) {
+      previousRefEditorConfig.current = configurableEditorConfig
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        MenuService: selectedWaxConfig.MenuService.map(service => {
+          // Find the matching service in waxMenuConfig based on templateArea
+          const matchingConfig = waxMenuConfig.MenuService.find(
+            config => config.templateArea === service.templateArea,
+          )
+
+          return {
+            ...service,
+            toolGroups: matchingConfig
+              ? matchingConfig.toolGroups
+              : service.toolGroups,
+          }
+        }),
+      })
+    }
+  }, [configurableEditorConfig])
+
+  useEffect(() => {
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       editorKey,
@@ -126,6 +167,34 @@ const EditorWrapper = ({
         AiOn: aiEnabled && aiOn,
         ...(kbOn ? { AskKb: true } : {}),
       },
+    })
+  }, [aiOn])
+
+  useEffect(() => {
+    setSelectedWaxConfig({
+      ...selectedWaxConfig,
+      YjsService: {
+        provider: () => wsProvider,
+        ydoc: () => ydoc,
+        yjsType: 'prosemirror',
+        cursorBuilder: () => {
+          if (user) {
+            const cursor = document.createElement('span')
+            cursor.classList.add('ProseMirror-yjs-cursor')
+            cursor.setAttribute('style', `border-color: ${user.color}`)
+            const userDiv = document.createElement('div')
+            userDiv.setAttribute('style', `background-color: ${user.color}`)
+            userDiv.insertBefore(
+              document.createTextNode(user.displayName),
+              null,
+            )
+            cursor.insertBefore(userDiv, null)
+            return cursor
+          }
+
+          return ''
+        },
+      },
       TitleService: {
         updateTitle: onPeriodicTitleChange,
       },
@@ -133,24 +202,18 @@ const EditorWrapper = ({
         // readOnly: !canInteractWithComments,
         readOnlyPost: false,
         readOnlyResolve: !canInteractWithComments,
-        getComments: addComments,
+        // getComments: addComments,
+        readOnly: !canInteractWithComments,
         setComments: () => {
-          return savedComments || []
+          return []
         },
         userList: bookMembers,
         getMentionedUsers: onMention,
       },
-      CustomTagService: {
-        tags: waxCustomTags,
-        updateTags: () => true,
-      },
+
+      services: [new YjsService(), ...selectedWaxConfig.services],
     })
-  }, [
-    aiOn,
-    editorKey,
-    JSON.stringify(configurableEditorConfig),
-    JSON.stringify(waxCustomTags),
-  ])
+  }, [memoizedProvider])
 
   useEffect(() => {
     setLuluWax({
@@ -172,7 +235,6 @@ const EditorWrapper = ({
       onBookComponentTypeChange,
       onBookComponentParentIdChange,
       editorLoading,
-      editorKey,
       savedComments,
       onUploadBookCover,
       viewMetadata,
@@ -192,7 +254,6 @@ const EditorWrapper = ({
     canEdit,
     metadataModalOpen,
     editorLoading,
-    editorKey,
     savedComments,
     viewMetadata,
     settings,
@@ -218,11 +279,9 @@ const EditorWrapper = ({
       customProps={luluWax}
       fileUpload={onImageUpload}
       layout={LuluLayout}
-      onChange={onPeriodicBookComponentContentChange}
       readonly={isReadOnly}
       ref={editorRef}
       user={userObject}
-      value={bookComponentContent || ''}
     />
   )
 }

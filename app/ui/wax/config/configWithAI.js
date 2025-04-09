@@ -14,15 +14,15 @@ import {
   FullScreenService,
   // disallowPasteImagesPlugin,
   AskAiContentService,
-  CommentsService,
   HighlightService,
   TransformService,
-  CodeBlockService,
   TrackChangeService,
   EditingSuggestingService,
   CustomTagService,
   MathService,
   NoteService,
+  CommentsService,
+  CodeBlockService,
 } from 'wax-prosemirror-services'
 
 import { QuestionsService } from 'wax-questions-service'
@@ -128,14 +128,14 @@ const config = {
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),
-    new CommentsService(),
     new HighlightService(),
     new TransformService(),
-    new CodeBlockService(),
     new EditingSuggestingService(),
     new CustomTagService(),
     new QuestionsService(),
     new MathService(),
+    new CommentsService(),
+    new CodeBlockService(),
   ],
 }
 

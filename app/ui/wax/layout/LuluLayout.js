@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
-import { Spin } from 'antd'
 import PanelGroup from 'react-panelgroup'
+
 import {
   ToTopOutlined,
   CaretUpFilled,
@@ -447,17 +447,6 @@ const EditorContainer = styled.div`
   }
 `
 
-const StyledSpin = styled(Spin)`
-  background-color: white;
-  display: grid;
-  height: 100vh;
-  inset: 0;
-  justify-content: center;
-  margin-inline: auto;
-  padding-block-start: 20%;
-  position: absolute;
-`
-
 const LeftPanelWrapper = styled.div`
   background-color: ${th('colorBackground')};
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
@@ -553,7 +542,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     canEdit,
     metadataModalOpen,
     setMetadataModalOpen,
-    editorLoading,
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
@@ -626,27 +614,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     window.addEventListener('resize', checkOverflow)
     return () => window.removeEventListener('resize', checkOverflow)
   }, [])
-
-  useEffect(() => {
-    const backToEditor = e => {
-      if (e.key === 'Escape') {
-        toggleMetadata(viewMetadata)
-      }
-    }
-
-    window.addEventListener('keydown', backToEditor)
-    return () => window.removeEventListener('keydown', backToEditor)
-  }, [viewMetadata])
-
-  useEffect(() => {
-    if (editorLoading) {
-      document.getElementById('toolbar').classList.remove('scrollable')
-    } else {
-      setTimeout(() => {
-        checkOverflow()
-      }, 1)
-    }
-  }, [editorLoading])
 
   useEffect(() => {
     // make comments visible when adding a new comment and they are hidden
@@ -743,7 +710,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
           data-expanded={!mobileToolbarCollapsed}
-          data-loading={editorLoading}
           id="toolbar"
           isHidden={viewMetadata}
         >
@@ -757,7 +723,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
           >
             {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
           </Button>
-          {!editorLoading ? <MainMenuToolBar /> : null}
+          <MainMenuToolBar />
         </TopMenu>
         <Main>
           {!options.fullScreen && (
@@ -815,46 +781,38 @@ const LuluLayout = ({ customProps, ...rest }) => {
               >
                 <WaxSurfaceScroll id="wax-surface-scroll">
                   <EditorContainer selectedChapterId={selectedChapterId}>
-                    {editorLoading ? (
-                      <StyledSpin spinning={editorLoading} />
+                    {selectedChapterId ? (
+                      <WaxView {...rest} />
                     ) : (
-                      <>
-                        {selectedChapterId ? (
-                          <WaxView {...rest} />
-                        ) : (
-                          <NoSelectedChapterWrapper>
-                            {t('editor.noChapterSelected')}
-                          </NoSelectedChapterWrapper>
-                        )}
-                        <TrackToolsContainer>
-                          {savedComments.length > 0 && (
-                            <ToggleComments id="commentToggle">
-                              <Checkbox
-                                checked={showComments}
-                                onChange={e =>
-                                  setShowComments(e.target.checked)
-                                }
-                              >
-                                SHOW COMMENTS
-                              </Checkbox>
-                            </ToggleComments>
-                          )}
-                          {showTrackControls && (
-                            <TrackTools>
-                              {commentsTracksCount + trackBlockNodesCount}{' '}
-                              SUGGESTIONS
-                              <TrackOptions>
-                                <CommentTrackToolBar />
-                              </TrackOptions>
-                            </TrackTools>
-                          )}
-                        </TrackToolsContainer>
-                        {showComments && (
-                          <CommentsContainer>
-                            <RightArea area="main" />
-                          </CommentsContainer>
-                        )}
-                      </>
+                      <NoSelectedChapterWrapper>
+                        {t('editor.noChapterSelected')}
+                      </NoSelectedChapterWrapper>
+                    )}
+                    <TrackToolsContainer>
+                      {savedComments.length > 0 && (
+                        <ToggleComments id="commentToggle">
+                          <Checkbox
+                            checked={showComments}
+                            onChange={e => setShowComments(e.target.checked)}
+                          >
+                            SHOW COMMENTS
+                          </Checkbox>
+                        </ToggleComments>
+                      )}
+                      {showTrackControls && (
+                        <TrackTools>
+                          {commentsTracksCount + trackBlockNodesCount}{' '}
+                          SUGGESTIONS
+                          <TrackOptions>
+                            <CommentTrackToolBar />
+                          </TrackOptions>
+                        </TrackTools>
+                      )}
+                    </TrackToolsContainer>
+                    {showComments && (
+                      <CommentsContainer>
+                        <RightArea area="main" />
+                      </CommentsContainer>
                     )}
                   </EditorContainer>
                 </WaxSurfaceScroll>
