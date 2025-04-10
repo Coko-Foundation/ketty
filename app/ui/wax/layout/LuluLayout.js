@@ -21,6 +21,9 @@ import { useTranslation } from 'react-i18next'
 import { usePrevious } from '../../../utils'
 import { Button, Checkbox } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
+
+import { DocTreeManager } from '../../DocTreeManager'
+
 import {
   BookInformation,
   BookMetadataForm,
@@ -548,8 +551,14 @@ const LuluLayout = ({ customProps, ...rest }) => {
     settings,
     getBookSettings,
     bookId,
+    bodyDivisionId,
     aiEnabled,
     savedComments,
+    deleteResource,
+    renameResource,
+    addResource,
+    reorderResource,
+    getDocTreeData,
   } = customProps
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
@@ -743,8 +752,16 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 toggleInformation={toggleMetadata}
                 viewInformation={viewMetadata}
               />
-
-              <BookPanel
+              <DocTreeManager
+                deleteResource={deleteResource}
+                renameResource={renameResource}
+                addResource={addResource}
+                reorderResource={reorderResource}
+                getDocTreeData={getDocTreeData}
+                bodyDivisionId={bodyDivisionId}
+                bookId={bookId}
+              />
+              {/* <BookPanel
                 bookMetadataValues={bookMetadataValues}
                 canEdit={canEdit}
                 chapters={chapters}
@@ -764,7 +781,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 subtitle={subtitle}
                 title={title}
                 viewMetadata={viewMetadata}
-              />
+              /> */}
             </LeftPanelWrapper>
           )}
           {viewMetadata !== '' ? (

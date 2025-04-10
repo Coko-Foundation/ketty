@@ -43,6 +43,11 @@ import {
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  GET_TREE_MANAGER_AND_SHARED_DOCS,
+  ADD_RESOURCE,
+  RENAME_RESOURCE,
+  DELETE_RESOURCE,
+  REORDER_RESOURCE,
 } from '../graphql'
 
 import {
@@ -113,6 +118,17 @@ const ProducerPage = () => {
   const [selectedChapterId, setSelectedChapterId] = useState(
     () => localStorage.getItem(`${bookId}-selected-chapter`) || undefined,
   )
+
+  // TreeFileManager
+  const { refetch: getDocTreeData } = useQuery(
+    GET_TREE_MANAGER_AND_SHARED_DOCS,
+    { skip: true },
+  )
+
+  const [addResource] = useMutation(ADD_RESOURCE)
+  const [renameResource] = useMutation(RENAME_RESOURCE)
+  const [deleteResource] = useMutation(DELETE_RESOURCE)
+  const [reorderResource] = useMutation(REORDER_RESOURCE)
 
   // const [reconnecting, setReconnecting] = useState(false)
   const reconnecting = false
@@ -1182,6 +1198,7 @@ const ProducerPage = () => {
       addComments={handleAddingComments}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
+      bodyDivisionId={getBodyDivisionId()}
       bookComponentContent={currentBookComponentContent}
       bookId={bookId}
       bookMembers={members}
@@ -1232,6 +1249,11 @@ const ProducerPage = () => {
       viewMetadata={viewMetadata}
       wsProvider={wsProvider}
       ydoc={ydoc}
+      deleteResource={deleteResource}
+      renameResource={renameResource}
+      addResource={addResource}
+      reorderResource={reorderResource}
+      getDocTreeData={getDocTreeData}
     />
   )
 }

@@ -8,6 +8,7 @@ import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
   bookId,
+  bodyDivisionId,
   title,
   subtitle,
   chapters,
@@ -56,6 +57,11 @@ const EditorWrapper = ({
   getBookSettings,
   wsProvider,
   ydoc,
+  deleteResource,
+  renameResource,
+  addResource,
+  reorderResource,
+  getDocTreeData,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -84,6 +90,11 @@ const EditorWrapper = ({
     getBookSettings,
     bookId,
     aiEnabled,
+    deleteResource,
+    renameResource,
+    addResource,
+    reorderResource,
+    getDocTreeData,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -242,7 +253,13 @@ const EditorWrapper = ({
       getBookSettings,
       settings,
       bookId,
+      bodyDivisionId,
       aiEnabled,
+      deleteResource,
+      renameResource,
+      addResource,
+      reorderResource,
+      getDocTreeData,
     })
   }, [
     title,

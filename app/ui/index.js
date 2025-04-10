@@ -7,4 +7,6 @@ export * from './createBook'
 export * from './preview'
 export * from './knowledgeBase'
 export * from './templateManager'
+export * from './DocTreeManager'
+
 export { default as Editor } from './wax/Editor'
