@@ -1,5 +1,6 @@
 /* stylelint-disable no-descending-specificity */
 import React, { useContext, useEffect, useState, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -20,7 +21,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { usePrevious } from '../../../utils'
 import { Button, Checkbox } from '../../common'
-import BookPanel from '../../bookPanel/BookPanel'
+// import BookPanel from '../../bookPanel/BookPanel'
 
 import { DocTreeManager } from '../../DocTreeManager'
 
@@ -559,7 +560,11 @@ const LuluLayout = ({ customProps, ...rest }) => {
     addResource,
     reorderResource,
     getDocTreeData,
+    setSelectedChapterId,
   } = customProps
+
+  const params = useParams()
+  const { bookComponentId } = params
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
@@ -707,7 +712,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
         )
 
       case 'members':
-        return <UserInviteModal bookId={bookId} />
+        return <UserInviteModal bookComponentId={bookComponentId} />
 
       default:
         return null
@@ -760,6 +765,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 getDocTreeData={getDocTreeData}
                 bodyDivisionId={bodyDivisionId}
                 bookId={bookId}
+                setSelectedChapterId={setSelectedChapterId}
               />
               {/* <BookPanel
                 bookMetadataValues={bookMetadataValues}

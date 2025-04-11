@@ -208,7 +208,7 @@ const routes = (
                 <GlobalContextProvider>
                   <YjsProvider>
                     <Switch>
-                      <Redirect exact path="/" to="/dashboard" />
+                      <Redirect exact path="/" to="/create-book" />
 
                       <Route component={SignupPage} exact path="/signup" />
                       <Route component={LoginPage} exact path="/login" />
@@ -274,9 +274,18 @@ const routes = (
                           </Authenticated>
                         )}
                       />
-                      <Route
+                      {/* <Route
                         exact
                         path="/books/:bookId/producer"
+                        render={() => (
+                          <Authenticated>
+                            <ProducerPage />
+                          </Authenticated>
+                        )}
+                      /> */}
+                      <Route
+                        exact
+                        path="/document/:bookComponentId"
                         render={() => (
                           <Authenticated>
                             <ProducerPage />

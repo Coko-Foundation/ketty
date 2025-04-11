@@ -3,13 +3,13 @@ import { gql } from '@apollo/client'
 const SEND_INVITATIONS = gql`
   mutation SendInvitations(
     $teamId: ID!
-    $bookId: ID!
+    $bookComponentId: ID!
     $members: [String]!
     $status: String!
   ) {
     sendInvitations(
       teamId: $teamId
-      bookId: $bookId
+      bookComponentId: $bookComponentId
       members: $members
       status: $status
     ) {
@@ -32,8 +32,8 @@ const HANDLE_INVITATION = gql`
 `
 
 const GET_INVITATIONS = gql`
-  query GetInvitations($bookId: ID!) {
-    getInvitations(bookId: $bookId) {
+  query GetInvitations($bookComponentId: ID!) {
+    getInvitations(bookComponentId: $bookComponentId) {
       role
       members {
         status
@@ -47,8 +47,8 @@ const GET_INVITATIONS = gql`
 `
 
 const DELETE_INVITATION = gql`
-  mutation DeleteInvitation($bookId: ID!, $email: String!) {
-    deleteInvitation(bookId: $bookId, email: $email) {
+  mutation DeleteInvitation($bookComponentId: ID!, $email: String!) {
+    deleteInvitation(bookComponentId: $bookComponentId, email: $email) {
       role
       members {
         status
@@ -62,8 +62,16 @@ const DELETE_INVITATION = gql`
 `
 
 const UPDATE_INVITATION = gql`
-  mutation UpdateInvitation($bookId: ID!, $email: String!, $status: String!) {
-    updateInvitation(bookId: $bookId, status: $status, email: $email) {
+  mutation UpdateInvitation(
+    $bookComponentId: ID!
+    $email: String!
+    $status: String!
+  ) {
+    updateInvitation(
+      bookComponentId: $bookComponentId
+      status: $status
+      email: $email
+    ) {
       role
       members {
         status

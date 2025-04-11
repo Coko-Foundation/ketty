@@ -1,6 +1,6 @@
 export const findFirstDocument = data => {
   for (let node of data) {
-    if (!node.isFolder && node.identifier) {
+    if (!node.isFolder && node.bookComponentId) {
       return node
     }
     if (node.children) {

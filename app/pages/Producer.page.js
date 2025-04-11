@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 
 // import useWebSocket from 'react-use-websocket'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import {
   useQuery,
   useLazyQuery,
@@ -30,6 +30,7 @@ import {
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  GET_BOOKS,
   GET_BOOK_COMPONENT,
   USE_CHATGPT,
   APPLICATION_PARAMETERS,
@@ -107,12 +108,10 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
 
 // let issueInCommunicationModal
 
-const ProducerPage = () => {
+const ProducerPage = ({ bookId }) => {
   // #region INITIALIZATION SECTION START
   const { createYjsProvider, wsProvider, ydoc } = useContext(YjsContext)
   const history = useHistory()
-  const params = useParams()
-  const { bookId } = params
   const [tabId] = useState(uuid())
 
   const [selectedChapterId, setSelectedChapterId] = useState(
@@ -1254,8 +1253,31 @@ const ProducerPage = () => {
       addResource={addResource}
       reorderResource={reorderResource}
       getDocTreeData={getDocTreeData}
+      setSelectedChapterId={setSelectedChapterId}
     />
   )
 }
 
-export default ProducerPage
+// eslint-disable-next-line react/function-component-definition
+export default props => {
+  const { loading, data: dataBooks } = useQuery(GET_BOOKS, {
+    fetchPolicy: 'network-only',
+    variables: {
+      options: {
+        archived: false,
+        orderBy: {
+          column: 'title',
+          order: 'asc',
+        },
+        page: 0,
+        pageSize: 10,
+      },
+    },
+  })
+
+  if (loading) return null
+
+  const [book] = dataBooks.getBooks.result
+
+  return <ProducerPage {...props} bookId={book.id} />
+}

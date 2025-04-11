@@ -62,6 +62,7 @@ const EditorWrapper = ({
   addResource,
   reorderResource,
   getDocTreeData,
+  setSelectedChapterId,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -95,6 +96,7 @@ const EditorWrapper = ({
     addResource,
     reorderResource,
     getDocTreeData,
+    setSelectedChapterId,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -260,6 +262,7 @@ const EditorWrapper = ({
       addResource,
       reorderResource,
       getDocTreeData,
+      setSelectedChapterId,
     })
   }, [
     title,

@@ -97,6 +97,8 @@ const RowRender = row => {
     isActive,
     bookId,
     bodyDivisionId,
+    bookComponentId,
+    setSelectedChapterId,
   } = row
 
   const history = useHistory()
@@ -132,7 +134,8 @@ const RowRender = row => {
       }
 
       if (!isFolder) {
-        history.push(`/${identifier}`, { replace: true })
+        setSelectedChapterId(bookComponentId)
+        history.push(`/document/${bookComponentId}`, { replace: true })
         setActive()
       }
     }

@@ -135,6 +135,7 @@ const DocTreeManager = ({
   deleteResource,
   bodyDivisionId,
   bookId,
+  setSelectedChapterId,
 }) => {
   let isFileManagerOpen = true
 
@@ -353,6 +354,7 @@ const DocTreeManager = ({
                 renameResource={renameResourceFn}
                 bookId={bookId}
                 bodyDivisionId={bodyDivisionId}
+                setSelectedChapterId={setSelectedChapterId}
               />
             )
           }}

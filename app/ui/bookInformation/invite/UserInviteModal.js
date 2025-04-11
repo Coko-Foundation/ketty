@@ -29,13 +29,13 @@ const ScrollWrapper = styled.div`
   padding: ${grid(1)} ${grid(2)};
 `
 
-const UserInviteModal = ({ bookId }) => {
+const UserInviteModal = ({ bookComponentId }) => {
   const { data: bookTeamsData, loading: loadingBookTeamsData } = useQuery(
     GET_BOOK_TEAMS,
     {
       variables: {
-        objectId: bookId,
-        objectType: 'book',
+        objectId: bookComponentId,
+        objectType: 'bookComponent',
       },
     },
   )
@@ -44,7 +44,7 @@ const UserInviteModal = ({ bookId }) => {
     GET_INVITATIONS,
     {
       variables: {
-        bookId,
+        bookComponentId,
       },
     },
   )
@@ -55,19 +55,25 @@ const UserInviteModal = ({ bookId }) => {
 
   const bookTeamsAndInvites = bookTeams.concat(bookInvites)
 
+  console.log(bookTeams, bookTeamsAndInvites)
+
   const [searchForUsers] = useMutation(SEARCH_USERS)
   const [addTeamMembers] = useMutation(ADD_TEAM_MEMBERS)
   const [updateTeamMemberStatus] = useMutation(UPDATE_TEAM_MEMBER_STATUS)
   const [removeTeamMember] = useMutation(REMOVE_TEAM_MEMBER)
 
   const [sendInvitations] = useMutation(SEND_INVITATIONS, {
-    refetchQueries: [{ query: GET_INVITATIONS, variables: { bookId } }],
+    refetchQueries: [
+      { query: GET_INVITATIONS, variables: { bookComponentId } },
+    ],
   })
 
   const [updateInvitation] = useMutation(UPDATE_INVITATION)
 
   const [deleteInvitation] = useMutation(DELETE_INVITATION, {
-    refetchQueries: [{ query: GET_INVITATIONS, variables: { bookId } }],
+    refetchQueries: [
+      { query: GET_INVITATIONS, variables: { bookComponentId } },
+    ],
   })
 
   const { currentUser } = useCurrentUser()
@@ -138,7 +144,7 @@ const UserInviteModal = ({ bookId }) => {
       await sendInvitations({
         variables: {
           ...variables,
-          bookId,
+          bookComponentId,
           members: emailInvites.map(user => user.value),
         },
       })
@@ -151,7 +157,7 @@ const UserInviteModal = ({ bookId }) => {
     return addTeamMembers({
       variables: {
         ...variables,
-        bookId,
+        bookComponentId,
         members: existingInvites.map(user => user.value),
       },
       skip: !existingInvites.length,
@@ -168,7 +174,7 @@ const UserInviteModal = ({ bookId }) => {
         variables: {
           email,
           status,
-          bookId,
+          bookComponentId,
         },
       })
     }
@@ -186,7 +192,7 @@ const UserInviteModal = ({ bookId }) => {
       return deleteInvitation({
         variables: {
           email: removeData.email,
-          bookId,
+          bookComponentId,
         },
       })
     }
@@ -196,7 +202,8 @@ const UserInviteModal = ({ bookId }) => {
     })
   }
 
-  const canChangeAccess = isAdmin(currentUser) || isOwner(bookId, currentUser)
+  const canChangeAccess =
+    isAdmin(currentUser) || isOwner(bookComponentId, currentUser)
 
   return (
     <Box>
@@ -224,7 +231,7 @@ const UserInviteModal = ({ bookId }) => {
 }
 
 UserInviteModal.propTypes = {
-  bookId: PropTypes.string.isRequired,
+  bookComponentId: PropTypes.string.isRequired,
   // onCancel: PropTypes.func.isRequired,
   // open: PropTypes.bool.isRequired,
   // title: PropTypes.string.isRequired,

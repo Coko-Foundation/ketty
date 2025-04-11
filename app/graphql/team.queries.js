@@ -46,13 +46,15 @@ const ADD_TEAM_MEMBERS = gql`
   mutation AddTeamMembers(
     $teamId: ID!
     $members: [ID!]!
-    $bookId: ID!
+    $bookId: ID
+    $bookComponentId: ID
     $status: String
   ) {
     addTeamMembers(
       teamId: $teamId
       members: $members
       bookId: $bookId
+      bookComponentId: $bookComponentId
       status: $status
     ) {
       id

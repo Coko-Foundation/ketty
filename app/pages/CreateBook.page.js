@@ -1,14 +1,19 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 import { InitBook } from '../ui'
-import { CREATE_BOOK } from '../graphql'
+import { CREATE_BOOK, GET_TREE_MANAGER_AND_SHARED_DOCS } from '../graphql'
 import { showGenericErrorModal } from '../helpers/commonModals'
+import { findFirstDocument } from '../ui/DocTreeManager/utils'
 
 const CreateBook = () => {
   const history = useHistory()
   const { currentUser, setCurrentUser } = useCurrentUser()
+
+  const { loading, data: documents } = useQuery(
+    GET_TREE_MANAGER_AND_SHARED_DOCS,
+  )
 
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: () => {
@@ -43,6 +48,23 @@ const CreateBook = () => {
   const onImportBook = () => {
     return createBookHandler('import')
   }
+
+  if (loading) return null
+
+  const root = JSON.parse(documents.getDocTree)
+
+  console.log(root)
+  if (root.length > 0) {
+    const firstDocument = findFirstDocument(root)
+    console.log(firstDocument)
+    if (firstDocument?.bookComponentId) {
+      history.push(`/document/${firstDocument?.bookComponentId}`, {
+        replace: true,
+      })
+      return true
+    }
+  }
+  console.log('strart book')
 
   return <InitBook onCreateBook={onCreateBook} onImportBook={onImportBook} />
 }
