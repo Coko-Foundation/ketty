@@ -22,11 +22,13 @@ import {
   EditingSuggestingService,
   CustomTagService,
   MathService,
+  NoteService,
 } from 'wax-prosemirror-services'
 
 import { QuestionsService } from 'wax-questions-service'
 
-import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
+// import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
+import { TablesService, columnResizing } from 'wax-table-service'
 
 import disallowPasteImagesPlugin from '../disallowPasteImagesPlugin'
 
@@ -73,9 +75,10 @@ const config = {
 
   SchemaService: DefaultSchema,
   SpecialCharactersService: charactersList,
+
   PmPlugins: [
     columnResizing(),
-    tableEditing(),
+    // tableEditing(),
     disallowPasteImagesPlugin(() => {
       if (!window.showInfo) {
         window.showInfo = true
@@ -120,6 +123,7 @@ const config = {
     new BaseService(),
     new DisplayBlockLevelService(),
     new TextBlockLevelService(),
+    new NoteService(),
     new SpecialCharactersService(),
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
