@@ -1,9 +1,10 @@
 /* stylelint-disable no-descending-specificity */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Spin } from 'antd'
+import PanelGroup from 'react-panelgroup'
 import {
   ToTopOutlined,
   CaretUpFilled,
@@ -296,6 +297,39 @@ const CommentsContainer = styled.div`
   }
 `
 
+const NotesAreaContainer = styled.div`
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow-y: scroll;
+  position: absolute;
+  width: 100%;
+  /* PM styles  for note content */
+  .ProseMirror {
+    display: inline;
+  }
+
+  @media (max-width: 600px) {
+    padding-inline-start: ${grid(12)};
+  }
+`
+
+const NotesContainer = styled.div`
+  counter-reset: footnote-view;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: auto;
+  max-width: 816px;
+  padding-bottom: ${grid(4)};
+  padding-left: ${grid(10)};
+  padding-top: 10px;
+  width: 100%;
+`
+
+const CommentsContainerNotes = styled.div``
+
 const TrackToolsContainer = styled.div`
   border: 1px solid ${th('colorBorder')};
   display: grid;
@@ -479,6 +513,25 @@ const NoSelectedChapterWrapper = styled.div`
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 const RightArea = ComponentPlugin('rightArea')
 const CommentTrackToolBar = ComponentPlugin('commentTrackToolBar')
+const NotesArea = ComponentPlugin('notesArea')
+
+let surfaceHeight = (window.innerHeight / 5) * 3
+let notesHeight = (window.innerHeight / 5) * 2
+
+const onResizeEnd = arr => {
+  surfaceHeight = arr[0].size
+  notesHeight = arr[1].size
+}
+
+const getNotes = main => {
+  const notes = DocumentHelpers.findChildrenByType(
+    main.state.doc,
+    main.state.schema.nodes.footnote,
+    true,
+  )
+
+  return notes
+}
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const {
@@ -552,6 +605,20 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
   const showTrackControls =
     menuContainsTrackTools || commentsTracksCount + trackBlockNodesCount > 0
+
+  const notes = main && getNotes(main)
+  const areNotes = notes && !!notes.length && notes.length > 0
+
+  const [hasNotes, setHasNotes] = useState(areNotes)
+
+  const showNotes = () => {
+    setHasNotes(areNotes)
+  }
+
+  useCallback(
+    setTimeout(() => showNotes(), 100),
+    [],
+  )
 
   useEffect(() => {
     // Re-check on window resize
@@ -737,49 +804,70 @@ const LuluLayout = ({ customProps, ...rest }) => {
             renderInformationBox()
           ) : (
             <EditorArea isFullscreen={options.fullScreen}>
-              <WaxSurfaceScroll id="wax-surface-scroll">
-                <EditorContainer selectedChapterId={selectedChapterId}>
-                  {editorLoading ? (
-                    <StyledSpin spinning={editorLoading} />
-                  ) : (
-                    <>
-                      {selectedChapterId ? (
-                        <WaxView {...rest} />
-                      ) : (
-                        <NoSelectedChapterWrapper>
-                          {t('editor.noChapterSelected')}
-                        </NoSelectedChapterWrapper>
-                      )}
-                      <TrackToolsContainer>
-                        {savedComments.length > 0 && (
-                          <ToggleComments id="commentToggle">
-                            <Checkbox
-                              checked={showComments}
-                              onChange={e => setShowComments(e.target.checked)}
-                            >
-                              SHOW COMMENTS
-                            </Checkbox>
-                          </ToggleComments>
+              <PanelGroup
+                direction="column"
+                onResizeEnd={onResizeEnd}
+                panelWidths={[
+                  { size: surfaceHeight, resize: 'stretch' },
+                  { size: notesHeight, resize: 'resize' },
+                ]}
+              >
+                <WaxSurfaceScroll id="wax-surface-scroll">
+                  <EditorContainer selectedChapterId={selectedChapterId}>
+                    {editorLoading ? (
+                      <StyledSpin spinning={editorLoading} />
+                    ) : (
+                      <>
+                        {selectedChapterId ? (
+                          <WaxView {...rest} />
+                        ) : (
+                          <NoSelectedChapterWrapper>
+                            {t('editor.noChapterSelected')}
+                          </NoSelectedChapterWrapper>
                         )}
-                        {showTrackControls && (
-                          <TrackTools>
-                            {commentsTracksCount + trackBlockNodesCount}{' '}
-                            SUGGESTIONS
-                            <TrackOptions>
-                              <CommentTrackToolBar />
-                            </TrackOptions>
-                          </TrackTools>
+                        <TrackToolsContainer>
+                          {savedComments.length > 0 && (
+                            <ToggleComments id="commentToggle">
+                              <Checkbox
+                                checked={showComments}
+                                onChange={e =>
+                                  setShowComments(e.target.checked)
+                                }
+                              >
+                                SHOW COMMENTS
+                              </Checkbox>
+                            </ToggleComments>
+                          )}
+                          {showTrackControls && (
+                            <TrackTools>
+                              {commentsTracksCount + trackBlockNodesCount}{' '}
+                              SUGGESTIONS
+                              <TrackOptions>
+                                <CommentTrackToolBar />
+                              </TrackOptions>
+                            </TrackTools>
+                          )}
+                        </TrackToolsContainer>
+                        {showComments && (
+                          <CommentsContainer>
+                            <RightArea area="main" />
+                          </CommentsContainer>
                         )}
-                      </TrackToolsContainer>
-                      {showComments && (
-                        <CommentsContainer>
-                          <RightArea area="main" />
-                        </CommentsContainer>
-                      )}
-                    </>
-                  )}
-                </EditorContainer>
-              </WaxSurfaceScroll>
+                      </>
+                    )}
+                  </EditorContainer>
+                </WaxSurfaceScroll>
+                {hasNotes && (
+                  <NotesAreaContainer>
+                    <NotesContainer id="notes-container">
+                      <NotesArea view={main} />
+                    </NotesContainer>
+                    <CommentsContainerNotes>
+                      <RightArea area="notes" />
+                    </CommentsContainerNotes>
+                  </NotesAreaContainer>
+                )}
+              </PanelGroup>
             </EditorArea>
           )}
         </Main>
