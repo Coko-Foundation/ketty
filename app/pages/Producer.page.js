@@ -11,7 +11,7 @@ import {
 import find from 'lodash/find'
 import debounce from 'lodash/debounce'
 import { uuid, useCurrentUser } from '@coko/client'
-// import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
+
 import styled from 'styled-components'
 import {
   GET_ENTIRE_BOOK,
@@ -108,10 +108,12 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
 
 // let issueInCommunicationModal
 
+// eslint-disable-next-line react/prop-types
 const ProducerPage = ({ bookId }) => {
   // #region INITIALIZATION SECTION START
   const { createYjsProvider, wsProvider, ydoc } = useContext(YjsContext)
   const history = useHistory()
+  const { currentUser } = useCurrentUser()
   const [tabId] = useState(uuid())
 
   const [selectedChapterId, setSelectedChapterId] = useState(
@@ -140,17 +142,18 @@ const ProducerPage = ({ bookId }) => {
   const [savedComments, setSavedComments] = useState()
   // const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
+  const [isCurrentDocumentMine, setIsCurrentDocumentMine] = useState(null)
+  const [canModify, setCanModify] = useState(true)
 
-  const [currentBookComponentContent, setCurrentBookComponentContent] =
-    useState(null)
-
-  const { currentUser } = useCurrentUser()
   // const token = localStorage.getItem('token')
 
-  const canModify =
-    isAdmin(currentUser) ||
-    isOwner(bookId, currentUser) ||
-    hasEditAccess(bookId, currentUser)
+  useEffect(() => {
+    setCanModify(
+      isCurrentDocumentMine
+        ? true
+        : isAdmin(currentUser) || hasEditAccess(selectedChapterId, currentUser),
+    )
+  }, [selectedChapterId, isCurrentDocumentMine])
 
   const hasMembership =
     isOwner(bookId, currentUser) || isCollaborator(bookId, currentUser)
@@ -210,7 +213,6 @@ const ProducerPage = ({ bookId }) => {
         }
       },
       onCompleted: data => {
-        setCurrentBookComponentContent(data.getBookComponent.content)
         getComments({
           variables: {
             bookId,
@@ -341,7 +343,6 @@ const ProducerPage = ({ bookId }) => {
 
   useEffect(() => {
     if (!selectedChapterId) {
-      setCurrentBookComponentContent(null)
       localStorage.removeItem(`${bookId}-selected-chapter`)
     } else {
       localStorage.setItem(`${bookId}-selected-chapter`, selectedChapterId)
@@ -383,10 +384,6 @@ const ProducerPage = ({ bookId }) => {
 
   useEffect(() => {
     if (isOwner(bookId, currentUser)) {
-      if (selectedChapterId) {
-        setCurrentBookComponentContent(editorRef?.current?.getContent())
-      }
-
       refetchBook({ id: bookId })
     }
   }, [bookQueryData?.getBook.bookSettings?.aiOn])
@@ -946,12 +943,12 @@ const ProducerPage = ({ bookId }) => {
       return
     }
 
-    if (found.status === 300) {
+    if (found?.status === 300) {
       showConversionErrorModal(chapterId)
       return
     }
 
-    if (found.uploading) {
+    if (found?.uploading) {
       showUploadingModal()
       return
     }
@@ -1198,7 +1195,6 @@ const ProducerPage = ({ bookId }) => {
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bodyDivisionId={getBodyDivisionId()}
-      bookComponentContent={currentBookComponentContent}
       bookId={bookId}
       bookMembers={members}
       bookMetadataValues={bookMetadataValues}
@@ -1254,6 +1250,7 @@ const ProducerPage = ({ bookId }) => {
       reorderResource={reorderResource}
       getDocTreeData={getDocTreeData}
       setSelectedChapterId={setSelectedChapterId}
+      setIsCurrentDocumentMine={setIsCurrentDocumentMine}
     />
   )
 }

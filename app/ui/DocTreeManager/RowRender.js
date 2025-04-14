@@ -99,6 +99,8 @@ const RowRender = row => {
     bodyDivisionId,
     bookComponentId,
     setSelectedChapterId,
+    setIsCurrentDocumentMine,
+    myFiles,
   } = row
 
   const history = useHistory()
@@ -135,6 +137,7 @@ const RowRender = row => {
 
       if (!isFolder) {
         setSelectedChapterId(bookComponentId)
+        setIsCurrentDocumentMine(myFiles)
         history.push(`/document/${bookComponentId}`, { replace: true })
         setActive()
       }

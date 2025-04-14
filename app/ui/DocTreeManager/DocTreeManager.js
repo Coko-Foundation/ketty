@@ -9,11 +9,12 @@ import {
   FileAddFilled,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons'
+import { useParams } from 'react-router-dom'
 import Button from '../common/Button'
 import RowRender from './RowRender'
 import ConfirmDelete from '../modals/ConfirmDelete'
 
-import { findParentNode, findChildNodeByIdentifier } from './utils'
+import { findParentNode, findChildNodeByBookComponentId } from './utils'
 
 const DocTreeManagerWrapper = styled.div`
   display: flex;
@@ -136,7 +137,9 @@ const DocTreeManager = ({
   bodyDivisionId,
   bookId,
   setSelectedChapterId,
+  setIsCurrentDocumentMine,
 }) => {
+  const { bookComponentId } = useParams()
   let isFileManagerOpen = true
 
   if (localStorage.getItem('isFileManagerOpen') !== null) {
@@ -232,16 +235,25 @@ const DocTreeManager = ({
       allData[0].title = 'My Folders and Files'
     }
 
+    console.log(bookComponentId, 'bookCompoentid')
+
     setGData([...allData])
 
     const sharedData = cloneDeep(data.getSharedDocTree)
     sharedData[0].isRoot = true
 
     setSharedDocTree([...sharedData])
+
+    if (findChildNodeByBookComponentId(allData, bookComponentId)) {
+      setIsCurrentDocumentMine(true)
+    } else if (findChildNodeByBookComponentId(sharedData, bookComponentId)) {
+      setIsCurrentDocumentMine(false)
+    }
   }, [])
 
   const addResourceFn = async variables => {
     await addResource(variables)
+
     const { data } = await getDocTreeData()
     const allData = JSON.parse(data.getDocTree)
     allData[0].disabled = true
@@ -282,10 +294,12 @@ const DocTreeManager = ({
   const parts = window.location.href.split('/')
   const currentIdentifier = parts[parts.length - 1]
 
-  const getActiveDocForDeletion = findChildNodeByIdentifier(
-    deleteResourceRow ? [deleteResourceRow] : [],
-    currentIdentifier,
-  )
+  // const getActiveDocForDeletion = findChildNodeByIdentifier(
+  //   deleteResourceRow ? [deleteResourceRow] : [],
+  //   currentIdentifier,
+  // )
+
+  const getActiveDocForDeletion = 'ddd'
 
   return (
     <DocTreeManagerWrapper>
@@ -349,12 +363,14 @@ const DocTreeManager = ({
             return (
               <RowRender
                 {...rowProps}
+                myFiles={true}
                 confirmDelete={confirmDelete}
                 addResource={addResourceFn}
                 renameResource={renameResourceFn}
                 bookId={bookId}
                 bodyDivisionId={bodyDivisionId}
                 setSelectedChapterId={setSelectedChapterId}
+                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
               />
             )
           }}
@@ -365,7 +381,15 @@ const DocTreeManager = ({
           blockNode
           treeData={sharedDocTree}
           titleRender={rowProps => {
-            return <RowRender {...rowProps} confirmDelete={confirmDelete} />
+            return (
+              <RowRender
+                {...rowProps}
+                confirmDelete={confirmDelete}
+                setSelectedChapterId={setSelectedChapterId}
+                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
+                myFiles={false}
+              />
+            )
           }}
         />
       </FilesWrapper>

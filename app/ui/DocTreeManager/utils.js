@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 export const findFirstDocument = data => {
   for (let node of data) {
     if (!node.isFolder && node.bookComponentId) {
@@ -30,15 +31,20 @@ export const findParentNode = (data, childKey) => {
   return null
 }
 
-export const findChildNodeByIdentifier = (data, identifier) => {
+export const findChildNodeByBookComponentId = (data, bookComponentId) => {
   for (let node of data) {
     if (node.children) {
       for (let child of node.children) {
-        if (child.identifier === identifier) {
+        if (child.bookComponentId === bookComponentId) {
           return child
         }
       }
-      const found = findChildNodeByIdentifier(node.children, identifier)
+
+      const found = findChildNodeByBookComponentId(
+        node.children,
+        bookComponentId,
+      )
+
       if (found) {
         return found
       }

@@ -561,6 +561,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     reorderResource,
     getDocTreeData,
     setSelectedChapterId,
+    setIsCurrentDocumentMine,
   } = customProps
 
   const params = useParams()
@@ -766,6 +767,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 bodyDivisionId={bodyDivisionId}
                 bookId={bookId}
                 setSelectedChapterId={setSelectedChapterId}
+                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
               />
               {/* <BookPanel
                 bookMetadataValues={bookMetadataValues}

@@ -15,6 +15,7 @@ const EditorWrapper = ({
   onPeriodicBookComponentContentChange,
   onPeriodicTitleChange,
   isReadOnly,
+  setIsCurrentDocumentMine,
   onImageUpload,
   onBookComponentTypeChange,
   onBookComponentParentIdChange,
@@ -97,6 +98,7 @@ const EditorWrapper = ({
     reorderResource,
     getDocTreeData,
     setSelectedChapterId,
+    setIsCurrentDocumentMine,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -263,6 +265,7 @@ const EditorWrapper = ({
       reorderResource,
       getDocTreeData,
       setSelectedChapterId,
+      setIsCurrentDocumentMine,
     })
   }, [
     title,

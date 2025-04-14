@@ -11,6 +11,7 @@ export const GET_TREE_MANAGER_AND_SHARED_DOCS = gql`
       bookComponent {
         id
       }
+      bookComponentId
       children {
         id
         key
@@ -19,6 +20,7 @@ export const GET_TREE_MANAGER_AND_SHARED_DOCS = gql`
         bookComponent {
           id
         }
+        bookComponentId
       }
     }
   }
@@ -39,6 +41,19 @@ export const ADD_RESOURCE = gql`
     ) {
       id
       title
+      bookComponentId
+      bookComponent {
+        teams {
+          id
+          members {
+            id
+            user {
+              id
+            }
+            status
+          }
+        }
+      }
     }
   }
 `

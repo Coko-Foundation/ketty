@@ -55,8 +55,6 @@ const UserInviteModal = ({ bookComponentId }) => {
 
   const bookTeamsAndInvites = bookTeams.concat(bookInvites)
 
-  console.log(bookTeams, bookTeamsAndInvites)
-
   const [searchForUsers] = useMutation(SEARCH_USERS)
   const [addTeamMembers] = useMutation(ADD_TEAM_MEMBERS)
   const [updateTeamMemberStatus] = useMutation(UPDATE_TEAM_MEMBER_STATUS)
