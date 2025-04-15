@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Link } from 'react-router-dom'
 import {
-  DatabaseOutlined,
   PrinterOutlined,
   SettingOutlined,
   UsergroupAddOutlined,
@@ -97,15 +96,6 @@ const BookInformation = props => {
 
   return (
     <Wrapper>
-      <Tooltip placement="bottomLeft" title="Metadata">
-        <StyledButton
-          aria-label="Toggle book metadata"
-          aria-pressed={viewInformation === 'metadata'}
-          data-test="producer-metadata-btn"
-          icon={<DatabaseOutlined />}
-          onClick={() => toggleInformation('metadata')}
-        />
-      </Tooltip>
       <Tooltip placement="bottom" title="Settings">
         <StyledButton
           aria-label="Toggle book settings"

@@ -10,8 +10,6 @@ const EditorWrapper = ({
   bookId,
   bodyDivisionId,
   title,
-  subtitle,
-  chapters,
   onPeriodicTitleChange, // WE KEEP
   isReadOnly,
   setIsCurrentDocumentMine,
@@ -57,13 +55,11 @@ const EditorWrapper = ({
 }) => {
   const [luluWax, setLuluWax] = useState({
     onChapterClick,
-    chapters,
     selectedChapterId,
     onUploadChapter,
     canEdit,
     chaptersActionInProgress,
     title,
-    subtitle,
     onSubmitBookMetadata,
     bookMetadataValues,
     editorLoading,
@@ -209,8 +205,6 @@ const EditorWrapper = ({
   useEffect(() => {
     setLuluWax({
       title,
-      subtitle,
-      chapters,
       selectedChapterId,
       chaptersActionInProgress,
       onChapterClick,
@@ -238,8 +232,6 @@ const EditorWrapper = ({
     })
   }, [
     title,
-    subtitle,
-    chapters,
     selectedChapterId,
     bookMetadataValues,
     chaptersActionInProgress,

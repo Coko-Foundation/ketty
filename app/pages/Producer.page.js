@@ -27,7 +27,6 @@ import {
   UPLOAD_FILES,
   // LOCK_BOOK_COMPONENT_POD,
   RENAME_BOOK,
-  UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   GET_BOOKS,
@@ -96,10 +95,9 @@ const calculateEditorMode = (lock, canModify, currentUser, tabId) => {
     : 'preview'
 }
 
-const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
+const constructMetadataValues = (title, podMetadata, cover) => {
   return {
     title,
-    subtitle,
     coverUrl: cover?.length ? cover[0].coverUrl : '',
     coverAlt: cover?.length ? cover[0].altText : '',
     ...podMetadata,
@@ -325,7 +323,6 @@ const ProducerPage = ({ bookId }) => {
 
   const bookMetadataValues = constructMetadataValues(
     bookQueryData?.getBook.title,
-    bookQueryData?.getBook.subtitle,
     bookQueryData?.getBook?.podMetadata,
     bookQueryData?.getBook?.cover,
   )
@@ -430,14 +427,6 @@ const ProducerPage = ({ bookId }) => {
   })
 
   const [renameBook] = useMutation(RENAME_BOOK, {
-    onError: err => {
-      if (err.toString().includes('Not Authorised')) {
-        showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
-    },
-  })
-
-  const [updateSubtitle] = useMutation(UPDATE_SUBTITLE, {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
@@ -595,10 +584,6 @@ const ProducerPage = ({ bookId }) => {
 
     if (title) {
       renameBook({ variables: { id: bookId, title } })
-    }
-
-    if (typeof subtitle === 'string') {
-      updateSubtitle({ variables: { id: bookId, subtitle } })
     }
 
     if (typeof coverAlt === 'string') {
@@ -1098,7 +1083,6 @@ const ProducerPage = ({ bookId }) => {
       selectedChapterId={selectedChapterId}
       settings={bookQueryData?.getBook.bookSettings}
       setViewMetadata={setViewMetadata}
-      subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
       user={currentUser}
       viewMetadata={viewMetadata}

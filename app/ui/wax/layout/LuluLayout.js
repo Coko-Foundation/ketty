@@ -529,12 +529,10 @@ const getNotes = main => {
 
 const LuluLayout = ({ customProps, ...rest }) => {
   const {
-    chapters,
     onChapterClick,
     onUploadChapter, // WE KEEP FOR DOC UPLOAD
     selectedChapterId,
     title,
-    subtitle,
     onSubmitBookMetadata,
     bookMetadataValues,
     chaptersActionInProgress,
@@ -648,15 +646,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
 
     if (window.innerWidth < 600) {
-      setBookPanelCollapsed(true)
-    }
-  }
-
-  const handleChapterClick = chapterId => {
-    if (viewMetadata !== '') setViewMetadata('')
-    onChapterClick(chapterId)
-
-    if (window.innerWidth < 600 && !bookPanelCollapsed) {
       setBookPanelCollapsed(true)
     }
   }
