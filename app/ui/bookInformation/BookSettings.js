@@ -4,7 +4,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Link } from 'react-router-dom'
-import { PrinterOutlined, UsergroupAddOutlined } from '@ant-design/icons'
+import { SettingOutlined } from '@ant-design/icons'
 import { Tooltip as AntTooltip } from 'antd'
 import { Button } from '../common'
 import RobotSvg from './RobotSvg'
@@ -13,8 +13,10 @@ const Wrapper = styled.div`
   display: flex !important;
   flex-shrink: 0;
   gap: 1ch;
+  left: 4%;
   position: absolute;
-  right: 1%;
+  top: 6px;
+  z-index: 999;
 
   > button[aria-pressed='true'] {
     background-color: rgb(63 133 198);
@@ -81,7 +83,7 @@ const StyledLink = styled(Link)`
   }
 `
 
-const BookInformation = props => {
+const BookSettings = props => {
   const {
     viewInformation,
     toggleInformation,
@@ -92,21 +94,13 @@ const BookInformation = props => {
 
   return (
     <Wrapper>
-      <Tooltip placement="bottom" title="Share">
+      <Tooltip placement="bottom" title="Settings">
         <StyledButton
-          aria-label="Toggle book collaborators"
-          aria-pressed={viewInformation === 'members'}
-          icon={<UsergroupAddOutlined />}
-          onClick={() => toggleInformation('members')}
+          aria-label="Toggle book settings"
+          aria-pressed={viewInformation === 'settings'}
+          icon={<SettingOutlined />}
+          onClick={() => toggleInformation('settings')}
         />
-      </Tooltip>
-      <Tooltip placement="bottom" title="Preview and Publish">
-        <StyledLink
-          aria-label="Preview and Publish"
-          to={`/books/${bookId}/exporter`}
-        >
-          <PrinterOutlined />
-        </StyledLink>
       </Tooltip>
       {showKnowledgeBaseLink && (
         <Tooltip placement="bottom" title="Knowledge Base">
@@ -132,4 +126,4 @@ const BookInformation = props => {
   )
 }
 
-export default BookInformation
+export default BookSettings

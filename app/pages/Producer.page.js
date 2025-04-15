@@ -1045,6 +1045,7 @@ const ProducerPage = ({ bookId }) => {
   return (
     <Editor
       addComments={handleAddingComments}
+      addResource={addResource}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
       bodyDivisionId={getBodyDivisionId()}
@@ -1065,11 +1066,13 @@ const ProducerPage = ({ bookId }) => {
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       customTags={customTags}
+      deleteResource={deleteResource}
       // editorKey={key}
       // editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}
+      getDocTreeData={getDocTreeData}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       onChapterClick={onChapterClick}
@@ -1088,11 +1091,8 @@ const ProducerPage = ({ bookId }) => {
       viewMetadata={viewMetadata}
       wsProvider={wsProvider}
       ydoc={ydoc}
-      deleteResource={deleteResource}
       renameResource={renameResource}
-      addResource={addResource}
       reorderResource={reorderResource}
-      getDocTreeData={getDocTreeData}
       setSelectedChapterId={setSelectedChapterId}
       setIsCurrentDocumentMine={setIsCurrentDocumentMine}
     />

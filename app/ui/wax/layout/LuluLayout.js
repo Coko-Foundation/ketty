@@ -27,7 +27,7 @@ import { DocTreeManager } from '../../DocTreeManager'
 
 import {
   BookInformation,
-  BookMetadataForm,
+  BookSettings,
   SettingsForm,
   UserInviteModal,
 } from '../../bookInformation'
@@ -60,14 +60,6 @@ const Main = styled.div`
   > :nth-child(2) {
     overflow: auto;
     width: 100%;
-  }
-`
-
-const StyledMetadataForm = styled(BookMetadataForm)`
-  padding-inline-start: calc(50px + var(--s1));
-
-  @media (min-width: 600px) {
-    padding-inline-start: var(--s1);
   }
 `
 
@@ -675,15 +667,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
   const renderInformationBox = () => {
     switch (viewMetadata) {
-      case 'metadata':
-        return (
-          <StyledMetadataForm
-            canChangeMetadata={canEdit}
-            initialValues={bookMetadataValues}
-            onSubmitBookMetadata={onSubmitBookMetadata}
-            onUploadBookCover={onUploadBookCover}
-          />
-        )
       case 'settings':
         return (
           <StyledSettingsForm
@@ -704,58 +687,67 @@ const LuluLayout = ({ customProps, ...rest }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Wrapper id="wax-container" style={fullScreenStyles}>
-        <TopMenu
-          data-expanded={!mobileToolbarCollapsed}
-          id="toolbar"
-          isHidden={viewMetadata}
-        >
-          <Button
-            icon={
-              mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
-            }
-            iconPosition="end"
-            id="collapse"
-            onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
+      {viewMetadata !== '' ? (
+        renderInformationBox()
+      ) : (
+        <Wrapper id="wax-container" style={fullScreenStyles}>
+          <TopMenu
+            data-expanded={!mobileToolbarCollapsed}
+            id="toolbar"
+            isHidden={viewMetadata}
           >
-            {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
-          </Button>
-          <MainMenuToolBar />
-        </TopMenu>
-        <Main>
-          {!options.fullScreen && (
-            <LeftPanelWrapper>
-              <CollapseContainer data-collapsed={bookPanelCollapsed}>
-                <Button
-                  aria-label="Collapse"
-                  icon={<ToTopOutlined />}
-                  onClick={() => setBookPanelCollapsed(!bookPanelCollapsed)}
-                  type="text"
+            <Button
+              icon={
+                mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
+              }
+              iconPosition="end"
+              id="collapse"
+              onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
+            >
+              {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
+            </Button>
+            <BookSettings
+              bookId={bookId}
+              showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
+              showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
+              toggleInformation={toggleMetadata}
+              viewInformation={viewMetadata}
+            />
+            <MainMenuToolBar />
+            <BookInformation
+              bookId={bookId}
+              showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
+              showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
+              toggleInformation={toggleMetadata}
+              viewInformation={viewMetadata}
+            />
+          </TopMenu>
+          <Main>
+            {!options.fullScreen && (
+              <LeftPanelWrapper>
+                <CollapseContainer data-collapsed={bookPanelCollapsed}>
+                  <Button
+                    aria-label="Collapse"
+                    icon={<ToTopOutlined />}
+                    onClick={() => setBookPanelCollapsed(!bookPanelCollapsed)}
+                    type="text"
+                  />
+                </CollapseContainer>
+
+                <DocTreeManager
+                  addResource={addResource}
+                  bodyDivisionId={bodyDivisionId}
+                  bookId={bookId}
+                  deleteResource={deleteResource}
+                  getDocTreeData={getDocTreeData}
+                  renameResource={renameResource}
+                  reorderResource={reorderResource}
+                  setIsCurrentDocumentMine={setIsCurrentDocumentMine}
+                  setSelectedChapterId={setSelectedChapterId}
                 />
-              </CollapseContainer>
-              <BookInformation
-                bookId={bookId}
-                showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
-                showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
-                toggleInformation={toggleMetadata}
-                viewInformation={viewMetadata}
-              />
-              <DocTreeManager
-                addResource={addResource}
-                bodyDivisionId={bodyDivisionId}
-                bookId={bookId}
-                deleteResource={deleteResource}
-                getDocTreeData={getDocTreeData}
-                renameResource={renameResource}
-                reorderResource={reorderResource}
-                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
-                setSelectedChapterId={setSelectedChapterId}
-              />
-            </LeftPanelWrapper>
-          )}
-          {viewMetadata !== '' ? (
-            renderInformationBox()
-          ) : (
+              </LeftPanelWrapper>
+            )}
+
             <EditorArea isFullscreen={options.fullScreen}>
               <PanelGroup
                 direction="column"
@@ -814,9 +806,9 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 )}
               </PanelGroup>
             </EditorArea>
-          )}
-        </Main>
-      </Wrapper>
+          </Main>
+        </Wrapper>
+      )}
     </ThemeProvider>
   )
 }
