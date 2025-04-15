@@ -554,83 +554,6 @@ const ProducerPage = ({ bookId }) => {
     return undefined
   }
 
-  const onBookComponentContentChange = content => {
-    if (selectedChapterId && canModify) {
-      updateContent({
-        variables: {
-          input: {
-            id: selectedChapterId,
-            content,
-          },
-        },
-      })
-    }
-  }
-
-  const onPeriodicBookComponentContentChange = debounce(changedContent => {
-    if (editorMode && editorMode === 'full') {
-      onBookComponentContentChange(changedContent)
-    }
-  }, 500)
-
-  const onBookComponentTypeChange = (componentId, componentType) => {
-    if (componentId && componentType && canModify) {
-      updateBookComponentType({
-        variables: {
-          input: {
-            id: componentId,
-            componentType,
-          },
-        },
-      })
-    }
-  }
-
-  const onBookComponentParentIdChange = (componentId, parentComponentId) => {
-    if (componentId && canModify) {
-      updateBookComponentParentId({
-        variables: {
-          input: {
-            id: componentId,
-            parentComponentId,
-          },
-        },
-      })
-    }
-  }
-
-  const onAddChapter = () => {
-    if (!canModify) {
-      showUnauthorizedActionModal(false)
-      return
-    }
-
-    const divisionId = getBodyDivisionId()
-
-    if (!divisionId) {
-      console.error('no body division found')
-      return
-    }
-
-    const variables = {
-      input: {
-        bookId,
-        divisionId,
-        componentType: 'chapter',
-      },
-    }
-
-    if (selectedChapterId) {
-      variables.input.afterId = selectedChapterId
-    }
-
-    createBookComponent({
-      variables,
-    }).then(({ data }) => {
-      setSelectedChapterId(data?.podAddBookComponent?.id)
-    })
-  }
-
   canUpdateTitle.current =
     selectedChapterId &&
     canModify &&
@@ -661,42 +584,6 @@ const ProducerPage = ({ bookId }) => {
   const onPeriodicTitleChange = debounce(title => {
     onBookComponentTitleChange(title)
   }, 50)
-
-  const onDeleteChapter = bookComponentId => {
-    if (!canModify) {
-      showUnauthorizedActionModal(false)
-      return
-    }
-
-    const found = find(bookQueryData?.getBook.divisions[1].bookComponents, {
-      id: bookComponentId,
-    })
-
-    if (found) {
-      const { lock } = found
-
-      if (
-        lock &&
-        !isOwner(bookId, currentUser) &&
-        lock.userId !== currentUser.id
-      ) {
-        showUnauthorizedActionModal(false, null, 'lockedChapterDelete')
-        return
-      }
-    }
-
-    if (selectedChapterId === bookComponentId) {
-      setSelectedChapterId(null)
-    }
-
-    deleteBookComponent({
-      variables: {
-        input: {
-          id: bookComponentId,
-        },
-      },
-    })
-  }
 
   const onSubmitBookMetadata = debounce(data => {
     const { title, subtitle, coverAlt, ...rest } = data
@@ -910,25 +797,6 @@ const ProducerPage = ({ bookId }) => {
   //   applicationParametersData?.getApplicationParameters,
   //   { area: 'heartbeatInterval' },
   // )
-
-  const onReorderChapter = newChapterList => {
-    if (!canModify) {
-      showUnauthorizedActionModal(false)
-      return
-    }
-
-    if (
-      JSON.stringify(newChapterList) !==
-      JSON.stringify(bookQueryData?.getBook.divisions[1].bookComponents)
-    ) {
-      updateBookComponentsOrder({
-        variables: {
-          targetDivisionId: bookQueryData?.getBook.divisions[1].id,
-          bookComponents: newChapterList.map(chapter => chapter.id),
-        },
-      })
-    }
-  }
 
   const onChapterClick = chapterId => {
     const found = find(bookQueryData?.getBook?.divisions[1].bookComponents, {
@@ -1219,18 +1087,10 @@ const ProducerPage = ({ bookId }) => {
       getBookSettings={getBookSettings}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
-      onAddChapter={onAddChapter}
-      onBookComponentParentIdChange={onBookComponentParentIdChange}
-      onBookComponentTypeChange={onBookComponentTypeChange}
       onChapterClick={onChapterClick}
-      onDeleteChapter={onDeleteChapter}
       onImageUpload={handleImageUpload}
       onMention={handleMentions}
-      onPeriodicBookComponentContentChange={
-        onPeriodicBookComponentContentChange
-      }
-      onPeriodicTitleChange={onPeriodicTitleChange}
-      onReorderChapter={onReorderChapter}
+      onPeriodicTitleChange={onPeriodicTitleChange} // WE KEEP
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadBookCover={handleUploadBookCover}
       onUploadChapter={onUploadChapter}

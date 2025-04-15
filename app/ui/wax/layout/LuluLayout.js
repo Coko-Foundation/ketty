@@ -530,22 +530,15 @@ const getNotes = main => {
 const LuluLayout = ({ customProps, ...rest }) => {
   const {
     chapters,
-    onDeleteChapter,
     onChapterClick,
-    onReorderChapter,
-    onUploadChapter,
-    onBookComponentTypeChange,
-    onBookComponentParentIdChange,
+    onUploadChapter, // WE KEEP FOR DOC UPLOAD
     selectedChapterId,
     title,
     subtitle,
-    onAddChapter,
     onSubmitBookMetadata,
     bookMetadataValues,
     chaptersActionInProgress,
     canEdit,
-    metadataModalOpen,
-    setMetadataModalOpen,
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
@@ -759,37 +752,16 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 viewInformation={viewMetadata}
               />
               <DocTreeManager
-                deleteResource={deleteResource}
-                renameResource={renameResource}
                 addResource={addResource}
-                reorderResource={reorderResource}
-                getDocTreeData={getDocTreeData}
                 bodyDivisionId={bodyDivisionId}
                 bookId={bookId}
-                setSelectedChapterId={setSelectedChapterId}
+                deleteResource={deleteResource}
+                getDocTreeData={getDocTreeData}
+                renameResource={renameResource}
+                reorderResource={reorderResource}
                 setIsCurrentDocumentMine={setIsCurrentDocumentMine}
+                setSelectedChapterId={setSelectedChapterId}
               />
-              {/* <BookPanel
-                bookMetadataValues={bookMetadataValues}
-                canEdit={canEdit}
-                chapters={chapters}
-                chaptersActionInProgress={chaptersActionInProgress}
-                metadataModalOpen={metadataModalOpen}
-                onAddChapter={onAddChapter}
-                onBookComponentParentIdChange={onBookComponentParentIdChange}
-                onBookComponentTypeChange={onBookComponentTypeChange}
-                onChapterClick={handleChapterClick}
-                onDeleteChapter={onDeleteChapter}
-                onReorderChapter={onReorderChapter}
-                onSubmitBookMetadata={onSubmitBookMetadata}
-                onUploadChapter={onUploadChapter}
-                selectedChapterId={selectedChapterId}
-                setMetadataModalOpen={setMetadataModalOpen}
-                setViewMetadata={setViewMetadata}
-                subtitle={subtitle}
-                title={title}
-                viewMetadata={viewMetadata}
-              /> */}
             </LeftPanelWrapper>
           )}
           {viewMetadata !== '' ? (

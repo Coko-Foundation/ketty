@@ -100,15 +100,16 @@ const FilesWrapper = styled.div`
 
 const StyledMainButton = styled(Button)`
   background-color: transparent;
-  text-decoration: none;
   border: none;
-  outline: 0 !important;
-  width: fit-content;
-  padding: 0;
   margin-bottom: ${grid(4)};
+  outline: 0 !important;
+  padding: 0;
+  text-decoration: none;
+  width: fit-content;
 
   svg {
     fill: #a34ba1;
+
     &:active,
     &:focus,
     &:hover {

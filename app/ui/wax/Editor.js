@@ -12,23 +12,14 @@ const EditorWrapper = ({
   title,
   subtitle,
   chapters,
-  onPeriodicBookComponentContentChange,
-  onPeriodicTitleChange,
+  onPeriodicTitleChange, // WE KEEP
   isReadOnly,
   setIsCurrentDocumentMine,
   onImageUpload,
-  onBookComponentTypeChange,
-  onBookComponentParentIdChange,
-  onAddChapter,
   onChapterClick,
-  bookComponentContent,
-  metadataModalOpen,
-  setMetadataModalOpen,
-  onDeleteChapter,
   queryAI,
   aiEnabled,
   chaptersActionInProgress,
-  onReorderChapter,
   onUploadChapter,
   onSubmitBookMetadata,
   bookMetadataValues,
@@ -46,7 +37,6 @@ const EditorWrapper = ({
   kbOn,
   canInteractWithComments,
   comments: savedComments,
-  // addComments,
   editorKey,
   user,
   bookMembers,
@@ -66,12 +56,7 @@ const EditorWrapper = ({
   setSelectedChapterId,
 }) => {
   const [luluWax, setLuluWax] = useState({
-    onAddChapter,
     onChapterClick,
-    onDeleteChapter,
-    onReorderChapter,
-    onBookComponentTypeChange,
-    onBookComponentParentIdChange,
     chapters,
     selectedChapterId,
     onUploadChapter,
@@ -81,8 +66,6 @@ const EditorWrapper = ({
     subtitle,
     onSubmitBookMetadata,
     bookMetadataValues,
-    metadataModalOpen,
-    setMetadataModalOpen,
     editorLoading,
     savedComments,
     onUploadBookCover,
@@ -109,13 +92,6 @@ const EditorWrapper = ({
       : configWithAi
 
   const tags = customTags?.length > 0 ? JSON.parse(customTags) : []
-
-  useEffect(() => {
-    return () => {
-      onPeriodicBookComponentContentChange.cancel()
-      onPeriodicTitleChange.cancel()
-    }
-  }, [])
 
   const previousRefEditorConfig = useRef(configurableEditorConfig)
   const previousRefEditorTags = useRef(tags)
@@ -237,18 +213,11 @@ const EditorWrapper = ({
       chapters,
       selectedChapterId,
       chaptersActionInProgress,
-      onAddChapter,
       onChapterClick,
-      onDeleteChapter,
-      onReorderChapter,
       onUploadChapter,
       onSubmitBookMetadata,
       bookMetadataValues,
       canEdit,
-      metadataModalOpen,
-      setMetadataModalOpen,
-      onBookComponentTypeChange,
-      onBookComponentParentIdChange,
       editorLoading,
       savedComments,
       onUploadBookCover,
@@ -275,7 +244,6 @@ const EditorWrapper = ({
     bookMetadataValues,
     chaptersActionInProgress,
     canEdit,
-    metadataModalOpen,
     editorLoading,
     savedComments,
     viewMetadata,
