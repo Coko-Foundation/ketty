@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -6,7 +7,7 @@ import { useCurrentUser, th, grid } from '@coko/client'
 import UserInviteForm from './UserInviteForm'
 import UserList from './UserList'
 // import UserStatus from './UserStatus'
-import { Form, Box, Center } from '../../common'
+import { Button, Form, Box, Center } from '../../common'
 import {
   SEARCH_USERS,
   ADD_TEAM_MEMBERS,
@@ -29,7 +30,23 @@ const ScrollWrapper = styled.div`
   padding: ${grid(1)} ${grid(2)};
 `
 
-const UserInviteModal = ({ bookComponentId }) => {
+const StyledButton = styled(Button)`
+  box-shadow: none;
+  padding: 0 2%;
+`
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: ${grid(4)};
+  justify-content: right;
+  margin-top: 36px;
+`
+
+const UserInviteModal = ({
+  bookComponentId,
+  toggleInformation,
+  toggleName,
+}) => {
   const { data: bookTeamsData, loading: loadingBookTeamsData } = useQuery(
     GET_BOOK_TEAMS,
     {
@@ -223,6 +240,20 @@ const UserInviteModal = ({ bookComponentId }) => {
             onRemoveAccess={handleRemoveTeamMember}
           />
         </ScrollWrapper>
+        <ButtonsContainer>
+          <StyledButton
+            data-test="settings-save-btn"
+            htmlType="submit"
+            onClick={() => {
+              setTimeout(() => {
+                toggleInformation(toggleName)
+              }, 500)
+            }}
+            type="primary"
+          >
+            exit
+          </StyledButton>
+        </ButtonsContainer>
       </Center>
     </Box>
   )

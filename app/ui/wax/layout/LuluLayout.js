@@ -674,11 +674,19 @@ const LuluLayout = ({ customProps, ...rest }) => {
             bookId={bookId}
             bookSettings={settings}
             refetchBookSettings={getBookSettings}
+            toggleInformation={toggleMetadata}
+            toggleName="settings"
           />
         )
 
       case 'members':
-        return <UserInviteModal bookComponentId={bookComponentId} />
+        return (
+          <UserInviteModal
+            bookComponentId={bookComponentId}
+            toggleInformation={toggleMetadata}
+            toggleName="members"
+          />
+        )
 
       default:
         return null

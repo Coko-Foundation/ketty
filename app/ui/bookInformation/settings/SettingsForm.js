@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -122,6 +123,8 @@ const SettingsForm = ({
   bookSettings,
   refetchBookSettings,
   className,
+  toggleInformation,
+  toggleName,
 }) => {
   const { t } = useTranslation(null, {
     keyPrefix: 'pages.common.header.bookSettingsModal',
@@ -221,6 +224,10 @@ const SettingsForm = ({
         configurableEditorConfig: JSON.stringify(waxConfig),
       },
     })
+
+    setTimeout(() => {
+      toggleInformation(toggleName)
+    }, 500)
   }
 
   const saveWaxConfig = config => {
@@ -334,7 +341,7 @@ const SettingsForm = ({
   return (
     <Box className={className}>
       <Center style={{ 'margin-block-end': '5em' }}>
-        <h1>Book Settings</h1>
+        <h1>Editor Settings</h1>
         <Stack>
           <SettingsWrapper style={{ marginTop: '24px' }}>
             <div>
@@ -522,8 +529,8 @@ const SettingsForm = ({
                     onFinish={handleAddCustomTagInline}
                   >
                     <StyledFormItem
-                      name="inline"
                       label="Custom Tag Inline"
+                      name="inline"
                       rules={[
                         {
                           required: true,
@@ -598,7 +605,21 @@ const SettingsForm = ({
               onClick={handleUpdateBookSettings}
               type="primary"
             >
-              {t('save', { keyPrefix: 'pages.common.actions' })}
+              save and exit
+            </StyledButton>
+            <StyledButton
+              data-test="settings-save-btn"
+              disabled={!canChangeSettings}
+              htmlType="submit"
+              loading={updateLoading}
+              onClick={() => {
+                setTimeout(() => {
+                  toggleInformation(toggleName)
+                }, 500)
+              }}
+              type="primary"
+            >
+              exit without saving
             </StyledButton>
           </ButtonsContainer>
         </Stack>
