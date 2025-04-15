@@ -22,8 +22,6 @@ import { isAdmin } from './helpers/permissions'
 import Header from './ui/common/Header'
 
 import {
-  BookTitlePage,
-  DashboardPage,
   ImportPage,
   LoginPage,
   ProducerPage,
@@ -142,25 +140,27 @@ const SiteHeader = () => {
   const isExporterPage = currentPath.includes('/exporter')
   const isAiAssistantPage = currentPath.includes('/ai-pdf')
   const isKnowledgeBasePage = currentPath.includes('/knowledge-base')
+  const isAdminPage = currentPath.includes('/admin')
+  const isTemplatePage = currentPath.includes('/template-manager')
 
-  const bookTitle =
-    getBook?.getBook.title !== undefined
-      ? getBook?.getBook.title ||
-        t('untitledBook', { keyPrefix: 'pages.producer' })
-      : ''
+  // const bookTitle =
+  //   getBook?.getBook.title !== undefined
+  //     ? getBook?.getBook.title ||
+  //       t('untitledBook', { keyPrefix: 'pages.producer' })
+  //     : ''
 
   return (
     <Header
       bookId={getBookId()}
-      bookTitle={bookTitle}
+      bookTitle={documentTitle}
       brandLabel="Ketty"
       brandLogoURL="/ketida.png"
       canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
-      homeURL="/dashboard"
+      homeURL="/"
       languages={languages?.config.filter(l => l.enabled)}
       onLogout={logout}
       showBackToBook={
-        isExporterPage || isAiAssistantPage || isKnowledgeBasePage
+        isExporterPage || isAiAssistantPage || isKnowledgeBasePage || isAdminPage || isTemplatePage
       }
       userDisplayName={currentUser ? currentUser.displayName : ''}
     />
@@ -202,13 +202,13 @@ const routes = (
       <LayoutWrapper>
         <Wrapper>
           <Suspense fallback={<div>Loading...</div>}>
-            <SiteHeader />
+            <SiteHeader documentTitle={documentTitle}/>
             <StyledPage fadeInPages>
               <StyledMain id="main-content" tabIndex="-1">
                 <GlobalContextProvider>
                   <YjsProvider>
                     <Switch>
-                      <Redirect exact path="/" to="/create-book" />
+                      <Redirect exact path="/" to="/create-document" />
 
                       <Route component={SignupPage} exact path="/signup" />
                       <Route component={LoginPage} exact path="/login" />
@@ -240,28 +240,10 @@ const routes = (
                       />
                       <Route
                         exact
-                        path="/dashboard"
-                        render={() => (
-                          <Authenticated>
-                            <DashboardPage />
-                          </Authenticated>
-                        )}
-                      />
-                      <Route
-                        exact
-                        path="/create-book"
+                        path="/create-document"
                         render={() => (
                           <Authenticated>
                             <CreateBook />
-                          </Authenticated>
-                        )}
-                      />
-                      <Route
-                        exact
-                        path="/books/:bookId/rename"
-                        render={() => (
-                          <Authenticated>
-                            <BookTitlePage />
                           </Authenticated>
                         )}
                       />
@@ -274,15 +256,6 @@ const routes = (
                           </Authenticated>
                         )}
                       />
-                      {/* <Route
-                        exact
-                        path="/books/:bookId/producer"
-                        render={() => (
-                          <Authenticated>
-                            <ProducerPage />
-                          </Authenticated>
-                        )}
-                      /> */}
                       <Route
                         exact
                         path="/document/:bookComponentId"

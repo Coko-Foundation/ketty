@@ -121,23 +121,15 @@ const StyledButton = styled(Button)`
 `
 
 const InitBook = props => {
-  const { onCreateBook, onImportBook } = props
+  const { onCreateBook } = props
   const { t } = useTranslation(null, { keyPrefix: 'pages.newBook.sections' })
 
   const [loadingCreateBook, setLoadingCreateBook] = useState(false)
-  const [loadingImportBook, setLoadingImportBook] = useState(false)
 
   const handleCreateBook = () => {
     setLoadingCreateBook(true)
     onCreateBook().finally(() => {
       setLoadingCreateBook(false)
-    })
-  }
-
-  const handleImportBook = () => {
-    setLoadingImportBook(true)
-    onImportBook().finally(() => {
-      setLoadingImportBook(false)
     })
   }
 
@@ -152,31 +144,12 @@ const InitBook = props => {
                 <p>{t('write.description')}.</p>
                 <StyledButton
                   data-test="createBook-startWriting-button"
-                  disabled={loadingCreateBook || loadingImportBook}
+                  disabled={loadingCreateBook}
                   onClick={handleCreateBook}
                   size="large"
                   type="primary"
                 >
                   {t('write.action')}
-                </StyledButton>
-              </Stack>
-            }
-            hoverable
-            size="small"
-          />
-          <StyledCard
-            cover={
-              <Stack>
-                <h2>{t('upload.heading')}</h2>
-                <p>{t('upload.description')}.</p>
-                <StyledButton
-                  data-test="createBook-selectFiles-button"
-                  disabled={loadingCreateBook || loadingImportBook}
-                  onClick={handleImportBook}
-                  size="large"
-                  type="primary"
-                >
-                  {t('upload.action')}
                 </StyledButton>
               </Stack>
             }

@@ -404,7 +404,7 @@ const PreviewerPage = () => {
       p => p.area === 'integrations',
     ).config.lulu
 
-    return config[value]
+    return config && config[value]
   }
 
   const handleConnectToLulu = () => {
