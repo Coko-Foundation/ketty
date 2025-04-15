@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Tree } from 'antd'
 import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
@@ -13,6 +13,8 @@ import { useParams } from 'react-router-dom'
 import Button from '../common/Button'
 import RowRender from './RowRender'
 import ConfirmDelete from '../modals/ConfirmDelete'
+
+import DocumentContext from '../documentProvider/DocumentProvider'
 
 import { findParentNode, findChildNodeByBookComponentId } from './utils'
 
@@ -141,6 +143,7 @@ const DocTreeManager = ({
   setIsCurrentDocumentMine,
 }) => {
   const { bookComponentId } = useParams()
+  const { setTitle } = useContext(DocumentContext)
   let isFileManagerOpen = true
 
   if (localStorage.getItem('isFileManagerOpen') !== null) {
@@ -245,9 +248,13 @@ const DocTreeManager = ({
 
     setSharedDocTree([...sharedData])
 
-    if (findChildNodeByBookComponentId(allData, bookComponentId)) {
+    const myDocs = findChildNodeByBookComponentId(allData, bookComponentId)
+    const sharedDocs = findChildNodeByBookComponentId(sharedData, bookComponentId)
+    if (myDocs) {
+      setTitle(myDocs.title)
       setIsCurrentDocumentMine(true)
-    } else if (findChildNodeByBookComponentId(sharedData, bookComponentId)) {
+    } else if (sharedDocs) {
+      setTitle(sharedDocs.title)
       setIsCurrentDocumentMine(false)
     }
   }, [])

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import {
@@ -9,6 +9,9 @@ import {
   EditFilled,
   CloseCircleFilled,
 } from '@ant-design/icons'
+
+import DocumentContext from '../documentProvider/DocumentProvider'
+
 import Button from '../common/Button'
 
 const RowContainer = styled.div`
@@ -102,7 +105,7 @@ const RowRender = row => {
     setIsCurrentDocumentMine,
     myFiles,
   } = row
-
+  const { setTitle } = useContext(DocumentContext)
   const history = useHistory()
   const [updatedName, setUpdateName] = useState(title)
   const [isRename, setRename] = useState(false)
@@ -138,6 +141,8 @@ const RowRender = row => {
       if (!isFolder) {
         setSelectedChapterId(bookComponentId)
         setIsCurrentDocumentMine(myFiles)
+        setTitle(title)
+        console.log(title, 'change document')
         history.push(`/document/${bookComponentId}`, { replace: true })
         setActive()
       }
@@ -161,6 +166,7 @@ const RowRender = row => {
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                   renameResource({ variables: { id, title: updatedName } })
+                  setTitle(updatedName)
                   setRename(false)
                 }
               }}
@@ -170,10 +176,12 @@ const RowRender = row => {
               onMouseDown={e => {
                 e.preventDefault()
                 renameResource({ variables: { id, title: updatedName } })
+                setTitle(updatedName)
                 setRename(false)
               }}
               onClick={() => {
                 renameResource({ variables: { id, title: updatedName } })
+                setTitle(updatedName)
                 setRename(false)
               }}
             >

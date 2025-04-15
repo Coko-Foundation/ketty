@@ -1,6 +1,6 @@
 /* stylelint-disable no-descending-specificity */
 
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, Suspense, useContext } from 'react'
 import { useApolloClient, useQuery } from '@apollo/client'
 import { Route, Switch, useHistory, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
@@ -39,11 +39,14 @@ import {
   TemplateMananger,
 } from './pages'
 
-import { GET_BOOK, APPLICATION_PARAMETERS } from './graphql'
+import { APPLICATION_PARAMETERS } from './graphql'
 import { CssAssistantProvider } from './ui/AiPDFDesigner/hooks/CssAssistantContext'
 import { GlobalContextProvider } from './helpers/hooks/GlobalContext'
 
 import { YjsProvider } from './ui/provider-yjs/YjsProvider'
+import { DocumentProvider } from './ui/documentProvider/DocumentProvider'
+import DocumentContext from './ui/documentProvider/DocumentProvider'
+
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -97,12 +100,14 @@ const StyledPage = styled(Page)`
 `
 
 const SiteHeader = () => {
+  const { title } = useContext(DocumentContext)
   const { currentUser, setCurrentUser } = useCurrentUser()
   const client = useApolloClient()
   const history = useHistory()
-  const { t } = useTranslation(null, { keyPrefix: 'pages.common.header' })
   const [currentPath, setCurrentPath] = useState(history.location.pathname)
 
+
+  console.log(title, 'title document')
   useEffect(() => {
     const unlisten = history.listen(val => setCurrentPath(val.pathname))
 
@@ -120,15 +125,6 @@ const SiteHeader = () => {
     return currentPath.split('/')[2]
   }
 
-  const { data: getBook } = useQuery(GET_BOOK, {
-    fetchPolicy: 'network-only',
-    nextFetchPolicy: 'network-only',
-    variables: {
-      id: getBookId(),
-    },
-    skip: !getBookId(),
-  })
-
   const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
   })
@@ -143,16 +139,10 @@ const SiteHeader = () => {
   const isAdminPage = currentPath.includes('/admin')
   const isTemplatePage = currentPath.includes('/template-manager')
 
-  // const bookTitle =
-  //   getBook?.getBook.title !== undefined
-  //     ? getBook?.getBook.title ||
-  //       t('untitledBook', { keyPrefix: 'pages.producer' })
-  //     : ''
-
   return (
     <Header
       bookId={getBookId()}
-      bookTitle={documentTitle}
+      bookTitle={title}
       brandLabel="Ketty"
       brandLogoURL="/ketida.png"
       canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
@@ -202,11 +192,13 @@ const routes = (
       <LayoutWrapper>
         <Wrapper>
           <Suspense fallback={<div>Loading...</div>}>
-            <SiteHeader documentTitle={documentTitle}/>
+          <DocumentProvider>
+            <SiteHeader />
             <StyledPage fadeInPages>
               <StyledMain id="main-content" tabIndex="-1">
                 <GlobalContextProvider>
                   <YjsProvider>
+                   
                     <Switch>
                       <Redirect exact path="/" to="/create-document" />
 
@@ -301,10 +293,12 @@ const routes = (
                         </Authenticated>
                       </Route>
                     </Switch>
+                    
                   </YjsProvider>
                 </GlobalContextProvider>
               </StyledMain>
             </StyledPage>
+            </DocumentProvider>
           </Suspense>
         </Wrapper>
       </LayoutWrapper>

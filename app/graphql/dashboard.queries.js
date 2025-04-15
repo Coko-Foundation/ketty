@@ -43,16 +43,7 @@ export const ADD_RESOURCE = gql`
       title
       bookComponentId
       bookComponent {
-        teams {
-          id
-          members {
-            id
-            user {
-              id
-            }
-            status
-          }
-        }
+        id
       }
     }
   }
