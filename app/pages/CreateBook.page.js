@@ -21,23 +21,20 @@ const CreateBook = () => {
     },
   })
 
-  const createBookHandler = whereNext => {
+  const createBookHandler = () => {
     const variables = { input: { addUserToBookTeams: ['owner'] } }
 
     return createBook({ variables }).then(res => {
       const { data } = res
       const { createBook: createBookData } = data
-      const { book: { id, divisions } = {}, newUserTeam } = createBookData
+      const { newUserTeam } = createBookData
 
       setCurrentUser({
         ...currentUser,
         teams: [...currentUser.teams, newUserTeam],
       })
 
-      history.push({
-        pathname: `/books/${id}/${whereNext}`,
-        state: { createdChapterId: divisions[1]?.bookComponents[0]?.id },
-      })
+      history.push({ pathname: `/` })
     })
   }
 
@@ -45,28 +42,19 @@ const CreateBook = () => {
     return createBookHandler('rename')
   }
 
-  const onImportBook = () => {
-    return createBookHandler('import')
-  }
-
   if (loading) return null
 
   const root = JSON.parse(documents.getDocTree)
 
-  console.log(root)
-  if (root.length > 0) {
-    const firstDocument = findFirstDocument(root)
-    console.log(firstDocument)
-    if (firstDocument?.bookComponentId) {
-      history.push(`/document/${firstDocument?.bookComponentId}`, {
-        replace: true,
-      })
-      return true
-    }
+  const firstDocument = findFirstDocument(root)
+  if (firstDocument) {
+    history.push(`/document/${firstDocument?.bookComponentId}`, {
+      replace: true,
+    })
+    return true
   }
-  console.log('strart book')
 
-  return <InitBook onCreateBook={onCreateBook} onImportBook={onImportBook} />
+  return <InitBook onCreateBook={onCreateBook} />
 }
 
 export default CreateBook
