@@ -89,8 +89,8 @@ const optionKeys = [
 const contentOrder = [
   'includeCoverPage',
   'includeTitlePage',
-  'includeCopyrights',
-  'includeTOC',
+  // 'includeCopyrights',
+  // 'includeTOC',
 ]
 
 const getProfileSelectOptions = profile => pick(profile, selectKeys)
@@ -305,8 +305,8 @@ PreviewSettings.propTypes = {
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
         'includeTitlePage',
-        'includeCopyrights',
-        'includeTOC',
+        // 'includeCopyrights',
+        // 'includeTOC',
         'includeCoverPage',
       ]),
     ),
@@ -321,8 +321,8 @@ PreviewSettings.propTypes = {
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
         'includeTitlePage',
-        'includeCopyrights',
-        'includeTOC',
+        // 'includeCopyrights',
+        // 'includeTOC',
         'includeCoverPage',
       ]),
     ),
@@ -338,7 +338,7 @@ PreviewSettings.propTypes = {
     format: PropTypes.oneOf(['pdf', 'epub', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
-      PropTypes.oneOf(['includeTitlePage', 'includeCopyrights', 'includeTOC']),
+      PropTypes.oneOf(['includeTitlePage']),
     ),
     template: PropTypes.string,
     isbn: PropTypes.string,

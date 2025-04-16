@@ -113,15 +113,15 @@ const ExportOptionsSection = props => {
       value: 'includeTitlePage',
       label: t('frontMatter.options.titlePage'),
     },
-    {
-      value: 'includeCopyrights',
-      label: t('frontMatter.options.copyrightPage'),
-    },
-    {
-      value: 'includeTOC',
-      label: t('frontMatter.options.tableOfContents'),
-      disabled: isEpub,
-    },
+    // {
+    //   value: 'includeCopyrights',
+    //   label: t('frontMatter.options.copyrightPage'),
+    // },
+    // {
+    //   value: 'includeTOC',
+    //   label: t('frontMatter.options.tableOfContents'),
+    //   disabled: isEpub,
+    // },
   ]
 
   const isbnOptions = [
@@ -140,8 +140,8 @@ const ExportOptionsSection = props => {
   const isWeb = selectedFormat === 'web'
   const contentOptions = makeContentOptions(isPdf, isEpub, hasCover)
   const contentValue = selectedContent
-  if (isEpub && !contentValue.includes('includeTOC'))
-    contentValue.push('includeTOC')
+  // if (isEpub && !contentValue.includes('includeTOC'))
+  //   contentValue.push('includeTOC')
 
   const webDownloadOptions = webDownloadOptionsDefault.filter(
     option =>

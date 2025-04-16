@@ -142,8 +142,8 @@ Preview.propTypes = {
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
         'includeTitlePage',
-        'includeCopyrights',
-        'includeTOC',
+        // 'includeCopyrights',
+        // 'includeTOC',
         'includeCoverPage',
       ]),
     ),
@@ -157,8 +157,8 @@ Preview.propTypes = {
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
         'includeTitlePage',
-        'includeCopyrights',
-        'includeTOC',
+        // 'includeCopyrights',
+        // 'includeTOC',
         'includeCoverPage',
       ]),
     ),

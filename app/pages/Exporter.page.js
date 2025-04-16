@@ -15,6 +15,7 @@ import sortBy from 'lodash/sortBy'
 import { useCurrentUser } from '@coko/client'
 
 import {
+  GET_BOOKS,
   APPLICATION_PARAMETERS,
   BOOK_UPDATED_SUBSCRIPTION,
   CREATE_EXPORT_PROFILE,
@@ -55,7 +56,7 @@ export const defaultProfile = {
   value: 'new-export',
   format: 'pdf',
   size: '5.5x8.5',
-  content: ['includeTitlePage', 'includeCopyrights', 'includeTOC'],
+  content: ['includeTitlePage'],
   template: null,
   isbn: null,
 }
@@ -63,8 +64,6 @@ export const defaultProfile = {
 const contentOrder = [
   'includeCoverPage',
   'includeTitlePage',
-  'includeCopyrights',
-  'includeTOC',
 ]
 
 const sanitizeProfileData = input => {
@@ -116,11 +115,11 @@ const chooseZoom = screenWidth => {
 }
 // #endregion helpers
 
-const PreviewerPage = () => {
+const PreviewerPage = ({ bookId }) => {
   // #region init
   const params = useParams()
   const history = useHistory()
-  const { bookId } = params
+  const { bookComponentId } = params
   const { currentUser } = useCurrentUser()
   const [previewLink, setPreviewLink] = useState(null)
   const [creatingPreview, setCreatingPreview] = useState(true)
@@ -293,10 +292,6 @@ const PreviewerPage = () => {
                 .map(e => {
                   if (includedComponents[e]) {
                     switch (e) {
-                      case 'copyright':
-                        return 'includeCopyrights'
-                      case 'toc':
-                        return 'includeTOC'
                       case 'titlePage':
                         return 'includeTitlePage'
                       case 'cover':
@@ -557,6 +552,7 @@ const PreviewerPage = () => {
       variables: {
         input: {
           bookId,
+          bookComponentId,
           templateId: template,
           fileExtension: format,
           additionalExportOptions: {
@@ -586,6 +582,7 @@ const PreviewerPage = () => {
       variables: {
         input: {
           bookId,
+          bookComponentId,
           templateId: template,
           additionalExportOptions: {
             includePdf,
@@ -643,6 +640,7 @@ const PreviewerPage = () => {
 
     const previewData = {
       bookId,
+      bookComponentId,
       previewer: target,
       templateId: optionsToApply.template,
       additionalExportOptions: {
@@ -989,4 +987,25 @@ const PreviewerPage = () => {
   )
 }
 
-export default PreviewerPage
+export default props => {
+  const { loading, data: dataBooks } = useQuery(GET_BOOKS, {
+    fetchPolicy: 'network-only',
+    variables: {
+      options: {
+        archived: false,
+        orderBy: {
+          column: 'title',
+          order: 'asc',
+        },
+        page: 0,
+        pageSize: 10,
+      },
+    },
+  })
+
+  if (loading) return null
+
+  const [book] = dataBooks.getBooks.result
+
+  return <PreviewerPage {...props} bookId={book.id} />
+}

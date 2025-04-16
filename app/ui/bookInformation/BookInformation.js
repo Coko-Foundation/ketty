@@ -88,6 +88,7 @@ const BookInformation = props => {
     showAiAssistantLink,
     showKnowledgeBaseLink,
     bookId,
+    bookComponentId
   } = props
 
   return (
@@ -103,7 +104,7 @@ const BookInformation = props => {
       <Tooltip placement="bottom" title="Preview and Publish">
         <StyledLink
           aria-label="Preview and Publish"
-          to={`/books/${bookId}/exporter`}
+          to={`/document/${bookComponentId}/exporter`}
         >
           <PrinterOutlined />
         </StyledLink>

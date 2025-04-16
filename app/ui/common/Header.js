@@ -157,7 +157,6 @@ const Header = props => {
     backToBookURL,
     previewURL,
     dropdownItems,
-    bookId,
     languages,
     bookTitle,
     ...rest
@@ -256,7 +255,6 @@ const Header = props => {
 }
 
 Header.propTypes = {
-  bookId: PropTypes.string,
   brandLabel: PropTypes.string.isRequired,
   brandLogoURL: PropTypes.string,
   canAccessAdminPage: PropTypes.bool,
@@ -280,7 +278,6 @@ Header.propTypes = {
 }
 
 Header.defaultProps = {
-  bookId: undefined,
   brandLogoURL: null,
   canAccessAdminPage: false,
   dropdownItems: [],

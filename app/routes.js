@@ -119,10 +119,6 @@ const SiteHeader = () => {
     history.push('/login')
   }
 
-  const getBookId = () => {
-    return currentPath.split('/')[2]
-  }
-
   const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
   })
@@ -139,7 +135,6 @@ const SiteHeader = () => {
 
   return (
     <Header
-      bookId={getBookId()}
       bookTitle={title}
       brandLabel="wax-platform"
       brandLogoURL="/wax.png"
@@ -293,11 +288,47 @@ const routes = (
                             <TemplateMananger />
                           </Authenticated>
                         </Route>
-                      </Switch>
-                    </YjsProvider>
-                  </GlobalContextProvider>
-                </StyledMain>
-              </StyledPage>
+
+                      <Route exact path="/document/:bookComponentId/exporter">
+                        <Authenticated>
+                          <ExporterPage />
+                        </Authenticated>
+                      </Route>
+
+                      <Route exact path="/books/:bookId/ai-pdf">
+                        <Authenticated>
+                          <CssAssistantProvider>
+                            <AiPDFDesignerPage />
+                          </CssAssistantProvider>
+                        </Authenticated>
+                      </Route>
+
+                      <Route exact path="/books/:bookId/knowledge-base">
+                        <Authenticated>
+                          <KnowledgeBasePage />
+                        </Authenticated>
+                      </Route>
+
+                      <Route exact path="/provider-redirect/:provider">
+                        <ProviderConnectionPage closeOnSuccess />
+                      </Route>
+
+                      <Route exact path="/admin">
+                        <Authenticated>
+                          <AdminPage />
+                        </Authenticated>
+                      </Route>
+                      <Route exact path="/template-manager">
+                        <Authenticated>
+                          <TemplateMananger />
+                        </Authenticated>
+                      </Route>
+                    </Switch>
+                    
+                  </YjsProvider>
+                </GlobalContextProvider>
+              </StyledMain>
+            </StyledPage>
             </DocumentProvider>
           </Suspense>
         </Wrapper>

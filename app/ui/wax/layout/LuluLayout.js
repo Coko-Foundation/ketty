@@ -723,6 +723,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
             <MainMenuToolBar />
             <BookInformation
               bookId={bookId}
+              bookComponentId={bookComponentId}
               showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
               showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
               toggleInformation={toggleMetadata}
