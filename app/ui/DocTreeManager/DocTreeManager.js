@@ -1,3 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable react/no-unstable-nested-components */
+/* stylelint-disable no-descending-specificity */
+/* stylelint-disable declaration-no-important */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState, useContext } from 'react'
 import { Tree } from 'antd'
@@ -28,6 +32,7 @@ const DocTreeManagerWrapper = styled.div`
     0% {
       transform: translateX(0%);
     }
+
     100% {
       transform: translateX(-100%);
       visibility: hidden;
@@ -39,6 +44,7 @@ const DocTreeManagerWrapper = styled.div`
       transform: translateX(0%);
       visibility: visible;
     }
+
     100% {
       transform: translateX(0%);
     }
@@ -46,39 +52,41 @@ const DocTreeManagerWrapper = styled.div`
 `
 
 const ControlsWrappers = styled.div`
+  align-items: center;
   background: #f6edf6;
   display: flex;
-  align-items: center;
   flex-direction: column;
   height: 100%;
-  width: 10%;
   padding: ${grid(2)};
+  width: 10%;
   z-index: 1;
 `
 
 const FilesWrapper = styled.div`
+  animation: ${props =>
+    props.expand ? 'slideRight 2s forwards' : 'slideLeft 1s forwards'};
   background: white;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: auto;
   padding: 8px 8px 8px 0;
-  width: 90%;
-  animation: ${props =>
-    props.expand ? 'slideRight 2s forwards' : 'slideLeft 1s forwards'};
   visibility: ${props => (props.defaultState ? 'visible' : 'hidden')};
+  width: 90%;
+
   .ant-tree {
     background: white;
   }
 
   .ant-tree-treenode-disabled {
     color: black !important;
+
     span {
       color: black !important;
     }
   }
 
-  ant-tree-title::hover {
+  ant-tree-title:hover {
     background: #c8e4f0 !important;
   }
 
@@ -91,9 +99,10 @@ const FilesWrapper = styled.div`
   }
 
   .ant-tree-draggable-icon {
-    margin-top: 10px;
     cursor: grab;
+    margin-top: 10px;
     opacity: 1 !important;
+
     span svg {
       fill: #6db6d6;
     }
@@ -171,7 +180,7 @@ const DocTreeManager = ({
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]) // the drop position relative to the drop node, inside 0, top -1, bottom 1
 
     const loop = (data, key, callback) => {
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i += 1) {
         if (data[i].key === key) {
           return callback(data[i], i, data)
         }
@@ -180,6 +189,8 @@ const DocTreeManager = ({
           loop(data[i].children, key, callback)
         }
       }
+
+      return true
     }
 
     const data = [...gData]
@@ -239,8 +250,6 @@ const DocTreeManager = ({
       allData[0].title = 'My Folders and Files'
     }
 
-    console.log(bookComponentId, 'bookCompoentid')
-
     setGData([...allData])
 
     const sharedData = cloneDeep(data.getSharedDocTree)
@@ -249,7 +258,12 @@ const DocTreeManager = ({
     setSharedDocTree([...sharedData])
 
     const myDocs = findChildNodeByBookComponentId(allData, bookComponentId)
-    const sharedDocs = findChildNodeByBookComponentId(sharedData, bookComponentId)
+
+    const sharedDocs = findChildNodeByBookComponentId(
+      sharedData,
+      bookComponentId,
+    )
+
     if (myDocs) {
       setTitle(myDocs.title)
       setIsCurrentDocumentMine(true)
@@ -299,8 +313,8 @@ const DocTreeManager = ({
     setDeleteResourceRow(row)
   }
 
-  const parts = window.location.href.split('/')
-  const currentIdentifier = parts[parts.length - 1]
+  // const parts = window.location.href.split('/')
+  // const currentIdentifier = parts[parts.length - 1]
 
   // const getActiveDocForDeletion = findChildNodeByIdentifier(
   //   deleteResourceRow ? [deleteResourceRow] : [],
@@ -347,15 +361,8 @@ const DocTreeManager = ({
           <VerticalAlignBottomOutlined style={{ fontSize: '32px' }} />
         </StyledMainButtonExpand>
       </ControlsWrappers>
-      <FilesWrapper expand={expandFilesArea} defaultState={defaultState}>
+      <FilesWrapper defaultState={defaultState} expand={expandFilesArea}>
         <Tree
-          key="myDocs"
-          className="draggable-tree"
-          // defaultExpandedKeys={expandedKeys}
-          defaultExpandAll
-          draggable
-          blockNode
-          onDrop={onDrop}
           allowDrop={node => {
             if (
               (node.dropPosition <= 0 && node.dropNode.isRoot) ||
@@ -366,39 +373,46 @@ const DocTreeManager = ({
 
             return true
           }}
-          treeData={gData}
+          blockNode
+          className="draggable-tree"
+          defaultExpandAll
+          draggable
+          key="myDocs"
+          // defaultExpandedKeys={expandedKeys}
+          onDrop={onDrop}
           titleRender={rowProps => {
             return (
               <RowRender
                 {...rowProps}
-                myFiles={true}
-                confirmDelete={confirmDelete}
                 addResource={addResourceFn}
-                renameResource={renameResourceFn}
-                bookId={bookId}
                 bodyDivisionId={bodyDivisionId}
-                setSelectedChapterId={setSelectedChapterId}
+                bookId={bookId}
+                confirmDelete={confirmDelete}
+                myFiles
+                renameResource={renameResourceFn}
                 setIsCurrentDocumentMine={setIsCurrentDocumentMine}
+                setSelectedChapterId={setSelectedChapterId}
               />
             )
           }}
+          treeData={gData}
         />
 
         <SharedTree
-          key="sharedDocTree"
           blockNode
-          treeData={sharedDocTree}
+          key="sharedDocTree"
           titleRender={rowProps => {
             return (
               <RowRender
                 {...rowProps}
                 confirmDelete={confirmDelete}
-                setSelectedChapterId={setSelectedChapterId}
-                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
                 myFiles={false}
+                setIsCurrentDocumentMine={setIsCurrentDocumentMine}
+                setSelectedChapterId={setSelectedChapterId}
               />
             )
           }}
+          treeData={sharedDocTree}
         />
       </FilesWrapper>
       <ConfirmDelete

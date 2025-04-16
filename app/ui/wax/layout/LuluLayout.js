@@ -450,7 +450,7 @@ const LeftPanelWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding-inline: ${grid(3)};
+  padding-inline: ${grid(3)} ${grid(3)} ${grid(3)} 0;
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
