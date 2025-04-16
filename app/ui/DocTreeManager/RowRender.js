@@ -4,11 +4,11 @@ import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import {
-  FolderAddFilled,
-  FileAddFilled,
-  DeleteFilled,
-  EditFilled,
-  CloseCircleFilled,
+  FolderAddOutlined,
+  FileAddOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons'
 
 import DocumentContext from '../documentProvider/DocumentProvider'
@@ -44,12 +44,18 @@ const StyledFolderFileBtn = styled(Button)`
   padding: 0;
   margin-left: 10px;
 
+  &:active,
+  &:focus,
+  &:hover {
+    background: transparent !important;
+  }
+
   svg {
-    fill: #6db6d6;
+    fill: #4c4949;
     &:active,
     &:focus,
     &:hover {
-      fill: #49a4cc;
+      fill: #000;
     }
   }
 `
@@ -57,18 +63,18 @@ const StyledFolderFileBtn = styled(Button)`
 const StyledInput = styled.input`
   margin-right: 5px;
 
-  border: 2px solid #a34ba1;
-  background-color: #f6edf6;
+  border: 2px solid #4c4949;
+  background-color: #f4f2f2;
   :focus {
     outline: none;
   }
 `
 
 const StyledApplyButton = styled(Button)`
-  background-color: #a34ba1;
+  background-color: #4c4949;
   color: #fff;
   &:hover {
-    background-color: #a34ba1 !important;
+    background-color: #4c4949 !important;
     color: #fff !important;
   }
 `
@@ -82,7 +88,7 @@ const IconTitleContainer = styled.div`
     margin-bottom: 10px;
 
     svg {
-      fill: #a34ba1;
+      fill: #4c4949;
     }
   }
 `
@@ -192,7 +198,7 @@ const RowRender = row => {
           </>
         ) : (
           <IconTitleContainer>
-            {isFolder && <FolderAddFilled style={{ fontSize: '19px' }} />}
+            {isFolder && <FolderAddOutlined style={{ fontSize: '19px' }} />}
             <span>
               {!row.isRoot && title.length > 18
                 ? `${title.substring(0, 18)}...`
@@ -210,7 +216,7 @@ const RowRender = row => {
                   }
                   title="Add Folder"
                 >
-                  <FolderAddFilled style={{ fontSize: '19px' }} />
+                  <FolderAddOutlined style={{ fontSize: '19px' }} />
                 </StyledFolderFileBtn>
                 <StyledFolderFileBtn
                   onClick={() =>
@@ -225,7 +231,7 @@ const RowRender = row => {
                   }
                   title="Add File"
                 >
-                  <FileAddFilled style={{ fontSize: '19px' }} />
+                  <FileAddOutlined style={{ fontSize: '19px' }} />
                 </StyledFolderFileBtn>
               </>
             )}
@@ -238,7 +244,7 @@ const RowRender = row => {
                 }}
                 title="Delete"
               >
-                <DeleteFilled style={{ fontSize: '19px' }} />
+                <DeleteOutlined style={{ fontSize: '19px' }} />
               </StyledFolderFileBtn>
             )}
 
@@ -250,7 +256,7 @@ const RowRender = row => {
                 }}
                 title="Close"
               >
-                <CloseCircleFilled style={{ fontSize: '22px' }} />
+                <CloseCircleOutlined style={{ fontSize: '22px' }} />
               </StyledFolderFileBtn>
             ) : (
               renameResource && (
@@ -261,7 +267,7 @@ const RowRender = row => {
                   }}
                   title="Rename"
                 >
-                  <EditFilled style={{ fontSize: '22px' }} />
+                  <EditOutlined style={{ fontSize: '22px' }} />
                 </StyledFolderFileBtn>
               )
             )}

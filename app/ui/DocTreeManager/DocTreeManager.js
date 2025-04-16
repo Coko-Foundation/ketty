@@ -91,7 +91,7 @@ const FilesWrapper = styled.div`
   }
 
   span.ant-tree-node-selected {
-    background: #edf6fa !important;
+    background: #f4f2f2 !important;
   }
 
   .ant-tree-switcher {
@@ -104,7 +104,7 @@ const FilesWrapper = styled.div`
     opacity: 1 !important;
 
     span svg {
-      fill: #6db6d6;
+      fill: #4c4949;
     }
   }
 `

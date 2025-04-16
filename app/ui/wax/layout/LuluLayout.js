@@ -453,7 +453,7 @@ const LeftPanelWrapper = styled.div`
   padding-inline: ${grid(3)} ${grid(3)} ${grid(3)} 0;
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
-  width: 320px;
+  width: 340px;
   z-index: 1000; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
@@ -462,7 +462,7 @@ const LeftPanelWrapper = styled.div`
   }
 
   @media (min-width: 600px) {
-    flex: 0 0 320px;
+    flex: 0 0 340px;
     position: relative;
     width: unset;
   }
@@ -475,7 +475,7 @@ const LeftPanelWrapper = styled.div`
 
   @media (min-width: 1100px) {
     &:has([data-collapsed]) {
-      flex: 0 0 380px;
+      flex: 0 0 400px;
     }
   }
 `
