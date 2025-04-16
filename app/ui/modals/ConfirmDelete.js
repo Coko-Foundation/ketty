@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react/prop-types */
 import React from 'react'
 import styled from 'styled-components'
@@ -59,9 +60,9 @@ const ConfirmDelete = ({
 
   return (
     <>
-      {currentIdentifier !== deleteResourceRow?.identifier ? (
+      {currentIdentifier !== deleteResourceRow?.bookComponentId ? (
         <StyledModal
-          bodyStyle={{ fontSize: th('fontSizeBaseSmall') }}
+          // bodyStyle={{ fontSize: th('fontSizeBaseSmall') }}
           closable
           onOk={() => {
             deleteResourceFn({ variables: { id: deleteResourceRow.id } })

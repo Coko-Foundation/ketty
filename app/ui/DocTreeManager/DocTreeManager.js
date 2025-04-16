@@ -319,15 +319,13 @@ const DocTreeManager = ({
     setDeleteResourceRow(row)
   }
 
-  // const parts = window.location.href.split('/')
-  // const currentIdentifier = parts[parts.length - 1]
+  const parts = window.location.href.split('/')
+  const currentIdentifier = parts[parts.length - 1]
 
-  // const getActiveDocForDeletion = findChildNodeByIdentifier(
-  //   deleteResourceRow ? [deleteResourceRow] : [],
-  //   currentIdentifier,
-  // )
-
-  const getActiveDocForDeletion = 'ddd'
+  const getActiveDocForDeletion = findChildNodeByBookComponentId(
+    deleteResourceRow ? [deleteResourceRow] : [],
+    currentIdentifier,
+  )
 
   return (
     <DocTreeManagerWrapper>

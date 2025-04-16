@@ -1,11 +1,13 @@
 /* eslint-disable no-restricted-syntax */
 export const findFirstDocument = data => {
-  for (let node of data) {
+  for (const node of data) {
     if (!node.isFolder && node.bookComponentId) {
       return node
     }
+
     if (node.children) {
-      for (let child of node.children) {
+      // eslint-disable-next-line no-unreachable-loop
+      for (const child of node.children) {
         return findFirstDocument([child])
       }
     }
@@ -15,26 +17,29 @@ export const findFirstDocument = data => {
 }
 
 export const findParentNode = (data, childKey) => {
-  for (let node of data) {
+  for (const node of data) {
     if (node.children) {
-      for (let child of node.children) {
+      for (const child of node.children) {
         if (child.key === childKey) {
           return node
         }
       }
+
       const found = findParentNode(node.children, childKey)
+
       if (found) {
         return found
       }
     }
   }
+
   return null
 }
 
 export const findChildNodeByBookComponentId = (data, bookComponentId) => {
-  for (let node of data) {
+  for (const node of data) {
     if (node.children) {
-      for (let child of node.children) {
+      for (const child of node.children) {
         if (child.bookComponentId === bookComponentId) {
           return child
         }
