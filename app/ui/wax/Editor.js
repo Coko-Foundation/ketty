@@ -164,7 +164,7 @@ const EditorWrapper = ({
         provider: () => wsProvider,
         ydoc: () => ydoc,
         yjsType: 'prosemirror',
-        cursorBuilder: () => {
+        cursorBuilder: (user) => {
           if (user) {
             const cursor = document.createElement('span')
             cursor.classList.add('ProseMirror-yjs-cursor')

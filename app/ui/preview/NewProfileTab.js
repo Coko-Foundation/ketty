@@ -6,7 +6,7 @@ import Footer from './Footer'
 
 const allExportOptions = [
   { label: 'PDF', value: 'pdf' },
-  { label: 'EPUB', value: 'epub' },
+  // { label: 'EPUB', value: 'epub' },
   { label: 'Web', value: 'web' },
 ]
 

@@ -78,9 +78,7 @@ const YjsProvider = ({ children }) => {
       provider.awareness.setLocalStateField('user', {
         id: currentUser.id || uuid(),
         color,
-        displayName: currentUser
-          ? currentUser.username || currentUser.email
-          : 'Anonymous',
+        displayName: currentUser.displayName || 'Anonymous',
       })
     }
 

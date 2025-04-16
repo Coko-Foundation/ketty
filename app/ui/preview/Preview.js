@@ -137,7 +137,7 @@ Preview.propTypes = {
   connectToLulu: PropTypes.func.isRequired,
   createProfile: PropTypes.func.isRequired,
   currentOptions: PropTypes.shape({
-    format: PropTypes.oneOf(['pdf', 'epub', 'web']),
+    format: PropTypes.oneOf(['pdf', 'web']),
     size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
