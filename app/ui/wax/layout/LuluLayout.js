@@ -444,7 +444,7 @@ const EditorContainer = styled.div`
 `
 
 const LeftPanelWrapper = styled.div`
-  background-color: ${th('colorBackground')};
+  background-color: #e8e3e3;
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
   display: flex;
   flex-direction: column;

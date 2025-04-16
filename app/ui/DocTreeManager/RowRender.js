@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-param-reassign */
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -105,6 +106,7 @@ const RowRender = row => {
     setIsCurrentDocumentMine,
     myFiles,
   } = row
+
   const { setTitle } = useContext(DocumentContext)
   const history = useHistory()
   const [updatedName, setUpdateName] = useState(title)
@@ -142,7 +144,7 @@ const RowRender = row => {
         setSelectedChapterId(bookComponentId)
         setIsCurrentDocumentMine(myFiles)
         setTitle(title)
-        console.log(title, 'change document')
+
         history.push(`/document/${bookComponentId}`, { replace: true })
         setActive()
       }
@@ -151,8 +153,8 @@ const RowRender = row => {
 
   return (
     <RowContainer
-      id={identifier}
       className="rowContainer"
+      id={identifier}
       isActive={isActive}
       onClick={e => goToDocument(e)}
     >
@@ -160,9 +162,8 @@ const RowRender = row => {
         {isRename ? (
           <>
             <StyledInput
-              type="text"
               autoFocus
-              value={updatedName}
+              onChange={e => setUpdateName(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                   renameResource({ variables: { id, title: updatedName } })
@@ -170,16 +171,17 @@ const RowRender = row => {
                   setRename(false)
                 }
               }}
-              onChange={e => setUpdateName(e.target.value)}
+              type="text"
+              value={updatedName}
             />
             <StyledApplyButton
-              onMouseDown={e => {
-                e.preventDefault()
+              onClick={() => {
                 renameResource({ variables: { id, title: updatedName } })
                 setTitle(updatedName)
                 setRename(false)
               }}
-              onClick={() => {
+              onMouseDown={e => {
+                e.preventDefault()
                 renameResource({ variables: { id, title: updatedName } })
                 setTitle(updatedName)
                 setRename(false)

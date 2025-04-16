@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   display: flex !important;
   flex-shrink: 0;
   gap: 1ch;
-  left: 4%;
+  left: 6%;
   position: absolute;
   top: 6px;
   z-index: 999;

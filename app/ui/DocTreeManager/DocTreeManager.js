@@ -9,8 +9,8 @@ import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 import {
-  FolderAddFilled,
-  FileAddFilled,
+  FolderAddOutlined,
+  FileAddOutlined,
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons'
 import { useParams } from 'react-router-dom'
@@ -53,7 +53,7 @@ const DocTreeManagerWrapper = styled.div`
 
 const ControlsWrappers = styled.div`
   align-items: center;
-  background: #f6edf6;
+  background: #f4f2f2;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -118,13 +118,19 @@ const StyledMainButton = styled(Button)`
   text-decoration: none;
   width: fit-content;
 
+  &:active,
+  &:focus,
+  &:hover {
+    background: #f4f2f2 !important;
+  }
+
   svg {
-    fill: #a34ba1;
+    fill: #4c4949;
 
     &:active,
     &:focus,
     &:hover {
-      fill: #723571;
+      fill: #000;
     }
   }
 `
@@ -330,9 +336,9 @@ const DocTreeManager = ({
           onClick={() =>
             addResourceFn({ variables: { id: null, isFolder: true } })
           }
-          title="Add Folder"
+          title="Add Root Folder"
         >
-          <FolderAddFilled style={{ fontSize: '32px' }} />
+          <FolderAddOutlined style={{ fontSize: '24px' }} />
         </StyledMainButton>
         <StyledMainButton
           onClick={() =>
@@ -345,9 +351,9 @@ const DocTreeManager = ({
               },
             })
           }
-          title="Add File"
+          title="Add Root File"
         >
-          <FileAddFilled style={{ fontSize: '32px' }} />
+          <FileAddOutlined style={{ fontSize: '24px' }} />
         </StyledMainButton>
         <StyledMainButtonExpand
           expand={expandFilesArea.toString()}
@@ -358,7 +364,7 @@ const DocTreeManager = ({
           }}
           title="Show / Hide Filemanager"
         >
-          <VerticalAlignBottomOutlined style={{ fontSize: '32px' }} />
+          <VerticalAlignBottomOutlined style={{ fontSize: '24px' }} />
         </StyledMainButtonExpand>
       </ControlsWrappers>
       <FilesWrapper defaultState={defaultState} expand={expandFilesArea}>
