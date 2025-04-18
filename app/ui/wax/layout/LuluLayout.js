@@ -722,8 +722,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
             />
             <MainMenuToolBar />
             <BookInformation
-              bookId={bookId}
               bookComponentId={bookComponentId}
+              bookId={bookId}
               showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
               showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
               toggleInformation={toggleMetadata}
@@ -748,6 +748,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   bookId={bookId}
                   deleteResource={deleteResource}
                   getDocTreeData={getDocTreeData}
+                  onUploadChapter={onUploadChapter}
                   renameResource={renameResource}
                   reorderResource={reorderResource}
                   setIsCurrentDocumentMine={setIsCurrentDocumentMine}

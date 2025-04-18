@@ -1083,16 +1083,16 @@ const ProducerPage = ({ bookId }) => {
       onUploadBookCover={handleUploadBookCover}
       onUploadChapter={onUploadChapter}
       queryAI={queryAI}
+      renameResource={renameResource}
       selectedChapterId={selectedChapterId}
       settings={bookQueryData?.getBook.bookSettings}
       setViewMetadata={setViewMetadata}
       title={bookQueryData?.getBook.title}
       user={currentUser}
       viewMetadata={viewMetadata}
+      reorderResource={reorderResource}
       wsProvider={wsProvider}
       ydoc={ydoc}
-      renameResource={renameResource}
-      reorderResource={reorderResource}
       setSelectedChapterId={setSelectedChapterId}
       setIsCurrentDocumentMine={setIsCurrentDocumentMine}
     />

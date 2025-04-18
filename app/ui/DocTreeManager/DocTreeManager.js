@@ -9,6 +9,7 @@ import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 import {
+  CloudUploadOutlined,
   FolderAddOutlined,
   FileAddOutlined,
   VerticalAlignBottomOutlined,
@@ -53,7 +54,8 @@ const DocTreeManagerWrapper = styled.div`
 
 const ControlsWrappers = styled.div`
   align-items: center;
-  background: #f4f2f2;
+  background: #fff;
+  border-right: 1px dotted #000;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -121,7 +123,7 @@ const StyledMainButton = styled(Button)`
   &:active,
   &:focus,
   &:hover {
-    background: #f4f2f2 !important;
+    background: #fff !important;
   }
 
   svg {
@@ -156,6 +158,7 @@ const DocTreeManager = ({
   bookId,
   setSelectedChapterId,
   setIsCurrentDocumentMine,
+  onUploadChapter,
 }) => {
   const { bookComponentId } = useParams()
   const { setTitle } = useContext(DocumentContext)
@@ -352,6 +355,9 @@ const DocTreeManager = ({
           title="Add Root File"
         >
           <FileAddOutlined style={{ fontSize: '24px' }} />
+        </StyledMainButton>
+        <StyledMainButton onClick={onUploadChapter} title="Upload a Document">
+          <CloudUploadOutlined style={{ fontSize: '24px' }} />
         </StyledMainButton>
         <StyledMainButtonExpand
           expand={expandFilesArea.toString()}
