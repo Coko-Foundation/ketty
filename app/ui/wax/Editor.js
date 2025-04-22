@@ -52,6 +52,8 @@ const EditorWrapper = ({
   setViewMetadata,
   settings,
   getBookSettings,
+  updateBookSettings,
+  updateLoading,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -80,6 +82,8 @@ const EditorWrapper = ({
     getBookSettings,
     bookId,
     aiEnabled,
+    updateBookSettings,
+    updateLoading,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -181,6 +185,8 @@ const EditorWrapper = ({
       settings,
       bookId,
       aiEnabled,
+      updateBookSettings,
+      updateLoading,
     })
   }, [
     title,
@@ -198,6 +204,7 @@ const EditorWrapper = ({
     settings,
     bookId,
     aiEnabled,
+    updateLoading,
   ])
 
   const userObject = {

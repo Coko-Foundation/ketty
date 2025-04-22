@@ -9,6 +9,7 @@ import {
   ToTopOutlined,
   CaretUpFilled,
   CaretDownFilled,
+  VerticalAlignBottomOutlined,
 } from '@ant-design/icons'
 import {
   ApplicationContext,
@@ -300,7 +301,7 @@ const CommentsContainer = styled.div`
 const NotesAreaContainer = styled.div`
   background: #fff;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 100%;
   overflow-y: scroll;
   position: absolute;
@@ -312,6 +313,25 @@ const NotesAreaContainer = styled.div`
 
   @media (max-width: 600px) {
     padding-inline-start: ${grid(12)};
+  }
+
+  &:has(button[data-collapsed='true']) {
+    overflow-y: hidden;
+  }
+`
+
+const NotesTopBar = styled.div`
+  display: flex;
+  padding-block: ${grid(2)};
+
+  button {
+    border: none;
+    margin-inline: auto ${grid(2)};
+    transition: transform 0.1s ease;
+
+    &[data-collapsed='true'] {
+      transform: rotate(180deg);
+    }
   }
 `
 
@@ -560,6 +580,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
     getBookSettings,
     bookId,
     aiEnabled,
+    updateBookSettings,
+    updateLoading,
     savedComments,
   } = customProps
 
@@ -708,6 +730,33 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }
 
+  const [panelWidths, setPanelWidth] = useState([
+    { size: surfaceHeight, resize: 'stretch' },
+    { size: notesHeight, resize: 'resize' },
+  ])
+
+  const [notesCollapsed, setNotesCollapsed] = useState(false)
+
+  useEffect(() => {
+    if (notesCollapsed) {
+      setPanelWidth([
+        { size: surfaceHeight, resize: 'stretch' },
+        { size: '40px', resize: 'fixed' },
+      ])
+    } else {
+      notesHeight = (window.innerHeight / 5) * 2
+
+      setPanelWidth([
+        { size: surfaceHeight, resize: 'stretch' },
+        { size: notesHeight, resize: 'resize' },
+      ])
+    }
+  }, [notesCollapsed])
+
+  const collapseNotes = () => {
+    setNotesCollapsed(!notesCollapsed)
+  }
+
   const renderInformationBox = () => {
     switch (viewMetadata) {
       case 'metadata':
@@ -726,6 +775,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
             bookId={bookId}
             bookSettings={settings}
             refetchBookSettings={getBookSettings}
+            updateBookSettings={updateBookSettings}
+            updateLoading={updateLoading}
           />
         )
 
@@ -807,10 +858,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
               <PanelGroup
                 direction="column"
                 onResizeEnd={onResizeEnd}
-                panelWidths={[
-                  { size: surfaceHeight, resize: 'stretch' },
-                  { size: notesHeight, resize: 'resize' },
-                ]}
+                panelWidths={panelWidths}
               >
                 <WaxSurfaceScroll id="wax-surface-scroll">
                   <EditorContainer selectedChapterId={selectedChapterId}>
@@ -859,12 +907,21 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 </WaxSurfaceScroll>
                 {hasNotes && (
                   <NotesAreaContainer>
-                    <NotesContainer id="notes-container">
-                      <NotesArea view={main} />
-                    </NotesContainer>
-                    <CommentsContainerNotes>
-                      <RightArea area="notes" />
-                    </CommentsContainerNotes>
+                    <NotesTopBar>
+                      <Button
+                        data-collapsed={notesCollapsed}
+                        onClick={collapseNotes}
+                        icon={<VerticalAlignBottomOutlined />}
+                      />
+                    </NotesTopBar>
+                    <div style={{ display: 'flex', 'flex-direction': 'row' }}>
+                      <NotesContainer id="notes-container">
+                        <NotesArea view={main} />
+                      </NotesContainer>
+                      <CommentsContainerNotes>
+                        <RightArea area="notes" />
+                      </CommentsContainerNotes>
+                    </div>
                   </NotesAreaContainer>
                 )}
               </PanelGroup>
