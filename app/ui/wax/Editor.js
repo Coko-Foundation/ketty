@@ -9,6 +9,7 @@ import YjsService from './config/YjsService'
 const EditorWrapper = ({
   bookId,
   bodyDivisionId,
+  bookComponentContent,
   title,
   onPeriodicTitleChange, // WE KEEP
   isReadOnly,
@@ -158,9 +159,11 @@ const EditorWrapper = ({
   }, [aiOn])
 
   useEffect(() => {
+    console.log(bookComponentContent,'useEffect bookComponentContent')
     setSelectedWaxConfig({
       ...selectedWaxConfig,
       YjsService: {
+        content: bookComponentContent,
         provider: () => wsProvider,
         ydoc: () => ydoc,
         yjsType: 'prosemirror',

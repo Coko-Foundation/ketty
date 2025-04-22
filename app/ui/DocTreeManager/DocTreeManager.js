@@ -4,6 +4,7 @@
 /* stylelint-disable declaration-no-important */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState, useContext } from 'react'
+import { useSubscription } from '@apollo/client'
 import { Tree } from 'antd'
 import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
@@ -22,6 +23,8 @@ import ConfirmDelete from '../modals/ConfirmDelete'
 import DocumentContext from '../documentProvider/DocumentProvider'
 
 import { findParentNode, findChildNodeByBookComponentId } from './utils'
+
+import { YJS_CONTENT_UPDATED_SUBSCRIPTION } from '../../graphql'
 
 const DocTreeManagerWrapper = styled.div`
   display: flex;
@@ -180,6 +183,18 @@ const DocTreeManager = ({
 
   const [defaultState, setDefaultState] = useState(expandFilesArea)
 
+    useSubscription(YJS_CONTENT_UPDATED_SUBSCRIPTION, {
+    variables: { id: bookComponentId },
+    fetchPolicy: 'network-only',
+    onData: async () => {
+      const { data } = await getDocTreeData()
+      const allData = JSON.parse(data.getDocTree)
+      allData[0].disabled = true
+      allData[0].isRoot = true
+      allData[0].title = 'My Folders and Files'
+      setGData([...allData])
+    },
+  })
   // const [expandedKeys] = useState(['0-0', '0-0-0', '0-0-0-0'])
 
   const onDrop = async info => {

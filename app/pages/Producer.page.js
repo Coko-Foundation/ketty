@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 
 // import useWebSocket from 'react-use-websocket'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   useQuery,
   useLazyQuery,
@@ -108,6 +108,7 @@ const constructMetadataValues = (title, podMetadata, cover) => {
 
 // eslint-disable-next-line react/prop-types
 const ProducerPage = ({ bookId }) => {
+  const { bookComponentId } = useParams()
   // #region INITIALIZATION SECTION START
   const { createYjsProvider, wsProvider, ydoc } = useContext(YjsContext)
   const history = useHistory()
@@ -142,6 +143,9 @@ const ProducerPage = ({ bookId }) => {
   const [viewMetadata, setViewMetadata] = useState('')
   const [isCurrentDocumentMine, setIsCurrentDocumentMine] = useState(null)
   const [canModify, setCanModify] = useState(true)
+  const [currentBookComponentContent, setCurrentBookComponentContent] =
+    useState(null)
+
 
   // const token = localStorage.getItem('token')
 
@@ -211,6 +215,13 @@ const ProducerPage = ({ bookId }) => {
         }
       },
       onCompleted: data => {
+        if (data.getBookComponent.content && data.getBookComponent.yState === null ) {
+          console.log('has content with no State')
+          console.log(data.getBookComponent.yState)
+          setCurrentBookComponentContent(data.getBookComponent.content)
+        } else {
+          setCurrentBookComponentContent('')
+        }
         getComments({
           variables: {
             bookId,
@@ -356,6 +367,15 @@ const ProducerPage = ({ bookId }) => {
 
   // SUBSCRIPTIONS SECTION START
 
+  // useSubscription(YJS_CONTENT_UPDATED_SUBSCRIPTION, {
+  //   variables: { id: bookComponentId },
+  //   fetchPolicy: 'network-only',
+  //   onData: (id) => {
+  //     console.log(id)
+  //     console.log('updated content')
+  //   },
+  // })
+
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
@@ -381,6 +401,10 @@ const ProducerPage = ({ bookId }) => {
 
   useEffect(() => {
     if (isOwner(bookId, currentUser)) {
+      // if (selectedChapterId) {
+      //   setCurrentBookComponentContent(editorRef?.current?.getContent())
+      // }
+
       refetchBook({ id: bookId })
     }
   }, [bookQueryData?.getBook.bookSettings?.aiOn])
@@ -968,17 +992,20 @@ const ProducerPage = ({ bookId }) => {
 
   useEffect(() => {
     if (wsProvider) {
+      console.log('disconnect')
       wsProvider?.disconnect()
     }
 
     if (selectedChapterId) {
-      createYjsProvider({
-        currentUser,
-        identifier: selectedChapterId,
-        object: {
-          bookComponentId: selectedChapterId,
-        },
-      })
+      setTimeout(() => {    
+        createYjsProvider({
+          currentUser,
+          identifier: selectedChapterId,
+          object: {
+            bookComponentId: selectedChapterId,
+          },
+        })
+      }, 500)
     }
 
     return () => wsProvider?.disconnect()
@@ -1040,7 +1067,7 @@ const ProducerPage = ({ bookId }) => {
     .flat()
     .filter(member => !!member)
 
-  if (!wsProvider) return null
+  if (!wsProvider || currentBookComponentContent === null ) return null
 
   return (
     <Editor
@@ -1048,6 +1075,7 @@ const ProducerPage = ({ bookId }) => {
       addResource={addResource}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
+      bookComponentContent={currentBookComponentContent}
       bodyDivisionId={getBodyDivisionId()}
       bookId={bookId}
       bookMembers={members}

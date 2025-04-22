@@ -22,6 +22,7 @@ const GET_BOOK_COMPONENT = gql`
       title
       divisionId
       content
+      yState
       componentType
       trackChangesEnabled
       uploading
@@ -251,11 +252,17 @@ const SET_BOOK_COMPONENT_STATUS = gql`
   }
 `
 
-// const BOOK_COMPONENT_UPDATED_SUBSCRIPTION = gql`
-//   subscription BookComponentUpdated($id: ID!) {
-//     bookComponentUpdated(id: $id)
-//   }
-// `
+const BOOK_COMPONENT_UPDATED_SUBSCRIPTION = gql`
+  subscription BookComponentUpdated($id: ID!) {
+    bookComponentUpdated(id: $id)
+  }
+`
+
+const YJS_CONTENT_UPDATED_SUBSCRIPTION = gql`
+  subscription YjsContentUpdated($id: ID!) {
+    yjsContentUpdated(id: $id)
+  }
+`
 
 export {
   CREATE_BOOK_COMPONENT,
@@ -269,5 +276,6 @@ export {
   SET_BOOK_COMPONENT_STATUS,
   UPDATE_BOOK_COMPONENT_TYPE,
   UPDATE_BOOK_COMPONENT_PARENT_ID,
-  // BOOK_COMPONENT_UPDATED_SUBSCRIPTION,
+  BOOK_COMPONENT_UPDATED_SUBSCRIPTION,
+  YJS_CONTENT_UPDATED_SUBSCRIPTION,
 }

@@ -3,6 +3,7 @@ import { Service } from 'wax-prosemirror-core'
 import { yCursorPlugin, ySyncPlugin, yUndoPlugin } from 'y-prosemirror'
 import { WebsocketProvider } from 'y-websocket'
 import * as Y from 'yjs'
+import ySyncContentPlugin from './ySyncContentPlugin'
 
 class YjsService extends Service {
   name = 'YjsService'
@@ -14,6 +15,7 @@ class YjsService extends Service {
       provider: configProvider,
       ydoc: configYdoc,
       yjsType,
+      content,
     } = this.config
 
     let provider = configProvider ? configProvider() : null
@@ -40,6 +42,10 @@ class YjsService extends Service {
     })
 
     const type = ydoc.getXmlFragment(yjsType || 'prosemirror')
+
+    if (content !== '') {
+      this.app.PmPlugins.add('ySyncContentPlugin', ySyncContentPlugin(content))
+    }
 
     this.app.PmPlugins.add('ySyncPlugin', ySyncPlugin(type))
 
