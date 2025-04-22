@@ -30,6 +30,7 @@ import {
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  UPDATE_SETTINGS,
   GET_BOOK_COMPONENT,
   USE_CHATGPT,
   APPLICATION_PARAMETERS,
@@ -352,6 +353,8 @@ const ProducerPage = () => {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
     onData: async () => {
+      getBookSettings({ id: bookId })
+
       if (selectedChapterId) {
         await refetchBookComponent()
       }
@@ -509,6 +512,13 @@ const ProducerPage = () => {
   const [notifyMentions] = useMutation(NOTIFY_MENTIONS)
 
   const [uploadBookCover] = useMutation(UPLOAD_BOOK_COVER)
+
+  const [updateBookSettings, { loading: updateSettingsLoading }] = useMutation(
+    UPDATE_SETTINGS,
+    {
+      onCompleted: () => {},
+    },
+  )
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
@@ -1203,6 +1213,8 @@ const ProducerPage = () => {
       setViewMetadata={setViewMetadata}
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
+      updateBookSettings={updateBookSettings}
+      updateLoading={updateSettingsLoading}
       user={currentUser}
       viewMetadata={viewMetadata}
     />

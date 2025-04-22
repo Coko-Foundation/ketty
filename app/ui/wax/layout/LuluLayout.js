@@ -580,6 +580,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
     getBookSettings,
     bookId,
     aiEnabled,
+    updateBookSettings,
+    updateLoading,
     savedComments,
   } = customProps
 
@@ -773,6 +775,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
             bookId={bookId}
             bookSettings={settings}
             refetchBookSettings={getBookSettings}
+            updateBookSettings={updateBookSettings}
+            updateLoading={updateLoading}
           />
         )
 

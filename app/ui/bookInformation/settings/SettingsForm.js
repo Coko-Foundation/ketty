@@ -2,15 +2,10 @@ import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Switch, Form } from 'antd'
-import { useMutation, useSubscription } from '@apollo/client'
 import { useCurrentUser, grid } from '@coko/client'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 
-import {
-  BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
-  UPDATE_SETTINGS,
-} from '../../../graphql'
 import { isAdmin, isOwner } from '../../../helpers/permissions'
 import { Button, Center, Input, Stack, Box } from '../../common'
 import ConfigurableEditorSettings from './ConfigurableEditorSettings'
@@ -22,7 +17,7 @@ const Indented = styled.div`
 
 const SettingsWrapper = styled.div`
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: space-between;
 `
 
@@ -120,7 +115,8 @@ const SettingsForm = ({
   aiEnabled,
   bookId,
   bookSettings,
-  refetchBookSettings,
+  updateBookSettings,
+  updateLoading,
   className,
 }) => {
   const { t } = useTranslation(null, {
@@ -171,35 +167,23 @@ const SettingsForm = ({
   const blockInput = useRef(null)
   const inlineInput = useRef(null)
 
-  // MUTATIONS SECTION START
-  const [updateBookSettings, { loading: updateLoading }] = useMutation(
-    UPDATE_SETTINGS,
-    {
-      onCompleted: () => {},
-    },
-  )
-
-  useSubscription(BOOK_SETTINGS_UPDATED_SUBSCRIPTION, {
-    variables: { id: bookId },
-    fetchPolicy: 'network-only',
-    onData: () => refetchBookSettings({ id: bookId }),
-  })
-
   const handleUpdateBookSettings = () => {
     // Both Free text and Custom prompts cannot be off
     // This check will throw a validation error to nudge user to add a prompt
-    const inputPrompt = form.getFieldValue('prompt')
+    if (isCustomPromptsOn) {
+      const inputPrompt = form.getFieldValue('prompt')
 
-    const isPromptAdded = prompts.includes(inputPrompt?.trim())
+      const isPromptAdded = prompts.includes(inputPrompt?.trim())
 
-    if (inputPrompt?.trim() && !isPromptAdded) {
-      form.setFields([
-        {
-          name: 'prompt',
-          errors: [t('add_prompt_missing')],
-        },
-      ])
-      return
+      if (inputPrompt?.trim() && !isPromptAdded) {
+        form.setFields([
+          {
+            name: 'prompt',
+            errors: [t('add_prompt_missing')],
+          },
+        ])
+        return
+      }
     }
 
     if (isAiOn && !isFreeTextPromptsOn && !prompts.length) {
@@ -229,6 +213,10 @@ const SettingsForm = ({
 
   const toggleAiOn = toggle => {
     setIsAiOn(toggle)
+
+    if (toggle && !isCustomPromptsOn && !isFreeTextPromptsOn) {
+      setIsFreeTextPromptsOn(true)
+    }
 
     if (isKnowledgeBaseOn && !toggle) {
       setIsKnowledgeBaseOn(false)
@@ -522,8 +510,8 @@ const SettingsForm = ({
                     onFinish={handleAddCustomTagInline}
                   >
                     <StyledFormItem
-                      name="inline"
                       label="Custom Tag Inline"
+                      name="inline"
                       rules={[
                         {
                           required: true,
@@ -621,7 +609,8 @@ SettingsForm.propTypes = {
     configurableEditorConfig: PropTypes.arrayOf(PropTypes.string),
     customTags: PropTypes.arrayOf(PropTypes.string),
   }),
-  refetchBookSettings: PropTypes.func.isRequired,
+  updateBookSettings: PropTypes.func,
+  updateLoading: PropTypes.bool,
 }
 
 SettingsForm.defaultProps = {
@@ -633,5 +622,7 @@ SettingsForm.defaultProps = {
     customPromptsOn: false,
     knowledgeBaseOn: false,
   },
+  updateBookSettings: null,
+  updateLoading: false,
 }
 export default SettingsForm
