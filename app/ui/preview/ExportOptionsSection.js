@@ -15,14 +15,14 @@ const exportFormatOptions = [
     value: 'pdf',
     label: 'PDF',
   },
-  {
-    value: 'epub',
-    label: 'EPUB',
-  },
-  {
-    value: 'web',
-    label: 'Web',
-  },
+  // {
+  //   value: 'epub',
+  //   label: 'EPUB',
+  // },
+  // {
+  //   value: 'web',
+  //   label: 'Web',
+  // },
 ]
 
 const exportSizeOptions = [

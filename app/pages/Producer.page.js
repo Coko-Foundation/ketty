@@ -300,6 +300,8 @@ const ProducerPage = ({ bookId }) => {
 
       window.history.replaceState('', document.title, window.location.pathname)
     }
+    
+    return () => wsProvider?.disconnect()
   }, [])
 
   useEffect(() => {
