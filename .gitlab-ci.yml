@@ -10,7 +10,7 @@ variables:
   IMAGE_NAME_PRODUCTION_DEVELOP: ketty-client-deploy-develop
   IMAGE_NAME_PRODUCTION_DEMO: ketty-client
   IMAGE_NAME_STORYBOOK: ketty-client-storybook
-  PATH_TO_BUILD: .
+  PATH_TO_BUILD: ./packages/client
   PATH_INSIDE_CONTAINER: /home/node/ketida
   COMPOSE_FILE_STORYBOOK: docker-compose.storybook-deploy.yml
   COMPOSE_FILE_DEPLOY_DEVELOP: docker-compose.develop-deploy.yml
