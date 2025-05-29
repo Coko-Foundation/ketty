@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import React from 'react'
 import { faker } from '@faker-js/faker'
-import { UserList } from '../../app/ui/invite'
+import { UserList } from '../../app/ui/bookInformation/invite'
 import { createData, randomPick } from '../_helpers'
 
 const usersCount = 10

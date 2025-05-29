@@ -4,7 +4,7 @@ include:
     file: 'ci-templates.yml'
 
 variables:
-  IMAGE_NAME_DEVELOPMENT: ketty-client-ci-development
+  IMAGE_NAME_DEVELOPMENT: coko-org/products/ketty/ketty/root-development
   IMAGE_NAME_PREPRODUCTION_DEVELOP: ketty-client-ci-production-develop
   IMAGE_NAME_PREPRODUCTION_DEMO: ketty-client-ci-production-demo
   IMAGE_NAME_PRODUCTION_DEVELOP: ketty-client-deploy-develop
@@ -61,19 +61,26 @@ pages:
 ## LINT & UNIT TEST
 
 build development:
-  extends: .build development
   stage: Build development
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    BUILD_PATH: $PATH_TO_BUILD
+  interruptible: true
+  image: docker:27
+  services:
+    - docker:27-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build
+      --tag $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
+      -f Dockerfile .
+    - docker push $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
 
 lint:
-  extends: .lint
   stage: Lint & Unit test
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    WORKDIR: $PATH_INSIDE_CONTAINER
-    STYLELINT: 1
+  interruptible: true
+  image: $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
+  script:
+    - cd /home/node/app
+    - yarn coko-lint run
 
 .unit test:
   extends: .client unit test

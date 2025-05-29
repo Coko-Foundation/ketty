@@ -1,0 +1,19 @@
+FROM cokoapps/base-dev:20
+
+WORKDIR /home/node/app
+
+COPY .yarnrc.yml .
+COPY package.json .
+COPY yarn.lock .
+
+RUN chown -R node:node .
+USER node
+
+RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
+
+COPY --chown=node:node app app
+COPY --chown=node:node static static
+
+# COPY --chown=node:node .eslintrc.js .eslintrc.js
+# COPY --chown=node:node .stylelintrc.js .stylelintrc.js
+# COPY --chown=node:node .prettierrc.js .prettierrc.js

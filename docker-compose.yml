@@ -2,9 +2,8 @@ version: '3'
 
 services:
   client:
-    restart: unless-stopped
     build:
-      context: ./
+      context: ./packages/client
       dockerfile: Dockerfile-development
     command: ['node_modules/.bin/coko-client-dev']
     ports:
@@ -23,7 +22,7 @@ services:
       - CLIENT_WS_TIMEOUT=30000
       - CLIENT_FAVICON_PATH=${CLIENT_FAVICON_PATH:-../static/ketida.ico}
     volumes:
-      - ./app:/home/node/ketida/app
+      - ./packages/client/app:/home/node/app/app
     tty: true
 
   server:
@@ -111,14 +110,14 @@ services:
       # FOR THE CASE OF GCP
       # - S3_SEPARATE_DELETE_OPERATIONS=true
       # - S3_FORCE_PATH_STYLE=false
-      - SERVICE_EPUB_CHECKER_CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - SERVICE_EPUB_CHECKER_SECRET=asldkjLKJLaslkdf897kjhKUJH
+      - SERVICE_EPUB_CHECKER_CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - SERVICE_EPUB_CHECKER_SECRET=service_secret
       - SERVICE_EPUB_CHECKER_URL=${SERVICE_EPUB_CHECKER_URL:-http://epubchecker:3001}
-      - SERVICE_PAGEDJS_CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - SERVICE_PAGEDJS_SECRET=asldkjLKJLaslkdf897kjhKUJH
+      - SERVICE_PAGEDJS_CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - SERVICE_PAGEDJS_SECRET=service_secret
       - SERVICE_PAGEDJS_URL=${SERVICE_PAGEDJS_URL:-http://pagedjs:3003}
-      - SERVICE_XSWEET_CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - SERVICE_XSWEET_SECRET=asldkjLKJLaslkdf897kjhKUJH
+      - SERVICE_XSWEET_CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - SERVICE_XSWEET_SECRET=service_secret
       - SERVICE_XSWEET_URL=${SERVICE_XSWEET_URL:-http://xsweet:3004}
       - FEATURE_UPLOAD_DOCX_FILES=true
       - FEATURE_BOOK_STRUCTURE=false
@@ -129,131 +128,94 @@ services:
       - TEMP_DIRECTORY_CRON_JOB_OFFSET=${TEMP_DIRECTORY_CRON_JOB_OFFSET:-1800000}
       - TEMP_DIRECTORY_CLEAN_UP=${TEMP_DIRECTORY_CLEAN_UP:-true}
     volumes:
-      - ./config/development.js:/home/node/server/config/development.js
+      - ./packages/server/config/development.js:/home/node/server/config/development.js
       # - ./config/local.js:/home/node/server/config/local.js
-
-  epubchecker:
-    depends_on:
-      - db-epubchecker
-    image: cokoapps/epubchecker:latest
-    ports:
-      - ${SERVICE_EPUB_CHECKER_PORT:-3001}:${SERVICE_EPUB_CHECKER_PORT:-3001}
-    environment:
-      - PUBSWEET_SECRET=epubchecker_dev_secret
-      - POSTGRES_USER=epubchecker_user_dev
-      - POSTGRES_PASSWORD=epubchecker_user_password
-      - POSTGRES_HOST=db-epubchecker
-      - POSTGRES_DB=epubchecker_dev
-      - POSTGRES_PORT=5432
-      - SERVER_PORT=${SERVICE_EPUB_CHECKER_PORT:-3001}
-      - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
-    entrypoint:
-      [
-        'sh',
-        'scripts/wait-for-it',
-        'db-epubchecker:5432',
-        '--',
-        'sh',
-        'scripts/setupProdServer.sh',
-      ]
-    command: ['node', 'server/startServer.js']
 
   pagedjs:
     depends_on:
       - db-pagedjs
-    image: cokoapps/pagedjs:latest
+    image: cokoapps/pagedjs:2.0.6
     ports:
       - ${SERVICE_PAGEDJS_PORT:-3003}:${SERVICE_PAGEDJS_PORT:-3003}
     environment:
       - SECRET=pagedjs_dev_secret
+      - SERVER_PORT=${SERVICE_PAGEDJS_PORT:-3003}
+      - SERVER_URL=http://localhost:${SERVICE_PAGEDJS_PORT:-3003}
+      - POSTGRES_HOST=db-pagedjs
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=pagedjs_dev
       - POSTGRES_USER=pagedjs_user_dev
       - POSTGRES_PASSWORD=pagedjs_user_password
-      - POSTGRES_HOST=db-pagedjs
-      - POSTGRES_DB=pagedjs_dev
-      - POSTGRES_PORT=5432
-      - SERVER_PORT=${SERVICE_PAGEDJS_PORT:-3003}
-      - SERVER_URL=${PAGEDJS_PUBLIC_URL:-http://localhost:3003}
-      - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
+      - CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - CLIENT_SECRET=service_secret
     security_opt:
       - seccomp:unconfined
-    entrypoint:
-      [
-        'dumb-init',
-        '--',
-        'sh',
-        'scripts/wait-for-it',
-        'db-pagedjs:5432',
-        '--',
-        'sh',
-        'scripts/setupProdServer.sh',
-      ]
+
+  db-pagedjs:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=pagedjs_dev
+      - POSTGRES_USER=pagedjs_user_dev
+      - POSTGRES_PASSWORD=pagedjs_user_password
 
   xsweet:
     depends_on:
       - db-xsweet
-    image: cokoapps/xsweet:2.3.3
+    image: cokoapps/xsweet:3.0.2
     ports:
       - ${SERVICE_XSWEET_PORT:-3004}:${SERVICE_XSWEET_PORT:-3004}
     environment:
-      - PUBSWEET_SECRET=xsweet_dev_secret
+      - SECRET=xsweet_dev_secret
+      - SERVER_PORT=${SERVICE_XSWEET_PORT:-3004}
+      - POSTGRES_HOST=db-xsweet
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=xsweet_dev
       - POSTGRES_USER=xsweet_user_dev
       - POSTGRES_PASSWORD=xsweet_user_password
-      - POSTGRES_HOST=db-xsweet
+      - CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - CLIENT_SECRET=service_secret
+
+  db-xsweet:
+    image: postgres:17-alpine
+    environment:
       - POSTGRES_DB=xsweet_dev
+      - POSTGRES_USER=xsweet_user_dev
+      - POSTGRES_PASSWORD=xsweet_user_password
+
+  epubchecker:
+    depends_on:
+      - db-epubchecker
+    image: cokoapps/epubchecker:2.0.3
+    ports:
+      - ${SERVICE_EPUB_CHECKER_PORT:-3001}:${SERVICE_EPUB_CHECKER_PORT:-3001}
+    environment:
+      - SECRET=epubchecker_dev_secret
+      - SERVER_PORT=${SERVICE_EPUB_CHECKER_PORT:-3001}
+      - POSTGRES_HOST=db-epubchecker
       - POSTGRES_PORT=5432
-      - SERVER_PORT=${SERVICE_XSWEET_PORT:-3004}
-      - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
-      - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
-    entrypoint:
-      [
-        'sh',
-        'scripts/wait-for-it',
-        'db-xsweet:5432',
-        '--',
-        'sh',
-        'scripts/setupProdServer.sh',
-      ]
-    command: ['node', 'server/startServer.js']
+      - POSTGRES_DB=epubchecker_dev
+      - POSTGRES_USER=epubchecker_user_dev
+      - POSTGRES_PASSWORD=epubchecker_user_password
+      - CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
+      - CLIENT_SECRET=service_secret
+
+  db-epubchecker:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=epubchecker_dev
+      - POSTGRES_USER=epubchecker_user_dev
+      - POSTGRES_PASSWORD=epubchecker_user_password
 
   db:
     build:
       context: .
       dockerfile: Dockerfile-pgvector
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT:-5432}:5432
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-ketida_dev}
       - POSTGRES_USER=${POSTGRES_USER:-dev_user}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dev_user_password}
-    volumes:
-      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
-
-  db-epubchecker:
-    image: postgres:14.4-alpine
-    environment:
-      - POSTGRES_USER=epubchecker_user_dev
-      - POSTGRES_DB=epubchecker_dev
-      - POSTGRES_PASSWORD=epubchecker_user_password
-    volumes:
-      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
-
-  db-pagedjs:
-    image: postgres:14.4-alpine
-    environment:
-      - POSTGRES_USER=pagedjs_user_dev
-      - POSTGRES_DB=pagedjs_dev
-      - POSTGRES_PASSWORD=pagedjs_user_password
-    volumes:
-      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
-
-  db-xsweet:
-    image: postgres:14.4-alpine
-    environment:
-      - POSTGRES_USER=xsweet_user_dev
-      - POSTGRES_DB=xsweet_dev
-      - POSTGRES_PASSWORD=xsweet_user_password
     volumes:
       - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
 
@@ -275,5 +237,6 @@ services:
       - s3
     entrypoint: >
       /bin/sh -c " /usr/bin/mc config host add ketida ${S3_PROTOCOL:-http}://${S3_HOST:-s3}:${S3_PORT:-9000} ${S3_ACCESS_KEY_ID_ADMIN:-admin} ${S3_SECRET_ACCESS_KEY_ADMIN:-superSecretAdminPassword}; /usr/bin/mc admin user add ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida} ${S3_SECRET_ACCESS_KEY_USER:-superSecretUserPassword}; /usr/bin/mc admin user enable ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida}; /usr/bin/mc mb ketida/${S3_BUCKET:-uploads}; /usr/bin/mc admin policy attach ketida readwrite --user ${S3_ACCESS_KEY_ID_USER:-ketida}; exit 0; "
+
 volumes:
   minio_storage:

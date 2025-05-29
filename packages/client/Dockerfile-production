@@ -1,15 +1,14 @@
-FROM node:18.19.0-alpine3.19
+FROM node:20-alpine3.19
 
 RUN apk add --no-cache git make g++
 
 WORKDIR /home/node/ketida
 
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
 
-
-RUN yarn cache clean
-RUN yarn install --frozen-lockfile --production=true
+RUN yarn workspaces focus --production && yarn cache clean && rm -rf ~/.npm
 
 COPY app app
 COPY static static
@@ -28,7 +27,7 @@ RUN yarn coko-client-build
 
 ############################################################################
 
-FROM node:18.19.0-alpine3.19
+FROM node:20-alpine3.19
 
 RUN npm install --global serve
 

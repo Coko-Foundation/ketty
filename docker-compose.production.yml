@@ -3,7 +3,7 @@ version: '3'
 services:
   client:
     build:
-      context: ./
+      context: ./packages/client
       dockerfile: Dockerfile-production
     entrypoint: ['sh', './env.sh']
     command: ['nginx', '-g', 'daemon off;']

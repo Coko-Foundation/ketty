@@ -211,10 +211,10 @@ const Header = props => {
             <PopupContentWrapper>
               <LanguageSwitcher languages={languages} />
               <UnstyledLink
-                to={homeURL}
                 onClick={() => {
                   document.querySelector('#main-content').focus()
                 }}
+                to={homeURL}
               >
                 Dashboard
               </UnstyledLink>
