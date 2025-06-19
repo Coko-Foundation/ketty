@@ -2,14 +2,23 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { CaretRightFilled } from '@ant-design/icons'
+import { grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Form, Collapse, Radio } from '../../common'
-import CopyrightLicenseOption from './CopyrightLicenseOption'
 import CopyrightInputs from './CopyrightInputs'
 import LicenseTypes from './LicenseTypes'
 
 const StyledParagraph = styled.p`
   margin-top: 0;
+`
+
+const PanelHeaderWrapper = styled.div`
+  align-items: center;
+  display: flex;
+
+  .ant-radio {
+    margin-inline-end: ${grid(2)};
+  }
 `
 
 const ExpandIcon = ({ isActive }) => {
@@ -29,64 +38,72 @@ const CopyrightLicenseInput = props => {
   })
 
   const handleChange = v => {
-    onChange(v)
-    setActiveKey(v)
+    if (canChangeMetadata && v[0]) {
+      onChange(v[0])
+      setActiveKey(v[0])
+    }
   }
 
-  return (
-    <Collapse
-      accordion
-      activeKey={activeKey}
-      destroyInactivePanel
-      expandIcon={ExpandIcon}
-      expandIconPosition="end"
-    >
-      <CopyrightLicenseOption
-        canChangeMetadata={canChangeMetadata}
-        description={t('options.allRightsReserved.detail')}
-        key="SCL"
-        name="SCL"
-        onChange={handleChange}
-        selected={value === 'SCL'}
-        title={t('options.allRightsReserved')}
-      >
+  const items = [
+    {
+      key: 'SCL',
+      label: (
+        <PanelHeaderWrapper>
+          <Radio checked={value === 'SCL'} disabled={!canChangeMetadata}>
+            <strong>{t('options.allRightsReserved')}</strong>
+            <p>{t('options.allRightsReserved.detail')}</p>
+          </Radio>
+        </PanelHeaderWrapper>
+      ),
+      children: (
         <CopyrightInputs
           canChangeMetadata={canChangeMetadata}
           namePrefix="nc"
           selected={value === 'SCL'}
         />
-      </CopyrightLicenseOption>
-
-      <CopyrightLicenseOption
-        canChangeMetadata={canChangeMetadata}
-        description={t('options.creativeCommons.detail')}
-        key="CC"
-        link="https://creativecommons.org/about/cclicenses/"
-        linkText={t('options.creativeCommons.link')}
-        name="CC"
-        onChange={handleChange}
-        selected={value === 'CC'}
-        title={t('options.creativeCommons')}
-      >
-        <CopyrightInputs
-          canChangeMetadata={canChangeMetadata}
-          namePrefix="sa"
-          selected={value === 'CC'}
-        />
-        <Form.Item name="licenseTypes">
-          <LicenseTypes canChangeMetadata={canChangeMetadata} />
-        </Form.Item>
-      </CopyrightLicenseOption>
-
-      <CopyrightLicenseOption
-        canChangeMetadata={canChangeMetadata}
-        description={t('options.publicDomain.detail')}
-        key="PD"
-        name="PD"
-        onChange={handleChange}
-        selected={value === 'PD'}
-        title={t('options.publicDomain')}
-      >
+      ),
+    },
+    {
+      key: 'CC',
+      label: (
+        <PanelHeaderWrapper>
+          <Radio checked={value === 'CC'} disabled={!canChangeMetadata}>
+            <strong>{t('options.creativeCommons')}</strong>
+            <p>{t('options.creativeCommons.detail')}</p>
+            <a
+              href="https://creativecommons.org/about/cclicenses/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              {t('options.creativeCommons.link')}
+            </a>
+          </Radio>
+        </PanelHeaderWrapper>
+      ),
+      children: (
+        <>
+          <CopyrightInputs
+            canChangeMetadata={canChangeMetadata}
+            namePrefix="sa"
+            selected={value === 'CC'}
+          />
+          <Form.Item name="licenseTypes">
+            <LicenseTypes canChangeMetadata={canChangeMetadata} />
+          </Form.Item>
+        </>
+      ),
+    },
+    {
+      key: 'PD',
+      label: (
+        <PanelHeaderWrapper>
+          <Radio checked={value === 'PD'} disabled={!canChangeMetadata}>
+            <strong>{t('options.publicDomain')}</strong>
+            <p>{t('options.publicDomain.detail')}</p>
+          </Radio>
+        </PanelHeaderWrapper>
+      ),
+      children: (
         <Form.Item name="publicDomainType">
           <Radio.Group
             disabled={!canChangeMetadata}
@@ -116,8 +133,20 @@ const CopyrightLicenseInput = props => {
             ]}
           />
         </Form.Item>
-      </CopyrightLicenseOption>
-    </Collapse>
+      ),
+    },
+  ]
+
+  return (
+    <Collapse
+      accordion
+      activeKey={activeKey}
+      destroyInactivePanel
+      expandIcon={ExpandIcon}
+      expandIconPosition="end"
+      items={items}
+      onChange={handleChange}
+    />
   )
 }
 
