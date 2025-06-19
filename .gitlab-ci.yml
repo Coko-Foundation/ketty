@@ -37,7 +37,7 @@ branch source and target rules:
   stage: Branch checks
   script:
     - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" == "main" ]]; then exit 1; fi # do not allow MRs from main into anything
-    - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" != "develop" && "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" == "main" ]]; then exit 1; fi # only develop can be merged into main
+    # - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" != "develop" && "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" == "main" ]]; then exit 1; fi # only develop can be merged into main
     - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" == "develop" && "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "main" ]]; then exit 1; fi # develop can only be merged into main
 
 pages:

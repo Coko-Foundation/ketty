@@ -321,7 +321,7 @@ const SettingsForm = ({
 
   return (
     <Box className={className}>
-      <Center style={{ 'margin-block-end': '5em' }}>
+      <Center style={{ marginBlockEnd: '5em' }}>
         <h1>Book Settings</h1>
         <Stack>
           <SettingsWrapper style={{ marginTop: '24px' }}>
