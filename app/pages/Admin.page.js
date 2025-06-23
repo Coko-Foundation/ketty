@@ -40,6 +40,10 @@ const AdminPage = () => {
     p => p.area === 'integrations',
   )?.config.lulu
 
+  const pureScienceConfig = getApplicationParameters?.find(
+    p => p.area === 'integrations',
+  )?.config.pureScience
+
   const aiEnabled = getApplicationParameters?.find(
     p => p.area === 'aiEnabled',
   )?.config
@@ -89,6 +93,30 @@ const AdminPage = () => {
       ...config,
       lulu: {
         ...config.lulu,
+        ...values,
+      },
+    }
+
+    const variables = {
+      input: {
+        context: 'bookBuilder',
+        area: 'integrations',
+        config: JSON.stringify(newConfig),
+      },
+    }
+
+    return updateApplicationParametersMutation({ variables })
+  }
+
+  const handleUpdatePsConfig = values => {
+    const config = getApplicationParameters?.find(
+      p => p.area === 'integrations',
+    ).config
+
+    const newConfig = {
+      ...config,
+      pureScience: {
+        ...config.pureScience,
         ...values,
       },
     }
@@ -224,7 +252,9 @@ const AdminPage = () => {
       onLanguagesUpdate={handleLanguagesUpdate}
       onTCUpdate={handleTCUppdate}
       onTranslationsUpload={handleTranslationsUpload}
+      onUpdatePsConfig={handleUpdatePsConfig}
       paramsLoading={paramsLoading || updateLoading}
+      psConfig={pureScienceConfig}
       termsAndConditions={tcContent}
     />
   )
