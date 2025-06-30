@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Form, Card } from 'antd'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
-import { Button, Input, Stack } from '../common'
+import { Button, Checkbox, Input, Stack } from '../common'
 
 const UpdateResult = styled.span`
   color: ${props => (props.$success ? th('colorSuccess') : th('colorError'))};
@@ -33,6 +33,8 @@ const WorkflowParamWrapper = styled.div`
   gap: 16px;
 
   .ant-form-item {
+    align-self: stretch;
+    flex-basis: 25%;
     flex-grow: 1;
     margin-block-end: 0;
   }
@@ -173,6 +175,14 @@ const PureScienceConfig = props => {
                                 <Form.Item name={[subField.name, 'tip']}>
                                   <Input placeholder="Tip that explains what the parameter is about" />
                                 </Form.Item>
+                                <Form.Item
+                                  layout="horizontal"
+                                  name={[subField.name, 'requiredField']}
+                                  valuePropName="checked"
+                                >
+                                  <Checkbox>Required</Checkbox>
+                                </Form.Item>
+
                                 <Button
                                   icon={<CloseOutlined />}
                                   onClick={() => {
