@@ -91,13 +91,14 @@ const PureScienceConfig = props => {
         onFinish={handleUpdatePsConfig}
       >
         <Form.Item
-          label="PureScience instance url"
+          label="PureScience graphql endpoint"
           name="url"
           rules={[
             {
               required: true,
             },
           ]}
+          tooltip="Graphql endpoint of you PureScience instance where requests will be posted"
         >
           <Input />
         </Form.Item>
@@ -128,18 +129,7 @@ const PureScienceConfig = props => {
                           required: true,
                         },
                       ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <Form.Item
-                      {...restFields}
-                      label="Workflow id"
-                      name={[index, 'id']}
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
+                      tooltip="Name of the workflow that will appear in the editor UI"
                     >
                       <Input />
                     </Form.Item>
@@ -152,6 +142,20 @@ const PureScienceConfig = props => {
                           required: true,
                         },
                       ]}
+                      tooltip="User-friendly description of what the workflow does."
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item
+                      {...restFields}
+                      label="Webhook token"
+                      name={[index, 'id']}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                      tooltip="Token from the webhook trigger node in your workflow"
                     >
                       <Input />
                     </Form.Item>
