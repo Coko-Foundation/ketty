@@ -1057,8 +1057,6 @@ const ProducerPage = () => {
   }
 
   const handleRunWorkflow = async (workflowId, workflowParams) => {
-    const url = 'https://purescience-staging-sevrer.fly.dev/graphql '
-
     const data = {
       bookId,
       bookComponentId: selectedChapterId,
@@ -1083,7 +1081,7 @@ const ProducerPage = () => {
       query: mutation,
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(pureScienceConfig.url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
