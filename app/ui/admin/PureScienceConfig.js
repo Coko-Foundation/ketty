@@ -186,7 +186,6 @@ const PureScienceConfig = props => {
                                 >
                                   <Checkbox>Required</Checkbox>
                                 </Form.Item>
-
                                 <Button
                                   icon={<CloseOutlined />}
                                   onClick={() => {

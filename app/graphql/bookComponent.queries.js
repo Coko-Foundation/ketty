@@ -16,12 +16,12 @@ const CREATE_BOOK_COMPONENT = gql`
 `
 
 const GET_BOOK_COMPONENT = gql`
-  query GetBookComponent($id: ID!) {
+  query GetBookComponent($id: ID!, $language: String) {
     getBookComponent(id: $id) {
       id
       title
       divisionId
-      content
+      content(language: $language)
       componentType
       trackChangesEnabled
       uploading
@@ -36,6 +36,7 @@ const GET_BOOK_COMPONENT = gql`
         surname
         id
       }
+      languages
     }
   }
 `

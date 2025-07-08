@@ -242,7 +242,6 @@ const ChapterItem = forwardRef(
       id,
       isDragging,
       isPart,
-      // onClickDuplicate,
       onChapterClick,
       onChapterConvert,
       onClickDelete,
@@ -359,6 +358,15 @@ const ChapterItem = forwardRef(
                       : t('menu.options.convertToPart')}
                   </Button>
                 )}
+                {/* <Button
+                    data-test="producer-deleteChapter"
+                    disabled={!canEdit}
+                    // onClick={() => onCreateTranslation(id)}
+                    onClick={handleTranslationCreate}
+                    onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
+                  >
+                    Translate
+                  </Button> */}
                 <Button
                   data-test="producer-deleteChapter"
                   disabled={!canEdit}
