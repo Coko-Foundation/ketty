@@ -54,6 +54,11 @@ const EditorWrapper = ({
   getBookSettings,
   updateBookSettings,
   updateLoading,
+  pureScienceConfig,
+  onRunWorkflow,
+  languages,
+  currentLanguage,
+  onLanguageChange,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -84,6 +89,11 @@ const EditorWrapper = ({
     aiEnabled,
     updateBookSettings,
     updateLoading,
+    pureScienceConfig,
+    onRunWorkflow,
+    languages,
+    currentLanguage,
+    onLanguageChange,
   })
 
   const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
@@ -187,6 +197,11 @@ const EditorWrapper = ({
       aiEnabled,
       updateBookSettings,
       updateLoading,
+      pureScienceConfig,
+      onRunWorkflow,
+      languages,
+      currentLanguage,
+      onLanguageChange,
     })
   }, [
     title,
@@ -205,6 +220,9 @@ const EditorWrapper = ({
     bookId,
     aiEnabled,
     updateLoading,
+    pureScienceConfig,
+    languages,
+    currentLanguage,
   ])
 
   const userObject = {

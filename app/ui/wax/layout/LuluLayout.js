@@ -20,13 +20,14 @@ import {
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
 import { usePrevious } from '../../../utils'
-import { Button, Checkbox } from '../../common'
+import { Button, Checkbox, Select } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
   BookInformation,
   BookMetadataForm,
   SettingsForm,
   UserInviteModal,
+  PSModal,
 } from '../../bookInformation'
 import theme from '../../../theme'
 
@@ -247,6 +248,37 @@ const CollapseContainer = styled.div`
 
   @media (min-width: 800px) {
     display: none;
+  }
+`
+
+const PSButton = styled(Button)`
+  background-color: #13110c;
+  block-size: 32px;
+  font-size: 22px;
+  gap: 0;
+  padding: 0;
+  width: 34px;
+
+  &:hover,
+  &:active,
+  &:focus-visible {
+    /* stylelint-disable-next-line declaration-no-important */
+    background-color: #13110c !important;
+    border: 0;
+    color: unset;
+    outline: none;
+  }
+
+  > span {
+    padding-bottom: 4px;
+
+    &:nth-child(1) {
+      color: white;
+    }
+
+    &:nth-child(2) {
+      color: #1487fe;
+    }
   }
 `
 
@@ -528,6 +560,10 @@ const NoSelectedChapterWrapper = styled.div`
   height: 80%;
   place-content: center;
 `
+
+const LanguageSelect = styled(Select)`
+  width: 10ch;
+`
 // #endregion styled
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
@@ -583,12 +619,18 @@ const LuluLayout = ({ customProps, ...rest }) => {
     updateBookSettings,
     updateLoading,
     savedComments,
+    pureScienceConfig,
+    onRunWorkflow,
+    languages,
+    currentLanguage,
+    onLanguageChange,
   } = customProps
 
   const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
   const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
   const [showComments, setShowComments] = useState(true)
+  const [showPsModal, setShowPsModal] = useState(false)
   const previousComments = usePrevious(savedComments)
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
 
@@ -788,6 +830,10 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }
 
+  const handleTogglePSWorkflows = () => {
+    setShowPsModal(true)
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Wrapper id="wax-container" style={fullScreenStyles}>
@@ -808,6 +854,15 @@ const LuluLayout = ({ customProps, ...rest }) => {
             {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
           </Button>
           {!editorLoading ? <MainMenuToolBar /> : null}
+          {!editorLoading &&
+            pureScienceConfig &&
+            pureScienceConfig.url &&
+            pureScienceConfig.workflows?.length && (
+              <PSButton onClick={handleTogglePSWorkflows}>
+                <span>p.</span>
+                <span>s</span>
+              </PSButton>
+            )}
         </TopMenu>
         <Main>
           {!options.fullScreen && (
@@ -822,6 +877,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
               </CollapseContainer>
               <BookInformation
                 bookId={bookId}
+                onTogglePSWorkflows={handleTogglePSWorkflows}
+                pureScienceConfig={pureScienceConfig}
                 showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
                 showKnowledgeBaseLink={aiEnabled && settings?.knowledgeBaseOn}
                 toggleInformation={toggleMetadata}
@@ -886,6 +943,16 @@ const LuluLayout = ({ customProps, ...rest }) => {
                               </Checkbox>
                             </ToggleComments>
                           )}
+                          {languages.length > 1 && (
+                            <LanguageSelect
+                              onChange={onLanguageChange}
+                              options={languages.map(l => ({
+                                value: l,
+                                label: l,
+                              }))}
+                              value={currentLanguage}
+                            />
+                          )}
                           {showTrackControls && (
                             <TrackTools>
                               {commentsTracksCount + trackBlockNodesCount}{' '}
@@ -910,8 +977,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
                     <NotesTopBar>
                       <Button
                         data-collapsed={notesCollapsed}
-                        onClick={collapseNotes}
                         icon={<VerticalAlignBottomOutlined />}
+                        onClick={collapseNotes}
                       />
                     </NotesTopBar>
                     <div style={{ display: 'flex', 'flex-direction': 'row' }}>
@@ -929,6 +996,12 @@ const LuluLayout = ({ customProps, ...rest }) => {
           )}
         </Main>
       </Wrapper>
+      <PSModal
+        closeModal={() => setShowPsModal(false)}
+        onRunWorkflow={onRunWorkflow}
+        open={showPsModal}
+        pureScienceConfig={pureScienceConfig}
+      />
     </ThemeProvider>
   )
 }

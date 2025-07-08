@@ -122,6 +122,8 @@ const ProducerPage = () => {
   const [savedComments, setSavedComments] = useState()
   const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
+  const [currentLanguage, setCurrentLanguage] = useState('en')
+  const [languages, setLanguages] = useState([])
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
@@ -182,7 +184,7 @@ const ProducerPage = () => {
     useQuery(GET_BOOK_COMPONENT, {
       fetchPolicy: 'network-only',
       skip: !selectedChapterId || !bookQueryData,
-      variables: { id: selectedChapterId },
+      variables: { id: selectedChapterId, language: currentLanguage },
       onError: () => {
         if (!reconnecting) {
           if (hasMembership) {
@@ -192,6 +194,7 @@ const ProducerPage = () => {
       },
       onCompleted: data => {
         setCurrentBookComponentContent(data.getBookComponent.content)
+        setLanguages(data.getBookComponent.languages)
         getComments({
           variables: {
             bookId,
@@ -904,6 +907,11 @@ const ProducerPage = () => {
     { area: 'heartbeatInterval' },
   )
 
+  const pureScienceConfig = find(
+    applicationParametersData?.getApplicationParameters,
+    { area: 'integrations' },
+  )?.config?.pureScience
+
   const onReorderChapter = newChapterList => {
     if (!canModify) {
       showUnauthorizedActionModal(false)
@@ -949,7 +957,7 @@ const ProducerPage = () => {
     setSelectedChapterId(chapterId)
   }
 
-  const onUploadChapter = () => {
+  const handleUploadChapter = () => {
     if (!canModify) {
       showUnauthorizedActionModal(false)
       return
@@ -1046,6 +1054,55 @@ const ProducerPage = () => {
         },
       },
     })
+  }
+
+  const handleRunWorkflow = async (workflowId, workflowParams) => {
+    const url = 'https://purescience-staging-sevrer.fly.dev/graphql '
+
+    const data = {
+      bookId,
+      bookComponentId: selectedChapterId,
+      ...workflowParams,
+    }
+
+    const mutation = `
+      mutation {
+        triggerWebhook(
+          token: "${workflowId}",
+          data: ${JSON.stringify(data).replace(/"([^"]+)":/g, '$1:')}
+        ) { 
+          success 
+          runId 
+          message 
+          error 
+        }
+      }
+    `
+
+    const requestData = {
+      query: mutation,
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`)
+    }
+
+    const json = await response.json()
+    /* eslint-disable no-console */
+    console.log(json)
+    /* eslint-enable no-console */
+  }
+
+  const handleLanguageChange = lang => {
+    setCurrentLanguage(lang)
   }
 
   const debouncedSaveComments = debounce(variables => {
@@ -1182,6 +1239,7 @@ const ProducerPage = () => {
       configurableEditorOn={
         bookQueryData?.getBook.bookSettings.configurableEditorOn
       }
+      currentLanguage={currentLanguage}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
       customTags={bookQueryData?.getBook.bookSettings.customTags}
@@ -1192,21 +1250,25 @@ const ProducerPage = () => {
       getBookSettings={getBookSettings}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
+      languages={languages}
       onAddChapter={onAddChapter}
       onBookComponentParentIdChange={onBookComponentParentIdChange}
       onBookComponentTypeChange={onBookComponentTypeChange}
       onChapterClick={onChapterClick}
       onDeleteChapter={onDeleteChapter}
       onImageUpload={handleImageUpload}
+      onLanguageChange={handleLanguageChange}
       onMention={handleMentions}
       onPeriodicBookComponentContentChange={
         onPeriodicBookComponentContentChange
       }
       onPeriodicTitleChange={onPeriodicTitleChange}
       onReorderChapter={onReorderChapter}
+      onRunWorkflow={handleRunWorkflow}
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadBookCover={handleUploadBookCover}
-      onUploadChapter={onUploadChapter}
+      onUploadChapter={handleUploadChapter}
+      pureScienceConfig={pureScienceConfig}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}
       settings={bookQueryData?.getBook.bookSettings}
