@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Form, Modal } from 'antd'
+import { Form, Modal, Spin } from 'antd'
 import { Button, Input } from '../common'
 
 const StyledModal = styled(Modal)``
@@ -80,8 +80,15 @@ const WorkflowDetailsHeader = styled.div`
   }
 `
 
+const StyledSpin = styled(Spin)`
+  display: block;
+  margin-block: 30px;
+`
+
 const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
   const [workflow, selectWorkflow] = useState(null)
+  const [loading, setLoading] = useState(null)
+  const [running, setRunning] = useState(null)
 
   const [worflowParamsForm] = Form.useForm()
 
@@ -94,7 +101,20 @@ const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
     worflowParamsForm
       .validateFields()
       .then(params => {
-        onRunWorkflow(workflow.id, params)
+        setLoading(true)
+        onRunWorkflow(workflow.id, params).then(
+          ({ data: { triggerWorkflow } = {} }) => {
+            setLoading(false)
+
+            if (triggerWorkflow) {
+              setRunning(true)
+              setTimeout(() => {
+                closeModal()
+                setRunning(false)
+              }, 7000)
+            }
+          },
+        )
       })
       .catch(e => console.error(e))
   }
@@ -106,6 +126,7 @@ const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
 
   return (
     <StyledModal
+      afterClose={handleClose}
       cancelText="Close"
       centered
       destroyOnClose
@@ -139,33 +160,46 @@ const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
             </Button>
             <h2>{workflow.name}</h2>
           </WorkflowDetailsHeader>
-          <div className="principal">
-            <p>{workflow.description}</p>
-            {workflow.workflowParams?.length > 0 && (
-              <Form form={worflowParamsForm} layout="vertical">
-                {workflow.workflowParams.map((param, index) => (
-                  <Form.Item
-                    key={param.label.replace(/[^a-zA-Z]/g, '')}
-                    label={param.label}
-                  >
-                    <Form.Item
-                      name={param.label}
-                      noStyle
-                      {...(param.requiredField
-                        ? { rules: [{ required: true }] }
-                        : {})}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <p className="workflow-tip">{param.tip}</p>
-                  </Form.Item>
-                ))}
-              </Form>
-            )}
-          </div>
-          <div>
-            <Button onClick={runWorkflow}>Run workflow</Button>
-          </div>
+          {running ? (
+            <div>
+              <StyledSpin />
+              <p style={{ textAlign: 'center' }}>
+                Workflow is currently running in the background
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="principal">
+                <p>{workflow.description}</p>
+                {workflow.workflowParams?.length > 0 && (
+                  <Form form={worflowParamsForm} layout="vertical">
+                    {workflow.workflowParams.map((param, index) => (
+                      <Form.Item
+                        key={param.label.replace(/[^a-zA-Z]/g, '')}
+                        label={param.label}
+                      >
+                        <Form.Item
+                          name={param.label}
+                          noStyle
+                          {...(param.requiredField
+                            ? { rules: [{ required: true }] }
+                            : {})}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <p className="workflow-tip">{param.tip}</p>
+                      </Form.Item>
+                    ))}
+                  </Form>
+                )}
+              </div>
+              <div>
+                <Button loading={loading} onClick={runWorkflow}>
+                  Run workflow
+                </Button>
+              </div>
+            </>
+          )}
         </WorkflowDetails>
       )}
     </StyledModal>

@@ -1071,7 +1071,7 @@ const ProducerPage = () => {
       data: JSON.stringify(data),
     }
 
-    triggerWorkflow({ variables })
+    return triggerWorkflow({ variables })
   }
 
   const handleLanguageChange = lang => {
