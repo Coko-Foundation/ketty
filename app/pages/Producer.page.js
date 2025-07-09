@@ -43,6 +43,7 @@ import {
   GET_BOOK_TEAMS,
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
+  TRIGGER_WORKFLOW,
   // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
@@ -522,6 +523,8 @@ const ProducerPage = () => {
       onCompleted: () => {},
     },
   )
+
+  const [triggerWorkflow] = useMutation(TRIGGER_WORKFLOW)
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
@@ -1063,40 +1066,12 @@ const ProducerPage = () => {
       ...workflowParams,
     }
 
-    const mutation = `
-      mutation {
-        triggerWebhook(
-          token: "${workflowId}",
-          data: ${JSON.stringify(data).replace(/"([^"]+)":/g, '$1:')}
-        ) { 
-          success 
-          runId 
-          message 
-          error 
-        }
-      }
-    `
-
-    const requestData = {
-      query: mutation,
+    const variables = {
+      token: workflowId,
+      data: JSON.stringify(data),
     }
 
-    const response = await fetch(pureScienceConfig.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`)
-    }
-
-    const json = await response.json()
-    /* eslint-disable no-console */
-    console.log(json)
-    /* eslint-enable no-console */
+    triggerWorkflow({ variables })
   }
 
   const handleLanguageChange = lang => {
