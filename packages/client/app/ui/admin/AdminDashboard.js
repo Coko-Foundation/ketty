@@ -115,8 +115,8 @@ const AdminDashboard = props => {
                 label: t('termsAndConditions.heading'),
                 children: (
                   <TermsAndConditions
-                    termsAndConditions={termsAndConditions}
                     onTCUpdate={onTCUpdate}
+                    termsAndConditions={termsAndConditions}
                   />
                 ),
               },

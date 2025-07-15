@@ -195,10 +195,10 @@ const PureScienceConfig = props => {
                               </WorkflowParamWrapper>
                             ))}
                             <Button
-                              type="dashed"
-                              onClick={() => subOpt.add()}
                               block
+                              onClick={() => subOpt.add()}
                               style={{ flexGrow: 1 }}
+                              type="dashed"
                             >
                               + Add workflow param
                             </Button>
@@ -216,7 +216,7 @@ const PureScienceConfig = props => {
           </Form.List>
         </Form.Item>
         <SaveConfigWrapper>
-          <Button loading={paramsLoading} htmlType="submit">
+          <Button htmlType="submit" loading={paramsLoading}>
             Save PureScience config
           </Button>
           <UpdateResult $success={psConfigUpdateResult?.success} role="status">
