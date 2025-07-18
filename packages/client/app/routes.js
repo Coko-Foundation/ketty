@@ -6,7 +6,6 @@ import { Route, Switch, useHistory, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { ConfigProvider } from 'antd'
-import { CURRENT_USER } from '@coko/client/dist/helpers/currentUserQuery'
 
 import {
   Authenticate,
@@ -195,7 +194,7 @@ const routes = (
       token: theme,
     }}
   >
-    <Authenticate currentUserQuery={CURRENT_USER}>
+    <Authenticate>
       <GlobalStyle />
       <LayoutWrapper>
         <Wrapper>

@@ -1,0 +1,165 @@
+const { subscriptionManager } = require('@coko/server')
+const { logger, TeamMember } = require('@coko/server')
+
+const {
+  subscriptions: { USER_UPDATED },
+} = require('@coko/server/src/models/user/constants')
+
+const {
+  updateTeamMembership,
+} = require('@coko/server/src/models/team/team.controller')
+
+const { getUser } = require('@coko/server/src/models/user/user.controller')
+
+const {
+  updateTeamMemberStatus,
+  updateTeamMemberStatuses,
+  addTeamMembers,
+} = require('../../../controllers/team.controller')
+
+const {
+  TEAM_MEMBERS_UPDATED,
+  BOOK_PRODUCTION_EDITORS_UPDATED,
+  TEAM_UPDATED,
+} = require('./constants')
+
+const updateKetidaTeamMembersHandler = async (
+  _,
+  { teamId, members, status },
+) => {
+  try {
+    logger.info('team resolver: executing updateTeamMembers use case')
+    const updatedTeam = await updateTeamMembership(teamId, members)
+
+    await updateTeamMemberStatuses(teamId, status)
+
+    if (updatedTeam.global === true) {
+      subscriptionManager.publish(TEAM_MEMBERS_UPDATED, {
+        teamMembersUpdated: updatedTeam.id,
+      })
+
+      return updatedTeam
+    }
+
+    if (updatedTeam.role === 'productionEditor') {
+      subscriptionManager.publish(BOOK_PRODUCTION_EDITORS_UPDATED, {
+        productionEditorsUpdated: updatedTeam.id,
+      })
+    }
+
+    await Promise.all(
+      members.map(async userId => {
+        const user = await getUser(userId)
+
+        return subscriptionManager.publish(USER_UPDATED, {
+          userUpdated: user,
+        })
+      }),
+    )
+
+    subscriptionManager.publish(TEAM_MEMBERS_UPDATED, {
+      teamMembersUpdated: updatedTeam.id,
+    })
+    logger.info(`Update msg broadcasted`)
+    return updatedTeam
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateTeamMemberStatusHandler = async (_, { teamMemberId, status }) => {
+  try {
+    const updatedTeam = await updateTeamMemberStatus(teamMemberId, status)
+
+    const teamMember = await TeamMember.findOne({ id: teamMemberId })
+    const user = await getUser(teamMember.userId)
+
+    subscriptionManager.publish(TEAM_UPDATED, {
+      teamUpdated: updatedTeam.id,
+    })
+
+    subscriptionManager.publish(USER_UPDATED, {
+      userUpdated: user,
+    })
+    return updatedTeam
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const addTeamMembersHandler = async (
+  _,
+  { teamId, members, status, bookId },
+  ctx,
+) => {
+  try {
+    logger.info('team resolver: executing addTeamMembers use case')
+
+    const updatedTeam = await addTeamMembers(
+      teamId,
+      members,
+      status,
+      bookId,
+      ctx.userId,
+    )
+
+    if (updatedTeam.global === true) {
+      subscriptionManager.publish(TEAM_MEMBERS_UPDATED, {
+        teamMembersUpdated: updatedTeam.id,
+      })
+
+      return updatedTeam
+    }
+
+    if (updatedTeam.role === 'productionEditor') {
+      subscriptionManager.publish(BOOK_PRODUCTION_EDITORS_UPDATED, {
+        productionEditorsUpdated: updatedTeam.id,
+      })
+    }
+
+    await Promise.all(
+      members.map(async userId => {
+        const user = await getUser(userId)
+
+        return subscriptionManager.publish(USER_UPDATED, {
+          userUpdated: user,
+        })
+      }),
+    )
+
+    subscriptionManager.publish(TEAM_MEMBERS_UPDATED, {
+      teamMembersUpdated: updatedTeam.id,
+    })
+    logger.info(`Update msg broadcasted`)
+    return updatedTeam
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+module.exports = {
+  Mutation: {
+    updateKetidaTeamMembers: updateKetidaTeamMembersHandler,
+    updateTeamMemberStatus: updateTeamMemberStatusHandler,
+    addTeamMembers: addTeamMembersHandler,
+  },
+  Subscription: {
+    teamMembersUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(TEAM_MEMBERS_UPDATED)
+      },
+    },
+    productionEditorsUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(
+          BOOK_PRODUCTION_EDITORS_UPDATED,
+        )
+      },
+    },
+    teamUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(TEAM_UPDATED)
+      },
+    },
+  },
+}

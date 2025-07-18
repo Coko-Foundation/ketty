@@ -1,11 +1,9 @@
-version: '3'
-
 services:
   client:
     build:
       context: ./packages/client
       dockerfile: Dockerfile-development
-    command: ['node_modules/.bin/coko-client-dev']
+    command: ['node_modules/.bin/coko-client-dev-js']
     ports:
       - ${CLIENT_PORT:-4000}:${CLIENT_PORT:-4000}
     environment:
@@ -26,8 +24,9 @@ services:
     tty: true
 
   server:
-    image: cokoapps/ketty-server:latest
-    restart: unless-stopped
+    build:
+      context: ./packages/server
+      dockerfile: Dockerfile-development
     depends_on:
       - db
       - createbucket
@@ -35,49 +34,14 @@ services:
       - epubchecker
       - pagedjs
       - xsweet
-    entrypoint:
-      [
-        'sh',
-        'scripts/wait-for-it',
-        'db:5432',
-        '-t',
-        '60',
-        '--',
-        'sh',
-        'scripts/wait-for-it',
-        'http://s3:9001',
-        '-t',
-        '60',
-        '--',
-        'sh',
-        'scripts/wait-for-it',
-        'http://epubchecker:3001/healthcheck',
-        '-t',
-        '60',
-        '--',
-        'sh',
-        'scripts/wait-for-it',
-        'http://pagedjs:3003/healthcheck',
-        '-t',
-        '60',
-        '--',
-        'sh',
-        'scripts/wait-for-it',
-        'http://xsweet:3004/healthcheck',
-        '-t',
-        '60',
-        '--',
-        'sh',
-        'scripts/setupDevServerKetida2.sh',
-      ]
-    command: ['node', 'startServer.js']
+    command: ['yarn', 'coko-server', 'start-dev']
     ports:
       - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
       - ${WS_SERVER_PORT:-3333}:${WS_SERVER_PORT:-3333}
     environment:
       - NODE_ENV=development
       - KETIDA_FLAVOUR=${KETIDA_FLAVOUR:-POD}
-      - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
+      - SECRET=${SECRET:-dev_secret}
       - SERVER_URL=${SERVER_URL:-http://server:3000}
       - WEBSOCKET_SERVER_URL=${WEBSOCKET_SERVER_URL:-ws://server:${WS_SERVER_PORT:-3333}}
       - CLIENT_URL=${CLIENT_URL:-http://localhost:4000}
@@ -101,9 +65,7 @@ services:
       - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
       - PASSWORD_RESET_PATH_TO_PAGE=/password-reset
-      - S3_PROTOCOL=${S3_PROTOCOL:-http}
-      - S3_HOST=${S3_HOST:-s3}
-      - S3_PORT=${S3_PORT:-9000}
+      - S3_URL=${S3_URL:-http://s3:9000}
       - S3_ACCESS_KEY_ID_USER=${S3_ACCESS_KEY_ID_USER:-ketida}
       - S3_SECRET_ACCESS_KEY_USER=${S3_SECRET_ACCESS_KEY_USER:-superSecretUserPassword}
       - S3_BUCKET=${S3_BUCKET:-uploads}
@@ -128,8 +90,14 @@ services:
       - TEMP_DIRECTORY_CRON_JOB_OFFSET=${TEMP_DIRECTORY_CRON_JOB_OFFSET:-1800000}
       - TEMP_DIRECTORY_CLEAN_UP=${TEMP_DIRECTORY_CLEAN_UP:-true}
     volumes:
-      - ./packages/server/config/development.js:/home/node/server/config/development.js
-      # - ./config/local.js:/home/node/server/config/local.js
+      - ./packages/server/api:/home/node/server/api
+      - ./packages/server/config:/home/node/server/config
+      - ./packages/server/controllers:/home/node/server/controllers
+      - ./packages/server/models:/home/node/server/models
+      - ./packages/server/scripts:/home/node/server/scripts
+      - ./packages/server/services:/home/node/server/services
+      - ./packages/server/utilities:/home/node/server/utilities
+    tty: true
 
   pagedjs:
     depends_on:
@@ -207,20 +175,16 @@ services:
       - POSTGRES_PASSWORD=epubchecker_user_password
 
   db:
-    build:
-      context: .
-      dockerfile: Dockerfile-pgvector
+    image: pgvector/pgvector:0.8.0-pg17
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-ketida_dev}
       - POSTGRES_USER=${POSTGRES_USER:-dev_user}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dev_user_password}
-    volumes:
-      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
 
   s3:
-    image: minio/minio:RELEASE.2023-12-07T04-16-00Z
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     ports:
       - ${S3_PORT:-9000}:9000
       - ${MINIO_CONSOLE_PORT:-9001}:9001
@@ -230,13 +194,26 @@ services:
       - MINIO_ROOT_USER=${S3_ACCESS_KEY_ID_ADMIN:-admin}
       - MINIO_ROOT_PASSWORD=${S3_SECRET_ACCESS_KEY_ADMIN:-superSecretAdminPassword}
     command: server --console-address ":9001" /data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 0.5s
+      timeout: 20s
+      retries: 30
 
   createbucket:
-    image: minio/mc:RELEASE.2023-12-02T11-24-10Z
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
     depends_on:
-      - s3
+      s3:
+        condition: service_healthy
     entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add ketida ${S3_PROTOCOL:-http}://${S3_HOST:-s3}:${S3_PORT:-9000} ${S3_ACCESS_KEY_ID_ADMIN:-admin} ${S3_SECRET_ACCESS_KEY_ADMIN:-superSecretAdminPassword}; /usr/bin/mc admin user add ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida} ${S3_SECRET_ACCESS_KEY_USER:-superSecretUserPassword}; /usr/bin/mc admin user enable ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida}; /usr/bin/mc mb ketida/${S3_BUCKET:-uploads}; /usr/bin/mc admin policy attach ketida readwrite --user ${S3_ACCESS_KEY_ID_USER:-ketida}; exit 0; "
+      /bin/sh -c "
+        /usr/bin/mc config host add ketida ${S3_PROTOCOL:-http}://${S3_HOST:-s3}:${S3_PORT:-9000} ${S3_ACCESS_KEY_ID_ADMIN:-admin} ${S3_SECRET_ACCESS_KEY_ADMIN:-superSecretAdminPassword}
+        /usr/bin/mc admin user add ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida} ${S3_SECRET_ACCESS_KEY_USER:-superSecretUserPassword};
+        /usr/bin/mc admin user enable ketida/ ${S3_ACCESS_KEY_ID_USER:-ketida};
+        /usr/bin/mc mb ketida/${S3_BUCKET:-uploads};
+        /usr/bin/mc admin policy attach ketida readwrite --user ${S3_ACCESS_KEY_ID_USER:-ketida};
+        exit 0;
+      "
 
 volumes:
   minio_storage:

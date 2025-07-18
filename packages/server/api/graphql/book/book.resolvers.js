@@ -1,0 +1,729 @@
+const {
+  subscriptionManager,
+  logger,
+  fileStorage,
+  withFilter,
+} = require('@coko/server')
+
+const { getUser } = require('@coko/server/src/models/user/user.controller')
+
+const map = require('lodash/map')
+const isEmpty = require('lodash/isEmpty')
+
+const {
+  subscriptions: { USER_UPDATED },
+} = require('@coko/server/src/models/user/constants')
+
+const {
+  BOOK_CREATED,
+  BOOK_DELETED,
+  BOOK_UPDATED,
+  BOOK_RENAMED,
+  BOOK_ARCHIVED,
+  BOOK_METADATA_UPDATED,
+  BOOK_RUNNING_HEADERS_UPDATED,
+  BOOK_SETTINGS_UPDATED,
+} = require('./constants')
+
+const { getObjectTeam } = require('../../../controllers/team.controller')
+
+const { isAdmin } = require('../../../controllers/user.controller')
+
+const {
+  pagedPreviewerLink,
+} = require('../../../controllers/microServices.controller')
+
+const File = require('../../../models/file/file.model')
+
+const {
+  getBook,
+  getBooks,
+  archiveBook,
+  createBook,
+  renameBook,
+  updateSubtitle,
+  deleteBook,
+  exportBook,
+  updateMetadata,
+  updatePODMetadata,
+  updateRunningHeaders,
+  changeLevelLabel,
+  changeNumberOfLevels,
+  updateBookOutline,
+  updateLevelContentStructure,
+  updateShowWelcome,
+  finalizeBookStructure,
+  getBookTitle,
+  // updateAssociatedTemplates,
+  updateBookStatus,
+  getBookSubtitle,
+  uploadBookThumbnail,
+  uploadBookCover,
+  updateBookCoverAltText,
+  createWebPreview,
+  publishOnline,
+  unpublishWebBook,
+} = require('../../../controllers/book.controller')
+
+const {
+  getBookSettings,
+  updateBookSettings,
+} = require('../../../controllers/bookSettings.controller')
+
+// const updateAssociatedTemplateHandler = async (
+//   _,
+//   { bookId, associatedTemplates },
+//   ctx,
+// ) => {
+//   try {
+//     logger.info('book resolver: executing updateAssociatedTemplate use case')
+
+//     const updatedBook = await updateAssociatedTemplates(
+//       bookId,
+//       associatedTemplates,
+//     )
+
+//     subscriptionManager.publish(BOOK_UPDATED, {
+//       bookUpdated: updatedBook.id,
+//     })
+
+//     return updatedBook
+//   } catch (e) {
+//     throw new Error(e)
+//   }
+// }
+
+const updateBookStatusHandler = async (_, { bookId, status }) => {
+  try {
+    logger.info('book resolver: executing updateBookStatus use case')
+
+    const updatedBook = await updateBookStatus(bookId, status)
+
+    logger.info('book resolver: broadcasting updated book to clients')
+
+    subscriptionManager.publish(BOOK_UPDATED, { bookUpdated: updatedBook.id })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const getBookHandler = async (_, { id }) => {
+  try {
+    logger.info('book resolver: executing getBook use case')
+    return getBook(id)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const getBooksHandler = async (_, { options }, ctx) => {
+  try {
+    const { archived, orderBy, page, pageSize } = options
+    logger.info('book resolver: executing getBooks use case')
+    return getBooks({
+      userId: ctx.userId,
+      options: { showArchived: archived, orderBy, page, pageSize },
+    })
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const createBookHandler = async (_, { input }, ctx) => {
+  try {
+    logger.info('book resolver: executing createBook use case')
+
+    const { collectionId, title, addUserToBookTeams } = input
+
+    let newBook
+    let newUserTeam
+
+    if (addUserToBookTeams && !isEmpty(addUserToBookTeams)) {
+      newBook = await createBook({
+        collectionId,
+        title,
+        options: {
+          addUserToBookTeams,
+          userId: ctx.userId,
+        },
+      })
+
+      const updatedUser = await getUser(ctx.userId)
+
+      subscriptionManager.publish(USER_UPDATED, { userUpdated: updatedUser })
+
+      newUserTeam = await getObjectTeam('owner', newBook.id, false)
+    } else {
+      newBook = await createBook({ collectionId, title })
+    }
+
+    logger.info('book resolver: broadcasting new book to clients')
+
+    subscriptionManager.publish(BOOK_CREATED, { bookCreated: newBook.id })
+
+    return { book: newBook, newUserTeam }
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const renameBookHandler = async (_, { id, title }) => {
+  try {
+    logger.info('book resolver: executing renameBook use case')
+
+    const renamedBook = await renameBook(id, title)
+
+    logger.info('book resolver: broadcasting renamed book to clients')
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: renamedBook.id,
+    })
+
+    subscriptionManager.publish(BOOK_RENAMED, {
+      bookRenamed: renamedBook.id,
+    })
+
+    return renamedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateSubtitleHandler = async (_, { id, subtitle }) => {
+  try {
+    logger.info('book resolver: executing updateSubtitle use case')
+
+    const updatedBook = await updateSubtitle(id, subtitle)
+
+    logger.info('book resolver: broadcasting updated book subtitle to clients')
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const deleteBookHandler = async (_, args) => {
+  try {
+    logger.info('book resolver: executing deleteBook use case')
+
+    const deletedBook = await deleteBook(args.id)
+
+    logger.info('book resolver: broadcasting deleted book to clients')
+
+    subscriptionManager.publish(BOOK_DELETED, {
+      bookDeleted: deletedBook.id,
+    })
+
+    return deletedBook
+  } catch (e) {
+    logger.error(e)
+    throw new Error(e)
+  }
+}
+
+const archiveBookHandler = async (_, { id, archive }) => {
+  try {
+    logger.info('book resolver: executing archiveBook use case')
+
+    const archivedBook = await archiveBook(id, archive)
+
+    logger.info('book resolver: broadcasting archived book to clients')
+
+    subscriptionManager.publish(BOOK_ARCHIVED, {
+      bookArchived: archivedBook.id,
+    })
+    return archivedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateMetadataHandler = async (_, { input }) => {
+  try {
+    logger.info('book resolver: executing updateMetadata use case')
+
+    const updatedBook = await updateMetadata(input)
+
+    logger.info('book resolver: broadcasting updated book to clients')
+
+    subscriptionManager.publish(BOOK_METADATA_UPDATED, {
+      bookMetadataUpdated: updatedBook.id,
+    })
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updatePODMetadataHandler = async (_, { bookId, metadata }) => {
+  try {
+    logger.info('book resolver: executing updatePODMetadata use case')
+
+    const updatedBook = await updatePODMetadata(bookId, metadata)
+
+    logger.info('book resolver: broadcasting updated book to clients')
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const exportBookHandler = async (_, { input }, ctx) => {
+  const {
+    bookId,
+    previewer,
+    templateId,
+    fileExtension,
+    icmlNotes,
+    additionalExportOptions = {},
+  } = input
+
+  logger.info('book resolver: executing exportBook use case')
+
+  return previewer === 'web'
+    ? createWebPreview(bookId, templateId, ctx.userId, additionalExportOptions)
+    : exportBook(
+        bookId,
+        templateId,
+        previewer,
+        fileExtension,
+        icmlNotes,
+        additionalExportOptions,
+      )
+}
+
+const publishOnlineHandler = async (_, { input, profileId }, ctx) => {
+  const { bookId, templateId, additionalExportOptions = {} } = input
+
+  return publishOnline(
+    bookId,
+    templateId,
+    profileId,
+    ctx.userId,
+    additionalExportOptions,
+  )
+}
+
+const unpublishOnlineHandler = async (_, { bookId }) => {
+  return unpublishWebBook(bookId)
+}
+
+const updateRunningHeadersHandler = async (_, { input, bookId }) => {
+  try {
+    logger.info('book resolver: executing updateRunningHeaders use case')
+    const updatedBook = await updateRunningHeaders(input, bookId)
+
+    logger.info('book resolver: broadcasting updated book to clients')
+
+    subscriptionManager.publish(BOOK_RUNNING_HEADERS_UPDATED, {
+      bookRunningHeadersUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const changeLevelLabelHandler = async (_, { bookId, levelId, label }) => {
+  try {
+    logger.info('book resolver: executing changeLevelLabel use case')
+
+    const updatedLevel = await changeLevelLabel(bookId, levelId, label)
+
+    return updatedLevel
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const changeNumberOfLevelsHandler = async (_, { bookId, levelsNumber }) => {
+  try {
+    logger.info(
+      'book resolver: executing changeBookStructureLevelNumber use case',
+    )
+
+    const updatedBookStructure = await changeNumberOfLevels(
+      bookId,
+      levelsNumber,
+    )
+
+    return updatedBookStructure
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateBookOutlineHandler = async (_, { bookId, outline }) => {
+  try {
+    logger.info('book resolver: executing updateBookOutline use case')
+
+    const updatedOutline = await updateBookOutline(bookId, outline)
+
+    return updatedOutline
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const getPagedPreviewerLinkHandler = async (_, { hash, previewerOptions }) => {
+  try {
+    logger.info('book resolver: executing getPreviewerLink use case')
+    return pagedPreviewerLink(hash, previewerOptions)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateLevelContentStructureHandler = async (_, { bookId, levels }) => {
+  try {
+    logger.info('book resolver: executing updateLevelContentStructure use case')
+
+    const updatedLevelsStructure = await updateLevelContentStructure(
+      bookId,
+      levels,
+    )
+
+    return updatedLevelsStructure
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const finalizeBookStructureHandler = async (_, { bookId }) => {
+  try {
+    logger.info('book resolver: executing finalizeBookStructure use case')
+    const updatedBook = await finalizeBookStructure(bookId)
+    // should add a specific event for the case of finalized
+    subscriptionManager.publish(BOOK_ARCHIVED, {
+      bookArchived: updatedBook.id,
+    })
+    return updatedBook.id
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateShowWelcomeHandler = async (_, { bookId }) => {
+  try {
+    logger.info('book resolver: executing updateShowWelcome use case')
+    const updatedBook = await updateShowWelcome(bookId)
+    // should add a specific event for the case of finalized
+    subscriptionManager.publish(BOOK_ARCHIVED, {
+      bookArchived: updatedBook.id,
+    })
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const uploadBookThumbnailHandler = async (_, { bookId, file }) => {
+  try {
+    logger.info('book resolver: uploading book thumbnail')
+
+    const updatedBook = await uploadBookThumbnail(bookId, file)
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const uploadBookCoverHandler = async (_, { bookId, file }) => {
+  try {
+    logger.info('book resolver: uploading book thumbnail')
+
+    const updatedBook = await uploadBookCover(bookId, file)
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateCoverAltHandler = async (_, { bookId, coverAlt }) => {
+  try {
+    logger.info("book resolver: updating book's coverAlt")
+
+    const updatedBook = await updateBookCoverAltText(bookId, coverAlt)
+
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBook.id,
+    })
+
+    return updatedBook
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const updateBookSettingsHandler = async (_, { bookId, settings }) => {
+  try {
+    logger.info('book resolver: executing updateBookSettings use case')
+
+    const updatedBookSettings = await updateBookSettings(bookId, settings)
+
+    subscriptionManager.publish(BOOK_SETTINGS_UPDATED, {
+      bookSettingsUpdated: updatedBookSettings.bookId,
+    })
+
+    return updatedBookSettings
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+module.exports = {
+  Query: {
+    getBook: getBookHandler,
+    getPagedPreviewerLink: getPagedPreviewerLinkHandler,
+    getBooks: getBooksHandler,
+  },
+  Mutation: {
+    archiveBook: archiveBookHandler,
+    createBook: createBookHandler,
+    renameBook: renameBookHandler,
+    updateSubtitle: updateSubtitleHandler,
+    deleteBook: deleteBookHandler,
+    exportBook: exportBookHandler,
+    publishOnline: publishOnlineHandler,
+    unpublishOnline: unpublishOnlineHandler,
+    updateMetadata: updateMetadataHandler,
+    updatePODMetadata: updatePODMetadataHandler,
+    updateRunningHeaders: updateRunningHeadersHandler,
+    changeLevelLabel: changeLevelLabelHandler,
+    changeNumberOfLevels: changeNumberOfLevelsHandler,
+    updateBookOutline: updateBookOutlineHandler,
+    updateLevelContentStructure: updateLevelContentStructureHandler,
+    updateShowWelcome: updateShowWelcomeHandler,
+    finalizeBookStructure: finalizeBookStructureHandler,
+    // updateAssociatedTemplates: updateAssociatedTemplateHandler,
+    updateBookStatus: updateBookStatusHandler,
+    updateBookSettings: updateBookSettingsHandler,
+    uploadBookThumbnail: uploadBookThumbnailHandler,
+    uploadBookCover: uploadBookCoverHandler,
+    updateCoverAlt: updateCoverAltHandler,
+  },
+  Book: {
+    async title(book) {
+      const { title } = book
+
+      if (!title) {
+        return getBookTitle(book.id)
+      }
+
+      return title
+    },
+    async subtitle(book) {
+      const { subtitle } = book
+
+      if (!subtitle) {
+        return getBookSubtitle(book.id)
+      }
+
+      return subtitle
+    },
+    divisions(book) {
+      return book.divisions
+    },
+    archived(book) {
+      return book.archived
+    },
+    async bookSettings(book) {
+      const bookSettings = await getBookSettings(book.id)
+      return bookSettings
+    },
+    async authors(book) {
+      const authorsTeam = await getObjectTeam('author', book.id, true)
+
+      let authors = []
+
+      if (authorsTeam && authorsTeam.users.length > 0) {
+        authors = authorsTeam.users
+      }
+
+      return authors
+    },
+    async isPublished(book) {
+      let isPublished = false
+
+      if (book.publicationDate) {
+        const date = book.publicationDate
+        const inTimestamp = new Date(date).getTime()
+        const nowDate = new Date()
+        const nowTimestamp = nowDate.getTime()
+
+        if (inTimestamp <= nowTimestamp) {
+          isPublished = true
+        } else {
+          isPublished = false
+        }
+      }
+
+      return isPublished
+    },
+    async productionEditors(book) {
+      const productionEditorsTeam = await getObjectTeam(
+        'productionEditor',
+        book.id,
+        true,
+      )
+
+      let productionEditors = []
+
+      if (productionEditorsTeam && productionEditorsTeam.users.length > 0) {
+        productionEditors = map(productionEditorsTeam.users, teamMember => {
+          const { givenNames, surname } = teamMember
+          return `${givenNames} ${surname}`
+        })
+      }
+
+      return productionEditors
+    },
+    async cover(book) {
+      const { cover } = book
+
+      if (cover) {
+        try {
+          return Promise.all(
+            cover.map(async c => {
+              const { fileId } = c
+
+              try {
+                const coverFile = fileId && (await File.findById(fileId))
+
+                if (coverFile) {
+                  const coverUrl = await fileStorage.getURL(
+                    coverFile.getStoredObjectBasedOnType('original').key,
+                  )
+
+                  return {
+                    fileId,
+                    coverUrl,
+                    altText: c.altText,
+                  }
+                }
+
+                return {}
+              } catch (error) {
+                logger.error(`Error fetching cover for book ${book.id},`, error)
+                return {}
+              }
+            }),
+          )
+        } catch (error) {
+          logger.error(`Error fetching cover for book ${book.id},`, error)
+          return []
+        }
+      }
+
+      return null
+    },
+    async thumbnailURL(book) {
+      if (book.thumbnailId) {
+        try {
+          const thumbnailFile = await File.findById(book.thumbnailId)
+
+          if (thumbnailFile) {
+            return fileStorage.getURL(
+              thumbnailFile.getStoredObjectBasedOnType('small').key,
+            )
+          }
+
+          return null
+        } catch (error) {
+          logger.error(`Error fetching thumbnail for book ${book.id},`, error)
+          return null
+        }
+      }
+
+      return null
+    },
+  },
+  Subscription: {
+    bookUpdated: {
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(BOOK_UPDATED)
+          },
+          (payload, variables) => {
+            const { id: bookId } = variables
+            const { bookUpdated: updatedBookId } = payload
+
+            return bookId === updatedBookId
+          },
+        )(...args)
+      },
+    },
+    bookArchived: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(BOOK_ARCHIVED)
+      },
+    },
+    bookDeleted: {
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(BOOK_DELETED)
+          },
+          (_, __, ctx) => {
+            const { userId } = ctx
+
+            return isAdmin(userId)
+          },
+        )(...args)
+      },
+    },
+    bookRenamed: {
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(BOOK_RENAMED)
+          },
+          (_, __, ctx) => {
+            const { userId } = ctx
+
+            return isAdmin(userId)
+          },
+        )(...args)
+      },
+    },
+    bookMetadataUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(BOOK_METADATA_UPDATED)
+      },
+    },
+    bookRunningHeadersUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(BOOK_RUNNING_HEADERS_UPDATED)
+      },
+    },
+    bookSettingsUpdated: {
+      subscribe: async () => {
+        return subscriptionManager.asyncIterator(BOOK_SETTINGS_UPDATED)
+      },
+    },
+  },
+}

@@ -26,6 +26,14 @@ COPY packages/client/yarn.lock .
 WORKDIR /home/node/app/packages/client
 RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
 
+WORKDIR /home/node/app/packages/server
+COPY packages/server/.yarnrc.yml .
+COPY packages/server/package.json .
+COPY packages/server/yarn.lock .
+
+WORKDIR /home/node/app/packages/server
+RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
+
 WORKDIR /home/node/app
 
 COPY . .

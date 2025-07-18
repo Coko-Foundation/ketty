@@ -1,0 +1,62 @@
+{
+  "name": "server",
+  "version": "1.45.0",
+  "packageManager": "yarn@4.9.2",
+  "private": true,
+  "description": "Ketida's Platform common server",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.coko.foundation/ketida/server.git"
+  },
+  "license": "MIT",
+  "author": "Yannis Barlas, Alexandros Georgantas",
+  "scripts": {
+    "create:admin": "node ./scripts/runners/createAdmin.js",
+    "create:collection": "node ./scripts/runners/createCollection.js",
+    "delete:templates": "node ./scripts/runners/deleteTemplates.js",
+    "exec:fixUploading": "node ./scripts/runners/unfreezeUploads.js",
+    "seed:templates": "node ./scripts/runners/createTemplates.js",
+    "cz": "git-cz",
+    "lint": "eslint '**/*.js'",
+    "test": "jest"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && lint-staged"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-customizable"
+    }
+  },
+  "dependencies": {
+    "@coko/server": "^4.15.1",
+    "@dqbd/tiktoken": "^1.0.21",
+    "archiver": "^3.1.1",
+    "bluebird": "^3.7.2",
+    "cheerio": "^1.0.0-rc.2",
+    "config": "^3.3.11",
+    "css-tree": "^1.1.2",
+    "form-data": "^3.0.0",
+    "fs-extra": "^11.2.0",
+    "highlight.js": "^10.7.1",
+    "htmltidy2": "^1.2.0",
+    "js-beautify": "^1.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "list-contents": "^4.0.2",
+    "lodash": "4.17.21",
+    "mammoth": "^1.7.1",
+    "mathjax-node": "^2.1.1",
+    "mime-types": "^2.1.24",
+    "moment": "^2.29.4",
+    "objection": "^3.1.4",
+    "pdf2html": "^3.1.0",
+    "ws": "^8.18.0",
+    "xlsx": "^0.18.5",
+    "xmlbuilder": "^13.0.2"
+  },
+  "devDependencies": {
+    "jest": "^28.1.3"
+  }
+}

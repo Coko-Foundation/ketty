@@ -20,7 +20,7 @@ services:
     environment:
       - NODE_ENV=production
       - KETIDA_FLAVOUR=LULU
-      - PUBSWEET_SECRET=${PUBSWEET_SECRET}
+      - SECRET=${SECRET}
       - SERVER_URL=${SERVER_URL}
       - WEBSOCKET_SERVER_URL=${WEBSOCKET_SERVER_URL}
       - CLIENT_URL=${CLIENT_URL}

@@ -151,7 +151,7 @@ const CopyrightLicenseInput = props => {
 }
 
 CopyrightLicenseInput.propTypes = {
-  value: PropTypes.oneOf(['SCL', 'PD', 'CC']),
+  value: PropTypes.oneOf(['SCL', 'PD', 'CC', '']),
   onChange: PropTypes.func,
   canChangeMetadata: PropTypes.bool,
 }

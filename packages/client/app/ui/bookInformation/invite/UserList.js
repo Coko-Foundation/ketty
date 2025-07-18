@@ -4,16 +4,9 @@ import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { List, Select } from '../../common'
 
-const StyledListItem = styled(List.Item)`
+const StyledListItem = styled.div`
+  padding: 12px 0;
   width: 100%;
-
-  .ant-list-item {
-    width: 100%;
-  }
-
-  .ant-list-item > div {
-    width: 100%;
-  }
 `
 
 const getInitials = fullname => {
@@ -118,7 +111,7 @@ UserListItem.propTypes = {
   onChangeAccess: PropTypes.func.isRequired,
   onRemoveAccess: PropTypes.func.isRequired,
   role: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
   teamId: PropTypes.string.isRequired,
   user: PropTypes.shape({
     displayName: PropTypes.string.isRequired,
@@ -126,6 +119,10 @@ UserListItem.propTypes = {
     email: PropTypes.string,
   }).isRequired,
   canChangeAccess: PropTypes.bool.isRequired,
+}
+
+UserListItem.defaultProps = {
+  status: null,
 }
 
 const UserList = ({
@@ -140,6 +137,7 @@ const UserList = ({
     team =>
       team.members.length > 0 && (
         <List
+          className={className}
           dataSource={team.members}
           key={team.id}
           loading={loading}
@@ -171,8 +169,8 @@ UserList.propTypes = {
           }),
         }),
       ),
-      id: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired,
+      id: PropTypes.string,
+      role: PropTypes.string,
     }),
   ).isRequired,
   onChangeAccess: PropTypes.func.isRequired,

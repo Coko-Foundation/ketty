@@ -100,16 +100,16 @@ const StyledButton = styled(AntButton)`
  * `danger` prop, which is ommited in favour of `status`, described below.
  */
 
-const Button = props => {
+const Button = React.forwardRef((props, ref) => {
   const { children, className, ...rest } = props
   const passProps = omit(rest, 'danger')
 
   return (
-    <StyledButton className={className} {...passProps}>
+    <StyledButton className={className} ref={ref} {...passProps}>
       {children}
     </StyledButton>
   )
-}
+})
 
 Button.propTypes = {
   status: PropTypes.oneOf(['error', 'danger', 'success']),

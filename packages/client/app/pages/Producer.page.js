@@ -244,13 +244,16 @@ const ProducerPage = () => {
     },
   })
 
-  const { data: { getObjectTeams: { result: bookMembers } = {} } = {} } =
-    useQuery(GET_BOOK_TEAMS, {
+  const { data: { teams: { result: bookMembers } = {} } = {} } = useQuery(
+    GET_BOOK_TEAMS,
+    {
       variables: {
-        objectId: bookId,
-        objectType: 'book',
+        filter: {
+          objectId: bookId,
+        },
       },
-    })
+    },
+  )
 
   const editorRef = useRef(null)
 

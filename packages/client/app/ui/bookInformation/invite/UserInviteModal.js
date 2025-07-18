@@ -34,8 +34,9 @@ const UserInviteModal = ({ bookId }) => {
     GET_BOOK_TEAMS,
     {
       variables: {
-        objectId: bookId,
-        objectType: 'book',
+        filter: {
+          objectId: bookId,
+        },
       },
     },
   )
@@ -49,7 +50,7 @@ const UserInviteModal = ({ bookId }) => {
     },
   )
 
-  const bookTeams = bookTeamsData?.getObjectTeams?.result || []
+  const bookTeams = bookTeamsData?.teams?.result || []
 
   const bookInvites = invitationsData?.getInvitations || []
 

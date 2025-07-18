@@ -1,6 +1,6 @@
 {
   "name": "ketty-root",
-  "packageManager": "yarn@4.8.1",
+  "packageManager": "yarn@4.9.2",
   "license": "MIT",
   "author": "Yannis Barlas, Alexandros Georgantas",
   "scripts": {

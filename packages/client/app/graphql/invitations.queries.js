@@ -34,10 +34,13 @@ const HANDLE_INVITATION = gql`
 const GET_INVITATIONS = gql`
   query GetInvitations($bookId: ID!) {
     getInvitations(bookId: $bookId) {
+      id
       role
       members {
+        id
         status
         user {
+          id
           displayName
           email
         }

@@ -112,9 +112,7 @@ const StyledPopup = styled(Popup)`
 `
 
 const StyledAvatar = styled(Avatar)`
-  display: grid;
   font-weight: bold;
-  place-content: center;
 `
 
 const PopupContentWrapper = styled.div`

@@ -97,21 +97,31 @@ const Dashboard = props => {
 }
 
 Dashboard.propTypes = {
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   books: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       // cover: PropTypes.string.isRequired,
       title: PropTypes.string,
     }),
-  ).isRequired,
-  booksPerPage: PropTypes.number.isRequired,
+  ),
+  booksPerPage: PropTypes.number,
   onPageChange: PropTypes.func.isRequired,
   onClickDelete: PropTypes.func.isRequired,
-  totalCount: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  canDeleteBook: PropTypes.func.isRequired,
-  canUploadBookThumbnail: PropTypes.func.isRequired,
+  totalCount: PropTypes.number,
+  currentPage: PropTypes.number,
+  canDeleteBook: PropTypes.func,
+  canUploadBookThumbnail: PropTypes.func,
+}
+
+Dashboard.defaultProps = {
+  books: [],
+  booksPerPage: 12,
+  canDeleteBook: false,
+  canUploadBookThumbnail: false,
+  currentPage: 1,
+  loading: false,
+  totalCount: 0,
 }
 
 export default Dashboard

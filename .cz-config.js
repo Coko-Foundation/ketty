@@ -1,16 +1,5 @@
 const { commitizen } = require('@coko/lint')
 
-/**
- * You can edit the config before you export it to suit your needs.
- *
- * eg.
- * commitizen.scopes = [
- *    'dashboard',
- *    'team manager',
- *    'api',
- *    'models',
- *    '*'
- * ]
- */
+commitizen.scopes = ['client', 'server', 'docs', 'root', '*']
 
 module.exports = commitizen

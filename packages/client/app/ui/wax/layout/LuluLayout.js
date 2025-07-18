@@ -847,7 +847,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
             icon={
               mobileToolbarCollapsed ? <CaretDownFilled /> : <CaretUpFilled />
             }
-            iconPosition="end"
             id="collapse"
             onClick={() => setMobileToolbarCollapsed(!mobileToolbarCollapsed)}
           >

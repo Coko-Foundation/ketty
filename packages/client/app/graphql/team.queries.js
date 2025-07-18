@@ -91,8 +91,8 @@ const UPDATE_TEAM_MEMBER_STATUS = gql`
 `
 
 const GET_BOOK_TEAMS = gql`
-  query GetObjectTeams($objectId: ID!, $objectType: String!) {
-    getObjectTeams(objectId: $objectId, objectType: $objectType) {
+  query GetBookTeams($filter: TeamFilter) {
+    teams(filter: $filter) {
       result {
         id
         role
@@ -111,6 +111,7 @@ const GET_BOOK_TEAMS = gql`
     }
   }
 `
+
 // const TEAM_MEMBERS_UPDATED_SUBSCRIPTION = gql`
 //   subscription TeamMembersUpdated {
 //     teamMembersUpdated {

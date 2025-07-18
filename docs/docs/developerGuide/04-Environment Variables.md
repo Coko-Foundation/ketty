@@ -5,7 +5,7 @@
 | Name       | Description |
 | ---------- | ----------- |
 | `NODE_ENV` | Valid values are `development`, `production` and `test`. Defines the environment that your node process will be running in. Features may be turned on or off depending on the environment.|
-| `PUBSWEET_SECRET` | The secret used for signing and verifying jwt tokens.|
+| `SECRET` | The secret used for signing and verifying jwt tokens.|
 | `PASSWORD_RESET_PATH_TO_PAGE` | The url path (without the host) for the password reset page. Used for creating links in reset password emails.|
 | `SERVER_URL` | The url (including port), where the server can be found. This is necessary for implementing callbacks from external services.|
 | `WEBSOCKET_SERVER_URL` | The url (including port) where the websocket server can be found. This is currently used for parsing the query params of websocket calls. The websocket server currently exists for handling locks.|
