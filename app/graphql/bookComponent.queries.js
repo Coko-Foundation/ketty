@@ -252,11 +252,17 @@ const SET_BOOK_COMPONENT_STATUS = gql`
   }
 `
 
-// const BOOK_COMPONENT_UPDATED_SUBSCRIPTION = gql`
-//   subscription BookComponentUpdated($id: ID!) {
-//     bookComponentUpdated(id: $id)
-//   }
-// `
+const BOOK_COMPONENT_UPDATED_SUBSCRIPTION = gql`
+  subscription BookComponentUpdated($id: ID!) {
+    bookComponentUpdated(id: $id)
+  }
+`
+
+const BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION = gql`
+  subscription BookComponentTranslated($id: ID!) {
+    bookComponentTranslated(id: $id)
+  }
+`
 
 export {
   CREATE_BOOK_COMPONENT,
@@ -270,5 +276,6 @@ export {
   SET_BOOK_COMPONENT_STATUS,
   UPDATE_BOOK_COMPONENT_TYPE,
   UPDATE_BOOK_COMPONENT_PARENT_ID,
-  // BOOK_COMPONENT_UPDATED_SUBSCRIPTION,
+  BOOK_COMPONENT_UPDATED_SUBSCRIPTION,
+  BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION,
 }
