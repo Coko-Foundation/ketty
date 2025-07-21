@@ -30,6 +30,7 @@ import {
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
+  BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION,
   UPDATE_SETTINGS,
   GET_BOOK_COMPONENT,
   USE_CHATGPT,
@@ -44,7 +45,6 @@ import {
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
   TRIGGER_WORKFLOW,
-  // BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
 } from '../graphql'
 
 import {
@@ -364,6 +364,27 @@ const ProducerPage = () => {
       }
 
       setKey(uuid())
+    },
+  })
+
+  useSubscription(BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION, {
+    variables: { id: selectedChapterId },
+    fetchPolicy: 'network-only',
+    onData: ({ data: { data } = {} }) => {
+      if (data.bookComponentTranslated === selectedChapterId) {
+        const infoModal = Modal.info()
+        infoModal.update({
+          title: 'Chapter translated',
+          content: (
+            <Paragraph>
+              Chapter has been translated. Use the language dropdown on the top
+              right to switch languages.
+            </Paragraph>
+          ),
+        })
+
+        refetchBookComponent()
+      }
     },
   })
   // SUBSCRIPTIONS SECTION END
@@ -958,6 +979,8 @@ const ProducerPage = () => {
     }
 
     setSelectedChapterId(chapterId)
+    // find better way to reset default language
+    setCurrentLanguage('en')
   }
 
   const handleUploadChapter = () => {
