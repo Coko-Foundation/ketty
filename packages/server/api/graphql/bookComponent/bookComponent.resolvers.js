@@ -43,6 +43,7 @@ const {
   BOOK_COMPONENT_TYPE_UPDATED,
   BOOK_COMPONENT_TOC_UPDATED,
   BOOK_COMPONENT_UPDATED,
+  BOOK_COMPONENT_TRANSLATED,
 } = require('./constants')
 
 const { BOOK_UPDATED } = require('../book/constants')
@@ -1093,6 +1094,21 @@ module.exports = {
           (payload, variables) => {
             const { id: clientBCId } = variables
             const { bookComponentUpdated: updatedBookComponentId } = payload
+
+            return clientBCId === updatedBookComponentId
+          },
+        )(...args)
+      },
+    },
+    bookComponentTranslated: {
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(BOOK_COMPONENT_TRANSLATED)
+          },
+          (payload, variables) => {
+            const { id: clientBCId } = variables
+            const { bookComponentTranslated: updatedBookComponentId } = payload
 
             return clientBCId === updatedBookComponentId
           },

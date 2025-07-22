@@ -443,6 +443,39 @@ const RESTEndpoints = app => {
       res.status(500).json({ error: error.message })
     }
   })
+  app.post('/api/chapter/translate', async (req, res) => {
+    try {
+      const { chapterId, languageIso, content } = req.body
+
+      const existingTranslation = await BookComponentTranslation.findOne({
+        bookComponentId: chapterId,
+        languageIso,
+      })
+
+      if (!existingTranslation) {
+        await BookComponentTranslation.insert({
+          bookComponentId: chapterId,
+          languageIso,
+          content,
+        })
+      } else {
+        await BookComponentTranslation.patchAndFetchById(
+          existingTranslation.id,
+          {
+            content,
+          },
+        )
+      }
+
+      subscriptionManager.publish('BOOK_COMPONENT_TRANSLATED', {
+        bookComponentTranslated: chapterId,
+      })
+
+      res.status(200).send('Chapter translated successfully')
+    } catch (error) {
+      res.status(500).json({ error: error.message })
+    }
+  })
 }
 
 module.exports = RESTEndpoints
