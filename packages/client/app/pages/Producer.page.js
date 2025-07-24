@@ -982,7 +982,7 @@ const ProducerPage = () => {
     }
 
     setSelectedChapterId(chapterId)
-    
+
     // find better way to reset default language
     setCurrentLanguage('en')
   }
