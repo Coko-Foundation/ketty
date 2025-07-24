@@ -157,18 +157,13 @@ deploy develop:
     - cd ../client
     - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
 
-.deploy demo:
-  extends: .deploy base
+deploy main:
   stage: Deploy
-  needs:
-    - publish production demo
-  variables:
-    URL: $DEMO_SSH_URL
-    PORT: $DEMO_SSH_PORT
-    USER: $DEMO_SSH_USER
-    PRIVATE_KEY: $DEMO_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $DEMO_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEMO
-    SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEMO
+  image: cokoapps/fly
   only:
     - main
+  script:
+    - cd ./packages/server
+    - FLY_API_TOKEN=$FLY_TOKEN_SERVER_MAIN flyctl deploy -c ./fly-main.toml --remote-only
+    - cd ../client
+    - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_MAIN flyctl deploy -c ./fly-main.toml --remote-only
