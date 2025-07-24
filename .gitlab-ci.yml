@@ -48,6 +48,7 @@ pages:
       - node_modules/
   script:
     - cd docs
+    - corepack enable
     - yarn install
     - yarn build
   artifacts:
