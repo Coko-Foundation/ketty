@@ -1,4 +1,4 @@
-app = 'ketty-server-develop'
+app = 'ketty-server-main'
 primary_region = 'ord'
 
 [build]
@@ -39,9 +39,9 @@ cpus = 2
 
 [env]
 NODE_ENV = "production"
-CLIENT_URL = "https://ketty-client-develop.fly.dev"
-SERVER_URL = "https://ketty-server-develop.fly.dev"
-WEBSOCKET_SERVER_URL = "wss://ketty-server-develop.fly.dev:3333"
+CLIENT_URL = "https://ketty-client-main.fly.dev"
+SERVER_URL = "https://ketty-server-main.fly.dev"
+WEBSOCKET_SERVER_URL = "wss://ketty-server-main.fly.dev:3333"
 KETIDA_FLAVOUR = "LULU"
 FEATURE_UPLOAD_DOCX_FILES = true
 FEATURE_BOOK_STRUCTURE = false
