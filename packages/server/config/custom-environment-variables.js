@@ -105,4 +105,5 @@ module.exports = {
     key: 'CHAT_GPT_KEY',
   },
   featureAIEnabled: 'AI_ENABLED',
+  corsOrigin: 'CORS_ORIGIN',
 }

@@ -52,3 +52,4 @@ SERVICE_XSWEET_URL = "https://xsweet-ms.fly.dev"
 SERVICE_FLAX_URL = "https://ketty-flax.fly.dev"
 TEMP_DIRECTORY_CLEAN_UP = true
 AI_ENABLED = true
+CORS_ORIGIN = "https://ketty.coko.app"
