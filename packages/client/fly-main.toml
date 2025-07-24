@@ -1,0 +1,20 @@
+app = 'ketty-client-main'
+primary_region = 'ord'
+
+[build]
+dockerfile = "Dockerfile-production"
+
+[http_service]
+internal_port = 80
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
+
+[[vm]]
+size = 'shared-cpu-1x'
+
+[env]
+SERVER_URL = "https://ketty-server-main.fly.dev"
+WEBSOCKET_SERVER_URL = "https://ketty-server-main.fly.dev:3333"

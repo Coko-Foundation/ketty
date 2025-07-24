@@ -4,13 +4,13 @@ include:
     file: 'ci-templates.yml'
 
 variables:
-  IMAGE_NAME_DEVELOPMENT: ketty-client-ci-development
+  IMAGE_NAME_DEVELOPMENT: coko-org/products/ketty/ketty/root-development
   IMAGE_NAME_PREPRODUCTION_DEVELOP: ketty-client-ci-production-develop
   IMAGE_NAME_PREPRODUCTION_DEMO: ketty-client-ci-production-demo
   IMAGE_NAME_PRODUCTION_DEVELOP: ketty-client-deploy-develop
   IMAGE_NAME_PRODUCTION_DEMO: ketty-client
   IMAGE_NAME_STORYBOOK: ketty-client-storybook
-  PATH_TO_BUILD: .
+  PATH_TO_BUILD: ./packages/client
   PATH_INSIDE_CONTAINER: /home/node/ketida
   COMPOSE_FILE_STORYBOOK: docker-compose.storybook-deploy.yml
   COMPOSE_FILE_DEPLOY_DEVELOP: docker-compose.develop-deploy.yml
@@ -61,19 +61,26 @@ pages:
 ## LINT & UNIT TEST
 
 build development:
-  extends: .build development
   stage: Build development
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    BUILD_PATH: $PATH_TO_BUILD
+  interruptible: true
+  image: docker:27
+  services:
+    - docker:27-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build
+      --tag $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
+      -f Dockerfile .
+    - docker push $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
 
 lint:
-  extends: .lint
   stage: Lint & Unit test
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
-    WORKDIR: $PATH_INSIDE_CONTAINER
-    STYLELINT: 1
+  interruptible: true
+  image: $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
+  script:
+    - cd /home/node/app
+    - yarn coko-lint run
 
 .unit test:
   extends: .client unit test
@@ -84,16 +91,7 @@ lint:
 
 ## BUILD PRODUCTION IMAGE
 
-build preproduction develop:
-  extends: .build production
-  stage: Build production
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEVELOP
-    BUILD_PATH: $PATH_TO_BUILD
-  only:
-    - develop
-
-build preproduction demo:
+.build preproduction demo:
   extends: .build production
   stage: Build production
   variables:
@@ -107,18 +105,7 @@ build preproduction demo:
 
 ## PUBLISH PRODUCTION IMAGE
 
-publish production develop:
-  extends: .publish
-  stage: Publish
-  needs:
-    - build preproduction develop
-  variables:
-    PREPRODUCTION_IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEVELOP
-    PRODUCTION_IMAGE_NAME: $IMAGE_NAME_PRODUCTION_DEVELOP
-  only:
-    - develop
-
-publish production demo:
+.publish production demo:
   extends: .publish
   stage: Publish
   needs:
@@ -160,33 +147,23 @@ publish production demo:
 #     url: https://$STORYBOOK_SSH_URL
 
 deploy develop:
-  extends: .deploy base
   stage: Deploy
-  needs:
-    - publish production develop
-  variables:
-    URL: $DEVELOP_SSH_URL
-    PORT: $DEVELOP_SSH_PORT
-    USER: $DEVELOP_SSH_USER
-    PRIVATE_KEY: $DEVELOP_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $DEVELOP_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEVELOP
-    SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEVELOP
+  image: cokoapps/fly
   only:
     - develop
+  script:
+    - cd ./packages/server
+    - FLY_API_TOKEN=$FLY_TOKEN_SERVER_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
+    - cd ../client
+    - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
 
-deploy demo:
-  extends: .deploy base
+deploy main:
   stage: Deploy
-  needs:
-    - publish production demo
-  variables:
-    URL: $DEMO_SSH_URL
-    PORT: $DEMO_SSH_PORT
-    USER: $DEMO_SSH_USER
-    PRIVATE_KEY: $DEMO_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $DEMO_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEMO
-    SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEMO
+  image: cokoapps/fly
   only:
     - main
+  script:
+    - cd ./packages/server
+    - FLY_API_TOKEN=$FLY_TOKEN_SERVER_MAIN flyctl deploy -c ./fly-main.toml --remote-only
+    - cd ../client
+    - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_MAIN flyctl deploy -c ./fly-main.toml --remote-only

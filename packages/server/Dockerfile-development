@@ -1,0 +1,14 @@
+FROM cokoapps/base-dev:20
+
+WORKDIR /home/node/server
+
+COPY .yarnrc.yml .
+COPY package.json .
+COPY yarn.lock .
+
+RUN chown -R node:node .
+USER node
+
+RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
+
+COPY --chown=node:node . .

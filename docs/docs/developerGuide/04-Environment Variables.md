@@ -5,14 +5,12 @@
 | Name       | Description |
 | ---------- | ----------- |
 | `NODE_ENV` | Valid values are `development`, `production` and `test`. Defines the environment that your node process will be running in. Features may be turned on or off depending on the environment.|
-| `PUBSWEET_SECRET` | The secret used for signing and verifying jwt tokens.|
-| `PASSWORD_RESET_PATH_TO_PAGE` | The url path (without the host) for the password reset page. Used for creating links in reset password emails.|
+| `SECRET` | The secret used for signing and verifying jwt tokens.|
 | `SERVER_URL` | The url (including port), where the server can be found. This is necessary for implementing callbacks from external services.|
 | `WEBSOCKET_SERVER_URL` | The url (including port) where the websocket server can be found. This is currently used for parsing the query params of websocket calls. The websocket server currently exists for handling locks.|
 | `SERVER_PORT` | This defines the port that server will run on, both inside and outside of the container.|
 | `WS_SERVER_PORT` | This defines the port that the websocket server (for locks) will run on, both inside and outside the container.|
 | `CLIENT_URL` | The url that the client can be found at. This exists for two reasons: (a) to whitelist the client url at the CORS configuration, so that we don’t run into cross-origin errors in the browser and (b) to construct links that could eg. be constructed on the server, but shown in an email.|
-| `SERVER_SERVE_CLIENT` | Whether the server container will also serve the static bundle of the client. This feature should be considered deprecated and should always be `false`.|
 | `ADMIN_USERNAME` | The `ADMIN_*` variables allow you to optionally create an admin user at server startup with these values. |
 | `ADMIN_PASSWORD` | See above. |
 | `ADMIN_GIVEN_NAME` | See above. |

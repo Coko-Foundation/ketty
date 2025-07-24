@@ -63,7 +63,6 @@ First thing to do is to setup the correct environment variables in the environme
 Some notes on specific variables:
 
 - Make sure `NODE_ENV=production` on production environments
-- Make sure `SERVER_SERVE_CLIENT` is set to `false`
 - Make sure each container has a unique `SERVER_IDENTIFIER` value
 - Make sure `FEATURE_UPLOAD_DOCX_FILES` is set to `true`
 - Make sure `FEATURE_BOOK_STRUCTURE` is set to `false`
