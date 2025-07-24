@@ -1,0 +1,54 @@
+app = 'ketty-server-develop'
+primary_region = 'ord'
+
+[build]
+dockerfile = "Dockerfile-production"
+
+[http_service]
+internal_port = 3000
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 1
+processes = ['app']
+
+[[services]]
+protocol = 'tcp'
+internal_port = 3000
+
+[[services.ports]]
+port = 80
+handlers = ['http']
+
+[[services.ports]]
+port = 443
+handlers = ['tls', 'http']
+
+[[services]]
+protocol = 'tcp'
+internal_port = 3333
+
+[[services.ports]]
+port = 3333
+handlers = ['tls', 'http']
+
+[[vm]]
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 2
+
+[env]
+NODE_ENV = "production"
+CLIENT_URL = "https://ketty-client-develop.fly.dev"
+SERVER_URL = "https://ketty-server-develop.fly.dev"
+WEBSOCKET_SERVER_URL = "https://ketty-server-develop.fly.dev:3333"
+KETIDA_FLAVOUR = "LULU"
+FEATURE_UPLOAD_DOCX_FILES = true
+FEATURE_BOOK_STRUCTURE = false
+FEATURE_POD = true
+SERVICE_EPUB_CHECKER_URL = "https://epubchecker-ms.fly.dev"
+SERVICE_PAGEDJS_URL = "https://pagedjs-ms.fly.dev"
+SERVICE_XSWEET_URL = "https://xsweet-ms.fly.dev"
+SERVICE_FLAX_URL = "https://ketty-flax.fly.dev"
+TEMP_DIRECTORY_CLEAN_UP = true
+AI_ENABLED = true

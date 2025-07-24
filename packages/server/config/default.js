@@ -74,6 +74,9 @@ module.exports = {
   pool: { min: 0, max: 10, idleTimeoutMillis: 1000 },
   teams: flavorTeams,
   tempDirectoryCleanUp: true,
+  wsHeartbeatInterval: 5000,
+  WSServerPort: 3333,
+  failSafeUnlockingInterval: 7000,
 
   onStartup: startUpScripts,
   devServerIgnore: ['./templates/*'],

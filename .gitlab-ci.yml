@@ -91,16 +91,7 @@ lint:
 
 ## BUILD PRODUCTION IMAGE
 
-build preproduction develop:
-  extends: .build production
-  stage: Build production
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEVELOP
-    BUILD_PATH: $PATH_TO_BUILD
-  only:
-    - develop
-
-build preproduction demo:
+.build preproduction demo:
   extends: .build production
   stage: Build production
   variables:
@@ -114,18 +105,7 @@ build preproduction demo:
 
 ## PUBLISH PRODUCTION IMAGE
 
-publish production develop:
-  extends: .publish
-  stage: Publish
-  needs:
-    - build preproduction develop
-  variables:
-    PREPRODUCTION_IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEVELOP
-    PRODUCTION_IMAGE_NAME: $IMAGE_NAME_PRODUCTION_DEVELOP
-  only:
-    - develop
-
-publish production demo:
+.publish production demo:
   extends: .publish
   stage: Publish
   needs:
@@ -167,22 +147,17 @@ publish production demo:
 #     url: https://$STORYBOOK_SSH_URL
 
 deploy develop:
-  extends: .deploy base
   stage: Deploy
-  needs:
-    - publish production develop
-  variables:
-    URL: $DEVELOP_SSH_URL
-    PORT: $DEVELOP_SSH_PORT
-    USER: $DEVELOP_SSH_USER
-    PRIVATE_KEY: $DEVELOP_SSH_PRIVATE_KEY
-    APP_PATH_ON_SERVER: $DEVELOP_APP_PATH_ON_SERVER
-    COMPOSE_FILE: $COMPOSE_FILE_DEPLOY_DEVELOP
-    SERVICE_NAME: $SERVICE_NAME_DEPLOY_DEVELOP
+  image: cokoapps/fly
   only:
     - develop
+  script:
+    - cd ./packages/server
+    - FLY_API_TOKEN=$FLY_TOKEN_SERVER_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
+    - cd ../client
+    - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
 
-deploy demo:
+.deploy demo:
   extends: .deploy base
   stage: Deploy
   needs:

@@ -56,4 +56,9 @@ module.exports = {
       supportedNoteTypes: ['chapterEnd'],
     },
   ],
+  mailer: {
+    transport: {
+      secure: true,
+    },
+  },
 }

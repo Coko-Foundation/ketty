@@ -746,31 +746,36 @@ const removeTemplate = async (url, options = {}) => {
 const deleteTemplateFiles = async (url, trx) => {
   const templatesToDelete = await Template.find({ url })
 
-  logger.info('Deleting associated files')
-  await Promise.all(
-    templatesToDelete.result.map(async t => {
-      const files = await t.getFiles(trx)
-      const fileIds = files.map(file => file.id)
-      const thumbnail = await t.getThumbnail(trx)
+  return useTransaction(
+    async tr => {
+      logger.info('Deleting associated files')
+      await Promise.all(
+        templatesToDelete.result.map(async t => {
+          const files = await t.getFiles(tr)
+          const fileIds = files.map(file => file.id)
+          const thumbnail = await t.getThumbnail(tr)
 
-      if (thumbnail) {
-        const affectedRows = await deleteFilesController([thumbnail.id], true, {
-          trx,
-        })
+          if (thumbnail) {
+            const affectedRows = await deleteFilesController(
+              [thumbnail.id],
+              true,
+              { tr },
+            )
 
-        if (affectedRows > 0) {
-          logger.info(`>>> thumbnail with id ${thumbnail.id} deleted`)
-        }
-      }
+            if (affectedRows > 0) {
+              logger.info(`>>> thumbnail with id ${thumbnail.id} deleted`)
+            }
+          }
 
-      logger.info(`>>> ${files.length} associated files should be deleted`)
+          logger.info(`>>> ${files.length} associated files should be deleted`)
 
-      await deleteFilesController(fileIds, true, {
-        trx,
-      })
+          await deleteFilesController(fileIds, true, { tr })
 
-      return true
-    }),
+          return true
+        }),
+      )
+    },
+    { trx },
   )
 }
 

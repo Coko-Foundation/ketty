@@ -1,10 +1,28 @@
 module.exports = {
   db: {
+    host: 'POSTGRES_HOST',
+    port: 'POSTGRES_PORT',
+    database: 'POSTGRES_DB',
     user: 'POSTGRES_USER',
     password: 'POSTGRES_PASSWORD',
-    host: 'POSTGRES_HOST',
-    database: 'POSTGRES_DB',
-    port: 'POSTGRES_PORT',
+    allowSelfSignedCertificates: {
+      __name: 'POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES',
+      __format: 'json',
+    },
+    caCert: 'POSTGRES_CA_CERT',
+  },
+
+  subscriptionsDb: {
+    host: 'SUBSCRIPTIONS_POSTGRES_HOST',
+    port: 'SUBSCRIPTIONS_POSTGRES_PORT',
+    database: 'SUBSCRIPTIONS_POSTGRES_DB',
+    user: 'SUBSCRIPTIONS_POSTGRES_USER',
+    password: 'SUBSCRIPTIONS_POSTGRES_PASSWORD',
+    allowSelfSignedCertificates: {
+      __name: 'SUBSCRIPTIONS_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES',
+      __format: 'json',
+    },
+    caCert: 'SUBSCRIPTIONS_POSTGRES_CA_CERT',
   },
 
   admin: {
@@ -14,11 +32,11 @@ module.exports = {
     surname: 'ADMIN_SURNAME',
     email: 'ADMIN_EMAIL',
   },
+
   port: 'SERVER_PORT',
   protocol: 'SERVER_PROTOCOL',
   host: 'SERVER_HOST',
   secret: 'SECRET',
-  // serveClient: 'SERVER_SERVE_CLIENT',
   serverUrl: 'SERVER_URL',
   WSServerPort: 'WS_SERVER_PORT',
   wsHeartbeatInterval: 'WS_HEARTBEAT_INTERVAL',
@@ -72,13 +90,11 @@ module.exports = {
     maximumWidthForMediumImages: 'MAXIMUM_WIDTH_FOR_MEDIUM_IMAGES',
     s3SeparateDeleteOperations: 'S3_SEPARATE_DELETE_OPERATIONS',
   },
-  passwordReset: {
-    pathToPage: 'PASSWORD_RESET_PATH_TO_PAGE',
-  },
   mailer: {
     from: 'MAILER_SENDER',
     transport: {
       host: 'MAILER_HOSTNAME',
+      port: 'MAILER_PORT',
       auth: {
         user: 'MAILER_USER',
         pass: 'MAILER_PASSWORD',

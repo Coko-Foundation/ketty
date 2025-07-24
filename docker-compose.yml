@@ -45,7 +45,6 @@ services:
       - SERVER_URL=${SERVER_URL:-http://server:3000}
       - WEBSOCKET_SERVER_URL=${WEBSOCKET_SERVER_URL:-ws://server:${WS_SERVER_PORT:-3333}}
       - CLIENT_URL=${CLIENT_URL:-http://localhost:4000}
-      - SERVER_SERVE_CLIENT=false
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB:-ketida_dev}
@@ -64,7 +63,6 @@ services:
       - MAILER_PASSWORD=${MAILER_PASSWORD}
       - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
-      - PASSWORD_RESET_PATH_TO_PAGE=/password-reset
       - S3_URL=${S3_URL:-http://s3:9000}
       - S3_ACCESS_KEY_ID_USER=${S3_ACCESS_KEY_ID_USER:-ketida}
       - S3_SECRET_ACCESS_KEY_USER=${S3_SECRET_ACCESS_KEY_USER:-superSecretUserPassword}
