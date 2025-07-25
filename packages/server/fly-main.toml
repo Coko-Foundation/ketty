@@ -39,7 +39,7 @@ cpus = 2
 
 [env]
 NODE_ENV = "production"
-CLIENT_URL = "https://ketty-client-main.fly.dev"
+CLIENT_URL = "https://ketty.coko.app"
 SERVER_URL = "https://ketty-server-main.fly.dev"
 WEBSOCKET_SERVER_URL = "wss://ketty-server-main.fly.dev:3333"
 KETIDA_FLAVOUR = "LULU"
@@ -52,4 +52,4 @@ SERVICE_XSWEET_URL = "https://xsweet-ms.fly.dev"
 SERVICE_FLAX_URL = "https://ketty-flax.fly.dev"
 TEMP_DIRECTORY_CLEAN_UP = true
 AI_ENABLED = true
-CORS_ORIGIN = "https://ketty.coko.app"
+CORS_ORIGIN = "https://ketty-client-main.fly.dev"
