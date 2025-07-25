@@ -42,7 +42,7 @@ branch source and target rules:
     # - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" != "develop" && "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" == "main" ]]; then exit 1; fi # only develop can be merged into main
     - if [[ "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" == "develop" && "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "main" ]]; then exit 1; fi # develop can only be merged into main
 
-pages:
+.pages:
   image: node:lts
   stage: Docs
   cache:
@@ -63,7 +63,7 @@ pages:
 
 ## LINT & UNIT TEST
 
-build development:
+.build development:
   stage: Build development
   interruptible: true
   image: docker:27
@@ -77,7 +77,7 @@ build development:
       -f Dockerfile .
     - docker push $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
 
-lint:
+.lint:
   stage: Lint & Unit test
   interruptible: true
   image: $CI_REGISTRY/$IMAGE_NAME_DEVELOPMENT:$CI_COMMIT_REF_NAME.$CI_COMMIT_SHA
@@ -97,7 +97,7 @@ lint:
 
 ## DEPLOY
 
-deploy develop:
+.deploy develop:
   stage: Deploy
   image: cokoapps/fly
   only:
@@ -108,7 +108,7 @@ deploy develop:
     - cd ../client
     - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_DEVELOP flyctl deploy -c ./fly-develop.toml --remote-only
 
-deploy main:
+.deploy main:
   stage: Deploy
   image: cokoapps/fly
   only:
