@@ -1,6 +1,6 @@
 {
   "name": "ketty-root",
-  "version": "2025.07.25-0",
+  "version": "2025.07.25-1",
   "packageManager": "yarn@4.9.2",
   "license": "MIT",
   "author": "Yannis Barlas, Alexandros Georgantas",
