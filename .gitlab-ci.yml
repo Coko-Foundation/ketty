@@ -15,8 +15,8 @@ variables:
   COMPOSE_FILE_STORYBOOK: docker-compose.storybook-deploy.yml
   COMPOSE_FILE_DEPLOY_DEVELOP: docker-compose.develop-deploy.yml
   COMPOSE_FILE_DEPLOY_DEMO: docker-compose.demo-deploy.yml
-  IMAGE_NAME_RELEASE_SERVER: ketty-server
-  IMAGE_NAME_RELEASE_CLIENT: ketty-client
+  IMAGE_NAME_RELEASE_SERVER: cokoapps/ketty-server
+  IMAGE_NAME_RELEASE_CLIENT: cokoapps/ketty-client
 
 workflow:
   rules:
