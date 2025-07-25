@@ -15,6 +15,8 @@ variables:
   COMPOSE_FILE_STORYBOOK: docker-compose.storybook-deploy.yml
   COMPOSE_FILE_DEPLOY_DEVELOP: docker-compose.develop-deploy.yml
   COMPOSE_FILE_DEPLOY_DEMO: docker-compose.demo-deploy.yml
+  IMAGE_NAME_RELEASE_SERVER: ketty-server
+  IMAGE_NAME_RELEASE_CLIENT: ketty-client
 
 workflow:
   rules:
@@ -29,9 +31,9 @@ stages:
   - Docs
   - Build development
   - Lint & Unit test
-  - Build production
-  - Publish
   - Deploy
+  - Release
+  - Publish
 
 branch source and target rules:
   stage: Branch checks
@@ -90,62 +92,10 @@ lint:
     IMAGE_NAME: $IMAGE_NAME_DEVELOPMENT
     WORKDIR: $PATH_INSIDE_CONTAINER
 
-## BUILD PRODUCTION IMAGE
-
-.build preproduction demo:
-  extends: .build production
-  stage: Build production
-  variables:
-    IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEMO
-    BUILD_PATH: $PATH_TO_BUILD
-  only:
-    - main
-
 ## E2E TESTS -- TO DO --
 # NOTE: update 'needs' for publish stage after adding e2e tests.
 
-## PUBLISH PRODUCTION IMAGE
-
-.publish production demo:
-  extends: .publish
-  stage: Publish
-  needs:
-    - build preproduction demo
-  variables:
-    PREPRODUCTION_IMAGE_NAME: $IMAGE_NAME_PREPRODUCTION_DEMO
-    PRODUCTION_IMAGE_NAME: $IMAGE_NAME_PRODUCTION_DEMO
-  only:
-    - main
-
-# .build & publish storybook:
-#   extends: .build & publish storybook
-#   stage: Publish
-#   variables:
-#     IMAGE_NAME: $IMAGE_NAME_STORYBOOK
-#     BUILD_PATH: $PATH_TO_BUILD
-#   only:
-#     - develop
-
-# DEPLOY
-
-# .deploy storybook:
-#   extends: .deploy base
-#   stage: Deploy
-#   needs:
-#     - build & publish storybook
-#   variables:
-#     URL: $STORYBOOK_SSH_URL
-#     PORT: $STORYBOOK_SSH_PORT
-#     USER: $STORYBOOK_SSH_USER
-#     PRIVATE_KEY: $STORYBOOK_SSH_PRIVATE_KEY
-#     APP_PATH_ON_SERVER: $STORYBOOK_APP_PATH_ON_SERVER
-#     COMPOSE_FILE: $COMPOSE_FILE_STORYBOOK
-#     SERVICE_NAME: $SERVICE_NAME_STORYBOOK
-#   only:
-#     - develop
-#   environment:
-#     name: storybook
-#     url: https://$STORYBOOK_SSH_URL
+## DEPLOY
 
 deploy develop:
   stage: Deploy
@@ -168,3 +118,71 @@ deploy main:
     - FLY_API_TOKEN=$FLY_TOKEN_SERVER_MAIN flyctl deploy -c ./fly-main.toml --remote-only
     - cd ../client
     - FLY_API_TOKEN=$FLY_TOKEN_CLIENT_MAIN flyctl deploy -c ./fly-main.toml --remote-only
+
+## RELEASE
+
+release:
+  stage: Release
+  interruptible: false
+  image: node:20
+  when: manual
+  only:
+    - main
+  before_script:
+    - git remote set-url --push origin "https://gitlab-ci-token:$CI_RELEASE_TOKEN@gitlab.coko.foundation/coko-org/products/ketty/ketty.git"
+    - git config user.email "$CI_RELEASE_BOT_EMAIL"
+    - git config user.name "ketty release bot"
+  script:
+    - node scripts/updatePackageJson.js
+    - VERSION=$(node -e "const packageJson = require('./package.json'); console.log(packageJson.version);")
+    - echo VERSION set to $VERSION
+    - git add -A
+    - git commit -m "release version $VERSION [skip ci]"
+    - git show-ref --tags "$VERSION" > /dev/null 2>&1 && git tag -d "$VERSION" || echo "Tag '$VERSION' does not exist."
+    - git tag $VERSION
+    - git push origin HEAD:$CI_COMMIT_REF_NAME --verbose
+    - git push origin $VERSION
+    - echo RELEASE_VERSION=$VERSION >> version.env
+  artifacts:
+    reports:
+      dotenv: version.env
+
+publish server:
+  stage: Publish
+  interruptible: false
+  image: docker:28
+  services:
+    - docker:28-dind
+  needs:
+    - release
+  only:
+    - main
+  before_script:
+    - '[ -z "$RELEASE_VERSION" ] && exit 1'
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - git fetch origin $CI_COMMIT_REF_NAME
+    - git reset --hard origin/$CI_COMMIT_REF_NAME
+    - cd packages/server
+    - docker build --tag $IMAGE_NAME_RELEASE_SERVER:$RELEASE_VERSION -f Dockerfile-production .
+    - docker push $IMAGE_NAME_RELEASE_SERVER:$RELEASE_VERSION
+
+publish client:
+  stage: Publish
+  interruptible: false
+  image: docker:28
+  services:
+    - docker:28-dind
+  needs:
+    - release
+  only:
+    - main
+  before_script:
+    - '[ -z "$RELEASE_VERSION" ] && exit 1'
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - git fetch origin $CI_COMMIT_REF_NAME
+    - git reset --hard origin/$CI_COMMIT_REF_NAME
+    - cd packages/client
+    - docker build --tag $IMAGE_NAME_RELEASE_CLIENT:$RELEASE_VERSION -f Dockerfile-production .
+    - docker push $IMAGE_NAME_RELEASE_CLIENT:$RELEASE_VERSION
