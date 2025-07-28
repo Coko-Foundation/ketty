@@ -17,4 +17,4 @@ size = 'shared-cpu-1x'
 
 [env]
 SERVER_URL = "https://ketty-server-main.fly.dev"
-WEBSOCKET_SERVER_URL = "https://ketty-server-main.fly.dev:3333"
+WEBSOCKET_SERVER_URL = "wss://ketty-server-main.fly.dev:3333"
