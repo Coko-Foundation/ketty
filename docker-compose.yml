@@ -34,6 +34,7 @@ services:
       - epubchecker
       - pagedjs
       - xsweet
+      - flax
     command: ['yarn', 'coko-server', 'start-dev']
     ports:
       - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
@@ -79,6 +80,9 @@ services:
       - SERVICE_XSWEET_CLIENT_ID=edd8fd93-9129-4cef-8ad9-5ee196d10e19
       - SERVICE_XSWEET_SECRET=service_secret
       - SERVICE_XSWEET_URL=${SERVICE_XSWEET_URL:-http://xsweet:3004}
+      - SERVICE_FLAX_CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
+      - SERVICE_FLAX_SECRET=asldkjLKJLaslkdf897kjhKUJH
+      - SERVICE_FLAX_URL=${SERVICE_FLAX_URL:-http://flax:3005}
       - FEATURE_UPLOAD_DOCX_FILES=true
       - FEATURE_BOOK_STRUCTURE=false
       - FEATURE_POD=true
@@ -171,6 +175,30 @@ services:
       - POSTGRES_DB=epubchecker_dev
       - POSTGRES_USER=epubchecker_user_dev
       - POSTGRES_PASSWORD=epubchecker_user_password
+
+  flax:
+    depends_on:
+      - db-flax
+    image: cokoapps/ketty-flax:latest
+    ports:
+      - ${SERVICE_FLAX_PORT:-3005}:${SERVICE_FLAX_PORT:-3005}
+    environment:
+      - SECRET=flax_dev_secret
+      - SERVER_PORT=${SERVICE_FLAX_PORT:-3005}
+      - POSTGRES_HOST=db-flax
+      - POSTGRES_DB=flax_dev_db
+      - POSTGRES_USER=flax_user_dev
+      - POSTGRES_PASSWORD=flax_secretpassword
+      - POSTGRES_PORT=5432
+      - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
+      - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
+
+  db-flax:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=flax_dev_db
+      - POSTGRES_USER=flax_user_dev
+      - POSTGRES_PASSWORD=flax_secretpassword
 
   db:
     image: pgvector/pgvector:0.8.0-pg17
