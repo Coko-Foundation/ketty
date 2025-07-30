@@ -148,6 +148,30 @@ services:
       - POSTGRES_USER=epubchecker_user_dev
       - POSTGRES_PASSWORD=epubchecker_user_password
 
+  flax:
+    depends_on:
+      - db-flax
+    image: cokoapps/ketty-flax:latest
+    ports:
+      - ${SERVICE_FLAX_PORT:-3005}:${SERVICE_FLAX_PORT:-3005}
+    environment:
+      - SECRET=flax_dev_secret
+      - SERVER_PORT=${SERVICE_FLAX_PORT:-3005}
+      - POSTGRES_HOST=db-flax
+      - POSTGRES_DB=flax_dev_db
+      - POSTGRES_USER=flax_user_dev
+      - POSTGRES_PASSWORD=flax_secretpassword
+      - POSTGRES_PORT=5432
+      - CLIENT_ID=59a3392b-0c4f-4318-bbe2-f86eff6d3de4
+      - CLIENT_SECRET=asldkjLKJLaslkdf897kjhKUJH
+
+  db-flax:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=flax_dev_db
+      - POSTGRES_USER=flax_user_dev
+      - POSTGRES_PASSWORD=flax_secretpassword
+
   db:
     image: pgvector/pgvector:0.8.0-pg17
     ports:
