@@ -441,7 +441,10 @@ const flaxHandler = async (data, options) => {
 
     return {
       status: response.status,
-      serviceBaseUrl: `${getServiceURL(FLAX)}`,
+      serviceBaseUrl:
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3005'
+          : `${getServiceURL(FLAX)}`,
     }
   } catch (error) {
     logger.error(error)
