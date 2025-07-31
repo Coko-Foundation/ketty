@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 import { Link } from 'react-router-dom'
@@ -8,6 +8,8 @@ import {
   PrinterOutlined,
   SettingOutlined,
   UsergroupAddOutlined,
+  CopyOutlined,
+  CheckOutlined,
 } from '@ant-design/icons'
 import { Tooltip as AntTooltip } from 'antd'
 import { Button } from '../common'
@@ -86,6 +88,10 @@ const StyledLink = styled(Link)`
   }
 `
 
+const StyledCheckIcon = styled(CheckOutlined)`
+  color: ${th('colorSuccess')};
+`
+
 const BookInformation = props => {
   const {
     viewInformation,
@@ -95,9 +101,27 @@ const BookInformation = props => {
     bookId,
   } = props
 
+  const [copiedId, setCopiedId] = useState()
+
+  const copyBookId = () => {
+    navigator.clipboard.writeText(bookId)
+    setCopiedId(true)
+    setTimeout(() => {
+      setCopiedId(false)
+    }, 2000)
+  }
+
   return (
     <Wrapper>
-      <Tooltip placement="bottomLeft" title="Metadata">
+      <Tooltip placement="bottomLeft" title="Copy book id">
+        <StyledButton
+          aria-label="Copy book id"
+          data-test="producer-copy-id-btn"
+          icon={copiedId ? <StyledCheckIcon /> : <CopyOutlined />}
+          onClick={copyBookId}
+        />
+      </Tooltip>
+      <Tooltip placement="bottom" title="Metadata">
         <StyledButton
           aria-label="Toggle book metadata"
           aria-pressed={viewInformation === 'metadata'}

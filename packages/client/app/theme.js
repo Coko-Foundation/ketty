@@ -6,7 +6,7 @@ module.exports = {
   colorBorder: 'gainsboro',
   colorShadow: 'rgba(0, 0, 0, 0.1)',
 
-  colorSuccess: 'green',
+  colorSuccess: '#80af43',
   colorError: 'red',
   colorWarning: '#ffc300',
 
