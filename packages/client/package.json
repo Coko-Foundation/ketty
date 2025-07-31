@@ -1,6 +1,6 @@
 {
   "name": "ketty-client",
-  "version": "2025.07.25-1",
+  "version": "2025.07.31-0",
   "license": "MIT",
   "packageManager": "yarn@4.9.2",
   "author": "Yannis Barlas, Alexandros Georgantas",
