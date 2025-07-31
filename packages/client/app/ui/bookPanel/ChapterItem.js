@@ -2,9 +2,9 @@
 /* stylelint-disable no-descending-specificity */
 /* stylelint-disable string-quotes */
 /* stylelint-disable value-list-comma-newline-after */
-import React, { useEffect, forwardRef, useRef } from 'react'
+import React, { useEffect, forwardRef, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { HolderOutlined, MoreOutlined } from '@ant-design/icons'
+import { HolderOutlined, MoreOutlined, CheckOutlined } from '@ant-design/icons'
 import styled, { keyframes } from 'styled-components'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import { grid, th } from '@coko/client'
@@ -212,6 +212,10 @@ const PopupContentWrapper = styled.div`
   }
 `
 
+const Copied = styled.span`
+  color: ${th('colorSuccess')};
+`
+
 const getInitials = fullname => {
   const deconstructName = fullname.split(' ')
   return `${deconstructName[0][0].toUpperCase()}${
@@ -283,6 +287,16 @@ const ChapterItem = forwardRef(
         e.key === ' ' && collapseOtherParts()
         onKeyDown(e)
       }
+    }
+
+    const [copiedId, setCopiedId] = useState(false)
+
+    const handleCopyChapterId = () => {
+      navigator.clipboard.writeText(id)
+      setCopiedId(true)
+      setTimeout(() => {
+        setCopiedId(false)
+      }, 2000)
     }
 
     return (
@@ -374,6 +388,20 @@ const ChapterItem = forwardRef(
                   onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
                 >
                   {t('menu.options.delete')}
+                </Button>
+                <Button
+                  data-test="producer-copyChapterId"
+                  onClick={handleCopyChapterId}
+                  onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
+                >
+                  {copiedId ? (
+                    <Copied>
+                      <CheckOutlined />
+                      &nbsp; ID copied!
+                    </Copied>
+                  ) : (
+                    `Copy ${isPart ? 'part' : 'chapter'} ID`
+                  )}
                 </Button>
               </PopupContentWrapper>
             </StyledPopup>
