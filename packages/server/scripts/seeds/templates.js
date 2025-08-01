@@ -7,11 +7,24 @@ const seedTemplates = async () => {
   const { logger, useTransaction } = require('@coko/server')
   const config = require('config')
   const { getTemplates, persistTemplates } = require('../helpers/templates')
+  const { Template } = require('../../models').models
   /* eslint-enable global-require */
 
   let templatesFolder
 
   try {
+    const { result: templates } = await Template.find({ deleted: false })
+
+    const templatesByName = templates.reduce((acc, template) => {
+      const { name } = template
+      // Still need to check if the key exists
+      if (!acc[name]) acc[name] = []
+
+      acc[name].push(template)
+
+      return acc
+    }, {})
+
     const normalizedTemplates = config.has('templates')
       ? config.get('templates').map(t => ({
           label: t.label.toLowerCase(),
@@ -27,83 +40,97 @@ const seedTemplates = async () => {
       return
     }
 
-    await getTemplates()
+    if (
+      normalizedTemplates.filter(
+        t => Object.keys(templatesByName).indexOf(t.label) === -1,
+      ).length > 0
+    ) {
+      await getTemplates()
 
-    templatesFolder = path.join(__dirname, '..', '..', 'templates')
+      templatesFolder = path.join(__dirname, '..', '..', 'templates')
 
-    if (!fs.existsSync(templatesFolder)) {
-      throw new Error(
-        'something went wrong and your defined templates were not fetched correctly',
-      )
-    }
+      if (!fs.existsSync(templatesFolder)) {
+        throw new Error(
+          'something went wrong and your defined templates were not fetched correctly',
+        )
+      }
 
-    const fetchedTemplates = await fs.readdir(templatesFolder)
-    await useTransaction(async trx =>
-      Promise.all(
-        fetchedTemplates.map(async templateFolder => {
-          const sourceRoot = path.join(
-            __dirname,
-            '..',
-            '..',
-            'templates',
-            templateFolder,
-          )
-
-          const raw = fs.readFileSync(path.join(sourceRoot, 'template.json'))
-          const manifest = JSON.parse(raw)
-
-          const { name: originalName, author, target, thumbnailFile } = manifest
-          const name = originalName.toLowerCase()
-
-          const templateConfig = find(normalizedTemplates, {
-            label: name,
-          })
-
-          if (!templateConfig) {
-            return
-          }
-
-          logger.info('******* Create Templates script is starting ********')
-
-          if (
-            !templateConfig.supportedNoteTypes ||
-            templateConfig.supportedNoteTypes.length === 0
-          ) {
-            throw new Error(
-              'supportedNoteTypes is required for the creation of templates, please check your templates config',
+      const fetchedTemplates = await fs.readdir(templatesFolder)
+      await useTransaction(async trx =>
+        Promise.all(
+          fetchedTemplates.map(async templateFolder => {
+            const sourceRoot = path.join(
+              __dirname,
+              '..',
+              '..',
+              'templates',
+              templateFolder,
             )
-          }
 
-          const { supportedNoteTypes } = templateConfig
+            const raw = fs.readFileSync(path.join(sourceRoot, 'template.json'))
+            const manifest = JSON.parse(raw)
 
-          const foundTemplateConfig = find(normalizedTemplates, {
-            label: name,
-          })
-
-          await persistTemplates(
-            {
-              name,
-              url: templateConfig.url,
-              target,
-              supportedNoteTypes,
+            const {
+              name: originalName,
               author,
+              target,
               thumbnailFile,
-              shouldBeDefault: foundTemplateConfig?.default || false,
-              sourceRoot,
-            },
-            {
-              trx,
-            },
-          )
+            } = manifest
 
-          logger.info(
-            `******* Create Templates script for ${name} finished successfully ********`,
-          )
-        }),
-      ),
-    )
-    await fs.remove(templatesFolder)
-    logger.info('******* Templates folder removed ********')
+            const name = originalName.toLowerCase()
+
+            const templateConfig = find(normalizedTemplates, {
+              label: name,
+            })
+
+            if (!templateConfig) {
+              return
+            }
+
+            logger.info('******* Create Templates script is starting ********')
+
+            if (
+              !templateConfig.supportedNoteTypes ||
+              templateConfig.supportedNoteTypes.length === 0
+            ) {
+              throw new Error(
+                'supportedNoteTypes is required for the creation of templates, please check your templates config',
+              )
+            }
+
+            const { supportedNoteTypes } = templateConfig
+
+            const foundTemplateConfig = find(normalizedTemplates, {
+              label: name,
+            })
+
+            await persistTemplates(
+              {
+                name,
+                url: templateConfig.url,
+                target,
+                supportedNoteTypes,
+                author,
+                thumbnailFile,
+                shouldBeDefault: foundTemplateConfig?.default || false,
+                sourceRoot,
+              },
+              {
+                trx,
+              },
+            )
+
+            logger.info(
+              `******* Create Templates script for ${name} finished successfully ********`,
+            )
+          }),
+        ),
+      )
+      await fs.remove(templatesFolder)
+      logger.info('******* Templates folder removed ********')
+    } else {
+      logger.info('******* Default templates already exist *******')
+    }
   } catch (e) {
     fs.remove(templatesFolder)
     throw new Error(e.message)
