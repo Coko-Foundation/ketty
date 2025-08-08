@@ -26,7 +26,7 @@ exports.down = async knex => {
           ALTER COLUMN format DROP DEFAULT,
           ALTER COLUMN format TYPE export_profile_format_type_temp USING format::text::export_profile_format_type_temp;
         DROP TYPE IF EXISTS export_profile_format_type;
-        ALTER TYPE export_profile_format_type_temp RENAME TO export_profile_format_type_temp;
+        ALTER TYPE export_profile_format_type_temp RENAME TO export_profile_format_type;
       `)
   } catch (e) {
     logger.error(e)

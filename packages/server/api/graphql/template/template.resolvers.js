@@ -22,6 +22,7 @@ const {
   disableTemplate,
   enableTemplate,
   removeTemplate,
+  getAvailablePdfDimensions,
 } = require('../../../controllers/template.controller')
 
 const { getEntityFiles } = require('../../../controllers/file.controller')
@@ -244,12 +245,17 @@ const removeTemplateHandler = async (_, { url }) => {
   return removeTemplate(url)
 }
 
+const getAvailablePdfDimensionsHandler = async () => {
+  return getAvailablePdfDimensions()
+}
+
 module.exports = {
   Query: {
     getTemplates: getTemplatesHandler,
     getTemplate: getTemplateHandler,
     getSpecificTemplates: getSpecificTemplatesHandler,
     getExportScripts: getExportScriptsHandler,
+    getAvailablePdfDimensions: getAvailablePdfDimensionsHandler,
   },
   Mutation: {
     createTemplate: createTemplateHandler,
