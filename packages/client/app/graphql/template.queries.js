@@ -44,6 +44,12 @@ const GET_SPECIFIC_TEMPLATES = gql`
   }
 `
 
+const GET_PDF_DIMENSIONS = gql`
+  query GetAvailablePdfDimensions {
+    getAvailablePdfDimensions
+  }
+`
+
 const TEMPLATE_UPDATED_SUBSCRIPTION = gql`
   subscription TemplatedUpdated($id: ID!) {
     templateUpdated(id: $id)
@@ -149,4 +155,5 @@ export {
   DISABLE_TEMPLATE,
   ENABLE_TEMPLATE,
   REMOVE_TEMPLATE,
+  GET_PDF_DIMENSIONS,
 }

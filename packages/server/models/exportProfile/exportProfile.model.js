@@ -11,7 +11,8 @@ const format = {
 }
 
 const trimSize = {
-  enum: ['8.5x11', '6x9', '5.5x8.5', null],
+  type: 'string',
+  // enum: ['8.5x11', '6x9', '5.5x8.5', null],
 }
 
 const providerItem = {
@@ -56,8 +57,8 @@ const downloadableAssets = {
   properties: {
     pdf: { type: 'boolean', default: false },
     epub: { type: 'boolean', default: false },
-    pdfProfileId: { type: 'id', default: null },
-    epubProfileId: { type: 'id', default: null },
+    pdfProfileId: { type: ['string', 'null'], format: 'uuid', default: null },
+    epubProfileId: { type: ['string', 'null'], format: 'uuid', default: null },
   },
   default: {
     pdf: false,

@@ -30,6 +30,7 @@ import {
   PUBLISH_ONLINE,
   UNPUBLISH_ONLINE,
   GET_BOOK_WEB_PUBLISH_INFO,
+  GET_PDF_DIMENSIONS,
 } from '../graphql'
 
 import { isOwner, hasEditAccess } from '../helpers/permissions'
@@ -210,6 +211,9 @@ const PreviewerPage = () => {
       },
     },
   })
+
+  const { data: { getAvailablePdfDimensions } = {} } =
+    useQuery(GET_PDF_DIMENSIONS)
 
   const [getPagedLink, { loading: previewIsLoading }] = useLazyQuery(
     GET_PAGED_PREVIEWER_LINK,
@@ -953,6 +957,7 @@ const PreviewerPage = () => {
   return (
     <Preview
       activeTabKey={activeTabKey}
+      availablePdfDimension={getAvailablePdfDimensions}
       canModify={userIsOwner || canEdit}
       canUploadToProvider={luluConfig && !luluConfig?.disabled && userIsOwner}
       connectToLulu={handleConnectToLulu}

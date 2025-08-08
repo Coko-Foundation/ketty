@@ -62,6 +62,7 @@ const Preview = props => {
     onUnpublish,
     webPublishInfo,
     hasCover,
+    availablePdfDimension,
   } = props
 
   const [showSettings, setShowSettings] = useState(true)
@@ -94,6 +95,7 @@ const Preview = props => {
 
         <PreviewSettings
           activeTabKey={activeTabKey}
+          availablePdfDimension={availablePdfDimension}
           canModify={canModify}
           canUploadToProvider={canUploadToProvider}
           createProfile={createProfile}
@@ -170,7 +172,8 @@ Preview.propTypes = {
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     format: PropTypes.oneOf(['pdf', 'epub', 'web']),
-    size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
+    // size: PropTypes.oneOf(['8.5x11', '6x9', '5.5x8.5']),
+    size: PropTypes.arrayOf(PropTypes.string),
     content: PropTypes.arrayOf(
       PropTypes.oneOf([
         'includeTitlePage',
@@ -229,9 +232,11 @@ Preview.propTypes = {
   onUnpublish: PropTypes.func,
   publishing: PropTypes.bool,
   hasCover: PropTypes.bool,
+  availablePdfDimension: PropTypes.arrayOf(PropTypes.string),
 }
 
 Preview.defaultProps = {
+  availablePdfDimension: [],
   selectedProfile: null,
   luluConfig: null,
   previewLink: null,
