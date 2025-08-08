@@ -26,6 +26,7 @@ const NewProfileTab = props => {
     updateProfileOptions,
     exportsConfig,
     profiles,
+    availablePdfDimension,
   } = props
 
   const exportOptions = allExportOptions.filter(option => {
@@ -39,6 +40,7 @@ const NewProfileTab = props => {
   return (
     <>
       <ExportOptionsSection
+        availableDimensions={availablePdfDimension}
         disabled={optionsDisabled}
         exportOptions={exportOptions}
         exportsConfig={exportsConfig}

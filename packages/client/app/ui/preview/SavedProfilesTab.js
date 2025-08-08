@@ -47,6 +47,7 @@ const SavedProfilesTab = props => {
     publishing,
     webPublishInfo,
     selectedProfileLastUpdated,
+    availablePdfDimension,
   } = props
 
   const profileSelected = selectedProfile && selectedProfile !== 'new-export'
@@ -109,6 +110,7 @@ const SavedProfilesTab = props => {
           ) : null}
 
           <ExportOptionsSection
+            availableDimensions={availablePdfDimension}
             canModifyProfiles={canModify}
             disabled={optionsDisabled}
             epubProfileId={currentOptions.epubProfileId}

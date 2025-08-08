@@ -779,6 +779,28 @@ const deleteTemplateFiles = async (url, trx) => {
   )
 }
 
+const getAvailablePdfDimensions = async () => {
+  try {
+    const pdfTemplates = await Template.find({
+      deleted: false,
+      enabled: true,
+      target: 'pagedjs',
+    })
+
+    const dimensions = pdfTemplates.result
+      .map(template => template.trimSize)
+      .filter(
+        (size, index, allSizes) =>
+          index === allSizes.findIndex(s => s === size),
+      )
+
+    return dimensions
+  } catch (error) {
+    logger.error('There was an error getting the available pdf dimensions')
+    throw new Error(error)
+  }
+}
+
 module.exports = {
   getTemplates,
   getTemplate,
@@ -794,4 +816,5 @@ module.exports = {
   disableTemplate,
   enableTemplate,
   removeTemplate,
+  getAvailablePdfDimensions,
 }

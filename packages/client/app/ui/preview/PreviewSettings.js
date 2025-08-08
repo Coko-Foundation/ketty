@@ -145,6 +145,7 @@ const PreviewSettings = props => {
     onUnpublish,
     webPublishInfo,
     hasCover,
+    availablePdfDimension,
   } = props
 
   const { t } = useTranslation(null, {
@@ -217,6 +218,7 @@ const PreviewSettings = props => {
             children: (
               <StyledStack>
                 <NewProfileTab
+                  availablePdfDimension={availablePdfDimension}
                   canModify={canModify}
                   createProfile={createProfile}
                   exportsConfig={exportsConfig}
@@ -244,6 +246,7 @@ const PreviewSettings = props => {
             children: (
               <StyledStack>
                 <SavedProfilesTab
+                  availablePdfDimension={availablePdfDimension}
                   canModify={canModify}
                   canUploadToProvider={canUploadToProvider}
                   createProfile={createProfile}
@@ -390,6 +393,7 @@ PreviewSettings.propTypes = {
   publishing: PropTypes.bool,
   webPublishInfo: PropTypes.shape(),
   onUnpublish: PropTypes.func,
+  availablePdfDimension: PropTypes.arrayOf(PropTypes.string),
 }
 
 PreviewSettings.defaultProps = {
@@ -399,6 +403,7 @@ PreviewSettings.defaultProps = {
   publishing: false,
   onUnpublish: null,
   webPublishInfo: null,
+  availablePdfDimension: [],
 }
 
 export default PreviewSettings

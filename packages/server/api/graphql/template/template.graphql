@@ -89,6 +89,7 @@ extend type Query {
   ): [Template]!
   getTemplate(id: ID!): Template!
   getSpecificTemplates(where: TemplatesWhereInput!): [Template!]!
+  getAvailablePdfDimensions: [String!]!
 }
 
 extend type Mutation {
