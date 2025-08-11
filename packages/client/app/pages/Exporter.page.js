@@ -115,6 +115,20 @@ const chooseZoom = screenWidth => {
   if (screenWidth <= 1280) return 0.5
   return 1.0
 }
+
+const constructSizeOptions = (availableDimensions = [], labels = []) => {
+  const dimensions = availableDimensions.map(dimension => {
+    if (
+      labels.findIndex(defaultOption => defaultOption.value === dimension) > -1
+    ) {
+      return labels.find(defaultOption => defaultOption.value === dimension)
+    }
+
+    return { value: dimension, label: dimension }
+  })
+
+  return dimensions
+}
 // #endregion helpers
 
 const PreviewerPage = () => {
@@ -792,6 +806,10 @@ const PreviewerPage = () => {
     p => p.area === 'exportsConfig',
   ).config
 
+  const pdfDimensionsLabel = getApplicationParameters?.find(
+    p => p.area === 'pdfDimensionsLabel',
+  )?.config
+
   const luluIdentity = currentUser?.identities?.find(
     id => id.provider === 'lulu',
   )
@@ -934,6 +952,11 @@ const PreviewerPage = () => {
 
   const userIsOwner = isOwner(bookId, currentUser)
   const canEdit = hasEditAccess(bookId, currentUser)
+
+  const dimensionsWithLabels = constructSizeOptions(
+    getAvailablePdfDimensions,
+    pdfDimensionsLabel,
+  )
   // #endregion data wrangling
 
   if (
@@ -957,7 +980,7 @@ const PreviewerPage = () => {
   return (
     <Preview
       activeTabKey={activeTabKey}
-      availablePdfDimension={getAvailablePdfDimensions}
+      availablePdfDimension={dimensionsWithLabels}
       canModify={userIsOwner || canEdit}
       canUploadToProvider={luluConfig && !luluConfig?.disabled && userIsOwner}
       connectToLulu={handleConnectToLulu}

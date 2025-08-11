@@ -9,6 +9,7 @@ import { th } from '@coko/client'
 import { Table, Button } from '../common'
 import TemplateManagerHeader from './TemplateManagerHeader'
 import TemplateDetails from './TemplateDetails'
+import PdfDimensionsLabelForm from './PdfDimensionsLabelForm'
 import Modals from './Modals'
 
 const AdminWrapper = styled.div`
@@ -46,6 +47,8 @@ const TemplateMananger = props => {
     enableTemplate,
     refreshTemplate,
     refreshingTemplate,
+    availableDimensions,
+    onLabelsUpdate,
   } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.templateManager' })
@@ -203,6 +206,16 @@ const TemplateMananger = props => {
           templateToDelete={templateToDelete}
           templateToDisable={templateToDisable}
         />
+        <hr />
+        <h2>PDF dimensions</h2>
+        <p>
+          Below are the available pdf dimensions for the templates currently
+          uploaded. You can add descriptive label for each template format.
+        </p>
+        <PdfDimensionsLabelForm
+          availableDimensions={availableDimensions}
+          onLabelsUpdate={onLabelsUpdate}
+        />
       </Wrapper>
     </AdminWrapper>
   )
@@ -219,6 +232,8 @@ TemplateMananger.propTypes = {
   enableTemplate: PropTypes.func,
   refreshTemplate: PropTypes.func,
   refreshingTemplate: PropTypes.bool,
+  availableDimensions: PropTypes.arrayOf(PropTypes.shape()),
+  onLabelsUpdate: PropTypes.func,
 }
 
 TemplateMananger.defaultProps = {
@@ -232,6 +247,8 @@ TemplateMananger.defaultProps = {
   enableTemplate: null,
   refreshTemplate: null,
   refreshingTemplate: false,
+  availableDimensions: [],
+  onLabelsUpdate: null,
 }
 
 export default TemplateMananger
