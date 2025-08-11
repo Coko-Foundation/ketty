@@ -9,7 +9,6 @@ import { Select } from '../common'
 import ProfileName from './ProfileName'
 import WebDownloadsSelection from './WebDownloadsSelection'
 
-// #region menu options
 const exportFormatOptions = [
   {
     value: 'pdf',
@@ -25,43 +24,7 @@ const exportFormatOptions = [
   },
 ]
 
-const constructSizeOptions = availableDimensions => {
-  const defaultExportSizeOptions = [
-    {
-      value: '5.5x8.5',
-      label: 'Digest: 5.5 × 8.5 in | 140 × 216 mm',
-    },
-    {
-      value: '6x9',
-      label: 'US Trade: 6 × 9 in | 152 × 229 mm',
-    },
-    {
-      value: '8.5x11',
-      label: 'US Letter: 8.5 × 11 in | 216 × 279 mm',
-    },
-  ]
-
-  const dimensions = availableDimensions.map(dimension => {
-    if (
-      defaultExportSizeOptions.findIndex(
-        defaultOption => defaultOption.value === dimension,
-      ) > -1
-    ) {
-      return defaultExportSizeOptions.find(
-        defaultOption => defaultOption.value === dimension,
-      )
-    }
-
-    return { value: dimension, label: dimension }
-  })
-
-  return dimensions
-}
-
-// #endregion menu options
-
 // #region styled
-
 const MultiSelect = styled(Select)`
   min-width: 150px;
 `
@@ -256,7 +219,7 @@ const ExportOptionsSection = props => {
             <Select
               bordered={false}
               onChange={handleSizeChange}
-              options={constructSizeOptions(availableDimensions)}
+              options={availableDimensions}
               value={selectedSize}
             />
           </ExportOption>

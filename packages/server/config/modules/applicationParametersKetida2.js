@@ -151,6 +151,20 @@ module.exports = {
       enabled: true,
     },
   },
+  pdfDimensionsLabel: [
+    {
+      value: '5.5x8.5',
+      label: 'Digest: 5.5 × 8.5 in | 140 × 216 mm',
+    },
+    {
+      value: '6x9',
+      label: 'US Trade: 6 × 9 in | 152 × 229 mm',
+    },
+    {
+      value: '8.5x11',
+      label: 'US Letter: 8.5 × 11 in | 216 × 279 mm',
+    },
+  ],
   languages: [
     {
       code: 'en-GB',
