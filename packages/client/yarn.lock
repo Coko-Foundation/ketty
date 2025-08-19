@@ -12524,10 +12524,10 @@ __metadata:
     react-router-dom: "npm:^5.2.0"
     react-use-websocket: "npm:^4.13.0"
     styled-components: "npm:^5.3.0"
-    wax-prosemirror-core: "npm:0.9.71"
-    wax-prosemirror-services: "npm:0.9.71"
-    wax-questions-service: "npm:^0.9.71"
-    wax-table-service: "npm:0.9.71"
+    wax-prosemirror-core: "npm:0.9.98"
+    wax-prosemirror-services: "npm:0.9.98"
+    wax-questions-service: "npm:0.9.98"
+    wax-table-service: "npm:0.9.98"
   languageName: unknown
   linkType: soft
 
@@ -19491,9 +19491,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wax-prosemirror-core@npm:0.9.71":
-  version: 0.9.71
-  resolution: "wax-prosemirror-core@npm:0.9.71"
+"wax-prosemirror-core@npm:0.9.98":
+  version: 0.9.98
+  resolution: "wax-prosemirror-core@npm:0.9.98"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     crypto-js: "npm:^4.2.0"
@@ -19523,13 +19523,13 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/d24ee16e26dcdcf580239dcc2edcf95c2ced73b60591b29cdb00c0292b5ebab8b01633526b4815f50f04f03c67dc16c0a6380318a67156c0af98bdbe239ad0b0
+  checksum: 10c0/1b2085f3e7c4e06011fc5ca06871f92b18a8b7ea6661e3bd4e958f4b9b4560d38bc1d575afacab97d6f4f63dbcda75bfe204a376232ae630a47bca3b97f1d141
   languageName: node
   linkType: hard
 
-"wax-prosemirror-services@npm:0.9.71":
-  version: 0.9.71
-  resolution: "wax-prosemirror-services@npm:0.9.71"
+"wax-prosemirror-services@npm:0.9.98":
+  version: 0.9.98
+  resolution: "wax-prosemirror-services@npm:0.9.98"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     highlight.js: "npm:^10.1.1"
@@ -19554,7 +19554,7 @@ __metadata:
     react-i18next: "npm:^13.3.1"
     use-deep-compare-effect: "npm:^1.3.1"
     uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.71"
+    wax-prosemirror-core: "npm:^0.9.98"
     y-prosemirror: "npm:1.2.0"
     y-protocols: "npm:1.0.5"
     y-webrtc: "npm:10.2.0"
@@ -19565,13 +19565,13 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/0eece860e6b44f7cfe2739d00e72bbf7deab3d88cbaf8f82987985c3677e6ecd77f7801d639032e6449ed3b5928529acf2df5d9f27839b1f8380841a032568a2
+  checksum: 10c0/6a388d1425f0ee2371b01309be52fa6e8b689c3f046903459171522f28a11d029d4726ac6bc5666bad7048abbc1a181241148c7e275308ff1714271bdde9f196
   languageName: node
   linkType: hard
 
-"wax-questions-service@npm:^0.9.71":
-  version: 0.9.71
-  resolution: "wax-questions-service@npm:0.9.71"
+"wax-questions-service@npm:0.9.98":
+  version: 0.9.98
+  resolution: "wax-questions-service@npm:0.9.98"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     inversify: "npm:^5.0.1"
@@ -19591,19 +19591,19 @@ __metadata:
     react-i18next: "npm:^13.3.1"
     use-dynamic-refs: "npm:^1.0.0"
     uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.71"
+    wax-prosemirror-core: "npm:^0.9.98"
   peerDependencies:
     i18next: ^23.6.0
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/3914e422e18739ec351d2a19d2a3b097a98e01d244387087674df8e9baa767928cd02b352c3cf9ff2d886cd01d51d88348287fed3aaace6f0ecf1f8c45c43465
+  checksum: 10c0/579fb068596462087c0d9ba002d0a9576f7677fbb2455d1479ca1f596c5c733c509aea026d409fec8b1e606ed9eb61ea7a8a825fdfe3ce97ce92dbe43065e2d9
   languageName: node
   linkType: hard
 
-"wax-table-service@npm:0.9.71":
-  version: 0.9.71
-  resolution: "wax-table-service@npm:0.9.71"
+"wax-table-service@npm:0.9.98":
+  version: 0.9.98
+  resolution: "wax-table-service@npm:0.9.98"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     inversify: "npm:^5.0.1"
@@ -19614,13 +19614,13 @@ __metadata:
     prosemirror-view: "npm:1.30.2"
     react-i18next: "npm:^13.3.1"
     uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.71"
+    wax-prosemirror-core: "npm:^0.9.98"
   peerDependencies:
     i18next: ^23.6.0
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/c8b88eb61451a64a5861636528419862021565eb11661efbd7b90adec4f58c1fa978d3e58c1371a67eb877fb762fa4754a9b730322a2fc0ff24d0c93716dd869
+  checksum: 10c0/1350cea56bd66fb2018004fb11bc6d46ee4cbd1113deb2d63bb82bf50aed27cb32fdbc6b1bf6182207e10b87f4cb0fbe15f6b1c9866a6c139c08524c87bbbe1d
   languageName: node
   linkType: hard
 

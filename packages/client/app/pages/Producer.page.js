@@ -1061,7 +1061,7 @@ const ProducerPage = () => {
       // update local copy of comments to show comment box
       setSavedComments(JSON.stringify(content))
 
-      if (savedComments !== null && JSON.stringify(content) !== savedComments) {
+      if (JSON.stringify(content) !== savedComments && selectedChapterId) {
         debouncedSaveComments({
           commentData: {
             bookId,
