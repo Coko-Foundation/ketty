@@ -47,9 +47,9 @@ const getURL = relativePath => {
     : undefined
 
   // temp code for solving docker networking for macOS
-  // if (process.env.NODE_ENV !== 'production') {
-  //   return `${serverUrl.replace('server', 'localhost')}/${relativePath}`
-  // }
+  if (process.env.NODE_ENV !== 'production') {
+    return `${serverUrl.replace('server', 'localhost')}/${relativePath}`
+  }
 
   return `${serverUrl}/${relativePath}`
 }
@@ -128,6 +128,7 @@ const ExporterService = async (
       return {
         localPath,
         path: getURL(localPath),
+        validationResult: messages.length ? messages.join('') : '?',
       }
     }
 

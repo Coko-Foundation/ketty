@@ -83,11 +83,13 @@ const Footer = props => {
     const messageMapper = {
       success: 'Success',
       error: 'Error',
+      warning: 'Warning',
     }
 
     notificationApi[type]({
       message: messageMapper[type],
       description: text,
+      duration: type === 'success' ? 5 : 0,
     })
   }
 
@@ -102,6 +104,11 @@ const Footer = props => {
     setDownloadLoading(true)
 
     onClickDownload()
+      .then(({ data }) => {
+        if (data.exportBook.validationResult) {
+          notify('warning', data.exportBook.validationResult)
+        }
+      })
       .catch(error => {
         notify('error', error.message)
       })

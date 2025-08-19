@@ -225,10 +225,8 @@ const BookMetadataForm = ({
               name="authors"
               wrapperCol={{ span: 24 }}
             >
-              <Input
-                disabled={!canChangeMetadata}
-                placeholder={t('sections.titlePage.authors.placeholder')}
-              />
+              {/* t('sections.titlePage.authors.placeholder') */}
+              <Input disabled={!canChangeMetadata} placeholder="John Smith" />
             </Form.Item>
           </FormSection>
 

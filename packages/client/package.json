@@ -18,10 +18,10 @@
     "prosemirror-view": "1.30.2",
     "prosemirror-state": "1.4.3",
     "antd": "5.6.1",
-    "wax-prosemirror-core": "0.9.71",
-    "wax-questions-service": "^0.9.71",
-    "wax-prosemirror-services": "0.9.71",
-    "wax-table-service": "0.9.71"
+    "wax-prosemirror-core": "0.9.98",
+    "wax-questions-service": "0.9.98",
+    "wax-prosemirror-services": "0.9.98",
+    "wax-table-service": "0.9.98"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
@@ -52,10 +52,10 @@
     "react-router-dom": "^5.2.0",
     "react-use-websocket": "^4.13.0",
     "styled-components": "^5.3.0",
-    "wax-prosemirror-core": "0.9.71",
-    "wax-prosemirror-services": "0.9.71",
-    "wax-questions-service": "^0.9.71",
-    "wax-table-service": "0.9.71"
+    "wax-prosemirror-core": "0.9.98",
+    "wax-prosemirror-services": "0.9.98",
+    "wax-questions-service": "0.9.98",
+    "wax-table-service": "0.9.98"
   },
   "devDependencies": {
     "@coko/storybook": "^1.6.0",
