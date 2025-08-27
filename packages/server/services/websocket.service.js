@@ -2,7 +2,10 @@
 const { logger } = require('@coko/server')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-
+const { omit } = require('lodash')
+const map = require('lib0/map')
+const WSSharedDoc = require('./yjsWebsocket/wsSharedDoc')
+const utils = require('./yjsWebsocket/utils')
 const { cleanUpLocks } = require('./bookComponentLock.service')
 
 const userExists = async userId => {
@@ -62,6 +65,86 @@ const establishConnection = async (ws, req) => {
   }
 }
 
+const getYDoc = (docName, userId, extraData) =>
+  map.setIfUndefined(utils.docs, docName, () => {
+    const doc = new WSSharedDoc(docName, userId, extraData)
+    doc.gc = true
+
+    if (utils.persistence !== null) {
+      utils.persistence.bindState(docName, doc)
+    }
+
+    utils.docs.set(docName, doc)
+    return doc
+  })
+
+const establishYjsConnection = async (injectedWS, request) => {
+  injectedWS.binaryType = 'arraybuffer'
+  const parts = request.url.split('/')
+  const lastPart = parts.pop()
+
+  const [, params] = lastPart.split('?')
+  const variables = {}
+  params.split('&').forEach(pair => {
+    const [key, value] = pair.split('=')
+    variables[key] = value || ''
+  })
+
+  const user = await isAuthenticatedUser(variables.token)
+
+  const { userId } = user
+
+  const extraData = {
+    objectId: variables.bookComponentId,
+    language: variables.language,
+    ...omit(variables, ['token']),
+  }
+
+  const doc = getYDoc(
+    `${variables.bookComponentId}-${variables.language}`,
+    userId,
+    extraData,
+  )
+
+  doc.conns.set(injectedWS, new Set())
+
+  injectedWS.on('message', message =>
+    utils.messageListener(injectedWS, doc, new Uint8Array(message)),
+  )
+
+  const pingInterval = initializeYjs(injectedWS, doc)
+
+  injectedWS.on('close', async () => {
+    utils.closeConn(doc, injectedWS)
+    clearInterval(pingInterval)
+
+    return false
+  })
+
+  {
+    const encoder = utils.encoding.createEncoder()
+    utils.encoding.writeVarUint(encoder, utils.messageSync)
+    utils.syncProtocol.writeSyncStep1(encoder, doc)
+    utils.send(doc, injectedWS, utils.encoding.toUint8Array(encoder))
+    const awarenessStates = doc.awareness.getStates()
+
+    if (awarenessStates.size > 0) {
+      const encoder1 = utils.encoding.createEncoder()
+      utils.encoding.writeVarUint(encoder1, utils.messageAwareness)
+      utils.encoding.writeVarUint8Array(
+        encoder1,
+        utils.awarenessProtocol.encodeAwarenessUpdate(
+          doc.awareness,
+          Array.from(awarenessStates.keys()),
+        ),
+      )
+      utils.send(doc, injectedWS, utils.encoding.toUint8Array(encoder1))
+    }
+  }
+
+  return { doc, pingInterval }
+}
+
 const heartbeat = ws => (ws.isAlive = true)
 
 const initializeHeartbeat = async WSServer => {
@@ -86,6 +169,36 @@ const initializeHeartbeat = async WSServer => {
   }
 }
 
+const initializeYjs = (injectedWS, doc) => {
+  const pingTimeout = 30000
+  let pingReceived = true
+
+  const pingInterval = setInterval(() => {
+    if (!pingReceived) {
+      if (doc.conns.has(injectedWS)) {
+        utils.closeConn(doc, injectedWS)
+      }
+
+      clearInterval(pingInterval)
+    } else if (doc.conns.has(injectedWS)) {
+      pingReceived = false
+
+      try {
+        injectedWS.ping()
+      } catch (error) {
+        utils.closeConn(doc, injectedWS)
+        clearInterval(pingInterval)
+      }
+    }
+  }, pingTimeout)
+
+  injectedWS.on('ping', () => {
+    pingReceived = true
+  })
+
+  return pingInterval
+}
+
 const initializeFailSafeUnlocking = async WSServer => {
   try {
     return setInterval(
@@ -99,6 +212,7 @@ const initializeFailSafeUnlocking = async WSServer => {
 
 module.exports = {
   establishConnection,
+  establishYjsConnection,
   heartbeat,
   initializeHeartbeat,
   initializeFailSafeUnlocking,

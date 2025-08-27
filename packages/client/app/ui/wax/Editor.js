@@ -1,14 +1,18 @@
 /* eslint-disable react/prop-types, react/jsx-no-constructed-context-values */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useRef, useContext } from 'react'
 import { Wax } from 'wax-prosemirror-core'
+import { isEqual } from 'lodash'
+import YjsContext from '../provider-yjs/YjsProvider'
 import { LuluLayout } from './layout'
 import configWithAi from './config/configWithAI'
+import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
   bookId,
   title,
   subtitle,
   chapters,
+  bookComponentContent,
   onPeriodicBookComponentContentChange,
   onPeriodicTitleChange,
   isReadOnly,
@@ -17,7 +21,6 @@ const EditorWrapper = ({
   onBookComponentParentIdChange,
   onAddChapter,
   onChapterClick,
-  bookComponentContent,
   metadataModalOpen,
   setMetadataModalOpen,
   onDeleteChapter,
@@ -38,12 +41,10 @@ const EditorWrapper = ({
   freeTextPromptsOn,
   customPrompts,
   customPromptsOn,
-  editorLoading,
   kbOn,
-  editorKey,
   canInteractWithComments,
   comments: savedComments,
-  addComments,
+  // addComments,
   user,
   bookMembers,
   onMention,
@@ -59,6 +60,16 @@ const EditorWrapper = ({
   languages,
   currentLanguage,
   onLanguageChange,
+  // wsProvider,
+  // ydoc,
+  getUserFileManager,
+  uploadToFileManager,
+  deleteFromFileManager,
+  updateComponentIdInManager,
+  updateFile,
+  isUploading,
+  setUploading,
+  setIsCurrentDocumentMine,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -78,7 +89,6 @@ const EditorWrapper = ({
     bookMetadataValues,
     metadataModalOpen,
     setMetadataModalOpen,
-    editorLoading,
     savedComments,
     onUploadBookCover,
     viewMetadata,
@@ -94,16 +104,47 @@ const EditorWrapper = ({
     languages,
     currentLanguage,
     onLanguageChange,
+    setIsCurrentDocumentMine,
   })
 
-  const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
+  const { wsProvider, ydoc } = useContext(YjsContext)
 
-  const [waxCustomTags, setWaxCustomTags] = useState([])
+  const [loaded, setLoaded] = useState(false)
+  const [userFileManagerFiles, setUserFileManagerFiles] = useState([])
+  const [selectedWaxConfig, setSelectedWaxConfig] = useState(configWithAi)
 
   const waxMenuConfig =
     configurableEditorOn && configurableEditorConfig?.length
       ? JSON.parse(configurableEditorConfig)
       : configWithAi
+
+  const tags = customTags?.length > 0 ? JSON.parse(customTags) : []
+
+  const onAssetManager = async () => {
+    setLoaded(true)
+    const userFiles = await getUserFileManager()
+    setUserFileManagerFiles(JSON.parse(userFiles.data.getUserFileManager))
+    return userFiles
+  }
+
+  const handleCloseFileUpload = () => {
+    setLoaded(false)
+  }
+
+  const handleAddedRemovedImages = async images => {
+    const addedImages = (images?.added || []).map(node => node.attrs.fileid)
+    const removedImages = (images?.removed || []).map(node => node.attrs.fileid)
+
+    await updateComponentIdInManager({
+      variables: {
+        bookComponentId: selectedChapterId,
+        input: {
+          added: addedImages,
+          removed: removedImages,
+        },
+      },
+    })
+  }
 
   useEffect(() => {
     return () => {
@@ -112,26 +153,49 @@ const EditorWrapper = ({
     }
   }, [])
 
+  const previousRefEditorConfig = useRef(configurableEditorConfig)
+  const previousRefEditorTags = useRef(tags)
+  const memoizedProvider = useMemo(() => wsProvider)
+
   // Used For Editor's reconfiguration
   useEffect(() => {
-    setWaxCustomTags(customTags?.length > 0 ? JSON.parse(customTags) : [])
+    if (!isEqual(previousRefEditorTags.current, tags)) {
+      previousRefEditorTags.current = tags
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        CustomTagService: {
+          tags,
+          updateTags: () => true,
+        },
+      })
+    }
+  }, [JSON.stringify(tags)])
 
+  useEffect(() => {
+    if (!isEqual(previousRefEditorConfig.current, configurableEditorConfig)) {
+      previousRefEditorConfig.current = configurableEditorConfig
+      setSelectedWaxConfig({
+        ...selectedWaxConfig,
+        MenuService: selectedWaxConfig.MenuService.map(service => {
+          // Find the matching service in waxMenuConfig based on templateArea
+          const matchingConfig = waxMenuConfig.MenuService.find(
+            config => config.templateArea === service.templateArea,
+          )
+
+          return {
+            ...service,
+            toolGroups: matchingConfig
+              ? matchingConfig.toolGroups
+              : service.toolGroups,
+          }
+        }),
+      })
+    }
+  }, [configurableEditorConfig])
+
+  useEffect(() => {
     setSelectedWaxConfig({
       ...selectedWaxConfig,
-      editorKey,
-      MenuService: selectedWaxConfig.MenuService.map(service => {
-        // Find the matching service in waxMenuConfig based on templateArea
-        const matchingConfig = waxMenuConfig.MenuService.find(
-          config => config?.templateArea === service.templateArea,
-        )
-
-        return {
-          ...service,
-          toolGroups: matchingConfig
-            ? matchingConfig.toolGroups
-            : service.toolGroups,
-        }
-      }),
       AskAiContentService: {
         AskAiContentTransformation: queryAI,
         FreeTextPromptsOn: freeTextPromptsOn,
@@ -140,31 +204,57 @@ const EditorWrapper = ({
         AiOn: aiEnabled && aiOn,
         ...(kbOn ? { AskKb: true } : {}),
       },
+    })
+  }, [aiOn])
+
+  useEffect(() => {
+    setSelectedWaxConfig({
+      ...selectedWaxConfig,
+      YjsService: {
+        content: bookComponentContent,
+        provider: () => wsProvider,
+        ydoc: () => ydoc,
+        yjsType: 'prosemirror',
+        cursorBuilder: u => {
+          if (u) {
+            const cursor = document.createElement('span')
+            cursor.classList.add('ProseMirror-yjs-cursor')
+            cursor.setAttribute('style', `border-color: ${u.color}`)
+            const userDiv = document.createElement('div')
+            userDiv.setAttribute('style', `background-color: ${u.color}`)
+            userDiv.insertBefore(document.createTextNode(u.name), null)
+            cursor.insertBefore(userDiv, null)
+            return cursor
+          }
+
+          return ''
+        },
+      },
+      CustomTagService: {
+        tags,
+        updateTags: () => true,
+      },
       TitleService: {
         updateTitle: onPeriodicTitleChange,
       },
       CommentsService: {
-        // readOnly: !canInteractWithComments,
-        readOnlyPost: false,
-        readOnlyResolve: !canInteractWithComments,
-        getComments: addComments,
+        readOnly: !canInteractWithComments,
+        // getComments: addComments,
         setComments: () => {
-          return savedComments || []
+          return []
         },
         userList: bookMembers,
         getMentionedUsers: onMention,
       },
-      CustomTagService: {
-        tags: waxCustomTags,
-        updateTags: () => true,
+      ImageService: {
+        handleAssetManager: onAssetManager,
+        handleAddedRemovedImages,
+        showAlt: true,
       },
+
+      services: [new YjsService(), ...selectedWaxConfig.services],
     })
-  }, [
-    aiOn,
-    editorKey,
-    JSON.stringify(configurableEditorConfig),
-    JSON.stringify(waxCustomTags),
-  ])
+  }, [memoizedProvider])
 
   useEffect(() => {
     setLuluWax({
@@ -185,8 +275,6 @@ const EditorWrapper = ({
       setMetadataModalOpen,
       onBookComponentTypeChange,
       onBookComponentParentIdChange,
-      editorLoading,
-      editorKey,
       savedComments,
       onUploadBookCover,
       viewMetadata,
@@ -202,6 +290,17 @@ const EditorWrapper = ({
       languages,
       currentLanguage,
       onLanguageChange,
+      setIsCurrentDocumentMine,
+      isUploading,
+      setUploading,
+      deleteFromFileManager,
+      getUserFileManager,
+      handleCloseFileUpload,
+      loaded,
+      setUserFileManagerFiles,
+      uploadToFileManager,
+      userFileManagerFiles,
+      updateFile,
     })
   }, [
     title,
@@ -212,8 +311,6 @@ const EditorWrapper = ({
     chaptersActionInProgress,
     canEdit,
     metadataModalOpen,
-    editorLoading,
-    editorKey,
     savedComments,
     viewMetadata,
     settings,
@@ -223,6 +320,8 @@ const EditorWrapper = ({
     pureScienceConfig,
     languages,
     currentLanguage,
+    loaded,
+    userFileManagerFiles,
   ])
 
   const userObject = {
@@ -243,11 +342,9 @@ const EditorWrapper = ({
       customProps={luluWax}
       fileUpload={onImageUpload}
       layout={LuluLayout}
-      onChange={onPeriodicBookComponentContentChange}
       readonly={isReadOnly}
       ref={editorRef}
       user={userObject}
-      value={bookComponentContent || ''}
     />
   )
 }

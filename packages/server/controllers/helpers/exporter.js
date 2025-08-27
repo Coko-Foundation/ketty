@@ -110,9 +110,9 @@ const ExporterService = async (
         `${EPUBtempFolderFilePath}/${filename}`,
       )
 
-      if (outcome === 'not valid') {
-        let errors = ''
+      let errors = ''
 
+      if (outcome === 'not valid') {
         for (let i = 0; i < messages.length; i += 1) {
           const { message } = messages[i]
           errors += `${message} - `
@@ -128,7 +128,7 @@ const ExporterService = async (
       return {
         localPath,
         path: getURL(localPath),
-        validationResult: messages.length ? messages.join('') : '?',
+        validationResult: errors,
       }
     }
 

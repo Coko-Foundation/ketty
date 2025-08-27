@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import useWebSocket from 'react-use-websocket'
 import { useHistory, useParams } from 'react-router-dom'
@@ -25,7 +25,7 @@ import {
   UPDATE_BOOK_POD_METADATA,
   UPDATE_BOOK_COMPONENTS_ORDER,
   UPLOAD_FILES,
-  LOCK_BOOK_COMPONENT_POD,
+  // LOCK_BOOK_COMPONENT_POD,
   RENAME_BOOK,
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
@@ -45,6 +45,11 @@ import {
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
   TRIGGER_WORKFLOW,
+  GET_USER_FILEMANAGER,
+  UPLOAD_TO_FILEMANAGER,
+  DELETE_FROM_FILEMANAGER,
+  UPDATE_COMPONENT_ID_IN_FILEMANAGER,
+  UPDATE_FILE,
 } from '../graphql'
 
 import {
@@ -66,6 +71,7 @@ import {
 
 import { Editor, Modal, Paragraph, Spin } from '../ui'
 import { waxAiToolRagSystem, waxAiToolSystem } from '../helpers/openAi'
+import YjsContext from '../ui/provider-yjs/YjsProvider'
 
 const StyledSpin = styled(Spin)`
   display: grid;
@@ -105,6 +111,7 @@ let issueInCommunicationModal
 
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
+  const { createYjsProvider, wsProvider } = useContext(YjsContext)
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
@@ -115,13 +122,13 @@ const ProducerPage = () => {
   )
 
   const [reconnecting, setReconnecting] = useState(false)
+  // const reconnecting = false
+  const [customTags, setCustomTags] = useState([])
   const [aiOn, setAiOn] = useState(false)
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
-  const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
-  const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('en')
   const [languages, setLanguages] = useState([])
@@ -142,10 +149,7 @@ const ProducerPage = () => {
 
   // #endregion INITIALIZATION SECTION
   // QUERIES SECTION START
-  const {
-    loading: applicationParametersLoading,
-    data: applicationParametersData,
-  } = useQuery(APPLICATION_PARAMETERS, {
+  const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
   })
 
@@ -169,6 +173,7 @@ const ProducerPage = () => {
       setCustomPrompts(data?.getBook?.bookSettings?.customPrompts)
       setFreeTextPromptsOn(data?.getBook?.bookSettings?.freeTextPromptsOn)
       setCustomPromptsOn(data?.getBook?.bookSettings?.customPromptsOn)
+      setCustomTags(data?.getBook?.bookSettings?.customTags)
 
       // if loading page the first time and no chapter is preselected, select the first one
       if (selectedChapterId === undefined) {
@@ -181,29 +186,65 @@ const ProducerPage = () => {
     },
   })
 
-  const { loading: bookComponentLoading, refetch: refetchBookComponent } =
-    useQuery(GET_BOOK_COMPONENT, {
-      fetchPolicy: 'network-only',
-      skip: !selectedChapterId || !bookQueryData,
-      variables: { id: selectedChapterId, language: currentLanguage },
-      onError: () => {
-        if (!reconnecting) {
-          if (hasMembership) {
-            showGenericErrorModal()
-          }
+  const { refetch: refetchBookComponent } = useQuery(GET_BOOK_COMPONENT, {
+    fetchPolicy: 'network-only',
+    skip: !selectedChapterId || !bookQueryData,
+    variables: { id: selectedChapterId, language: currentLanguage },
+    onError: () => {
+      if (!reconnecting) {
+        if (hasMembership) {
+          showGenericErrorModal()
         }
-      },
-      onCompleted: data => {
+      }
+    },
+    onCompleted: data => {
+      canUpdateTitle.current = false
+
+      if (wsProvider) {
+        wsProvider.disconnect()
+      }
+
+      if (
+        data.getBookComponent.content &&
+        data.getBookComponent.yState === false
+      ) {
         setCurrentBookComponentContent(data.getBookComponent.content)
-        setLanguages(data.getBookComponent.languages)
-        getComments({
-          variables: {
-            bookId,
-            chapterId: selectedChapterId,
-          },
-        })
-      },
-    })
+      } else {
+        setCurrentBookComponentContent('')
+      }
+
+      setLanguages(data.getBookComponent.languages)
+
+      createYjsProvider({
+        currentUser,
+        identifier: selectedChapterId,
+        object: {
+          bookComponentId: selectedChapterId,
+          language: currentLanguage,
+        },
+      })
+
+      getComments({
+        variables: {
+          bookId,
+          chapterId: selectedChapterId,
+        },
+      })
+    },
+  })
+
+  const { refetch: getUserFileManager } = useQuery(GET_USER_FILEMANAGER, {
+    skip: true,
+  })
+
+  const [uploadToFileManager] = useMutation(UPLOAD_TO_FILEMANAGER)
+  const [deleteFromFileManager] = useMutation(DELETE_FROM_FILEMANAGER)
+
+  const [updateComponentIdInManager] = useMutation(
+    UPDATE_COMPONENT_ID_IN_FILEMANAGER,
+  )
+
+  const [updateFile] = useMutation(UPDATE_FILE)
 
   const [getComments] = useLazyQuery(GET_COMMENTS, {
     skip: !bookId || !selectedChapterId,
@@ -277,7 +318,19 @@ const ProducerPage = () => {
 
       window.history.replaceState('', document.title, window.location.pathname)
     }
+
+    return () => wsProvider?.disconnect()
   }, [])
+
+  useEffect(() => {
+    if (wsProvider) {
+      wsProvider.on('sync', () => {
+        setTimeout(() => {
+          canUpdateTitle.current = true
+        }, 1000)
+      })
+    }
+  }, [wsProvider])
 
   useEffect(() => {
     if (currentUser && !hasRendered.current) {
@@ -338,12 +391,6 @@ const ProducerPage = () => {
     setSavedComments(null)
   }, [selectedChapterId])
 
-  useEffect(() => {
-    if (!bookComponentLoading) {
-      setKey(uuid())
-    }
-  }, [editorLoading, bookComponentLoading, isReadOnly])
-
   // SUBSCRIPTIONS SECTION START
 
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
@@ -365,8 +412,6 @@ const ProducerPage = () => {
       if (selectedChapterId) {
         await refetchBookComponent()
       }
-
-      setKey(uuid())
     },
   })
 
@@ -530,10 +575,10 @@ const ProducerPage = () => {
     },
   })
 
-  const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
-    refetchQueries: [GET_ENTIRE_BOOK],
-    onError: () => {},
-  })
+  // const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
+  //   refetchQueries: [GET_ENTIRE_BOOK],
+  //   onError: () => {},
+  // })
 
   const [upload] = useMutation(UPLOAD_FILES)
 
@@ -653,11 +698,6 @@ const ProducerPage = () => {
       setSelectedChapterId(data?.podAddBookComponent?.id)
     })
   }
-
-  canUpdateTitle.current =
-    selectedChapterId &&
-    canModify &&
-    !(applicationParametersLoading || loading || bookComponentLoading)
 
   currentChapterTitle.current = find(
     bookQueryData?.getBook?.divisions[1].bookComponents,
@@ -863,18 +903,18 @@ const ProducerPage = () => {
     })
   }
 
-  const onBookComponentLock = () => {
-    if (selectedChapterId && canModify) {
-      const userAgent = window.navigator.userAgent || null
-      lockBookComponent({
-        variables: {
-          id: selectedChapterId,
-          tabId,
-          userAgent,
-        },
-      })
-    }
-  }
+  // const onBookComponentLock = () => {
+  //   if (selectedChapterId && canModify) {
+  //     const userAgent = window.navigator.userAgent || null
+  //     lockBookComponent({
+  //       variables: {
+  //         id: selectedChapterId,
+  //         tabId,
+  //         userAgent,
+  //       },
+  //     })
+  //   }
+  // }
 
   const queryAI = async (input, { askKb }) => {
     const settings = await getBookSettings()
@@ -967,7 +1007,7 @@ const ProducerPage = () => {
       selectedChapterId && chapterId === selectedChapterId
 
     if (isAlreadySelected) {
-      setSelectedChapterId(null)
+      // setSelectedChapterId(null)
       return
     }
 
@@ -1115,13 +1155,13 @@ const ProducerPage = () => {
 
   // WEBSOCKET SECTION START
   useWebSocket(
-    `${webSocketServerUrl}/locks`,
+    `${webSocketServerUrl}`,
     {
       onOpen: () => {
         if (editorMode && editorMode !== 'preview') {
-          if (!reconnecting) {
-            onBookComponentLock()
-          }
+          // if (!reconnecting) {
+          //   onBookComponentLock()
+          // }
 
           if (reconnecting) {
             if (selectedChapterId) {
@@ -1177,16 +1217,6 @@ const ProducerPage = () => {
     return <StyledSpin spinning />
   }
 
-  useEffect(() => {
-    if (applicationParametersLoading || loading || bookComponentLoading) {
-      setEditorLoading(true)
-    } else if (!bookComponentLoading) {
-      setTimeout(() => {
-        setEditorLoading(false)
-      }, 500)
-    }
-  }, [applicationParametersLoading, loading, bookComponentLoading])
-
   const chaptersActionInProgress =
     changeOrderInProgress ||
     addBookComponentInProgress ||
@@ -1219,6 +1249,8 @@ const ProducerPage = () => {
     .flat()
     .filter(member => !!member)
 
+  if (!wsProvider || currentBookComponentContent === null) return null
+
   return (
     <Editor
       addComments={handleAddingComments}
@@ -1242,12 +1274,14 @@ const ProducerPage = () => {
       currentLanguage={currentLanguage}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
-      customTags={bookQueryData?.getBook.bookSettings.customTags}
-      editorKey={key}
-      editorLoading={editorLoading}
+      customTags={customTags}
+      deleteFromFileManager={deleteFromFileManager}
+      // editorKey={key}
+      // editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}
+      getUserFileManager={getUserFileManager}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       languages={languages}
@@ -1276,7 +1310,10 @@ const ProducerPage = () => {
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
       updateBookSettings={updateBookSettings}
+      updateComponentIdInManager={updateComponentIdInManager}
+      updateFile={updateFile}
       updateLoading={updateSettingsLoading}
+      uploadToFileManager={uploadToFileManager}
       user={currentUser}
       viewMetadata={viewMetadata}
     />

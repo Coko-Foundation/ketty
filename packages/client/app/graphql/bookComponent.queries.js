@@ -37,6 +37,7 @@ const GET_BOOK_COMPONENT = gql`
         id
       }
       languages
+      yState
     }
   }
 `
