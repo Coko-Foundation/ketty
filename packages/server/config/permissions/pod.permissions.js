@@ -803,6 +803,7 @@ const permissions = {
     teams: teamsRule,
     getInvitations: isAuthenticatedRule,
     getTemplates: isAdmin,
+    getUserFileManager: isAuthenticatedRule,
   },
   Mutation: {
     '*': deny,
@@ -852,6 +853,10 @@ const permissions = {
     deleteInvitation: isAuthenticatedRule,
     updateInvitation: isAuthenticatedRule,
     triggerWorkflow: isAuthenticatedRule,
+    uploadToFileManager: isAuthenticatedRule,
+    deleteFromFileManager: isAuthenticatedRule,
+    updateMetadataFileManager: isAuthenticatedRule,
+    updateComponentIdInFileManager: isAuthenticatedRule,
   },
 }
 

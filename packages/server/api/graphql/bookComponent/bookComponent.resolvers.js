@@ -1015,6 +1015,14 @@ module.exports = {
         translation => translation.languageIso,
       )
     },
+    async yState(bookComponent, { language = 'en' }) {
+      const bookComponentTranslation = await BookComponentTranslation.findOne({
+        bookComponentId: bookComponent.id,
+        languageIso: language,
+      })
+
+      return bookComponentTranslation?.yState !== null
+    },
   },
   Subscription: {
     bookComponentAdded: {

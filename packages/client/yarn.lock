@@ -12515,6 +12515,8 @@ __metadata:
     lodash: "npm:4.17.21"
     prop-types: "npm:^15.7.2"
     prosemirror-inputrules: "npm:1.1.3"
+    prosemirror-model: "npm:1.19.0"
+    prosemirror-state: "npm:1.4.3"
     prosemirror-tables: "npm:^1.3.2"
     react: "npm:^17.0.2"
     react-dom: "npm:^17.0.2"
@@ -12524,10 +12526,14 @@ __metadata:
     react-router-dom: "npm:^5.2.0"
     react-use-websocket: "npm:^4.13.0"
     styled-components: "npm:^5.3.0"
-    wax-prosemirror-core: "npm:0.9.98"
-    wax-prosemirror-services: "npm:0.9.98"
-    wax-questions-service: "npm:0.9.98"
-    wax-table-service: "npm:0.9.98"
+    wax-prosemirror-core: "npm:0.9.99"
+    wax-prosemirror-services: "npm:0.9.99"
+    wax-table-service: "npm:0.9.99"
+    y-prosemirror: "npm:1.2.0"
+    y-protocols: "npm:1.0.5"
+    y-webrtc: "npm:10.2.0"
+    y-websocket: "npm:1.4.5"
+    yjs: "npm:13.5.38"
   languageName: unknown
   linkType: soft
 
@@ -15140,16 +15146,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-inputrules@npm:1.1.3":
-  version: 1.1.3
-  resolution: "prosemirror-inputrules@npm:1.1.3"
-  dependencies:
-    prosemirror-state: "npm:^1.0.0"
-    prosemirror-transform: "npm:^1.0.0"
-  checksum: 10c0/eebc1f1717b542c07cf01673bce7c1e06ececebd2be525212bbcacee575f3f95d6e6b4eda933dbf12abe8da9dfe14e2483fd09e9920bb6e2bf926caa01a8b560
-  languageName: node
-  linkType: hard
-
 "prosemirror-inputrules@npm:1.2.0":
   version: 1.2.0
   resolution: "prosemirror-inputrules@npm:1.2.0"
@@ -15160,7 +15156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-keymap@npm:1.2.1, prosemirror-keymap@npm:^1.0.0, prosemirror-keymap@npm:^1.1.2":
+"prosemirror-keymap@npm:1.2.1":
   version: 1.2.1
   resolution: "prosemirror-keymap@npm:1.2.1"
   dependencies:
@@ -15214,7 +15210,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:1.7.1, prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.2.1, prosemirror-transform@npm:^1.7.3":
+"prosemirror-transform@npm:1.7.1":
   version: 1.7.1
   resolution: "prosemirror-transform@npm:1.7.1"
   dependencies:
@@ -19205,15 +19201,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-dynamic-refs@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "use-dynamic-refs@npm:1.0.0"
-  peerDependencies:
-    react: ^16.0.0
-  checksum: 10c0/175368e6d4727397a14de256bec0dd934db109382f3408b11ebfc8bf9fdd01cb99bf1ec05f74c43d4b36552548c98340733b1bd812fed72aba91323516c2c667
-  languageName: node
-  linkType: hard
-
 "use-isomorphic-layout-effect@npm:^1.1.1":
   version: 1.1.2
   resolution: "use-isomorphic-layout-effect@npm:1.1.2"
@@ -19491,9 +19478,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wax-prosemirror-core@npm:0.9.98":
-  version: 0.9.98
-  resolution: "wax-prosemirror-core@npm:0.9.98"
+"wax-prosemirror-core@npm:0.9.99":
+  version: 0.9.99
+  resolution: "wax-prosemirror-core@npm:0.9.99"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     crypto-js: "npm:^4.2.0"
@@ -19523,13 +19510,13 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/1b2085f3e7c4e06011fc5ca06871f92b18a8b7ea6661e3bd4e958f4b9b4560d38bc1d575afacab97d6f4f63dbcda75bfe204a376232ae630a47bca3b97f1d141
+  checksum: 10c0/5d731c9752c705a250617e626fef92450a2ceaa745270b2e7f3ced8e8141bfa233d4c0b442415eddca495248ec143f0622c4a7cb652da3e56fb150d09ef5ceae
   languageName: node
   linkType: hard
 
-"wax-prosemirror-services@npm:0.9.98":
-  version: 0.9.98
-  resolution: "wax-prosemirror-services@npm:0.9.98"
+"wax-prosemirror-services@npm:0.9.99":
+  version: 0.9.99
+  resolution: "wax-prosemirror-services@npm:0.9.99"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     highlight.js: "npm:^10.1.1"
@@ -19554,7 +19541,7 @@ __metadata:
     react-i18next: "npm:^13.3.1"
     use-deep-compare-effect: "npm:^1.3.1"
     uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.98"
+    wax-prosemirror-core: "npm:^0.9.99"
     y-prosemirror: "npm:1.2.0"
     y-protocols: "npm:1.0.5"
     y-webrtc: "npm:10.2.0"
@@ -19565,45 +19552,13 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/6a388d1425f0ee2371b01309be52fa6e8b689c3f046903459171522f28a11d029d4726ac6bc5666bad7048abbc1a181241148c7e275308ff1714271bdde9f196
+  checksum: 10c0/d74e2d0739a06221b6f7bf1659bb7c9dba1d2fb3717b74104ee70c8d777983685ec629d8afffd2b141c16a12f6e23b7d5fbaf60b1dfbfd9b1f4320508a7fdd8f
   languageName: node
   linkType: hard
 
-"wax-questions-service@npm:0.9.98":
-  version: 0.9.98
-  resolution: "wax-questions-service@npm:0.9.98"
-  dependencies:
-    "@pubsweet/ui-toolkit": "npm:^2.3.1"
-    inversify: "npm:^5.0.1"
-    lodash: "npm:^4.17.4"
-    prop-types: "npm:^15.7.2"
-    prosemirror-commands: "npm:1.5.1"
-    prosemirror-dropcursor: "npm:1.7.1"
-    prosemirror-gapcursor: "npm:1.3.1"
-    prosemirror-history: "npm:1.3.0"
-    prosemirror-keymap: "npm:1.2.1"
-    prosemirror-model: "npm:1.19.0"
-    prosemirror-schema-list: "npm:1.3.0"
-    prosemirror-state: "npm:1.4.3"
-    prosemirror-transform: "npm:1.7.1"
-    prosemirror-view: "npm:1.30.2"
-    rc-switch: "npm:^3.2.2"
-    react-i18next: "npm:^13.3.1"
-    use-dynamic-refs: "npm:^1.0.0"
-    uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.98"
-  peerDependencies:
-    i18next: ^23.6.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    styled-components: ^5.3.1
-  checksum: 10c0/579fb068596462087c0d9ba002d0a9576f7677fbb2455d1479ca1f596c5c733c509aea026d409fec8b1e606ed9eb61ea7a8a825fdfe3ce97ce92dbe43065e2d9
-  languageName: node
-  linkType: hard
-
-"wax-table-service@npm:0.9.98":
-  version: 0.9.98
-  resolution: "wax-table-service@npm:0.9.98"
+"wax-table-service@npm:0.9.99":
+  version: 0.9.99
+  resolution: "wax-table-service@npm:0.9.99"
   dependencies:
     "@pubsweet/ui-toolkit": "npm:^2.3.1"
     inversify: "npm:^5.0.1"
@@ -19614,13 +19569,13 @@ __metadata:
     prosemirror-view: "npm:1.30.2"
     react-i18next: "npm:^13.3.1"
     uuid: "npm:^7.0.3"
-    wax-prosemirror-core: "npm:^0.9.98"
+    wax-prosemirror-core: "npm:^0.9.99"
   peerDependencies:
     i18next: ^23.6.0
     react: ^17.0.2
     react-dom: ^17.0.2
     styled-components: ^5.3.1
-  checksum: 10c0/1350cea56bd66fb2018004fb11bc6d46ee4cbd1113deb2d63bb82bf50aed27cb32fdbc6b1bf6182207e10b87f4cb0fbe15f6b1c9866a6c139c08524c87bbbe1d
+  checksum: 10c0/7afdc48a396c73e39d921d676026b8e0903c4b63f4e51e318526da07802790c45500f9d6b4b5f586b85d0776c8b52a50e2c23941ece67d693f5f5d21b545f22a
   languageName: node
   linkType: hard
 

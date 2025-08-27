@@ -87,6 +87,7 @@ type BookComponent {
   status: Int
   parentComponentId: ID
   languages: [String]
+  yState: Boolean
 }
 
 input BookComponentInput {

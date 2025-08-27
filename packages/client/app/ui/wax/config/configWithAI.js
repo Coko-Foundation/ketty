@@ -14,18 +14,18 @@ import {
   FullScreenService,
   // disallowPasteImagesPlugin,
   AskAiContentService,
-  CommentsService,
   HighlightService,
   TransformService,
-  CodeBlockService,
   TrackChangeService,
   EditingSuggestingService,
   CustomTagService,
   MathService,
   NoteService,
+  CommentsService,
+  CodeBlockService,
 } from 'wax-prosemirror-services'
 
-import { QuestionsService } from 'wax-questions-service'
+// import { QuestionsService } from 'wax-questions-service'
 
 // import { TablesService, tableEditing, columnResizing } from 'wax-table-service'
 import { TablesService, columnResizing } from 'wax-table-service'
@@ -59,14 +59,14 @@ const config = {
       templateArea: 'commentTrackToolBar',
       toolGroups: ['TrackCommentOptions'],
     },
-    {
-      templateArea: 'fillTheGap',
-      toolGroups: ['FillTheGap'],
-    },
-    {
-      templateArea: 'MultipleDropDown',
-      toolGroups: ['MultipleDropDown'],
-    },
+    // {
+    //   templateArea: 'fillTheGap',
+    //   toolGroups: ['FillTheGap'],
+    // },
+    // {
+    //   templateArea: 'MultipleDropDown',
+    //   toolGroups: ['MultipleDropDown'],
+    // },
   ],
 
   AskAiContentService: {
@@ -128,14 +128,14 @@ const config = {
     new BlockDropDownToolGroupService(),
     new FindAndReplaceService(),
     new FullScreenService(),
-    new CommentsService(),
     new HighlightService(),
     new TransformService(),
-    new CodeBlockService(),
     new EditingSuggestingService(),
     new CustomTagService(),
-    new QuestionsService(),
+    // new QuestionsService(),
     new MathService(),
+    new CommentsService(),
+    new CodeBlockService(),
   ],
 }
 
