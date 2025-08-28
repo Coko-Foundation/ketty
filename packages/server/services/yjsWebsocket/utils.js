@@ -155,6 +155,20 @@ const messageListener = async (conn, doc, message) => {
 const replaceImgSrc = async doc => {
   const xmlFragment = doc.getXmlFragment('prosemirror')
 
+  // Traverses children of an xml fragment asynchronously
+  const traverseFragment = async fragment => {
+    const promises = []
+
+    for (let i = 0; i < fragment.length; i += 1) {
+      if (typeof fragment.get === 'function') {
+        const node = fragment.get(i)
+        promises.push(updateImageSrcs(node))
+      }
+    }
+
+    await Promise.all(promises)
+  }
+
   // Recursive function to walk the Y.XmlElement tree
   const updateImageSrcs = async node => {
     if (node instanceof Y.XmlElement && node.nodeName === 'image') {
@@ -166,28 +180,10 @@ const replaceImgSrc = async doc => {
       }
     }
 
-    const promises = []
-
-    // Start traversal from the root fragment
-    for (let i = 0; i < node.length; i += 1) {
-      if (typeof node.get === 'function') {
-        const child = node.get(i)
-        promises.push(updateImageSrcs(child))
-      }
-    }
-
-    await Promise.all(promises)
+    await traverseFragment(node)
   }
 
-  const promises = []
-
-  // Start traversal from the root fragment
-  for (let i = 0; i < xmlFragment.length; i += 1) {
-    const node = xmlFragment.get(i)
-    promises.push(updateImageSrcs(node))
-  }
-
-  await Promise.all(promises)
+  await traverseFragment(xmlFragment)
 }
 
 persistence = {

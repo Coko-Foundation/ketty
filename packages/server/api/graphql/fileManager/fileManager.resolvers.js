@@ -1,5 +1,6 @@
 const {
   getUserFileManagerHandler,
+  getObjectFileManagerHandler,
   uploadToFileManagerHandler,
   deleteFromFileManagerHandler,
   updateMetadataFileManagerHandler,
@@ -9,6 +10,7 @@ const {
 module.exports = {
   Query: {
     getUserFileManager: getUserFileManagerHandler,
+    getObjectFileManager: getObjectFileManagerHandler,
   },
   Mutation: {
     uploadToFileManager: uploadToFileManagerHandler,

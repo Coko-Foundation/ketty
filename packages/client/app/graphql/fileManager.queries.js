@@ -7,16 +7,24 @@ const GET_USER_FILEMANAGER = gql`
   }
 `
 
+const GET_OBJECT_FILEMANAGER = gql`
+  query GetObjectFileManager($objectId: ID) {
+    getObjectFileManager(objectId: $objectId)
+  }
+`
+
 const UPLOAD_TO_FILEMANAGER = gql`
   mutation UploadToFileManager(
     $files: [Upload!]!
     $entityId: ID
     $entityType: String
+    $objectId: ID
   ) {
     uploadToFileManager(
       files: $files
       entityId: $entityId
       entityType: $entityType
+      objectId: $objectId
     ) {
       id
       url(size: medium)
@@ -53,6 +61,7 @@ const UPDATE_COMPONENT_ID_IN_FILEMANAGER = gql`
 
 export {
   GET_USER_FILEMANAGER,
+  GET_OBJECT_FILEMANAGER,
   UPLOAD_TO_FILEMANAGER,
   DELETE_FROM_FILEMANAGER,
   UPDATE_FILE_IN_FILEMANAGER,

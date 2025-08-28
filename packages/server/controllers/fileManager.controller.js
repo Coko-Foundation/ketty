@@ -1,12 +1,14 @@
-const { createFile, deleteFiles } = require('@coko/server')
+const { createFile, deleteFiles, logger } = require('@coko/server')
 const { FileManager } = require('../models').models
 const { getFileURL } = require('./file.controller')
 // const DocTreeManager = require('../models/docTreeManager/docTreeManager.model')
 
+const FILE_MANAGER_CONTROLLER = '[FILE MANAGER CONTROLLER]'
+
 const getUserFileManagerHandler = async (_, __, ctx) => {
   const fileManager = await FileManager.query()
     .where({
-      userId: ctx.userId,
+      objectId: ctx.userId,
       parentId: null,
     })
     .withGraphFetched('file')
@@ -46,7 +48,33 @@ const getUserFileManagerHandler = async (_, __, ctx) => {
   return JSON.stringify(filesWithUrl)
 }
 
-const uploadToFileManagerHandler = async (_, { files }, ctx) => {
+const getObjectFileManagerHandler = async (_, { objectId }) => {
+  logger.info(
+    `${FILE_MANAGER_CONTROLLER} getObjectFileManagerHandler: fetching fileManager for objectId ${objectId}`,
+  )
+
+  try {
+    const fileManager = await FileManager.query()
+      .where({
+        objectId,
+        parentId: null,
+      })
+      .withGraphFetched('file')
+
+    const filesWithUrl = await Promise.all(
+      fileManager.map(async file => {
+        const url = await getFileURL(file.fileId, 'medium')
+        return { ...file, url }
+      }),
+    )
+
+    return JSON.stringify(filesWithUrl)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const uploadToFileManagerHandler = async (_, { files, objectId }, ctx) => {
   const uploadedFiles = []
   await Promise.all(
     files.map(async file => {
@@ -54,7 +82,14 @@ const uploadToFileManagerHandler = async (_, { files }, ctx) => {
       const fileStream = createReadStream()
 
       uploadedFiles.push(
-        await createFile(fileStream, filename, null, null, [], ctx.userId),
+        await createFile(
+          fileStream,
+          filename,
+          null,
+          null,
+          [],
+          objectId || ctx.userId,
+        ),
       )
     }),
   )
@@ -64,7 +99,7 @@ const uploadToFileManagerHandler = async (_, { files }, ctx) => {
       await FileManager.insert({
         name: file.name,
         fileId: file.id,
-        userId: ctx.userId,
+        objectId: objectId || ctx.userId,
         metadata: { bookComponentId: [] },
       })
     }),
@@ -150,6 +185,7 @@ const updateComponentIdInFileManagerHandler = async (
 
 module.exports = {
   getUserFileManagerHandler,
+  getObjectFileManagerHandler,
   uploadToFileManagerHandler,
   deleteFromFileManagerHandler,
   updateMetadataFileManagerHandler,

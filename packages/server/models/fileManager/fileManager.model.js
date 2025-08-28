@@ -28,7 +28,7 @@ class FileManager extends BaseModel {
           },
         },
         created: { type: 'string', format: 'date-time' },
-        userId: { type: 'string', format: 'uuid' },
+        objectId: { type: 'string', format: 'uuid' },
       },
     }
   }
@@ -36,7 +36,7 @@ class FileManager extends BaseModel {
   static get relationMappings() {
     /* eslint-disable global-require */
     const File = require('../file/file.model')
-    const User = require('../user/user.model')
+    // const User = require('../user/user.model')
 
     /* eslint-enable global-require */
 
@@ -49,14 +49,14 @@ class FileManager extends BaseModel {
           to: 'files.id',
         },
       },
-      user: {
-        relation: BaseModel.BelongsToOneRelation,
-        modelClass: User,
-        join: {
-          from: 'file_manager.userId',
-          to: 'users.id',
-        },
-      },
+      // user: {
+      //   relation: BaseModel.BelongsToOneRelation,
+      //   modelClass: User,
+      //   join: {
+      //     from: 'file_manager.userId',
+      //     to: 'users.id',
+      //   },
+      // },
     }
   }
 }

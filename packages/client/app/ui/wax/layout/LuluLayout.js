@@ -634,7 +634,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     currentLanguage,
     onLanguageChange,
     deleteFromFileManager,
-    getUserFileManager,
+    getObjectFileManager,
     loaded,
     setUserFileManagerFiles,
     handleCloseFileUpload,
@@ -1011,7 +1011,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
         </SpinnerWrapper>
         <FileUpload
           deleteFromFileManager={deleteFromFileManager}
-          getUserFileManager={getUserFileManager}
+          getObjectFileManager={getObjectFileManager}
           onClose={handleCloseFileUpload}
           open={loaded}
           setUserFileManagerFiles={setUserFileManagerFiles}
