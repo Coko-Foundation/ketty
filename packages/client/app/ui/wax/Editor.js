@@ -62,7 +62,7 @@ const EditorWrapper = ({
   onLanguageChange,
   // wsProvider,
   // ydoc,
-  getUserFileManager,
+  getObjectFileManager,
   uploadToFileManager,
   deleteFromFileManager,
   updateComponentIdInManager,
@@ -122,8 +122,8 @@ const EditorWrapper = ({
 
   const onAssetManager = async () => {
     setLoaded(true)
-    const userFiles = await getUserFileManager()
-    setUserFileManagerFiles(JSON.parse(userFiles.data.getUserFileManager))
+    const userFiles = await getObjectFileManager()
+    setUserFileManagerFiles(JSON.parse(userFiles.data.getObjectFileManager))
     return userFiles
   }
 
@@ -294,7 +294,7 @@ const EditorWrapper = ({
       isUploading,
       setUploading,
       deleteFromFileManager,
-      getUserFileManager,
+      getObjectFileManager,
       handleCloseFileUpload,
       loaded,
       setUserFileManagerFiles,

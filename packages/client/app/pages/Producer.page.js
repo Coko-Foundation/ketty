@@ -45,7 +45,7 @@ import {
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
   TRIGGER_WORKFLOW,
-  GET_USER_FILEMANAGER,
+  GET_OBJECT_FILEMANAGER,
   UPLOAD_TO_FILEMANAGER,
   DELETE_FROM_FILEMANAGER,
   UPDATE_COMPONENT_ID_IN_FILEMANAGER,
@@ -233,11 +233,17 @@ const ProducerPage = () => {
     },
   })
 
-  const { refetch: getUserFileManager } = useQuery(GET_USER_FILEMANAGER, {
+  const { refetch: getObjectFileManager } = useQuery(GET_OBJECT_FILEMANAGER, {
     skip: true,
+    variables: { objectId: bookId },
   })
 
-  const [uploadToFileManager] = useMutation(UPLOAD_TO_FILEMANAGER)
+  const [uploadToFileManager] = useMutation(UPLOAD_TO_FILEMANAGER, {
+    variables: {
+      objectId: bookId,
+    },
+  })
+
   const [deleteFromFileManager] = useMutation(DELETE_FROM_FILEMANAGER)
 
   const [updateComponentIdInManager] = useMutation(
@@ -1281,7 +1287,7 @@ const ProducerPage = () => {
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}
-      getUserFileManager={getUserFileManager}
+      getObjectFileManager={getObjectFileManager}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       languages={languages}

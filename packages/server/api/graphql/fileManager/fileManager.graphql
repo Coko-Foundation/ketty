@@ -24,6 +24,7 @@ input UpdateBookComponentIdInput {
 
 extend type Query {
   getUserFileManager(parentId: ID): String
+  getObjectFileManager(objectId: ID): String
 }
 
 extend type Mutation {
@@ -31,6 +32,7 @@ extend type Mutation {
     files: [Upload]!
     entityType: String
     entityId: ID
+    objectId: ID
   ): [File]!
   deleteFromFileManager(ids: [ID!]!): [ID]
   updateMetadataFileManager(fileId: ID, input: FileManagerMetaDataInput): ID

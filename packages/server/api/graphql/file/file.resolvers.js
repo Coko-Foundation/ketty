@@ -109,8 +109,8 @@ const uploadFilesHandler = async (_, { files, entityId }) => {
 
 const updateFileHandler = async (_, { input }) => {
   try {
-    const { id, name, alt } = input
-    const updatedFile = await updateFile(id, { name, alt })
+    const { id, ...data } = input
+    const updatedFile = await updateFile(id, data)
     subscriptionManager.publish(FILE_UPDATED, {
       fileUpdated: updatedFile.id,
     })

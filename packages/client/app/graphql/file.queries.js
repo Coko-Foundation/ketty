@@ -11,7 +11,7 @@ const UPLOAD_FILES = gql`
 `
 
 const UPDATE_FILE = gql`
-  mutation ($input: UpdateFileInput!) {
+  mutation ($input: UpdateFileDataInput!) {
     updateFile(input: $input) {
       id
     }

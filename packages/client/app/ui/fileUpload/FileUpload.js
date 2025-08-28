@@ -384,7 +384,7 @@ const FileUpload = ({
   uploadToFileManager,
   deleteFromFileManager,
   setUserFileManagerFiles,
-  getUserFileManager,
+  getObjectFileManager,
   onClose,
   waxApplication,
   waxContext,
@@ -440,10 +440,10 @@ const FileUpload = ({
   const onDeleteFile = useCallback(
     async item => {
       await deleteFromFileManager({ variables: { ids: [item.file.id] } })
-      const userFiles = await getUserFileManager({ variables: {} })
+      const userFiles = await getObjectFileManager({ variables: {} })
 
       setUserFileManagerFiles([
-        ...JSON.parse(userFiles.data.getUserFileManager),
+        ...JSON.parse(userFiles.data.getObjectFileManager),
       ])
     },
     [files],
@@ -503,10 +503,10 @@ const FileUpload = ({
         },
       })
 
-      const userFiles = await getUserFileManager({ variables: {} })
+      const userFiles = await getObjectFileManager({ variables: {} })
 
       setUserFileManagerFiles([
-        ...JSON.parse(userFiles.data.getUserFileManager),
+        ...JSON.parse(userFiles.data.getObjectFileManager),
       ])
       setFiles([])
     } catch (error) {
