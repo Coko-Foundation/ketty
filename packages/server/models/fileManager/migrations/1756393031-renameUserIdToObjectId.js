@@ -2,9 +2,9 @@ const { logger } = require('@coko/server')
 
 exports.up = knex => {
   try {
-    return knex.schema.table('file_manager', async table => {
-      await table.dropForeign('userId')
-      await table.renameColumn('userId', 'objectId')
+    return knex.schema.table('file_manager', table => {
+      table.dropForeign('userId')
+      table.renameColumn('userId', 'objectId')
     })
   } catch (error) {
     logger.error(error)
