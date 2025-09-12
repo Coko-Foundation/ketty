@@ -527,6 +527,8 @@ const updateContent = async (bookComponentId, content, languageIso) => {
       translationId,
       {
         content: parsedContent,
+        // reset yState to null, as this method is called only when uploading files, so yState will be set the moment that the user opens the chapter
+        yState: null,
       },
     )
 

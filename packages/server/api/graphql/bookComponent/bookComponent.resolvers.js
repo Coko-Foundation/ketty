@@ -49,7 +49,7 @@ const {
 const { BOOK_UPDATED } = require('../book/constants')
 
 const {
-  xsweetHandler,
+  pandocHandler,
 } = require('../../../controllers/microServices.controller')
 
 const {
@@ -199,7 +199,7 @@ const ingestWordFileHandler = async (_, { bookComponentFiles }) => {
         bookComponentUpdated: updatedBookComponent.id,
       })
 
-      return xsweetHandler(componentId, `${tempFolderPath}/${randomFilename}`)
+      return pandocHandler(componentId, `${tempFolderPath}/${randomFilename}`)
     })
 
     subscriptionManager.publish(BOOK_UPDATED, {

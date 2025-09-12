@@ -207,5 +207,12 @@ services:
         exit 0;
       "
 
+  pandoc-worker:
+    container_name: pandoc-worker
+    build:
+      context: ./packages/pandoc
+      dockerfile: ./Dockerfile
+    ports:
+      - 4040:4040
 volumes:
   minio_storage:
