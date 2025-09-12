@@ -52,6 +52,7 @@ module.exports = {
 
   clientUrl: 'CLIENT_URL',
   WSServerURL: 'WEBSOCKET_SERVER_URL',
+  clientPandocUrl: 'CLIENT_PANDOC_URL',
   services: {
     epubChecker: {
       clientId: 'SERVICE_EPUB_CHECKER_CLIENT_ID',
@@ -72,6 +73,11 @@ module.exports = {
       clientId: 'SERVICE_XSWEET_CLIENT_ID',
       clientSecret: 'SERVICE_XSWEET_SECRET',
       url: 'SERVICE_XSWEET_URL',
+    },
+    pandoc: {
+      clientId: 'SERVICE_PANDOC_CLIENT_ID',
+      clientSecret: 'SERVICE_PANDOC_SECRET',
+      url: 'SERVICE_PANDOC_URL',
     },
     flax: {
       clientId: 'SERVICE_FLAX_CLIENT_ID',

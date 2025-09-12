@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 
-import useWebSocket from 'react-use-websocket'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useQuery,
@@ -11,8 +10,6 @@ import {
 import find from 'lodash/find'
 import debounce from 'lodash/debounce'
 import { uuid, useCurrentUser } from '@coko/client'
-import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
-import styled from 'styled-components'
 import {
   GET_ENTIRE_BOOK,
   GET_BOOK_SETTINGS,
@@ -69,15 +66,9 @@ import {
   showDeletedBookModal,
 } from '../helpers/commonModals'
 
-import { Editor, Modal, Paragraph, Spin } from '../ui'
+import { Editor, Modal, Paragraph } from '../ui'
 import { waxAiToolRagSystem, waxAiToolSystem } from '../helpers/openAi'
 import YjsContext from '../ui/provider-yjs/YjsProvider'
-
-const StyledSpin = styled(Spin)`
-  display: grid;
-  height: 100vh;
-  place-content: center;
-`
 
 const calculateEditorMode = (lock, canModify, currentUser, tabId) => {
   if (
@@ -107,8 +98,6 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
   }
 }
 
-let issueInCommunicationModal
-
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
   const { createYjsProvider, wsProvider } = useContext(YjsContext)
@@ -121,7 +110,7 @@ const ProducerPage = () => {
     () => localStorage.getItem(`${bookId}-selected-chapter`) || undefined,
   )
 
-  const [reconnecting, setReconnecting] = useState(false)
+  // const [reconnecting, setReconnecting] = useState(false)
   // const reconnecting = false
   const [customTags, setCustomTags] = useState([])
   const [aiOn, setAiOn] = useState(false)
@@ -137,7 +126,7 @@ const ProducerPage = () => {
     useState(null)
 
   const { currentUser } = useCurrentUser()
-  const token = localStorage.getItem('token')
+  // const token = localStorage.getItem('token')
 
   const canModify =
     isAdmin(currentUser) ||
@@ -190,13 +179,6 @@ const ProducerPage = () => {
     fetchPolicy: 'network-only',
     skip: !selectedChapterId || !bookQueryData,
     variables: { id: selectedChapterId, language: currentLanguage },
-    onError: () => {
-      if (!reconnecting) {
-        if (hasMembership) {
-          showGenericErrorModal()
-        }
-      }
-    },
     onCompleted: data => {
       canUpdateTitle.current = false
 
@@ -458,7 +440,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -469,7 +451,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -479,7 +461,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -490,7 +472,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -498,7 +480,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -506,7 +488,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -514,7 +496,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -524,7 +506,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -535,9 +517,9 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting && !err.toString().includes('NotFoundError'))
+      } /* else if (!reconnecting && !err.toString().includes('NotFoundError'))
         // added the second clause to avoid weird race condition trying to rename deleted chapter
-        showGenericErrorModal()
+        showGenericErrorModal() */
     },
   })
 
@@ -547,7 +529,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -557,7 +539,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -568,7 +550,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     },
   )
@@ -577,7 +559,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -732,31 +714,22 @@ const ProducerPage = () => {
   }, 50)
 
   const onDeleteChapter = bookComponentId => {
-    if (!canModify) {
+    if (!canModify || !isOwner(bookId, currentUser)) {
       showUnauthorizedActionModal(false)
       return
     }
 
-    const found = find(bookQueryData?.getBook.divisions[1].bookComponents, {
-      id: bookComponentId,
-    })
+    const index = bookQueryData?.getBook.divisions[1].bookComponents.findIndex(
+      ({ id }) => id === bookComponentId,
+    )
 
-    if (found) {
-      const { lock } = found
-
-      if (
-        lock &&
-        !isOwner(bookId, currentUser) &&
-        lock.userId !== currentUser.id
-      ) {
-        showUnauthorizedActionModal(false, null, 'lockedChapterDelete')
-        return
-      }
-    }
-
-    if (selectedChapterId === bookComponentId) {
-      setSelectedChapterId(null)
-    }
+    index > 0
+      ? setSelectedChapterId(
+          bookQueryData?.getBook.divisions[1].bookComponents[index - 1].id,
+        )
+      : setSelectedChapterId(
+          bookQueryData?.getBook.divisions[1].bookComponents[1].id,
+        )
 
     deleteBookComponent({
       variables: {
@@ -789,52 +762,6 @@ const ProducerPage = () => {
 
     updatePODMetadata({ variables: { bookId, metadata: rest } })
   }, 1000)
-
-  const showOfflineModal = () => {
-    const warningModal = Modal.error()
-    return warningModal.update({
-      title: 'Server is unreachable',
-      content: (
-        <Paragraph>
-          {`Unfortunately, we couldn't re-establish communication with our server! Currently we don't
-          support offline mode. Please return to this page when your network
-          issue is resolved.`}
-        </Paragraph>
-      ),
-      maskClosable: false,
-      onOk() {
-        history.push('/dashboard')
-        warningModal.destroy()
-      },
-      okButtonProps: { style: { backgroundColor: 'black' } },
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-  }
-
-  const communicationDownModal = () => {
-    const warningModal = Modal.warn()
-    warningModal.update({
-      title: 'Something went wrong!',
-      content: (
-        <Paragraph>
-          Please wait while we are trying resolve the issue. Make sure your
-          internet connection is working.
-        </Paragraph>
-      ),
-      maskClosable: false,
-      footer: null,
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-    return warningModal
-  }
 
   const showUploadingModal = () => {
     const warningModal = Modal.warn()
@@ -974,11 +901,6 @@ const ProducerPage = () => {
       reject()
     })
   }
-
-  const heartbeatInterval = find(
-    applicationParametersData?.getApplicationParameters,
-    { area: 'heartbeatInterval' },
-  )
 
   const pureScienceConfig = find(
     applicationParametersData?.getApplicationParameters,
@@ -1159,58 +1081,6 @@ const ProducerPage = () => {
 
   // HANDLERS SECTION END
 
-  // WEBSOCKET SECTION START
-  useWebSocket(
-    `${webSocketServerUrl}`,
-    {
-      onOpen: () => {
-        if (editorMode && editorMode !== 'preview') {
-          // if (!reconnecting) {
-          //   onBookComponentLock()
-          // }
-
-          if (reconnecting) {
-            if (selectedChapterId) {
-              const tempChapterId = selectedChapterId
-              setSelectedChapterId(null)
-              setSelectedChapterId(tempChapterId)
-            }
-
-            if (issueInCommunicationModal) {
-              issueInCommunicationModal.destroy()
-              issueInCommunicationModal = undefined
-            }
-
-            setReconnecting(false)
-          }
-        }
-      },
-      onError: () => {
-        if (!reconnecting) {
-          issueInCommunicationModal = communicationDownModal()
-          setReconnecting(true)
-        }
-      },
-      shouldReconnect: () => {
-        return selectedChapterId && editorMode && editorMode !== 'preview'
-      },
-      onReconnectStop: () => {
-        showOfflineModal()
-      },
-      queryParams: {
-        token,
-        bookComponentId: selectedChapterId,
-        tabId,
-      },
-      share: true,
-      reconnectAttempts: 5000,
-      reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
-    },
-    selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
-  )
-
-  // WEBSOCKET SECTION END
-
   if (!loading && error?.message?.includes('does not exist')) {
     showErrorModal(() => history.push('/dashboard'))
   }
@@ -1219,9 +1089,9 @@ const ProducerPage = () => {
     showDeletedBookModal(() => history.push('/dashboard'))
   }
 
-  if (reconnecting) {
-    return <StyledSpin spinning />
-  }
+  // if (reconnecting) {
+  //   return <StyledSpin spinning />
+  // }
 
   const chaptersActionInProgress =
     changeOrderInProgress ||

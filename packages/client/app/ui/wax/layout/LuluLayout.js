@@ -69,7 +69,7 @@ const InfoWrapper = styled.div`
   inset-inline: 0;
   min-block-size: 100%;
   position: absolute;
-  z-index: 2;
+  z-index: 1000;
 `
 
 const SpinnerWrapper = styled.div`

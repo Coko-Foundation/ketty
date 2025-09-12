@@ -42,6 +42,7 @@ NODE_ENV = "production"
 CLIENT_URL = "https://ketty-client-develop.fly.dev"
 SERVER_URL = "https://ketty-server-develop.fly.dev"
 WEBSOCKET_SERVER_URL = "wss://ketty-server-develop.fly.dev:3333"
+CLIENT_PANDOC_URL='https://wax-staging-pandoc.fly.dev'
 KETIDA_FLAVOUR = "LULU"
 FEATURE_UPLOAD_DOCX_FILES = true
 FEATURE_BOOK_STRUCTURE = false
@@ -50,5 +51,7 @@ SERVICE_EPUB_CHECKER_URL = "https://epubchecker-ms.fly.dev"
 SERVICE_PAGEDJS_URL = "https://pagedjs-ms.fly.dev"
 SERVICE_XSWEET_URL = "https://xsweet-ms.fly.dev"
 SERVICE_FLAX_URL = "https://ketty-flax.fly.dev"
+SERVICE_PANDOC_URL = 'https://wax-staging-pandoc.fly.dev'
+
 TEMP_DIRECTORY_CLEAN_UP = true
 AI_ENABLED = true
