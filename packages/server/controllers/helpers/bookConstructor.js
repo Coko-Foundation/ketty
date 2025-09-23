@@ -131,7 +131,10 @@ module.exports = async (bookId, options = {}) => {
 
         return {
           ...bookComponent,
-          number: componentTypeNumber,
+          number:
+            bookComponent.componentType === 'chapter'
+              ? componentTypeNumber
+              : '',
         }
       },
     )
