@@ -255,6 +255,7 @@ const ChapterItem = forwardRef(
       canEdit,
       focused,
       collapseOtherParts,
+      unnumbered,
       ...rest
     },
     ref,
@@ -333,7 +334,11 @@ const ChapterItem = forwardRef(
               data-test="producer-chapterTitle"
               onClick={() => onChapterClick(id)}
             >
-              {!uploading ? title || t('new') : t('processing')}
+              {!uploading
+                ? `${rest.division ? `[${rest.division}]` : ''} ${
+                    title || t('new')
+                  }`
+                : t('processing')}
             </ChapterTitle>
             {lock ? (
               <UserAvatar data-test="producer-userAvatar">
@@ -355,6 +360,27 @@ const ChapterItem = forwardRef(
               }
             >
               <PopupContentWrapper>
+                <Button
+                  data-test="producer-copyChapterId"
+                  onClick={handleCopyChapterId}
+                  onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
+                >
+                  {copiedId ? (
+                    <Copied>
+                      <CheckOutlined />
+                      &nbsp; ID copied!
+                    </Copied>
+                  ) : (
+                    `Copy ${isPart ? 'part' : 'chapter'} ID`
+                  )}
+                </Button>
+                <Button
+                  onClick={() =>
+                    onChapterConvert(id, unnumbered ? 'chapter' : 'unnumbered')
+                  }
+                >
+                  Convert to {unnumbered ? 'numbered' : 'unnumbered'}
+                </Button>
                 {depth === 0 && (
                   <Button
                     disabled={!canEdit}
@@ -389,20 +415,6 @@ const ChapterItem = forwardRef(
                 >
                   {t('menu.options.delete')}
                 </Button>
-                <Button
-                  data-test="producer-copyChapterId"
-                  onClick={handleCopyChapterId}
-                  onKeyDown={e => e.key === 'Enter' && e.stopPropagation()}
-                >
-                  {copiedId ? (
-                    <Copied>
-                      <CheckOutlined />
-                      &nbsp; ID copied!
-                    </Copied>
-                  ) : (
-                    `Copy ${isPart ? 'part' : 'chapter'} ID`
-                  )}
-                </Button>
               </PopupContentWrapper>
             </StyledPopup>
           </InnerWrapper>
@@ -430,6 +442,7 @@ ChapterItem.propTypes = {
   collapseOtherParts: PropTypes.func,
   focused: PropTypes.bool,
   isPart: PropTypes.bool,
+  unnumbered: PropTypes.bool,
 }
 
 ChapterItem.defaultProps = {
@@ -445,6 +458,7 @@ ChapterItem.defaultProps = {
   collapseOtherParts: null,
   onClickDelete: null,
   onChapterClick: null,
+  unnumbered: false,
 }
 
 export default ChapterItem

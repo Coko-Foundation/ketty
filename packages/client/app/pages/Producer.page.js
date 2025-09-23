@@ -585,7 +585,6 @@ const ProducerPage = () => {
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
-
   const handleUploadBookCover = file => {
     if (!canModify) {
       return showUnauthorizedActionModal(false)

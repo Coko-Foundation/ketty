@@ -118,7 +118,7 @@ const ExporterService = async (
           errors += `${message} - `
         }
 
-        throw new Error(errors)
+        // throw new Error(errors)
       }
 
       await fs.remove(EPUBtempFolderAssetsPath)

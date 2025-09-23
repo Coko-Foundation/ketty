@@ -462,6 +462,7 @@ const ChapterList = ({
                     onChapterConvert={handleChapterConvert}
                     onClickDelete={handleChapterDelete}
                     selectedChapterId={selectedChapterId}
+                    unnumbered={componentType === 'unnumbered'}
                     {...rest}
                   />
                 ),
