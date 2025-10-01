@@ -272,8 +272,10 @@ const CollapseContainer = styled.div`
 `
 
 const PSButton = styled(Button)`
+  align-items: center;
   background-color: #13110c;
   block-size: 32px;
+  display: flex;
   font-size: 22px;
   gap: 0;
   padding: 0;
@@ -290,8 +292,6 @@ const PSButton = styled(Button)`
   }
 
   > span {
-    padding-bottom: 4px;
-
     &:nth-child(1) {
       color: white;
     }
