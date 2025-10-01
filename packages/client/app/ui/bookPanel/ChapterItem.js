@@ -4,11 +4,17 @@
 /* stylelint-disable value-list-comma-newline-after */
 import React, { useEffect, forwardRef, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { HolderOutlined, MoreOutlined, CheckOutlined } from '@ant-design/icons'
+import {
+  HolderOutlined,
+  MoreOutlined,
+  CheckOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons'
 import styled, { keyframes } from 'styled-components'
 import Popup from '@coko/client/dist/ui/common/Popup'
 import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+import { Tooltip } from 'antd'
 import { Button } from '../common'
 
 const animation = keyframes`
@@ -334,6 +340,11 @@ const ChapterItem = forwardRef(
               data-test="producer-chapterTitle"
               onClick={() => onChapterClick(id)}
             >
+              {unnumbered ? (
+                <Tooltip placement="top" title="This chapter is unnumbered">
+                  <CloseCircleOutlined />
+                </Tooltip>
+              ) : null}
               {!uploading
                 ? `${rest.division ? `[${rest.division}]` : ''} ${
                     title || t('new')
