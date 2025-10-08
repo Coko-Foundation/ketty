@@ -254,7 +254,8 @@ const EditorWrapper = ({
 
       services: [new YjsService(), ...selectedWaxConfig.services],
     })
-  }, [memoizedProvider])
+    // reset config when bookComponentContent is updated (in case of updates comming from subscriptions)
+  }, [memoizedProvider, bookComponentContent])
 
   useEffect(() => {
     setLuluWax({

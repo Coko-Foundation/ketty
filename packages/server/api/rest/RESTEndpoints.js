@@ -60,7 +60,7 @@ const updateBookComponent = async (req, res) => {
       bookComponentContentUpdated: bookComponentId,
     })
 
-    res.status(200).send('Chapter updated successfully')
+    res.status(200).send('Book component updated successfully')
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
