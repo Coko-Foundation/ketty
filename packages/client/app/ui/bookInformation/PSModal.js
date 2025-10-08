@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Form, Modal, Spin } from 'antd'
+import { Form, Modal, Spin, Upload } from 'antd'
 import { Button, Input } from '../common'
 
 const StyledModal = styled(Modal)``
@@ -185,7 +185,22 @@ const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
                             ? { rules: [{ required: true }] }
                             : {})}
                         >
-                          <Input />
+                          {param.fileInput ? (
+                            <Upload
+                              accept="*"
+                              beforeUpload={() => false}
+                              listType="picture-card"
+                            >
+                              <button
+                                style={{ border: 0, background: 'none' }}
+                                type="button"
+                              >
+                                Select file
+                              </button>
+                            </Upload>
+                          ) : (
+                            <Input />
+                          )}
                         </Form.Item>
                         <p className="workflow-tip">{param.tip}</p>
                       </Form.Item>
