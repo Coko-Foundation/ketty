@@ -28,6 +28,7 @@ import {
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION,
+  BOOK_COMPONENT_CONTENT_UPDATED,
   UPDATE_SETTINGS,
   GET_BOOK_COMPONENT,
   USE_CHATGPT,
@@ -386,7 +387,17 @@ const ProducerPage = () => {
     fetchPolicy: 'network-only',
     onData: () => {
       if (hasMembership) {
-        refetchBook({ id: bookId })
+        refetchBook({ id: bookId }).then(({ data }) => {
+          const chapterIds = data?.getBook?.divisions[1].bookComponents.map(
+            c => c.id,
+          )
+
+          if (chapterIds.length && !chapterIds.includes(selectedChapterId)) {
+            setSelectedChapterId(
+              data?.getBook?.divisions[1].bookComponents[0].id,
+            )
+          }
+        })
       }
     },
   })
@@ -420,6 +431,25 @@ const ProducerPage = () => {
         })
 
         refetchBookComponent()
+      }
+    },
+  })
+
+  useSubscription(BOOK_COMPONENT_CONTENT_UPDATED, {
+    variables: { id: selectedChapterId },
+    fetchPolicy: 'network-only',
+    onData: ({ data: { data } = {} }) => {
+      if (data.bookComponentContentUpdated === selectedChapterId) {
+        refetchBookComponent().then(({ data: { getBookComponent } = {} }) => {
+          // setSelectedChapterId(selectedChapterId)
+          setCurrentBookComponentContent(getBookComponent?.content)
+
+          const infoModal = Modal.info()
+          infoModal.update({
+            title: 'Chapter updated',
+            content: <Paragraph>Chapter content has been updated.</Paragraph>,
+          })
+        })
       }
     },
   })

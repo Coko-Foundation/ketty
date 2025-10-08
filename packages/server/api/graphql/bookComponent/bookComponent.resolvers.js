@@ -1062,8 +1062,20 @@ module.exports = {
       },
     },
     bookComponentContentUpdated: {
-      subscribe: async () => {
-        return subscriptionManager.asyncIterator(BOOK_COMPONENT_CONTENT_UPDATED)
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(
+              BOOK_COMPONENT_CONTENT_UPDATED,
+            )
+          },
+          (payload, variables) => {
+            const { id: componentId } = variables
+            const { bookComponentContentUpdated: updatedComponentId } = payload
+
+            return componentId === updatedComponentId
+          },
+        )(...args)
       },
     },
     bookComponentUploadingUpdated: {

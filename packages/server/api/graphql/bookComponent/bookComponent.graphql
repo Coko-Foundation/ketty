@@ -167,7 +167,7 @@ extend type Subscription {
   bookComponentLockUpdated: ID!
   bookComponentsLockUpdated: [ID!]!
   bookComponentTitleUpdated: ID!
-  bookComponentContentUpdated: ID!
+  bookComponentContentUpdated(id: ID!): ID!
   bookComponentTypeUpdated: ID!
   bookComponentUploadingUpdated: ID!
   bookComponentTOCToggled: ID!
