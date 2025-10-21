@@ -684,7 +684,7 @@ const ProducerPage = () => {
     }
   }
 
-  const onAddChapter = () => {
+  const onAddChapter = async () => {
     if (!canModify) {
       showUnauthorizedActionModal(false)
       return
@@ -742,7 +742,7 @@ const ProducerPage = () => {
     onBookComponentTitleChange(title)
   }, 50)
 
-  const onDeleteChapter = bookComponentId => {
+  const onDeleteChapter = async bookComponentId => {
     if (!canModify || !isOwner(bookId, currentUser)) {
       showUnauthorizedActionModal(false)
       return
@@ -751,6 +751,18 @@ const ProducerPage = () => {
     const index = bookQueryData?.getBook.divisions[1].bookComponents.findIndex(
       ({ id }) => id === bookComponentId,
     )
+
+    if (bookQueryData?.getBook.divisions[1].bookComponents.length === 1) {
+      await onAddChapter()
+      deleteBookComponent({
+        variables: {
+          input: {
+            id: bookComponentId,
+          },
+        },
+      })
+      return
+    }
 
     index > 0
       ? setSelectedChapterId(
