@@ -34,19 +34,9 @@ const WorkflowParamWrapper = styled.div`
 
   .ant-form-item {
     align-self: stretch;
-    flex-basis: 24%;
+    flex-basis: 25%;
     flex-grow: 1;
     margin-block-end: 0;
-
-    &:last-of-type,
-    &:nth-last-of-type(2) {
-      flex-basis: 12ch;
-    }
-  }
-
-  /* stylelint-disable-next-line no-descending-specificity */
-  > button {
-    align-self: self-start;
   }
 `
 
@@ -195,13 +185,6 @@ const PureScienceConfig = props => {
                                   valuePropName="checked"
                                 >
                                   <Checkbox>Required</Checkbox>
-                                </Form.Item>
-                                <Form.Item
-                                  layout="horizontal"
-                                  name={[subField.name, 'fileInput']}
-                                  valuePropName="checked"
-                                >
-                                  <Checkbox>File input</Checkbox>
                                 </Form.Item>
                                 <Button
                                   icon={<CloseOutlined />}
