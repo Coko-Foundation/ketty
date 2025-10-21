@@ -195,7 +195,7 @@ const PSModal = ({ open, closeModal, pureScienceConfig, onRunWorkflow }) => {
                                 style={{ border: 0, background: 'none' }}
                                 type="button"
                               >
-                                Select file
+                                Add file
                               </button>
                             </Upload>
                           ) : (
