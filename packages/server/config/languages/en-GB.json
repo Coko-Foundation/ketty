@@ -865,18 +865,32 @@
             "value": "Start Writing"
           }
         },
-        "upload": {
+        "uploadDocx": {
           "heading": {
             "type": "heading",
-            "value": "Upload your files"
+            "value": "Upload from docx"
           },
           "description": {
             "type": "detail",
-            "value": "Start your book with .docx files"
+            "value": "Start your book with .docx files. Each file will be converted to a chapter"
           },
           "action": {
             "type": "button",
             "value": "Select Files"
+          }
+        },
+        "uploadEpub": {
+          "heading": {
+            "type": "heading",
+            "value": "Upload from EPUB"
+          },
+          "description": {
+            "type": "detail",
+            "value": "Upload your epub and edit it in Ketty"
+          },
+          "action": {
+            "type": "button",
+            "value": "Select File"
           }
         }
       },

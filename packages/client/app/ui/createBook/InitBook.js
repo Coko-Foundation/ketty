@@ -10,14 +10,14 @@ import { grid, th } from '@coko/client'
 import { Button } from '../common'
 
 const Wrapper = styled.div`
-  align-items: center;
+  /* align-items: center; */
   background-color: ${th('colorBackground')};
-  display: flex;
+  /* display: flex; */
   height: 100%;
   overflow: auto;
 
   > div {
-    margin-block-start: -100px;
+    padding-block-start: clamp(0rem, -5.1136rem + 22.7273vw, 12.5rem);
   }
 
   // 580 + 2*grid(4)
@@ -32,9 +32,10 @@ const Wrapper = styled.div`
 `
 
 const Center = styled.div`
-  --max-width: 100ch;
+  --max-width: 150ch;
   --min-width: 0;
   --s1: ${grid(4)};
+
   /* ↓ Remove padding from the width calculation */
   box-sizing: content-box;
   /* ↓ Only affect horizontal margins */
@@ -55,7 +56,7 @@ const Switcher = styled.div`
   gap: var(--gutter, var(--s1));
   justify-content: space-around;
   /* ↓ The width at which the layout “breaks” */
-  --threshold: 581px;
+  --threshold: 1000px;
 
   > * {
     /* ↓ Switch the layout at the --threshold */
@@ -167,8 +168,8 @@ const InitBook = props => {
           <StyledCard
             cover={
               <Stack>
-                <h2>{t('upload.heading')}</h2>
-                <p>{t('upload.description')}.</p>
+                <h2>{t('uploadDocx.heading')}</h2>
+                <p>{t('uploadDocx.description')}.</p>
                 <StyledButton
                   data-test="createBook-selectFiles-button"
                   disabled={loadingCreateBook || loadingImportBook}
@@ -176,7 +177,26 @@ const InitBook = props => {
                   size="large"
                   type="primary"
                 >
-                  {t('upload.action')}
+                  {t('uploadDocx.action')}
+                </StyledButton>
+              </Stack>
+            }
+            hoverable
+            size="small"
+          />
+          <StyledCard
+            cover={
+              <Stack>
+                <h2>{t('uploadEpub.heading')}</h2>
+                <p>{t('uploadEpub.description')}.</p>
+                <StyledButton
+                  data-test="createBook-selectFiles-button"
+                  disabled={loadingCreateBook || loadingImportBook}
+                  onClick={handleImportBook}
+                  size="large"
+                  type="primary"
+                >
+                  {t('uploadEpub.action')}
                 </StyledButton>
               </Stack>
             }
