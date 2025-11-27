@@ -101,7 +101,7 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
 
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
-  const { createYjsProvider, wsProvider } = useContext(YjsContext)
+  const { createYjsProvider, wsProvider, showSpinner } = useContext(YjsContext)
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
@@ -122,6 +122,7 @@ const ProducerPage = () => {
   const [viewMetadata, setViewMetadata] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('en')
   const [languages, setLanguages] = useState([])
+  const [preparingExportSpinner, setPreparingExportSpinner] = useState(false)
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
@@ -990,7 +991,9 @@ const ProducerPage = () => {
       return
     }
 
-    setSelectedChapterId(chapterId)
+    if (!showSpinner) {
+      setSelectedChapterId(chapterId)
+    }
 
     // find better way to reset default language
     setCurrentLanguage('en')
@@ -1120,6 +1123,19 @@ const ProducerPage = () => {
     })
   }, 1000)
 
+  const handlePreview = () => {
+    if (wsProvider) {
+      wsProvider.disconnect()
+    }
+
+    // show loader...
+    setPreparingExportSpinner(true)
+
+    setTimeout(() => {
+      history.push(`/books/${bookId}/exporter`)
+    }, 2000)
+  }
+
   // HANDLERS SECTION END
 
   if (!loading && error?.message?.includes('does not exist')) {
@@ -1214,11 +1230,13 @@ const ProducerPage = () => {
         onPeriodicBookComponentContentChange
       }
       onPeriodicTitleChange={onPeriodicTitleChange}
+      onPreview={handlePreview}
       onReorderChapter={onReorderChapter}
       onRunWorkflow={handleRunWorkflow}
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadBookCover={handleUploadBookCover}
       onUploadChapter={handleUploadChapter}
+      preparingExportSpinner={preparingExportSpinner}
       pureScienceConfig={pureScienceConfig}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}

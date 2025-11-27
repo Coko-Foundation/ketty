@@ -70,6 +70,8 @@ const EditorWrapper = ({
   isUploading,
   setUploading,
   setIsCurrentDocumentMine,
+  onPreview,
+  preparingExportSpinner,
 }) => {
   const [luluWax, setLuluWax] = useState({
     onAddChapter,
@@ -105,6 +107,8 @@ const EditorWrapper = ({
     currentLanguage,
     onLanguageChange,
     setIsCurrentDocumentMine,
+    onPreview,
+    preparingExportSpinner,
   })
 
   const { wsProvider, ydoc } = useContext(YjsContext)
@@ -302,6 +306,8 @@ const EditorWrapper = ({
       uploadToFileManager,
       userFileManagerFiles,
       updateFile,
+      onPreview,
+      preparingExportSpinner,
     })
   }, [
     title,
@@ -323,6 +329,7 @@ const EditorWrapper = ({
     currentLanguage,
     loaded,
     userFileManagerFiles,
+    preparingExportSpinner,
   ])
 
   const userObject = {

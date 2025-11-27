@@ -74,10 +74,8 @@ const InfoWrapper = styled.div`
 
 const SpinnerWrapper = styled.div`
   display: ${({ showSpinner }) => (showSpinner ? 'block' : 'none')};
-  left: 42%;
-  margin-top: -25px;
+  inset: 20% 0 0;
   position: absolute;
-  top: 50%;
   z-index: 999;
 `
 
@@ -642,6 +640,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
     uploadToFileManager,
     userFileManagerFiles,
     updateFile,
+    onPreview,
+    preparingExportSpinner,
   } = customProps
 
   // const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
@@ -895,6 +895,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
               </CollapseContainer>
               <BookInformation
                 bookId={bookId}
+                onPreview={onPreview}
                 onTogglePSWorkflows={handleTogglePSWorkflows}
                 pureScienceConfig={pureScienceConfig}
                 showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
@@ -1001,13 +1002,16 @@ const LuluLayout = ({ customProps, ...rest }) => {
                 </NotesAreaContainer>
               )}
             </PanelGroup>
+            <SpinnerWrapper showSpinner={showSpinner}>
+              <Result
+                icon={<Spin size={18} spinning />}
+                title="Loading your document"
+              />
+            </SpinnerWrapper>
           </EditorArea>
         </Main>
-        <SpinnerWrapper showSpinner={showSpinner}>
-          <Result
-            icon={<Spin size={18} spinning />}
-            title="Loading your document"
-          />
+        <SpinnerWrapper showSpinner={preparingExportSpinner}>
+          <Result icon={<Spin size={18} spinning />} title="Preparing export" />
         </SpinnerWrapper>
         <FileUpload
           deleteFromFileManager={deleteFromFileManager}
