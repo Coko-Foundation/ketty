@@ -99,6 +99,7 @@ const BookInformation = props => {
     showAiAssistantLink,
     showKnowledgeBaseLink,
     bookId,
+    onPreview,
   } = props
 
   const [copiedId, setCopiedId] = useState()
@@ -147,12 +148,18 @@ const BookInformation = props => {
         />
       </Tooltip>
       <Tooltip placement="bottom" title="Preview and Publish">
-        <StyledLink
+        <StyledButton
+          aria-label="Preview and Publish"
+          icon={<PrinterOutlined />}
+          onClick={onPreview}
+        />
+        {/* <StyledLink
           aria-label="Preview and Publish"
           to={`/books/${bookId}/exporter`}
-        >
-          <PrinterOutlined />
-        </StyledLink>
+          onClick
+        > */}
+
+        {/* </StyledLink> */}
       </Tooltip>
       {showKnowledgeBaseLink && (
         <Tooltip placement="bottom" title="Knowledge Base">

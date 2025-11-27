@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { WebsocketProvider } from 'y-websocket'
 import * as Y from 'yjs'
-import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
-import { uuid } from '@coko/client'
+import { uuid, webSocketServerUrl } from '@coko/client'
 
 const YjsContext = React.createContext({
   wsProvider: null,
@@ -36,6 +35,7 @@ const arrayColor = [
 const YjsProvider = ({ children }) => {
   const [wsProvider, setWsProvider] = useState(null)
   const [ydoc, setYDoc] = useState(null)
+  const [showSpinner, setShowSpinner] = useState(false)
 
   const createYjsProvider = ({ currentUser, object, identifier }) => {
     if (!object) {
@@ -83,11 +83,21 @@ const YjsProvider = ({ children }) => {
     setWsProvider(provider)
   }
 
+  useEffect(() => {
+    setShowSpinner(true)
+    wsProvider?.once('synced', () => {
+      setTimeout(() => {
+        setShowSpinner(false)
+      }, 500)
+    })
+  }, [wsProvider])
+
   return (
     <Provider
       value={{
         wsProvider,
         ydoc,
+        showSpinner,
         createYjsProvider,
       }}
     >
