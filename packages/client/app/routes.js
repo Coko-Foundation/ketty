@@ -38,9 +38,10 @@ import {
   CreateBook,
   KnowledgeBasePage,
   TemplateMananger,
+  Profile,
 } from './pages'
 
-import { GET_BOOK, APPLICATION_PARAMETERS } from './graphql'
+import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
 import { CssAssistantProvider } from './ui/AiPDFDesigner/hooks/CssAssistantContext'
 import { GlobalContextProvider } from './helpers/hooks/GlobalContext'
 
@@ -158,6 +159,7 @@ const SiteHeader = () => {
       homeURL="/dashboard"
       languages={languages?.config.filter(l => l.enabled)}
       onLogout={logout}
+      profileURL="/profile"
       showBackToBook={
         isExporterPage || isAiAssistantPage || isKnowledgeBasePage
       }
@@ -196,7 +198,7 @@ const routes = (
       token: theme,
     }}
   >
-    <Authenticate>
+    <Authenticate currentUserQuery={CURRENT_USER}>
       <GlobalStyle />
       <LayoutWrapper>
         <Wrapper>
@@ -315,6 +317,11 @@ const routes = (
                       <Route exact path="/template-manager">
                         <Authenticated>
                           <TemplateMananger />
+                        </Authenticated>
+                      </Route>
+                      <Route exact path="/profile">
+                        <Authenticated>
+                          <Profile />
                         </Authenticated>
                       </Route>
                     </Switch>

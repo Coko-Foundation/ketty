@@ -9,8 +9,16 @@ type KetidaLoginResult {
   code: Int
 }
 
+input UserProfileInput {
+  id: ID!
+  givenNames: String!
+  surname: String!
+  email: String!
+}
+
 extend type Mutation {
   ketidaLogin(input: LoginInput!): KetidaLoginResult!
   searchForUsers(search: String!, exclude: [ID]!, exactMatch: Boolean): [User]!
   ketidaRequestVerificationEmail(email: String!): Boolean!
+  updateUserProfile(input: UserProfileInput!): User!
 }
