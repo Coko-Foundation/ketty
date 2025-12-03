@@ -13,7 +13,7 @@ import Publishing from './Publishing'
 import PureScienceConfig from './PureScienceConfig'
 import Languages from './Languages'
 import TermsAndConditions from './TermsAndConditions'
-
+import useBreakpoint from '../../helpers/useBreakpoint'
 import { Center, Box } from '../common'
 
 const AdminWrapper = styled.div`
@@ -55,6 +55,8 @@ const AdminDashboard = props => {
   } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
+
+  const isMobile = useBreakpoint('(max-width: 768px)')
 
   return (
     <AdminWrapper>
@@ -121,7 +123,7 @@ const AdminDashboard = props => {
                 ),
               },
             ]}
-            tabPosition="left"
+            tabPosition={isMobile ? 'top' : 'left'}
           />
         </StyledCenter>
       </Box>

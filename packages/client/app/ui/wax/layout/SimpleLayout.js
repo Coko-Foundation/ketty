@@ -17,6 +17,7 @@ const EditorWrapper = styled.div`
 const ToolbarContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   margin-block-end: ${grid(2)};
 
   > div:first-child {
