@@ -6,6 +6,7 @@ const {
   ketidaLogin,
   ketidaResendVerificationEmail,
   isGlobal,
+  updateUserProfile,
 } = require('../../../controllers/user.controller')
 
 const searchForUsersHandler = async (
@@ -43,11 +44,16 @@ const ketidaRequestVerificationEmailHandler = async (_, { email }) => {
   }
 }
 
+const updateUserProfileResolver = async (_, { input }) => {
+  return updateUserProfile(input)
+}
+
 module.exports = {
   Mutation: {
     searchForUsers: searchForUsersHandler,
     ketidaLogin: ketidaLoginHandler,
     ketidaRequestVerificationEmail: ketidaRequestVerificationEmailHandler,
+    updateUserProfile: updateUserProfileResolver,
   },
   User: {
     async admin(user) {

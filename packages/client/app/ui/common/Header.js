@@ -135,15 +135,16 @@ const PopupContentWrapper = styled.div`
 // #endregion styles
 
 const getInitials = fullname => {
-  const deconstructName = fullname.split(' ')
+  const deconstructName = fullname.split(/\s+/g)
   return `${deconstructName[0][0].toUpperCase()}${
-    deconstructName[1][0] && deconstructName[1][0].toUpperCase()
+    deconstructName[1] ? deconstructName[1][0].toUpperCase() : ''
   }`
 }
 
 const Header = props => {
   const {
     homeURL,
+    profileURL,
     brandLabel,
     brandLogoURL,
     canAccessAdminPage,
@@ -216,6 +217,14 @@ const Header = props => {
               >
                 Dashboard
               </UnstyledLink>
+              <UnstyledLink
+                onClick={() => {
+                  document.querySelector('#main-content').focus()
+                }}
+                to={profileURL}
+              >
+                Profile
+              </UnstyledLink>
               {canAccessAdminPage && (
                 <>
                   <UnstyledLink
@@ -257,6 +266,7 @@ Header.propTypes = {
   brandLogoURL: PropTypes.string,
   canAccessAdminPage: PropTypes.bool,
   homeURL: PropTypes.string.isRequired,
+  profileURL: PropTypes.string.isRequired,
   userDisplayName: PropTypes.string.isRequired,
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
