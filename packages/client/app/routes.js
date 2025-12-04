@@ -39,6 +39,7 @@ import {
   KnowledgeBasePage,
   TemplateMananger,
   Profile,
+  Users,
 } from './pages'
 
 import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
@@ -322,6 +323,11 @@ const routes = (
                       <Route exact path="/profile">
                         <Authenticated>
                           <Profile />
+                        </Authenticated>
+                      </Route>
+                      <Route exact path="/users-manager">
+                        <Authenticated>
+                          <Users />
                         </Authenticated>
                       </Route>
                     </Switch>

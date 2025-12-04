@@ -357,6 +357,28 @@ const updateUserProfile = async data => {
   }
 }
 
+const filterUsers = async (params = {}, options = {}) => {
+  try {
+    const { trx, ...restOptions } = options
+
+    return useTransaction(
+      async tr => {
+        return User.filter(params, {
+          trx: tr,
+          ...restOptions,
+        })
+      },
+      {
+        trx,
+        passedTrxOnly: true,
+      },
+    )
+  } catch (e) {
+    logger.error('Base model: find failed', e)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   searchForUsers,
   isAdmin,
@@ -365,4 +387,5 @@ module.exports = {
   isGlobal,
   getIdentityByToken,
   updateUserProfile,
+  filterUsers,
 }

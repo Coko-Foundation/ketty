@@ -7,7 +7,10 @@ const {
   ketidaResendVerificationEmail,
   isGlobal,
   updateUserProfile,
+  filterUsers,
 } = require('../../../controllers/user.controller')
+
+const { getBooks } = require('../../../controllers/book.controller')
 
 const searchForUsersHandler = async (
   _,
@@ -48,7 +51,18 @@ const updateUserProfileResolver = async (_, { input }) => {
   return updateUserProfile(input)
 }
 
+const filterUsersResolver = async (_, { filter, pagination }) => {
+  try {
+    return filterUsers(filter, pagination)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 module.exports = {
+  Query: {
+    filterUsers: filterUsersResolver,
+  },
   Mutation: {
     searchForUsers: searchForUsersHandler,
     ketidaLogin: ketidaLoginHandler,
@@ -63,6 +77,19 @@ module.exports = {
     async isGlobal(user) {
       logger.info('isGlobal resolver')
       return isGlobal(user.id)
+    },
+    async books(user) {
+      const books = await getBooks({
+        userId: user.id,
+        options: {
+          showArchived: false,
+          orderBy: { column: 'title', order: 'asc' },
+          page: 0,
+          pageSize: 100,
+        },
+      })
+
+      return books.result
     },
   },
 }

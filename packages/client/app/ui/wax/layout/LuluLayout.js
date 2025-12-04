@@ -69,14 +69,14 @@ const InfoWrapper = styled.div`
   inset-inline: 0;
   min-block-size: 100%;
   position: absolute;
-  z-index: 1000;
+  z-index: 999;
 `
 
 const SpinnerWrapper = styled.div`
   display: ${({ showSpinner }) => (showSpinner ? 'block' : 'none')};
   inset: 20% 0 0;
   position: absolute;
-  z-index: 999;
+  z-index: 998;
 `
 
 const StyledMetadataForm = styled(BookMetadataForm)`
@@ -528,7 +528,7 @@ const LeftPanelWrapper = styled.div`
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
-  z-index: 1000; // hate it but it's the wax cursor's fault!
+  z-index: 999; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
     flex: 0 0 50px;

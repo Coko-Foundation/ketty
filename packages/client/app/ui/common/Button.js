@@ -52,25 +52,28 @@ const StyledButton = styled(AntButton)`
     // primary
     if (type === 'primary')
       return css`
-        background-color: ${color};
-        border-color: ${color};
+        --color: ${color};
+        background-color: var(--color);
+        border-color: var(--color);
+        box-shadow: 0 2px 0 var(--color);
         color: ${theme.colorTextReverse};
 
         &:hover:not([disabled]),
         &:focus:not([disabled]),
         &:active:not([disabled]) {
-          border-color: ${color};
+          --color: ${darken(color, 0.25)};
+          background-color: var(--color) !important;
+          box-shadow: 0 2px 0 var(--color) !important;
+          border-color: var(--color) !important;
           color: ${theme.colorTextReverse};
         }
 
         &:hover:not([disabled]),
         &:focus:not([disabled]) {
-          background-color: ${darken(color, 0.25)} !important;
           color: ${th('colorTextReverse')} !important;
         }
 
         &:active:not([disabled]) {
-          background-color: ${darken(color, 0.25)} !important;
           color: ${th('colorTextReverse')} !important;
         }
       `
