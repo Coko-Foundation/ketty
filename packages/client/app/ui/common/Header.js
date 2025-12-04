@@ -22,7 +22,7 @@ const StyledHeader = styled.header`
   justify-content: flex-start;
   padding: ${grid(1)};
   width: 100%;
-  z-index: 9;
+  z-index: 1000;
 `
 
 const Navigation = styled.nav`
@@ -217,16 +217,26 @@ const Header = props => {
               >
                 Dashboard
               </UnstyledLink>
-              <UnstyledLink
-                onClick={() => {
-                  document.querySelector('#main-content').focus()
-                }}
-                to={profileURL}
-              >
-                Profile
-              </UnstyledLink>
               {canAccessAdminPage && (
                 <>
+                  <UnstyledLink
+                    data-test="header-template-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/template-manager"
+                  >
+                    Templates
+                  </UnstyledLink>
+                  <UnstyledLink
+                    data-test="header-users-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/users-manager"
+                  >
+                    Users
+                  </UnstyledLink>
                   <UnstyledLink
                     data-test="header-admin-link"
                     onClick={() => {
@@ -236,17 +246,16 @@ const Header = props => {
                   >
                     {t('admin')}
                   </UnstyledLink>
-                  <UnstyledLink
-                    data-test="header-admin-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to="/template-manager"
-                  >
-                    Templates
-                  </UnstyledLink>
                 </>
               )}
+              <UnstyledLink
+                onClick={() => {
+                  document.querySelector('#main-content').focus()
+                }}
+                to={profileURL}
+              >
+                Profile
+              </UnstyledLink>
               <Button data-test="logout-button" onClick={onLogout}>
                 {t('logout')}
               </Button>

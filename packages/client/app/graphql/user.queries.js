@@ -75,4 +75,42 @@ const UPDATE_USER_PASSWORD = gql`
   }
 `
 
-export { SEARCH_USERS, CURRENT_USER, UPDATE_USER_PROFILE, UPDATE_USER_PASSWORD }
+const FILTER_USERS = gql`
+  query FilterUsers($filter: UserFilter, $pagination: PageInput) {
+    filterUsers(filter: $filter, pagination: $pagination) {
+      result {
+        id
+        created
+        displayName
+        defaultIdentity {
+          email
+        }
+        books {
+          id
+          title
+          authors {
+            id
+          }
+        }
+      }
+      totalCount
+    }
+  }
+`
+
+const DEACTIVATE_USER = gql`
+  mutation DeactivateUser($ids: [ID!]!) {
+    deactivateUsers(ids: $ids) {
+      id
+    }
+  }
+`
+
+export {
+  SEARCH_USERS,
+  CURRENT_USER,
+  UPDATE_USER_PROFILE,
+  UPDATE_USER_PASSWORD,
+  FILTER_USERS,
+  DEACTIVATE_USER,
+}

@@ -555,7 +555,7 @@ module.exports = {
       return bookSettings
     },
     async authors(book) {
-      const authorsTeam = await getObjectTeam('author', book.id, true)
+      const authorsTeam = await getObjectTeam('owner', book.id, true)
 
       let authors = []
 
