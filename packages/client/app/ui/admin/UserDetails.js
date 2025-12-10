@@ -2,9 +2,15 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { DateParser } from '@coko/client/dist/ui'
 
-const DetailsWrapper = styled.div``
+const DetailsWrapper = styled.div`
+  .error {
+    color: ${th('colorError')};
+  }
+`
 
 const BookList = styled.ul`
   display: flex;
@@ -14,16 +20,23 @@ const BookList = styled.ul`
 
 const UserDetails = props => {
   const { user } = props
+
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.manageUsers.table.details',
+  })
+
   return (
     <DetailsWrapper>
       <p>
-        Signup date:{' '}
+        <strong>{t('signupDate')}:</strong>{' '}
         <DateParser dateFormat="MMMM DD, YYYY, HH:mm" timestamp={user.created}>
           {timestamp => timestamp}
         </DateParser>
       </p>
       <div>
-        This user has access to the following books:{' '}
+        <strong>
+          {user.displayName} {t('bookList')}:
+        </strong>{' '}
         {user.books?.length ? (
           <BookList>
             {user.books?.map(b => (
@@ -36,7 +49,7 @@ const UserDetails = props => {
             ))}
           </BookList>
         ) : (
-          <span>This user has not created any books</span>
+          <p className="error">{t('bookList.empty')}</p>
         )}
       </div>
     </DetailsWrapper>

@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
+import { useTranslation, Trans } from 'react-i18next'
 import UserDetails from './UserDetails'
-import { Button, Center, Modal, Table } from '../common'
+import { Button, Center, Modal, Table, Text } from '../common'
 
 const AdminWrapper = styled.div`
   background-color: #e8e8e8;
@@ -53,17 +54,17 @@ const UserManager = props => {
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
+  const { t } = useTranslation(null, { keyPrefix: 'pages.manageUsers' })
 
   const columns = [
     {
-      title: 'Name',
+      title: t('table.columns.name'),
       dataIndex: 'displayName',
       key: 'displayName',
-      showSorterTooltip: true,
     },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: t('table.columns.email'), dataIndex: 'email', key: 'email' },
     {
-      title: 'Actions',
+      title: t('table.columns.actions'),
       key: 'actions',
       render: (_, user) => {
         return (
@@ -75,7 +76,7 @@ const UserManager = props => {
             status="danger"
             type="primary"
           >
-            Deactivate
+            {t('table.actions.deactivate')}
           </Button>
         )
       },
@@ -92,18 +93,20 @@ const UserManager = props => {
   const handleDeactivate = user => {
     const warningModal = modal.warning()
     warningModal.update({
-      title: <ModalHeader>Deactivate user</ModalHeader>,
+      title: <ModalHeader>{t('modals.deactivate.title')}</ModalHeader>,
       content: (
         <p>
-          Are you sure you want to deactivate user {user.displayName}? This will
-          block them from signing in with their email, but will not delete the
-          books they created.
+          <Trans
+            components={[<Text strong />]}
+            i18nKey="pages.manageUsers.modals.deactivate.warning"
+            values={{ userName: user.displayName }}
+          />
         </p>
       ),
       footer: [
         <ModalFooter key="footer">
           <Button key="cancel" onClick={() => warningModal.destroy()}>
-            Cancel
+            {t('modals.deactivate.cancel')}
           </Button>
           <Button
             autoFocus
@@ -116,7 +119,7 @@ const UserManager = props => {
             status="danger"
             type="primary"
           >
-            Deactivate
+            {t('modals.deactivate.confirm')}
           </Button>
         </ModalFooter>,
       ],
@@ -127,7 +130,7 @@ const UserManager = props => {
     <ModalContext.Provider value={null}>
       <AdminWrapper className={className}>
         <StyledCenter>
-          <h1>Manage Users</h1>
+          <h1>{t('title')}</h1>
           <Table
             columns={columns}
             dataSource={parseUsers(users)}
@@ -135,7 +138,7 @@ const UserManager = props => {
             // loading={loading}
             onSearch={onSearch}
             pagination={pagination}
-            searchPlaceholder="Search for users by name or email"
+            searchPlaceholder={t('table.search')}
             showSearch
           />
         </StyledCenter>

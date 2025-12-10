@@ -824,6 +824,17 @@
           "type": "link(text)",
           "value": "Do you want to sign up instead?"
         }
+      },
+      "unverified": {
+        "title": {
+          "value": "Email not verified"
+        },
+        "subtitle": {
+          "value": "It appears you haven't verified your email address yet. Please check your inbox for an email containing instructions."
+        },
+        "action": {
+          "value": "Send me a new verification email"
+        }
       }
     },
     "newBook": {
@@ -1726,7 +1737,10 @@
         },
         "disable": {
           "type": "button",
-          "value": "Disable"
+          "value": "Disable",
+          "error": {
+            "value": "There is only one enabled template left, therefore it cannot be disabled."
+          }
         },
         "delete": {
           "type": "button",
@@ -1859,6 +1873,151 @@
           },
           "missingThumbnail": {
             "value": "The thumbnail file referenced in template.json does not exist. Please fix the reference and try again."
+          }
+        }
+      },
+      "pdfDimensions": {
+        "title": {
+          "value": "PDF dimensions"
+        },
+        "info": {
+          "value": "Below are the available pdf dimensions for the templates currently uploaded. You can add descriptive label for each template format."
+        },
+        "actions": {
+          "save": {
+            "value": "Save labels",
+            "success": {
+              "value": "Labels updated successfully"
+            },
+            "error": {
+              "value": "Error updating labels"
+            }
+          }
+        }
+      }
+    },
+    "userProfile": {
+      "title": {
+        "value": "User profile"
+      },
+      "passwordSectiontitle": {
+        "value": "Reset password"
+      },
+      "accountForm": {
+        "name": {
+          "value": "Given name",
+          "validation": {
+            "value": "Given name is required"
+          }
+        },
+        "surname": {
+          "value": "Surname",
+          "validation": {
+            "value": "Surname is required"
+          }
+        },
+        "email": {
+          "value": "Email",
+          "validation": {
+            "value": "Email is required"
+          }
+        },
+        "actions": {
+          "update": {
+            "value": "Update profile",
+            "success": {
+              "value": "Profile information updated."
+            },
+            "error": {
+              "value": "Error updating profile information."
+            }
+          }
+        }
+      },
+      "passwordForm": {
+        "current": {
+          "value": "Current password",
+          "validation": {
+            "value": "Current password is required"
+          }
+        },
+        "new": {
+          "value": "New password",
+          "validation": {
+            "value": "New password is required"
+          }
+        },
+        "confirm": {
+          "value": "Confirm password",
+          "validation": {
+            "value": "Please confirm your new password!",
+            "mismatch": {
+              "value": "The two passwords that you entered do not match!"
+            }
+          }
+        },
+        "actions": {
+          "update": {
+            "value": "Update password",
+            "success": {
+              "value": "Password updated!"
+            },
+            "error": {
+              "value": "Error updating password."
+            }
+          }
+        }
+      }
+    },
+    "manageUsers": {
+      "title": {
+        "value": "Manage Users"
+      },
+      "table": {
+        "search": {
+          "value": "Search for users by name or email"
+        },
+        "columns": {
+          "name": {
+            "value": "Name"
+          },
+          "email": {
+            "value": "Email"
+          },
+          "actions": {
+            "value": "Actions"
+          }
+        },
+        "details": {
+          "signupDate": {
+            "value": "Signup date"
+          },
+          "bookList": {
+            "value": "has access to the following books",
+            "empty": {
+              "value": "This user has not created any books."
+            }
+          }
+        },
+        "actions": {
+          "deactivate": {
+            "value": "Deactivate"
+          }
+        }
+      },
+      "modals": {
+        "deactivate": {
+          "title": {
+            "value": "Deactivate user"
+          },
+          "warning": {
+            "value": "Are you sure you want to deactivate user <0>{{userName}}</0>? This will block them from signing in with their email, but will not delete the books they created."
+          },
+          "confirm": {
+            "value": "Deactivate"
+          },
+          "cancel": {
+            "value": "Cancel"
           }
         }
       }
