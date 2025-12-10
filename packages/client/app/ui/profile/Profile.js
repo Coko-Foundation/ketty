@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { th, grid } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Button, Center, Form, Input, Divider } from '../common'
 
 const UpdateResult = styled.span`
@@ -19,6 +20,8 @@ const ResultWrapper = styled.div`
 
 const Profile = props => {
   const { onProfileUpdate, onPasswordUpdate, currentUser } = props
+
+  const { t } = useTranslation(null, { keyPrefix: 'pages.userProfile' })
 
   const [profileForm] = Form.useForm()
   const [passwordForm] = Form.useForm()
@@ -43,7 +46,7 @@ const Profile = props => {
         .then(() => {
           setProfileUpdateResult({
             success: true,
-            message: 'Profile information updated',
+            message: t('accountForm.actions.update.success'),
           })
           setTimeout(() => {
             setProfileUpdateResult(null)
@@ -68,7 +71,7 @@ const Profile = props => {
         .then(() => {
           setPasswordUpdateResult({
             success: true,
-            message: 'Password updated',
+            message: t('passwordForm.actions.update.success'),
           })
           setTimeout(() => {
             setPasswordUpdateResult(null)
@@ -90,7 +93,7 @@ const Profile = props => {
 
   return (
     <Center>
-      <h1 id="userProfile">User profile</h1>
+      <h1 id="userProfile">{t('title')}</h1>
       <Form
         aria-labelledby="userProfile"
         form={profileForm}
@@ -98,36 +101,36 @@ const Profile = props => {
         onFinish={handleProfileUpdate}
       >
         <Form.Item
-          label="Given name"
+          label={t('accountForm.name')}
           name="givenNames"
           rules={[
             {
               required: true,
-              message: 'Given name is required',
+              message: t('accountForm.name.validation'),
             },
           ]}
         >
           <Input placeholder="Given name" />
         </Form.Item>
         <Form.Item
-          label="Surname"
+          label={t('accountForm.surname')}
           name="surname"
           rules={[
             {
               required: true,
-              message: 'Surname is required',
+              message: t('accountForm.surname.validation'),
             },
           ]}
         >
           <Input placeholder="Surname" />
         </Form.Item>
         <Form.Item
-          label="Email"
+          label={t('accountForm.email')}
           name="email"
           rules={[
             {
               required: true,
-              message: 'Email is required',
+              message: t('accountForm.email.validation'),
             },
           ]}
         >
@@ -139,7 +142,7 @@ const Profile = props => {
             loading={profileUpdateResult?.loading}
             type="primary"
           >
-            Update profile
+            {t('accountForm.actions.update')}
           </Button>
 
           <UpdateResult $success={profileUpdateResult?.success} role="status">
@@ -158,7 +161,7 @@ const Profile = props => {
         </ResultWrapper>
       </Form>
       <Divider />
-      <h2 id="resetPass">Reset password</h2>
+      <h2 id="resetPass">{t('passwordSectiontitle')}</h2>
       <Form
         aria-labelledby="resetPass"
         form={passwordForm}
@@ -166,28 +169,32 @@ const Profile = props => {
         onFinish={handlePasswordUpdate}
       >
         <Form.Item
-          label="Current password"
+          label={t('passwordForm.current')}
           name="currentPassword"
-          rules={[{ required: true, message: 'Current password is required' }]}
+          rules={[
+            { required: true, message: t('passwordForm.current.validation') },
+          ]}
         >
           <Input placeholder="Enter current password" type="password" />
         </Form.Item>
 
         <Form.Item
-          label="New password"
+          label={t('passwordForm.new')}
           name="newPassword"
-          rules={[{ required: true, message: 'New password is required' }]}
+          rules={[
+            { required: true, message: t('passwordForm.new.validation') },
+          ]}
         >
           <Input placeholder="Enter new password" type="password" />
         </Form.Item>
 
         <Form.Item
-          label="Confirm new password"
+          label={t('passwordForm.confirm')}
           name="confirmPassword"
           rules={[
             {
               required: true,
-              message: 'Please confirm your new password!',
+              message: t('passwordForm.confirm.validation'),
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -196,7 +203,7 @@ const Profile = props => {
                 }
 
                 return Promise.reject(
-                  new Error('The two passwords that you entered do not match!'),
+                  new Error(t('passwordForm.confirm.validation.mismatch')),
                 )
               },
             }),
@@ -211,7 +218,7 @@ const Profile = props => {
             loading={passwordUpdateResult?.loading}
             type="primary"
           >
-            Update password
+            {t('passwordForm.actions.update')}
           </Button>
 
           <UpdateResult $success={passwordUpdateResult?.success} role="status">

@@ -11,7 +11,8 @@ const ExtraWrapper = styled.div``
 
 const UnverifiedUser = props => {
   const { className, resend } = props
-  const { t } = useTranslation()
+
+  const { t } = useTranslation(null, { keyPrefix: 'pages.login' })
 
   return (
     <Page maxWidth={600}>
@@ -20,17 +21,13 @@ const UnverifiedUser = props => {
           extra={
             <ExtraWrapper>
               <Button onClick={resend} type="primary">
-                {t(
-                  'Send me a new verification email'
-                    .replace(/ /g, '_')
-                    .toLowerCase(),
-                )}
+                {t('unverified.action')}
               </Button>
             </ExtraWrapper>
           }
           status="warning"
-          subTitle="It appears you haven't verified your email address yet. Please check your inbox for an email containing instructions. "
-          title="Email not verified"
+          subTitle={t('unverified.subtitle')}
+          title={t('unverified.title')}
         />
       </Wrapper>
     </Page>
