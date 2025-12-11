@@ -87,6 +87,7 @@ type BookComponent {
   status: Int
   parentComponentId: ID
   languages: [String]
+  yState: Boolean
 }
 
 input BookComponentInput {
@@ -166,7 +167,7 @@ extend type Subscription {
   bookComponentLockUpdated: ID!
   bookComponentsLockUpdated: [ID!]!
   bookComponentTitleUpdated: ID!
-  bookComponentContentUpdated: ID!
+  bookComponentContentUpdated(id: ID!): ID!
   bookComponentTypeUpdated: ID!
   bookComponentUploadingUpdated: ID!
   bookComponentTOCToggled: ID!

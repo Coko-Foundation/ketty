@@ -26,6 +26,14 @@ input EntityFilesInput {
   includeInUse: Boolean
 }
 
+input UpdateFileDataInput {
+  id: ID!
+  name: String
+  alt: String
+  caption: String
+  tags: [String!]
+}
+
 extend type Query {
   getFiles: [File]!
   getFile(id: ID!): File!
@@ -35,7 +43,7 @@ extend type Query {
 }
 extend type Mutation {
   uploadFiles(files: [Upload]!, entityType: String, entityId: ID): [File]!
-  updateFile(input: UpdateFileInput!): File!
+  updateFile(input: UpdateFileDataInput!): File!
   deleteFiles(ids: [ID!]!, remoteToo: Boolean): Int
 }
 extend type Subscription {

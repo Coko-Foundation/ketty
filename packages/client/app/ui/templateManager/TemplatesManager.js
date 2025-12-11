@@ -169,11 +169,7 @@ const TemplateMananger = props => {
       return disableTemplate(data)
     }
 
-    return Promise.reject(
-      new Error(
-        'There is only one enabled template left, therefore it cannot be disabled.',
-      ),
-    )
+    return Promise.reject(new Error(t('actions.disable.error')))
   }
 
   return (
@@ -207,11 +203,8 @@ const TemplateMananger = props => {
           templateToDisable={templateToDisable}
         />
         <hr />
-        <h2>PDF dimensions</h2>
-        <p>
-          Below are the available pdf dimensions for the templates currently
-          uploaded. You can add descriptive label for each template format.
-        </p>
+        <h2>{t('pdfDimensions.title')}</h2>
+        <p>{t('pdfDimensions.info')}</p>
         <PdfDimensionsLabelForm
           availableDimensions={availableDimensions}
           onLabelsUpdate={onLabelsUpdate}

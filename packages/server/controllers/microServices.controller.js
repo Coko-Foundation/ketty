@@ -11,6 +11,8 @@ const path = require('path')
 const crypto = require('crypto')
 const get = require('lodash/get')
 const FormData = require('form-data')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const axios = require('axios')
 
 const ServiceCallbackToken = require('../models/serviceCallbackToken/serviceCallbackToken.model')
 
@@ -25,6 +27,7 @@ const EPUBCHECKER = 'epubChecker'
 const ICML = 'icml'
 const PAGEDJS = 'pagedjs'
 const XSWEET = 'xsweet'
+const PANDOC = 'pandoc'
 const FLAX = 'flax'
 
 const services = config.get('services')
@@ -452,6 +455,51 @@ const flaxHandler = async (data, options) => {
   }
 }
 
+const pandocHandler = async (bookComponentId, filePath) => {
+  try {
+    // Read the file and convert to base64
+    const fileBuffer = fs.readFileSync(filePath)
+    const base64File = fileBuffer.toString('base64')
+
+    const serverUrl = config.get('serverUrl')
+
+    // Determine file type from extension
+    const fileExtension = filePath.split('.').pop().toLowerCase()
+
+    // Validate supported file types
+    const supportedTypes = ['docx', 'odt', 'md', 'tex', 'rtf']
+
+    if (!supportedTypes.includes(fileExtension)) {
+      throw new Error(
+        `Unsupported file format: ${fileExtension}. Only DOCX, ODT, MD, TEX, and RTF are supported.`,
+      )
+    }
+
+    // Send as JSON instead of FormData
+    const requestData = {
+      fileContent: base64File,
+      fileType: fileExtension,
+      bookComponentId,
+      callbackUrl: `${serverUrl}/api/pandoc-callback`,
+    }
+
+    const response = await axios.post(
+      `${getServiceURL(PANDOC)}/convert-uploads`,
+      requestData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    return response.data
+  } catch (error) {
+    logger.error(error)
+    throw new Error(error.message)
+  }
+}
+
 module.exports = {
   epubcheckerHandler,
   icmlHandler,
@@ -459,4 +507,5 @@ module.exports = {
   pdfHandler,
   pagedPreviewerLink,
   flaxHandler,
+  pandocHandler,
 }

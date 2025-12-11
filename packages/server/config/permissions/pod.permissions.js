@@ -783,6 +783,11 @@ const updateBookSettingsRule = rule()(async (parent, { bookId }, ctx, info) => {
   }
 })
 
+const canUpdateProfile = rule()((_, { id }, ctx) => {
+  // only the user can update his own profile info
+  return id === ctx
+})
+
 const permissions = {
   Query: {
     '*': deny,
@@ -803,6 +808,7 @@ const permissions = {
     teams: teamsRule,
     getInvitations: isAuthenticatedRule,
     getTemplates: isAdmin,
+    getUserFileManager: isAuthenticatedRule,
   },
   Mutation: {
     '*': deny,
@@ -852,6 +858,11 @@ const permissions = {
     deleteInvitation: isAuthenticatedRule,
     updateInvitation: isAuthenticatedRule,
     triggerWorkflow: isAuthenticatedRule,
+    uploadToFileManager: isAuthenticatedRule,
+    deleteFromFileManager: isAuthenticatedRule,
+    updateMetadataFileManager: isAuthenticatedRule,
+    updateComponentIdInFileManager: isAuthenticatedRule,
+    updateUserProfile: canUpdateProfile,
   },
 }
 

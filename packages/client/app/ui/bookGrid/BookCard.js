@@ -33,6 +33,8 @@ const StyledLink = styled(LinkWithoutStyles)`
 `
 
 const StyledCard = styled(Card)`
+  margin-inline: auto;
+  max-inline-size: 280px;
   position: relative;
   width: 100%;
 

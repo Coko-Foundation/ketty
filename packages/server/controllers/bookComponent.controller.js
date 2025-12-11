@@ -8,6 +8,7 @@ const map = require('lodash/map')
 const clone = require('lodash/clone')
 const assign = require('lodash/assign')
 const cheerio = require('cheerio')
+const Y = require('yjs')
 
 const {
   ApplicationParameter,
@@ -178,8 +179,12 @@ const addBookComponent = async (
           `new book component created with id ${createdBookComponent.id}`,
         )
 
+        const initialDoc = new Y.Doc()
+        const yState = Y.encodeStateAsUpdate(initialDoc)
+
         const translationData = {
           bookComponentId: createdBookComponent.id,
+          yState,
           languageIso: 'en',
         }
 
@@ -522,6 +527,8 @@ const updateContent = async (bookComponentId, content, languageIso) => {
       translationId,
       {
         content: parsedContent,
+        // reset yState to null, as this method is called only when uploading files, so yState will be set the moment that the user opens the chapter
+        yState: null,
       },
     )
 

@@ -1,6 +1,7 @@
 extend type User {
   admin: Boolean!
   isGlobal: Boolean!
+  books: [Book]
 }
 
 type KetidaLoginResult {
@@ -9,8 +10,24 @@ type KetidaLoginResult {
   code: Int
 }
 
+input UserProfileInput {
+  id: ID!
+  givenNames: String!
+  surname: String!
+  email: String!
+}
+
+extend input UserFilter {
+  search: String
+}
+
+extend type Query {
+  filterUsers(filter: UserFilter, pagination: PageInput): Users!
+}
+
 extend type Mutation {
   ketidaLogin(input: LoginInput!): KetidaLoginResult!
   searchForUsers(search: String!, exclude: [ID]!, exactMatch: Boolean): [User]!
   ketidaRequestVerificationEmail(email: String!): Boolean!
+  updateUserProfile(input: UserProfileInput!): User!
 }

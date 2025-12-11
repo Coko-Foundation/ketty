@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled, { ThemeProvider, css } from 'styled-components'
 import { grid, th } from '@coko/client'
-import { Spin } from 'antd'
+// import { Spin } from 'antd'
 import PanelGroup from 'react-panelgroup'
 import {
   ToTopOutlined,
@@ -20,7 +20,7 @@ import {
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
 import { usePrevious } from '../../../utils'
-import { Button, Checkbox, Select } from '../../common'
+import { Button, Checkbox, Result, Select, Spin } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
   BookInformation,
@@ -30,6 +30,9 @@ import {
   PSModal,
 } from '../../bookInformation'
 import theme from '../../../theme'
+
+import YjsContext from '../../provider-yjs/YjsProvider'
+import FileUpload from '../../fileUpload/FileUpload'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -59,6 +62,21 @@ const Main = styled.div`
     overflow: auto;
     width: 100%;
   }
+`
+
+const InfoWrapper = styled.div`
+  background: white;
+  inset-inline: 0;
+  min-block-size: 100%;
+  position: absolute;
+  z-index: 999;
+`
+
+const SpinnerWrapper = styled.div`
+  display: ${({ showSpinner }) => (showSpinner ? 'block' : 'none')};
+  inset: 20% 0 0;
+  position: absolute;
+  z-index: 998;
 `
 
 const StyledMetadataForm = styled(BookMetadataForm)`
@@ -252,8 +270,10 @@ const CollapseContainer = styled.div`
 `
 
 const PSButton = styled(Button)`
+  align-items: center;
   background-color: #13110c;
   block-size: 32px;
+  display: flex;
   font-size: 22px;
   gap: 0;
   padding: 0;
@@ -270,8 +290,6 @@ const PSButton = styled(Button)`
   }
 
   > span {
-    padding-bottom: 4px;
-
     &:nth-child(1) {
       color: white;
     }
@@ -288,6 +306,7 @@ const EditorArea = styled.div`
   flex-grow: 1;
   height: 100%;
   padding: 4px 0 0;
+  position: relative;
   width: ${({ isFullscreen }) => (isFullscreen ? '100%' : '80%')};
 `
 
@@ -498,17 +517,6 @@ const EditorContainer = styled.div`
   }
 `
 
-const StyledSpin = styled(Spin)`
-  background-color: white;
-  display: grid;
-  height: 100vh;
-  inset: 0;
-  justify-content: center;
-  margin-inline: auto;
-  padding-block-start: 20%;
-  position: absolute;
-`
-
 const LeftPanelWrapper = styled.div`
   background-color: ${th('colorBackground')};
   border-right: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
@@ -520,7 +528,7 @@ const LeftPanelWrapper = styled.div`
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
-  z-index: 1000; // hate it but it's the wax cursor's fault!
+  z-index: 999; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
     flex: 0 0 50px;
@@ -608,7 +616,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     canEdit,
     metadataModalOpen,
     setMetadataModalOpen,
-    editorLoading,
     onUploadBookCover,
     viewMetadata,
     setViewMetadata,
@@ -624,20 +631,34 @@ const LuluLayout = ({ customProps, ...rest }) => {
     languages,
     currentLanguage,
     onLanguageChange,
+    deleteFromFileManager,
+    getObjectFileManager,
+    loaded,
+    setUserFileManagerFiles,
+    handleCloseFileUpload,
+    updateFileInManager,
+    uploadToFileManager,
+    userFileManagerFiles,
+    updateFile,
+    onPreview,
+    preparingExportSpinner,
   } = customProps
 
-  const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
+  // const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
   const [bookPanelCollapsed, setBookPanelCollapsed] = useState(true)
   const [mobileToolbarCollapsed, setMobileToolbarCollapsed] = useState(true)
   const [showComments, setShowComments] = useState(true)
   const [showPsModal, setShowPsModal] = useState(false)
   const previousComments = usePrevious(savedComments)
+  const { showSpinner } = useContext(YjsContext)
   const { t } = useTranslation(null, { keyPrefix: 'pages.producer' })
+
+  const context = useContext(WaxContext)
 
   const {
     options,
     pmViews: { main },
-  } = useContext(WaxContext)
+  } = context
 
   const { app } = useContext(ApplicationContext)
   const waxMenuConfig = app.config.get('config.MenuService')
@@ -701,15 +722,15 @@ const LuluLayout = ({ customProps, ...rest }) => {
     return () => window.removeEventListener('keydown', backToEditor)
   }, [viewMetadata])
 
-  useEffect(() => {
-    if (editorLoading) {
-      document.getElementById('toolbar').classList.remove('scrollable')
-    } else {
-      setTimeout(() => {
-        checkOverflow()
-      }, 1)
-    }
-  }, [editorLoading])
+  // useEffect(() => {
+  //   if (editorLoading) {
+  //     document.getElementById('toolbar').classList.remove('scrollable')
+  //   } else {
+  //     setTimeout(() => {
+  //       checkOverflow()
+  //     }, 1)
+  //   }
+  // }, [editorLoading])
 
   useEffect(() => {
     // make comments visible when adding a new comment and they are hidden
@@ -722,15 +743,15 @@ const LuluLayout = ({ customProps, ...rest }) => {
     if (viewMetadata !== which) {
       setViewMetadata(which)
 
-      if (selectedChapterId) {
-        onChapterClick(selectedChapterId)
-        setLastSelectedChapter(selectedChapterId)
-      }
+      // if (selectedChapterId) {
+      //   onChapterClick(selectedChapterId)
+      //   setLastSelectedChapter(selectedChapterId)
+      // }
     } else {
-      if (lastSelectedChapter) {
-        setLastSelectedChapter(selectedChapterId)
-        onChapterClick(lastSelectedChapter)
-      }
+      // if (lastSelectedChapter) {
+      //   setLastSelectedChapter(selectedChapterId)
+      //   onChapterClick(lastSelectedChapter)
+      // }
 
       setViewMetadata('')
     }
@@ -839,7 +860,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
           data-expanded={!mobileToolbarCollapsed}
-          data-loading={editorLoading}
           id="toolbar"
           isHidden={viewMetadata}
         >
@@ -852,9 +872,8 @@ const LuluLayout = ({ customProps, ...rest }) => {
           >
             {mobileToolbarCollapsed ? 'Expand' : 'Collapse'}
           </Button>
-          {!editorLoading ? <MainMenuToolBar /> : null}
-          {!editorLoading &&
-            pureScienceConfig &&
+          <MainMenuToolBar />
+          {pureScienceConfig &&
             pureScienceConfig.url &&
             pureScienceConfig.workflows?.length && (
               <PSButton onClick={handleTogglePSWorkflows}>
@@ -876,6 +895,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
               </CollapseContainer>
               <BookInformation
                 bookId={bookId}
+                onPreview={onPreview}
                 onTogglePSWorkflows={handleTogglePSWorkflows}
                 pureScienceConfig={pureScienceConfig}
                 showAiAssistantLink={aiEnabled && settings?.aiPdfDesignerOn}
@@ -907,93 +927,105 @@ const LuluLayout = ({ customProps, ...rest }) => {
               />
             </LeftPanelWrapper>
           )}
-          {viewMetadata !== '' ? (
-            renderInformationBox()
-          ) : (
-            <EditorArea isFullscreen={options.fullScreen}>
-              <PanelGroup
-                direction="column"
-                onResizeEnd={onResizeEnd}
-                panelWidths={panelWidths}
-              >
-                <WaxSurfaceScroll id="wax-surface-scroll">
-                  <EditorContainer selectedChapterId={selectedChapterId}>
-                    {editorLoading ? (
-                      <StyledSpin spinning={editorLoading} />
-                    ) : (
-                      <>
-                        {selectedChapterId ? (
-                          <WaxView {...rest} />
-                        ) : (
-                          <NoSelectedChapterWrapper>
-                            {t('editor.noChapterSelected')}
-                          </NoSelectedChapterWrapper>
-                        )}
-                        <TrackToolsContainer>
-                          {savedComments.length > 0 && (
-                            <ToggleComments id="commentToggle">
-                              <Checkbox
-                                checked={showComments}
-                                onChange={e =>
-                                  setShowComments(e.target.checked)
-                                }
-                              >
-                                SHOW COMMENTS
-                              </Checkbox>
-                            </ToggleComments>
-                          )}
-                          {languages.length > 1 && (
-                            <LanguageSelect
-                              onChange={onLanguageChange}
-                              options={languages.map(l => ({
-                                value: l,
-                                label: l,
-                              }))}
-                              value={currentLanguage}
-                            />
-                          )}
-                          {showTrackControls && (
-                            <TrackTools>
-                              {commentsTracksCount + trackBlockNodesCount}{' '}
-                              SUGGESTIONS
-                              <TrackOptions>
-                                <CommentTrackToolBar />
-                              </TrackOptions>
-                            </TrackTools>
-                          )}
-                        </TrackToolsContainer>
-                        {showComments && (
-                          <CommentsContainer>
-                            <RightArea area="main" />
-                          </CommentsContainer>
-                        )}
-                      </>
+          <EditorArea isFullscreen={options.fullScreen}>
+            {viewMetadata && (
+              <InfoWrapper>{renderInformationBox()}</InfoWrapper>
+            )}
+            <PanelGroup
+              direction="column"
+              onResizeEnd={onResizeEnd}
+              panelWidths={panelWidths}
+            >
+              <WaxSurfaceScroll id="wax-surface-scroll">
+                <EditorContainer selectedChapterId={selectedChapterId}>
+                  {selectedChapterId ? (
+                    <WaxView {...rest} />
+                  ) : (
+                    <NoSelectedChapterWrapper>
+                      {t('editor.noChapterSelected')}
+                    </NoSelectedChapterWrapper>
+                  )}
+                  <TrackToolsContainer>
+                    {savedComments.length > 0 && (
+                      <ToggleComments id="commentToggle">
+                        <Checkbox
+                          checked={showComments}
+                          onChange={e => setShowComments(e.target.checked)}
+                        >
+                          SHOW COMMENTS
+                        </Checkbox>
+                      </ToggleComments>
                     )}
-                  </EditorContainer>
-                </WaxSurfaceScroll>
-                {hasNotes && (
-                  <NotesAreaContainer>
-                    <NotesTopBar>
-                      <Button
-                        data-collapsed={notesCollapsed}
-                        icon={<VerticalAlignBottomOutlined />}
-                        onClick={collapseNotes}
+                    {languages.length > 1 && (
+                      <LanguageSelect
+                        onChange={onLanguageChange}
+                        options={languages.map(l => ({
+                          value: l,
+                          label: l,
+                        }))}
+                        value={currentLanguage}
                       />
-                    </NotesTopBar>
-                    <div style={{ display: 'flex', 'flex-direction': 'row' }}>
-                      <NotesContainer id="notes-container">
-                        <NotesArea view={main} />
-                      </NotesContainer>
-                      <CommentsContainerNotes>
-                        <RightArea area="notes" />
-                      </CommentsContainerNotes>
-                    </div>
-                  </NotesAreaContainer>
-                )}
-              </PanelGroup>
-            </EditorArea>
-          )}
+                    )}
+                    {showTrackControls && (
+                      <TrackTools>
+                        {commentsTracksCount + trackBlockNodesCount} SUGGESTIONS
+                        <TrackOptions>
+                          <CommentTrackToolBar />
+                        </TrackOptions>
+                      </TrackTools>
+                    )}
+                  </TrackToolsContainer>
+                  {showComments && (
+                    <CommentsContainer>
+                      <RightArea area="main" />
+                    </CommentsContainer>
+                  )}
+                </EditorContainer>
+              </WaxSurfaceScroll>
+              {hasNotes && (
+                <NotesAreaContainer>
+                  <NotesTopBar>
+                    <Button
+                      data-collapsed={notesCollapsed}
+                      icon={<VerticalAlignBottomOutlined />}
+                      onClick={collapseNotes}
+                    />
+                  </NotesTopBar>
+                  <div style={{ display: 'flex', 'flex-direction': 'row' }}>
+                    <NotesContainer id="notes-container">
+                      <NotesArea view={main} />
+                    </NotesContainer>
+                    <CommentsContainerNotes>
+                      <RightArea area="notes" />
+                    </CommentsContainerNotes>
+                  </div>
+                </NotesAreaContainer>
+              )}
+            </PanelGroup>
+            <SpinnerWrapper showSpinner={showSpinner}>
+              <Result
+                icon={<Spin size={18} spinning />}
+                title="Loading your document"
+              />
+            </SpinnerWrapper>
+          </EditorArea>
         </Main>
+        <SpinnerWrapper showSpinner={preparingExportSpinner}>
+          <Result icon={<Spin size={18} spinning />} title="Preparing export" />
+        </SpinnerWrapper>
+        <FileUpload
+          deleteFromFileManager={deleteFromFileManager}
+          getObjectFileManager={getObjectFileManager}
+          onClose={handleCloseFileUpload}
+          open={loaded}
+          setUserFileManagerFiles={setUserFileManagerFiles}
+          updateFile={updateFile}
+          updateFileInManager={updateFileInManager}
+          uploadToFileManager={uploadToFileManager}
+          userFileManagerFiles={userFileManagerFiles}
+          waxApplication={app}
+          waxContext={context}
+        />
       </Wrapper>
       <PSModal
         closeModal={() => setShowPsModal(false)}

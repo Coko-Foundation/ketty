@@ -47,9 +47,9 @@ const getURL = relativePath => {
     : undefined
 
   // temp code for solving docker networking for macOS
-  // if (process.env.NODE_ENV !== 'production') {
-  //   return `${serverUrl.replace('server', 'localhost')}/${relativePath}`
-  // }
+  if (process.env.NODE_ENV !== 'production') {
+    return `${serverUrl.replace('server', 'localhost')}/${relativePath}`
+  }
 
   return `${serverUrl}/${relativePath}`
 }
@@ -110,15 +110,15 @@ const ExporterService = async (
         `${EPUBtempFolderFilePath}/${filename}`,
       )
 
-      if (outcome === 'not valid') {
-        let errors = ''
+      let errors = ''
 
+      if (outcome === 'not valid') {
         for (let i = 0; i < messages.length; i += 1) {
           const { message } = messages[i]
           errors += `${message} - `
         }
 
-        throw new Error(errors)
+        // throw new Error(errors)
       }
 
       await fs.remove(EPUBtempFolderAssetsPath)
@@ -128,6 +128,7 @@ const ExporterService = async (
       return {
         localPath,
         path: getURL(localPath),
+        validationResult: errors,
       }
     }
 

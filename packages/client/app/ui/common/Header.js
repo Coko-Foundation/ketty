@@ -22,7 +22,7 @@ const StyledHeader = styled.header`
   justify-content: flex-start;
   padding: ${grid(1)};
   width: 100%;
-  z-index: 9;
+  z-index: 1000;
 `
 
 const Navigation = styled.nav`
@@ -135,15 +135,16 @@ const PopupContentWrapper = styled.div`
 // #endregion styles
 
 const getInitials = fullname => {
-  const deconstructName = fullname.split(' ')
+  const deconstructName = fullname.split(/\s+/g)
   return `${deconstructName[0][0].toUpperCase()}${
-    deconstructName[1][0] && deconstructName[1][0].toUpperCase()
+    deconstructName[1] ? deconstructName[1][0].toUpperCase() : ''
   }`
 }
 
 const Header = props => {
   const {
     homeURL,
+    profileURL,
     brandLabel,
     brandLogoURL,
     canAccessAdminPage,
@@ -219,6 +220,24 @@ const Header = props => {
               {canAccessAdminPage && (
                 <>
                   <UnstyledLink
+                    data-test="header-template-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/template-manager"
+                  >
+                    Templates
+                  </UnstyledLink>
+                  <UnstyledLink
+                    data-test="header-users-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to="/users-manager"
+                  >
+                    Users
+                  </UnstyledLink>
+                  <UnstyledLink
                     data-test="header-admin-link"
                     onClick={() => {
                       document.querySelector('#main-content').focus()
@@ -227,17 +246,16 @@ const Header = props => {
                   >
                     {t('admin')}
                   </UnstyledLink>
-                  <UnstyledLink
-                    data-test="header-admin-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to="/template-manager"
-                  >
-                    Templates
-                  </UnstyledLink>
                 </>
               )}
+              <UnstyledLink
+                onClick={() => {
+                  document.querySelector('#main-content').focus()
+                }}
+                to={profileURL}
+              >
+                Profile
+              </UnstyledLink>
               <Button data-test="logout-button" onClick={onLogout}>
                 {t('logout')}
               </Button>
@@ -257,6 +275,7 @@ Header.propTypes = {
   brandLogoURL: PropTypes.string,
   canAccessAdminPage: PropTypes.bool,
   homeURL: PropTypes.string.isRequired,
+  profileURL: PropTypes.string.isRequired,
   userDisplayName: PropTypes.string.isRequired,
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,

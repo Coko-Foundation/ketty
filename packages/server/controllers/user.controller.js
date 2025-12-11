@@ -318,6 +318,67 @@ const getIdentityByToken = async (token, options = {}) => {
   }
 }
 
+const updateUserProfile = async data => {
+  try {
+    logger.info(`[USER CONTROLLER] - updateUserProfile `)
+    return useTransaction(async tr => {
+      const { id, givenNames, surname, email } = data
+
+      const identity = await Identity.findOne(
+        {
+          userId: id,
+          isDefault: true,
+        },
+        { trx: tr },
+      )
+
+      if (identity.email !== email) {
+        await Identity.patchAndFetchById(
+          identity.id,
+          {
+            email,
+          },
+          { trx: tr },
+        )
+      }
+
+      return User.patchAndFetchById(
+        id,
+        {
+          givenNames,
+          surname,
+        },
+        { trx: tr },
+      )
+    })
+  } catch (error) {
+    logger.info(`[USER CONTROLLER] - updateUserProfile error`)
+    throw new Error(error)
+  }
+}
+
+const filterUsers = async (params = {}, options = {}) => {
+  try {
+    const { trx, ...restOptions } = options
+
+    return useTransaction(
+      async tr => {
+        return User.filter(params, {
+          trx: tr,
+          ...restOptions,
+        })
+      },
+      {
+        trx,
+        passedTrxOnly: true,
+      },
+    )
+  } catch (e) {
+    logger.error('Base model: find failed', e)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   searchForUsers,
   isAdmin,
@@ -325,4 +386,6 @@ module.exports = {
   ketidaResendVerificationEmail,
   isGlobal,
   getIdentityByToken,
+  updateUserProfile,
+  filterUsers,
 }

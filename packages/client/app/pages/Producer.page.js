@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
-import useWebSocket from 'react-use-websocket'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useQuery,
@@ -11,8 +10,6 @@ import {
 import find from 'lodash/find'
 import debounce from 'lodash/debounce'
 import { uuid, useCurrentUser } from '@coko/client'
-import { webSocketServerUrl } from '@coko/client/dist/helpers/getUrl'
-import styled from 'styled-components'
 import {
   GET_ENTIRE_BOOK,
   GET_BOOK_SETTINGS,
@@ -25,12 +22,13 @@ import {
   UPDATE_BOOK_POD_METADATA,
   UPDATE_BOOK_COMPONENTS_ORDER,
   UPLOAD_FILES,
-  LOCK_BOOK_COMPONENT_POD,
+  // LOCK_BOOK_COMPONENT_POD,
   RENAME_BOOK,
   UPDATE_SUBTITLE,
   BOOK_UPDATED_SUBSCRIPTION,
   BOOK_SETTINGS_UPDATED_SUBSCRIPTION,
   BOOK_COMPONENT_TRANSLATED_SUBSCRIPTION,
+  BOOK_COMPONENT_CONTENT_UPDATED,
   UPDATE_SETTINGS,
   GET_BOOK_COMPONENT,
   USE_CHATGPT,
@@ -45,6 +43,11 @@ import {
   UPLOAD_BOOK_COVER,
   UPDATE_COVER_ALT,
   TRIGGER_WORKFLOW,
+  GET_OBJECT_FILEMANAGER,
+  UPLOAD_TO_FILEMANAGER,
+  DELETE_FROM_FILEMANAGER,
+  UPDATE_COMPONENT_ID_IN_FILEMANAGER,
+  UPDATE_FILE,
 } from '../graphql'
 
 import {
@@ -64,14 +67,9 @@ import {
   showDeletedBookModal,
 } from '../helpers/commonModals'
 
-import { Editor, Modal, Paragraph, Spin } from '../ui'
+import { Editor, Modal, Paragraph } from '../ui'
 import { waxAiToolRagSystem, waxAiToolSystem } from '../helpers/openAi'
-
-const StyledSpin = styled(Spin)`
-  display: grid;
-  height: 100vh;
-  place-content: center;
-`
+import YjsContext from '../ui/provider-yjs/YjsProvider'
 
 const calculateEditorMode = (lock, canModify, currentUser, tabId) => {
   if (
@@ -101,10 +99,9 @@ const constructMetadataValues = (title, subtitle, podMetadata, cover) => {
   }
 }
 
-let issueInCommunicationModal
-
 const ProducerPage = () => {
   // #region INITIALIZATION SECTION START
+  const { createYjsProvider, wsProvider, showSpinner } = useContext(YjsContext)
   const history = useHistory()
   const params = useParams()
   const { bookId } = params
@@ -114,23 +111,24 @@ const ProducerPage = () => {
     () => localStorage.getItem(`${bookId}-selected-chapter`) || undefined,
   )
 
-  const [reconnecting, setReconnecting] = useState(false)
+  // const [reconnecting, setReconnecting] = useState(false)
+  // const reconnecting = false
+  const [customTags, setCustomTags] = useState([])
   const [aiOn, setAiOn] = useState(false)
   const [customPrompts, setCustomPrompts] = useState([])
   const [freeTextPromptsOn, setFreeTextPromptsOn] = useState(false)
   const [customPromptsOn, setCustomPromptsOn] = useState(false)
-  const [editorLoading, setEditorLoading] = useState(false)
   const [savedComments, setSavedComments] = useState()
-  const [key, setKey] = useState()
   const [viewMetadata, setViewMetadata] = useState('')
   const [currentLanguage, setCurrentLanguage] = useState('en')
   const [languages, setLanguages] = useState([])
+  const [preparingExportSpinner, setPreparingExportSpinner] = useState(false)
 
   const [currentBookComponentContent, setCurrentBookComponentContent] =
     useState(null)
 
   const { currentUser } = useCurrentUser()
-  const token = localStorage.getItem('token')
+  // const token = localStorage.getItem('token')
 
   const canModify =
     isAdmin(currentUser) ||
@@ -142,10 +140,7 @@ const ProducerPage = () => {
 
   // #endregion INITIALIZATION SECTION
   // QUERIES SECTION START
-  const {
-    loading: applicationParametersLoading,
-    data: applicationParametersData,
-  } = useQuery(APPLICATION_PARAMETERS, {
+  const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
   })
 
@@ -169,6 +164,7 @@ const ProducerPage = () => {
       setCustomPrompts(data?.getBook?.bookSettings?.customPrompts)
       setFreeTextPromptsOn(data?.getBook?.bookSettings?.freeTextPromptsOn)
       setCustomPromptsOn(data?.getBook?.bookSettings?.customPromptsOn)
+      setCustomTags(data?.getBook?.bookSettings?.customTags)
 
       // if loading page the first time and no chapter is preselected, select the first one
       if (selectedChapterId === undefined) {
@@ -181,29 +177,64 @@ const ProducerPage = () => {
     },
   })
 
-  const { loading: bookComponentLoading, refetch: refetchBookComponent } =
-    useQuery(GET_BOOK_COMPONENT, {
-      fetchPolicy: 'network-only',
-      skip: !selectedChapterId || !bookQueryData,
-      variables: { id: selectedChapterId, language: currentLanguage },
-      onError: () => {
-        if (!reconnecting) {
-          if (hasMembership) {
-            showGenericErrorModal()
-          }
-        }
-      },
-      onCompleted: data => {
+  const { refetch: refetchBookComponent } = useQuery(GET_BOOK_COMPONENT, {
+    fetchPolicy: 'network-only',
+    skip: !selectedChapterId || !bookQueryData,
+    variables: { id: selectedChapterId, language: currentLanguage },
+    onCompleted: data => {
+      canUpdateTitle.current = false
+
+      if (wsProvider) {
+        wsProvider.disconnect()
+      }
+
+      if (
+        data.getBookComponent.content &&
+        data.getBookComponent.yState === false
+      ) {
         setCurrentBookComponentContent(data.getBookComponent.content)
-        setLanguages(data.getBookComponent.languages)
-        getComments({
-          variables: {
-            bookId,
-            chapterId: selectedChapterId,
-          },
-        })
-      },
-    })
+      } else {
+        setCurrentBookComponentContent('')
+      }
+
+      setLanguages(data.getBookComponent.languages)
+
+      createYjsProvider({
+        currentUser,
+        identifier: selectedChapterId,
+        object: {
+          bookComponentId: selectedChapterId,
+          language: currentLanguage,
+        },
+      })
+
+      getComments({
+        variables: {
+          bookId,
+          chapterId: selectedChapterId,
+        },
+      })
+    },
+  })
+
+  const { refetch: getObjectFileManager } = useQuery(GET_OBJECT_FILEMANAGER, {
+    skip: true,
+    variables: { objectId: bookId },
+  })
+
+  const [uploadToFileManager] = useMutation(UPLOAD_TO_FILEMANAGER, {
+    variables: {
+      objectId: bookId,
+    },
+  })
+
+  const [deleteFromFileManager] = useMutation(DELETE_FROM_FILEMANAGER)
+
+  const [updateComponentIdInManager] = useMutation(
+    UPDATE_COMPONENT_ID_IN_FILEMANAGER,
+  )
+
+  const [updateFile] = useMutation(UPDATE_FILE)
 
   const [getComments] = useLazyQuery(GET_COMMENTS, {
     skip: !bookId || !selectedChapterId,
@@ -277,7 +308,19 @@ const ProducerPage = () => {
 
       window.history.replaceState('', document.title, window.location.pathname)
     }
+
+    return () => wsProvider?.disconnect()
   }, [])
+
+  useEffect(() => {
+    if (wsProvider) {
+      wsProvider.on('sync', () => {
+        setTimeout(() => {
+          canUpdateTitle.current = true
+        }, 1000)
+      })
+    }
+  }, [wsProvider])
 
   useEffect(() => {
     if (currentUser && !hasRendered.current) {
@@ -338,12 +381,6 @@ const ProducerPage = () => {
     setSavedComments(null)
   }, [selectedChapterId])
 
-  useEffect(() => {
-    if (!bookComponentLoading) {
-      setKey(uuid())
-    }
-  }, [editorLoading, bookComponentLoading, isReadOnly])
-
   // SUBSCRIPTIONS SECTION START
 
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
@@ -351,7 +388,17 @@ const ProducerPage = () => {
     fetchPolicy: 'network-only',
     onData: () => {
       if (hasMembership) {
-        refetchBook({ id: bookId })
+        refetchBook({ id: bookId }).then(({ data }) => {
+          const chapterIds = data?.getBook?.divisions[1].bookComponents.map(
+            c => c.id,
+          )
+
+          if (chapterIds.length && !chapterIds.includes(selectedChapterId)) {
+            setSelectedChapterId(
+              data?.getBook?.divisions[1].bookComponents[0].id,
+            )
+          }
+        })
       }
     },
   })
@@ -365,8 +412,6 @@ const ProducerPage = () => {
       if (selectedChapterId) {
         await refetchBookComponent()
       }
-
-      setKey(uuid())
     },
   })
 
@@ -390,6 +435,25 @@ const ProducerPage = () => {
       }
     },
   })
+
+  useSubscription(BOOK_COMPONENT_CONTENT_UPDATED, {
+    variables: { id: selectedChapterId },
+    fetchPolicy: 'network-only',
+    onData: ({ data: { data } = {} }) => {
+      if (data.bookComponentContentUpdated === selectedChapterId) {
+        refetchBookComponent().then(({ data: { getBookComponent } = {} }) => {
+          // setSelectedChapterId(selectedChapterId)
+          setCurrentBookComponentContent(getBookComponent?.content)
+
+          const infoModal = Modal.info()
+          infoModal.update({
+            title: 'Chapter updated',
+            content: <Paragraph>Chapter content has been updated.</Paragraph>,
+          })
+        })
+      }
+    },
+  })
   // SUBSCRIPTIONS SECTION END
 
   useEffect(() => {
@@ -407,7 +471,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -418,7 +482,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -428,7 +492,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -439,7 +503,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -447,7 +511,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -455,7 +519,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -463,7 +527,7 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
@@ -473,7 +537,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -484,9 +548,9 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting && !err.toString().includes('NotFoundError'))
+      } /* else if (!reconnecting && !err.toString().includes('NotFoundError'))
         // added the second clause to avoid weird race condition trying to rename deleted chapter
-        showGenericErrorModal()
+        showGenericErrorModal() */
     },
   })
 
@@ -496,7 +560,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -506,7 +570,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     })
 
@@ -517,7 +581,7 @@ const ProducerPage = () => {
       onError: err => {
         if (err.toString().includes('Not Authorised')) {
           showUnauthorizedActionModal(false)
-        } else if (!reconnecting) showGenericErrorModal()
+        } // else if (!reconnecting) showGenericErrorModal()
       },
     },
   )
@@ -526,14 +590,14 @@ const ProducerPage = () => {
     onError: err => {
       if (err.toString().includes('Not Authorised')) {
         showUnauthorizedActionModal(false)
-      } else if (!reconnecting) showGenericErrorModal()
+      } // else if (!reconnecting) showGenericErrorModal()
     },
   })
 
-  const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
-    refetchQueries: [GET_ENTIRE_BOOK],
-    onError: () => {},
-  })
+  // const [lockBookComponent] = useMutation(LOCK_BOOK_COMPONENT_POD, {
+  //   refetchQueries: [GET_ENTIRE_BOOK],
+  //   onError: () => {},
+  // })
 
   const [upload] = useMutation(UPLOAD_FILES)
 
@@ -552,7 +616,6 @@ const ProducerPage = () => {
   // MUTATIONS SECTION END
 
   // HANDLERS SECTION START
-
   const handleUploadBookCover = file => {
     if (!canModify) {
       return showUnauthorizedActionModal(false)
@@ -622,7 +685,7 @@ const ProducerPage = () => {
     }
   }
 
-  const onAddChapter = () => {
+  const onAddChapter = async () => {
     if (!canModify) {
       showUnauthorizedActionModal(false)
       return
@@ -654,11 +717,6 @@ const ProducerPage = () => {
     })
   }
 
-  canUpdateTitle.current =
-    selectedChapterId &&
-    canModify &&
-    !(applicationParametersLoading || loading || bookComponentLoading)
-
   currentChapterTitle.current = find(
     bookQueryData?.getBook?.divisions[1].bookComponents,
     {
@@ -685,32 +743,35 @@ const ProducerPage = () => {
     onBookComponentTitleChange(title)
   }, 50)
 
-  const onDeleteChapter = bookComponentId => {
-    if (!canModify) {
+  const onDeleteChapter = async bookComponentId => {
+    if (!canModify || !isOwner(bookId, currentUser)) {
       showUnauthorizedActionModal(false)
       return
     }
 
-    const found = find(bookQueryData?.getBook.divisions[1].bookComponents, {
-      id: bookComponentId,
-    })
+    const index = bookQueryData?.getBook.divisions[1].bookComponents.findIndex(
+      ({ id }) => id === bookComponentId,
+    )
 
-    if (found) {
-      const { lock } = found
-
-      if (
-        lock &&
-        !isOwner(bookId, currentUser) &&
-        lock.userId !== currentUser.id
-      ) {
-        showUnauthorizedActionModal(false, null, 'lockedChapterDelete')
-        return
-      }
+    if (bookQueryData?.getBook.divisions[1].bookComponents.length === 1) {
+      await onAddChapter()
+      deleteBookComponent({
+        variables: {
+          input: {
+            id: bookComponentId,
+          },
+        },
+      })
+      return
     }
 
-    if (selectedChapterId === bookComponentId) {
-      setSelectedChapterId(null)
-    }
+    index > 0
+      ? setSelectedChapterId(
+          bookQueryData?.getBook.divisions[1].bookComponents[index - 1].id,
+        )
+      : setSelectedChapterId(
+          bookQueryData?.getBook.divisions[1].bookComponents[1].id,
+        )
 
     deleteBookComponent({
       variables: {
@@ -743,52 +804,6 @@ const ProducerPage = () => {
 
     updatePODMetadata({ variables: { bookId, metadata: rest } })
   }, 1000)
-
-  const showOfflineModal = () => {
-    const warningModal = Modal.error()
-    return warningModal.update({
-      title: 'Server is unreachable',
-      content: (
-        <Paragraph>
-          {`Unfortunately, we couldn't re-establish communication with our server! Currently we don't
-          support offline mode. Please return to this page when your network
-          issue is resolved.`}
-        </Paragraph>
-      ),
-      maskClosable: false,
-      onOk() {
-        history.push('/dashboard')
-        warningModal.destroy()
-      },
-      okButtonProps: { style: { backgroundColor: 'black' } },
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-  }
-
-  const communicationDownModal = () => {
-    const warningModal = Modal.warn()
-    warningModal.update({
-      title: 'Something went wrong!',
-      content: (
-        <Paragraph>
-          Please wait while we are trying resolve the issue. Make sure your
-          internet connection is working.
-        </Paragraph>
-      ),
-      maskClosable: false,
-      footer: null,
-      width: 570,
-      bodyStyle: {
-        marginRight: 38,
-        textAlign: 'justify',
-      },
-    })
-    return warningModal
-  }
 
   const showUploadingModal = () => {
     const warningModal = Modal.warn()
@@ -863,18 +878,18 @@ const ProducerPage = () => {
     })
   }
 
-  const onBookComponentLock = () => {
-    if (selectedChapterId && canModify) {
-      const userAgent = window.navigator.userAgent || null
-      lockBookComponent({
-        variables: {
-          id: selectedChapterId,
-          tabId,
-          userAgent,
-        },
-      })
-    }
-  }
+  // const onBookComponentLock = () => {
+  //   if (selectedChapterId && canModify) {
+  //     const userAgent = window.navigator.userAgent || null
+  //     lockBookComponent({
+  //       variables: {
+  //         id: selectedChapterId,
+  //         tabId,
+  //         userAgent,
+  //       },
+  //     })
+  //   }
+  // }
 
   const queryAI = async (input, { askKb }) => {
     const settings = await getBookSettings()
@@ -929,11 +944,6 @@ const ProducerPage = () => {
     })
   }
 
-  const heartbeatInterval = find(
-    applicationParametersData?.getApplicationParameters,
-    { area: 'heartbeatInterval' },
-  )
-
   const pureScienceConfig = find(
     applicationParametersData?.getApplicationParameters,
     { area: 'integrations' },
@@ -967,7 +977,7 @@ const ProducerPage = () => {
       selectedChapterId && chapterId === selectedChapterId
 
     if (isAlreadySelected) {
-      setSelectedChapterId(null)
+      // setSelectedChapterId(null)
       return
     }
 
@@ -981,7 +991,9 @@ const ProducerPage = () => {
       return
     }
 
-    setSelectedChapterId(chapterId)
+    if (!showSpinner) {
+      setSelectedChapterId(chapterId)
+    }
 
     // find better way to reset default language
     setCurrentLanguage('en')
@@ -1061,7 +1073,7 @@ const ProducerPage = () => {
       // update local copy of comments to show comment box
       setSavedComments(JSON.stringify(content))
 
-      if (savedComments !== null && JSON.stringify(content) !== savedComments) {
+      if (JSON.stringify(content) !== savedComments && selectedChapterId) {
         debouncedSaveComments({
           commentData: {
             bookId,
@@ -1111,59 +1123,20 @@ const ProducerPage = () => {
     })
   }, 1000)
 
+  const handlePreview = () => {
+    if (wsProvider) {
+      wsProvider.disconnect()
+    }
+
+    // show loader...
+    setPreparingExportSpinner(true)
+
+    setTimeout(() => {
+      history.push(`/books/${bookId}/exporter`)
+    }, 2000)
+  }
+
   // HANDLERS SECTION END
-
-  // WEBSOCKET SECTION START
-  useWebSocket(
-    `${webSocketServerUrl}/locks`,
-    {
-      onOpen: () => {
-        if (editorMode && editorMode !== 'preview') {
-          if (!reconnecting) {
-            onBookComponentLock()
-          }
-
-          if (reconnecting) {
-            if (selectedChapterId) {
-              const tempChapterId = selectedChapterId
-              setSelectedChapterId(null)
-              setSelectedChapterId(tempChapterId)
-            }
-
-            if (issueInCommunicationModal) {
-              issueInCommunicationModal.destroy()
-              issueInCommunicationModal = undefined
-            }
-
-            setReconnecting(false)
-          }
-        }
-      },
-      onError: () => {
-        if (!reconnecting) {
-          issueInCommunicationModal = communicationDownModal()
-          setReconnecting(true)
-        }
-      },
-      shouldReconnect: () => {
-        return selectedChapterId && editorMode && editorMode !== 'preview'
-      },
-      onReconnectStop: () => {
-        showOfflineModal()
-      },
-      queryParams: {
-        token,
-        bookComponentId: selectedChapterId,
-        tabId,
-      },
-      share: true,
-      reconnectAttempts: 5000,
-      reconnectInterval: (heartbeatInterval?.config || 5000) + 500,
-    },
-    selectedChapterId !== undefined && editorMode && editorMode !== 'preview',
-  )
-
-  // WEBSOCKET SECTION END
 
   if (!loading && error?.message?.includes('does not exist')) {
     showErrorModal(() => history.push('/dashboard'))
@@ -1173,19 +1146,9 @@ const ProducerPage = () => {
     showDeletedBookModal(() => history.push('/dashboard'))
   }
 
-  if (reconnecting) {
-    return <StyledSpin spinning />
-  }
-
-  useEffect(() => {
-    if (applicationParametersLoading || loading || bookComponentLoading) {
-      setEditorLoading(true)
-    } else if (!bookComponentLoading) {
-      setTimeout(() => {
-        setEditorLoading(false)
-      }, 500)
-    }
-  }, [applicationParametersLoading, loading, bookComponentLoading])
+  // if (reconnecting) {
+  //   return <StyledSpin spinning />
+  // }
 
   const chaptersActionInProgress =
     changeOrderInProgress ||
@@ -1219,6 +1182,8 @@ const ProducerPage = () => {
     .flat()
     .filter(member => !!member)
 
+  if (!wsProvider || currentBookComponentContent === null) return null
+
   return (
     <Editor
       addComments={handleAddingComments}
@@ -1242,12 +1207,14 @@ const ProducerPage = () => {
       currentLanguage={currentLanguage}
       customPrompts={customPrompts}
       customPromptsOn={customPromptsOn}
-      customTags={bookQueryData?.getBook.bookSettings.customTags}
-      editorKey={key}
-      editorLoading={editorLoading}
+      customTags={customTags}
+      deleteFromFileManager={deleteFromFileManager}
+      // editorKey={key}
+      // editorLoading={editorLoading}
       editorRef={editorRef}
       freeTextPromptsOn={freeTextPromptsOn}
       getBookSettings={getBookSettings}
+      getObjectFileManager={getObjectFileManager}
       isReadOnly={isReadOnly}
       kbOn={bookQueryData?.getBook.bookSettings.knowledgeBaseOn}
       languages={languages}
@@ -1263,11 +1230,13 @@ const ProducerPage = () => {
         onPeriodicBookComponentContentChange
       }
       onPeriodicTitleChange={onPeriodicTitleChange}
+      onPreview={handlePreview}
       onReorderChapter={onReorderChapter}
       onRunWorkflow={handleRunWorkflow}
       onSubmitBookMetadata={onSubmitBookMetadata}
       onUploadBookCover={handleUploadBookCover}
       onUploadChapter={handleUploadChapter}
+      preparingExportSpinner={preparingExportSpinner}
       pureScienceConfig={pureScienceConfig}
       queryAI={queryAI}
       selectedChapterId={selectedChapterId}
@@ -1276,7 +1245,10 @@ const ProducerPage = () => {
       subtitle={bookQueryData?.getBook.subtitle}
       title={bookQueryData?.getBook.title}
       updateBookSettings={updateBookSettings}
+      updateComponentIdInManager={updateComponentIdInManager}
+      updateFile={updateFile}
       updateLoading={updateSettingsLoading}
+      uploadToFileManager={uploadToFileManager}
       user={currentUser}
       viewMetadata={viewMetadata}
     />

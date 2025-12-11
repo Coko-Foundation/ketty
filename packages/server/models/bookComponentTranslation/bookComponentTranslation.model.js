@@ -43,6 +43,9 @@ class BookComponentTranslation extends Translation {
       properties: {
         bookComponentId: id,
         content: string,
+        yState: {
+          format: 'binary',
+        },
         notes: {
           type: 'array',
           items: {

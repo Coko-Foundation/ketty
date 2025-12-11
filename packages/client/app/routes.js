@@ -38,11 +38,15 @@ import {
   CreateBook,
   KnowledgeBasePage,
   TemplateMananger,
+  Profile,
+  Users,
 } from './pages'
 
-import { GET_BOOK, APPLICATION_PARAMETERS } from './graphql'
+import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
 import { CssAssistantProvider } from './ui/AiPDFDesigner/hooks/CssAssistantContext'
 import { GlobalContextProvider } from './helpers/hooks/GlobalContext'
+
+import { YjsProvider } from './ui/provider-yjs/YjsProvider'
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -156,6 +160,7 @@ const SiteHeader = () => {
       homeURL="/dashboard"
       languages={languages?.config.filter(l => l.enabled)}
       onLogout={logout}
+      profileURL="/profile"
       showBackToBook={
         isExporterPage || isAiAssistantPage || isKnowledgeBasePage
       }
@@ -194,7 +199,7 @@ const routes = (
       token: theme,
     }}
   >
-    <Authenticate>
+    <Authenticate currentUserQuery={CURRENT_USER}>
       <GlobalStyle />
       <LayoutWrapper>
         <Wrapper>
@@ -203,118 +208,130 @@ const routes = (
             <StyledPage fadeInPages>
               <StyledMain id="main-content" tabIndex="-1">
                 <GlobalContextProvider>
-                  <Switch>
-                    <Redirect exact path="/" to="/dashboard" />
+                  <YjsProvider>
+                    <Switch>
+                      <Redirect exact path="/" to="/dashboard" />
 
-                    <Route component={SignupPage} exact path="/signup" />
-                    <Route component={LoginPage} exact path="/login" />
+                      <Route component={SignupPage} exact path="/signup" />
+                      <Route component={LoginPage} exact path="/login" />
 
-                    <Route
-                      component={RequestPasswordResetPage}
-                      exact
-                      path="/request-password-reset"
-                    />
-                    <Route
-                      component={ResetPasswordPage}
-                      exact
-                      path="/password-reset/:token"
-                    />
-                    <Route
-                      component={VerifyEmailPage}
-                      exact
-                      path="/email-verification/:token"
-                    />
-                    <Route
-                      component={UnverifiedUserPage}
-                      exact
-                      path="/unverified-user/"
-                    />
-                    <Route
-                      component={RequestVerificationEmailPage}
-                      exact
-                      path="/request-verification-email/"
-                    />
-                    <Route
-                      exact
-                      path="/dashboard"
-                      render={() => (
+                      <Route
+                        component={RequestPasswordResetPage}
+                        exact
+                        path="/request-password-reset"
+                      />
+                      <Route
+                        component={ResetPasswordPage}
+                        exact
+                        path="/password-reset/:token"
+                      />
+                      <Route
+                        component={VerifyEmailPage}
+                        exact
+                        path="/email-verification/:token"
+                      />
+                      <Route
+                        component={UnverifiedUserPage}
+                        exact
+                        path="/unverified-user/"
+                      />
+                      <Route
+                        component={RequestVerificationEmailPage}
+                        exact
+                        path="/request-verification-email/"
+                      />
+                      <Route
+                        exact
+                        path="/dashboard"
+                        render={() => (
+                          <Authenticated>
+                            <DashboardPage />
+                          </Authenticated>
+                        )}
+                      />
+                      <Route
+                        exact
+                        path="/create-book"
+                        render={() => (
+                          <Authenticated>
+                            <CreateBook />
+                          </Authenticated>
+                        )}
+                      />
+                      <Route
+                        exact
+                        path="/books/:bookId/rename"
+                        render={() => (
+                          <Authenticated>
+                            <BookTitlePage />
+                          </Authenticated>
+                        )}
+                      />
+                      <Route
+                        exact
+                        path="/books/:bookId/import"
+                        render={() => (
+                          <Authenticated>
+                            <ImportPage />
+                          </Authenticated>
+                        )}
+                      />
+                      <Route
+                        exact
+                        path="/books/:bookId/producer"
+                        render={() => (
+                          <Authenticated>
+                            <ProducerPage />
+                          </Authenticated>
+                        )}
+                      />
+
+                      <Route exact path="/books/:bookId/exporter">
                         <Authenticated>
-                          <DashboardPage />
+                          <ExporterPage />
                         </Authenticated>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path="/create-book"
-                      render={() => (
+                      </Route>
+
+                      <Route exact path="/books/:bookId/ai-pdf">
                         <Authenticated>
-                          <CreateBook />
+                          <CssAssistantProvider>
+                            <AiPDFDesignerPage />
+                          </CssAssistantProvider>
                         </Authenticated>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path="/books/:bookId/rename"
-                      render={() => (
+                      </Route>
+
+                      <Route exact path="/books/:bookId/knowledge-base">
                         <Authenticated>
-                          <BookTitlePage />
+                          <KnowledgeBasePage />
                         </Authenticated>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path="/books/:bookId/import"
-                      render={() => (
+                      </Route>
+
+                      <Route exact path="/provider-redirect/:provider">
+                        <ProviderConnectionPage closeOnSuccess />
+                      </Route>
+
+                      <Route exact path="/admin">
                         <Authenticated>
-                          <ImportPage />
+                          <AdminPage />
                         </Authenticated>
-                      )}
-                    />
-                    <Route
-                      exact
-                      path="/books/:bookId/producer"
-                      render={() => (
+                      </Route>
+                      <Route exact path="/template-manager">
                         <Authenticated>
-                          <ProducerPage />
+                          <TemplateMananger />
                         </Authenticated>
-                      )}
-                    />
-
-                    <Route exact path="/books/:bookId/exporter">
-                      <Authenticated>
-                        <ExporterPage />
-                      </Authenticated>
-                    </Route>
-
-                    <Route exact path="/books/:bookId/ai-pdf">
-                      <Authenticated>
-                        <CssAssistantProvider>
-                          <AiPDFDesignerPage />
-                        </CssAssistantProvider>
-                      </Authenticated>
-                    </Route>
-
-                    <Route exact path="/books/:bookId/knowledge-base">
-                      <Authenticated>
-                        <KnowledgeBasePage />
-                      </Authenticated>
-                    </Route>
-
-                    <Route exact path="/provider-redirect/:provider">
-                      <ProviderConnectionPage closeOnSuccess />
-                    </Route>
-
-                    <Route exact path="/admin">
-                      <Authenticated>
-                        <AdminPage />
-                      </Authenticated>
-                    </Route>
-                    <Route exact path="/template-manager">
-                      <Authenticated>
-                        <TemplateMananger />
-                      </Authenticated>
-                    </Route>
-                  </Switch>
+                      </Route>
+                      <Route exact path="/profile">
+                        <Authenticated>
+                          <Profile />
+                        </Authenticated>
+                      </Route>
+                      <Route exact path="/users-manager">
+                        <Authenticated>
+                          <Users />
+                        </Authenticated>
+                      </Route>
+                    </Switch>
+                  </YjsProvider>
                 </GlobalContextProvider>
               </StyledMain>
             </StyledPage>

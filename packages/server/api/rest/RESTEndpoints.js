@@ -60,13 +60,73 @@ const updateBookComponent = async (req, res) => {
       bookComponentContentUpdated: bookComponentId,
     })
 
-    res.status(200).send('Chapter updated successfully')
+    res.status(200).send('Book component updated successfully')
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
 }
 
 const RESTEndpoints = app => {
+  app.use('/api/pandoc-callback', async (req, res) => {
+    try {
+      const { bookComponentId, convertedContent, status, error } = req.body
+
+      if (status === 'error') {
+        throw new Error(error)
+      }
+
+      // Use existing xsweetImagesHandler to process images and upload to S3
+      const contentWithImagesHandled = await xsweetImagesHandler(
+        convertedContent,
+        bookComponentId,
+      )
+
+      const uploading = false
+      await updateContent(bookComponentId, contentWithImagesHandled, 'en')
+      await updateUploading(bookComponentId, uploading)
+
+      const updatedBookComponent = await BookComponent.findById(bookComponentId)
+      const belongingBook = await Book.findById(updatedBookComponent.bookId)
+
+      subscriptionManager.publish(BOOK_COMPONENT_UPLOADING_UPDATED, {
+        bookComponentUploadingUpdated: updatedBookComponent.id,
+      })
+
+      subscriptionManager.publish(BOOK_UPDATED, {
+        bookUpdated: belongingBook.id,
+      })
+
+      res.json({ status: 'ok' })
+    } catch (error) {
+      console.error('Error processing pandoc callback:', error)
+
+      // Try to update the book component status to error
+      try {
+        const { bookComponentId } = req.body
+
+        if (bookComponentId) {
+          const bookComp = await getBookComponent(bookComponentId)
+          await updateUploading(bookComponentId, false)
+          await setStatus(bookComponentId, STATUSES.CONVERSION_ERROR)
+
+          const belongingBook = await Book.findById(bookComp.bookId)
+
+          subscriptionManager.publish(BOOK_COMPONENT_UPDATED, {
+            bookComponentUpdated: bookComponentId,
+          })
+
+          subscriptionManager.publish(BOOK_UPDATED, {
+            bookUpdated: belongingBook.id,
+          })
+        }
+      } catch (updateError) {
+        console.error('Error updating book component status:', updateError)
+      }
+
+      res.status(500).json({ error: error.message })
+    }
+  })
+
   app.use('/api/xsweet', async (req, res) => {
     try {
       const { body } = req

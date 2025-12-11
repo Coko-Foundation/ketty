@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
+import { useTranslation } from 'react-i18next'
 import { Button, Form, Input } from '../common'
 
 const UpdateResult = styled.span`
@@ -17,6 +18,8 @@ const PdfDimensionsLabelForm = props => {
   const [labelUpdateResult, setLabelUpdateResult] = useState()
 
   const [dimensionsForm] = Form.useForm()
+
+  const { t } = useTranslation(null, { keyPrefix: 'pages.templateManager' })
 
   useEffect(() => {
     dimensionsForm.setFieldsValue(
@@ -40,7 +43,7 @@ const PdfDimensionsLabelForm = props => {
         .then(() => {
           setLabelUpdateResult({
             success: true,
-            message: 'Labels updated successfully',
+            message: t('pdfDimensions.actions.save.success'),
           })
           setTimeout(() => {
             setLabelUpdateResult(null)
@@ -49,7 +52,7 @@ const PdfDimensionsLabelForm = props => {
         .catch(() => {
           setLabelUpdateResult({
             success: false,
-            message: 'Error updating labels',
+            message: t('pdfDimensions.actions.save.error'),
           })
           setTimeout(() => {
             setLabelUpdateResult(null)
@@ -80,7 +83,7 @@ const PdfDimensionsLabelForm = props => {
       ))}
       <div>
         <Button htmlType="submit" loading={labelUpdateResult?.loading}>
-          Save labels
+          {t('pdfDimensions.actions.save')}
         </Button>
         <UpdateResult $success={labelUpdateResult?.success} role="status">
           {labelUpdateResult?.message && (

@@ -49,7 +49,7 @@ const {
 const { BOOK_UPDATED } = require('../book/constants')
 
 const {
-  xsweetHandler,
+  pandocHandler,
 } = require('../../../controllers/microServices.controller')
 
 const {
@@ -199,7 +199,7 @@ const ingestWordFileHandler = async (_, { bookComponentFiles }) => {
         bookComponentUpdated: updatedBookComponent.id,
       })
 
-      return xsweetHandler(componentId, `${tempFolderPath}/${randomFilename}`)
+      return pandocHandler(componentId, `${tempFolderPath}/${randomFilename}`)
     })
 
     subscriptionManager.publish(BOOK_UPDATED, {
@@ -1015,6 +1015,14 @@ module.exports = {
         translation => translation.languageIso,
       )
     },
+    async yState(bookComponent, { language = 'en' }) {
+      const bookComponentTranslation = await BookComponentTranslation.findOne({
+        bookComponentId: bookComponent.id,
+        languageIso: language,
+      })
+
+      return bookComponentTranslation?.yState !== null
+    },
   },
   Subscription: {
     bookComponentAdded: {
@@ -1054,8 +1062,20 @@ module.exports = {
       },
     },
     bookComponentContentUpdated: {
-      subscribe: async () => {
-        return subscriptionManager.asyncIterator(BOOK_COMPONENT_CONTENT_UPDATED)
+      subscribe: async (...args) => {
+        return withFilter(
+          () => {
+            return subscriptionManager.asyncIterator(
+              BOOK_COMPONENT_CONTENT_UPDATED,
+            )
+          },
+          (payload, variables) => {
+            const { id: componentId } = variables
+            const { bookComponentContentUpdated: updatedComponentId } = payload
+
+            return componentId === updatedComponentId
+          },
+        )(...args)
       },
     },
     bookComponentUploadingUpdated: {
