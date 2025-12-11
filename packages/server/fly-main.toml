@@ -41,7 +41,6 @@ cpus = 2
 NODE_ENV = "production"
 CLIENT_URL = "https://ketty.coko.app"
 SERVER_URL = "https://ketty-server-main.fly.dev"
-CLIENT_PANDOC_URL='https://wax-staging-pandoc.fly.dev'
 WEBSOCKET_SERVER_URL = "wss://ketty-server-main.fly.dev:3333"
 KETIDA_FLAVOUR = "LULU"
 FEATURE_UPLOAD_DOCX_FILES = true
