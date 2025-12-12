@@ -24,6 +24,10 @@ const ForgotPassword = styled.div`
   > a {
     color: ${props => props.theme.colorText};
   }
+
+  &:only-child {
+    margin-inline: auto;
+  }
 `
 
 const AlternativeAction = styled.div`
@@ -68,22 +72,20 @@ const AuthenticationForm = props => {
           {submitButtonLabel}
         </SubmitButton>
       </Form>
-
-      {!!alternativeActionLabel && (
-        <Footer showForgotPassword={showForgotPassword}>
-          {showForgotPassword && (
-            <ForgotPassword>
-              <Link to={forgotPasswordUrl}>
-                {t('pages.login.links.forgotPassword')}
-              </Link>
-            </ForgotPassword>
-          )}
-
+      <Footer showForgotPassword={showForgotPassword}>
+        {showForgotPassword && (
+          <ForgotPassword>
+            <Link to={forgotPasswordUrl}>
+              {t('pages.login.links.forgotPassword')}
+            </Link>
+          </ForgotPassword>
+        )}
+        {!!alternativeActionLabel && (
           <AlternativeAction>
             <Link to={alternativeActionLink}>{alternativeActionLabel}</Link>
           </AlternativeAction>
-        </Footer>
-      )}
+        )}
+      </Footer>
     </Wrapper>
   )
 }

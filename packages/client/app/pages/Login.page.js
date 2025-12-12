@@ -1,11 +1,11 @@
 import React from 'react'
 import { useLocation, Redirect, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 
 import { Login } from '../ui'
-import { LOGIN } from '../graphql'
+import { LOGIN, APPLICATION_PARAMETERS } from '../graphql'
 
 const LoginPage = () => {
   const { search } = useLocation()
@@ -16,6 +16,14 @@ const LoginPage = () => {
   const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
 
   const redirectUrl = new URLSearchParams(search).get('next') || '/dashboard'
+
+  const { data: { getApplicationParameters } = {} } = useQuery(
+    APPLICATION_PARAMETERS,
+  )
+
+  const allowSignups = getApplicationParameters?.find(
+    p => p.area === 'allowSignups',
+  )?.config
 
   const login = formData => {
     const mutationData = {
@@ -52,6 +60,7 @@ const LoginPage = () => {
 
   return (
     <Login
+      allowSignups={allowSignups}
       errorMessage={errorMessage}
       hasError={!!error}
       loading={loading}
