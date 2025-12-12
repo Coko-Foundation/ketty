@@ -5,9 +5,15 @@ import { useTranslation } from 'react-i18next'
 import { Wax } from 'wax-prosemirror-core'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
-import { Button } from '../common'
+import { Button, Divider, Link, Switch } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
+import StyledControlWrapper from './StyledControlWrapper'
+
+const SignupToggleIndicator = styled.p`
+  flex-basis: 100%;
+  text-align: end;
+`
 
 const TCWrapper = styled.div`
   align-items: flex-start;
@@ -35,7 +41,14 @@ const UpdateResult = styled.span`
 `
 
 const TermsAndConditions = props => {
-  const { termsAndConditions, onTCUpdate } = props
+  const {
+    termsAndConditions,
+    onTCUpdate,
+    onSignupToggleChange,
+    allowSignups,
+    paramsLoading,
+  } = props
+
   const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
 
   const waxRef = useRef()
@@ -66,6 +79,26 @@ const TermsAndConditions = props => {
 
   return (
     <>
+      <TCHeader>User signup</TCHeader>
+      <p>
+        By toggling the button below you can allow or disallow new users to sign
+        up freely in your instance from the signup page. As an admin you can
+        always invite users in the{' '}
+        <Link to="/users-manager">Manage Users page</Link>.
+      </p>
+      <StyledControlWrapper>
+        <span>Open user signup to the instance</span>
+        <Switch
+          checked={allowSignups}
+          data-test="admindb-signup-switch"
+          loading={paramsLoading}
+          onChange={onSignupToggleChange}
+        />
+        <SignupToggleIndicator>
+          Signups are {allowSignups ? 'open' : 'closed'}
+        </SignupToggleIndicator>
+      </StyledControlWrapper>
+      <Divider />
       <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
       <p>{t('termsAndConditions.explanation')}</p>
       <TCWrapper>
@@ -107,10 +140,16 @@ const TermsAndConditions = props => {
 TermsAndConditions.propTypes = {
   termsAndConditions: PropTypes.string,
   onTCUpdate: PropTypes.func,
+  onSignupToggleChange: PropTypes.func,
+  allowSignups: PropTypes.bool,
+  paramsLoading: PropTypes.bool,
 }
 TermsAndConditions.defaultProps = {
   termsAndConditions: '',
   onTCUpdate: null,
+  onSignupToggleChange: null,
+  allowSignups: false,
+  paramsLoading: false,
 }
 
 export default TermsAndConditions

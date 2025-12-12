@@ -134,6 +134,10 @@ const SiteHeader = () => {
 
   const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
+    variables: {
+      context: 'bookBuilder',
+      area: 'languages',
+    },
   })
 
   const languages = applicationParametersData?.getApplicationParameters.find(
