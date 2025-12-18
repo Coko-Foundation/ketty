@@ -1,10 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import {
+  UserAddOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons'
 import { th } from '@coko/client'
 import { useTranslation, Trans } from 'react-i18next'
 import UserDetails from './UserDetails'
-import { Button, Center, Modal, Table, Text } from '../common'
+import {
+  Button,
+  ButtonGroup,
+  Center,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Text,
+} from '../common'
 
 const AdminWrapper = styled.div`
   background-color: #e8e8e8;
@@ -51,9 +66,18 @@ const UserManager = props => {
     onSearch,
     onDeactivate,
     currentUser,
+    onInviteUser,
+    onResendInvitation,
+    onCancelInvitation,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
+  const [inviteUserForm] = Form.useForm()
+
+  const [resendInvitation, setResendingInvitation] = useState({
+    text: 'Resend invitation',
+  })
+
   const { t } = useTranslation(null, { keyPrefix: 'pages.manageUsers' })
 
   const columns = [
@@ -67,7 +91,26 @@ const UserManager = props => {
       title: t('table.columns.actions'),
       key: 'actions',
       render: (_, user) => {
-        return (
+        return user.isInvited ? (
+          <ButtonGroup>
+            <Button
+              onClick={() =>
+                !resendInvitation.disabled && handleResendInvitation(user.id)
+              }
+              status="success"
+              type="primary"
+            >
+              {resendInvitation.text}
+            </Button>
+            <Button
+              onClick={() => onCancelInvitation(user.id)}
+              status="danger"
+              type="primary"
+            >
+              Cancel invitation
+            </Button>
+          </ButtonGroup>
+        ) : (
           <Button
             disabled={user.id === currentUser.id}
             onClick={
@@ -126,6 +169,104 @@ const UserManager = props => {
     })
   }
 
+  const handleAddNewUser = () => {
+    const newUserModal = modal.success()
+    newUserModal.update({
+      width: 450,
+      icon: <UserAddOutlined style={{ color: th('colorSuccess') }} />,
+      title: <ModalHeader>Add new user</ModalHeader>,
+      content: (
+        <>
+          <p>
+            Invite a new user to join your Ketty instance by typing their email
+            address and clicking the Invite button below. They will receive an
+            email with instructions, and their account will be activated the
+            moment they sign in.
+          </p>
+          <Form form={inviteUserForm} layout="vertical">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                },
+                {
+                  type: 'email',
+                },
+              ]}
+            >
+              <Input placeholder="Email of the user you want to invite" />
+            </Form.Item>
+          </Form>
+        </>
+      ),
+      footer: [
+        <ModalFooter key="new-user-footer">
+          <Button key="cancel" onClick={() => newUserModal.destroy()}>
+            {t('modals.deactivate.cancel')}
+          </Button>
+          <Button
+            autoFocus
+            key="add"
+            onClick={() =>
+              inviteUserForm
+                .validateFields()
+                .then(({ email }) => {
+                  onInviteUser(email).then(() => {
+                    newUserModal.destroy()
+                  })
+                })
+                .catch(err => console.error(err))
+            }
+            status="success"
+            type="primary"
+          >
+            Invite
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
+  const handleResendInvitation = userId => {
+    setResendingInvitation({
+      text: (
+        <span>
+          Sending <LoadingOutlined />
+        </span>
+      ),
+      disabled: true,
+    })
+    onResendInvitation(userId)
+      .then(() => {
+        setResendingInvitation({
+          text: (
+            <span>
+              Sent <CheckOutlined />
+            </span>
+          ),
+          disabled: true,
+        })
+        setTimeout(() => {
+          setResendingInvitation({ text: 'Resend invitation' })
+        }, 3000)
+      })
+      .catch(() => {
+        setResendingInvitation({
+          text: (
+            <span>
+              Failed <CloseOutlined />
+            </span>
+          ),
+          disabled: true,
+        })
+        setTimeout(() => {
+          setResendingInvitation({ text: 'Resend invitation' })
+        }, 3000)
+      })
+  }
+
   return (
     <ModalContext.Provider value={null}>
       <AdminWrapper className={className}>
@@ -133,13 +274,22 @@ const UserManager = props => {
           <h1>{t('title')}</h1>
           <Table
             columns={columns}
+            customActions={
+              <Button
+                onClick={handleAddNewUser}
+                status="success"
+                type="primary"
+              >
+                Add new user
+              </Button>
+            }
             dataSource={parseUsers(users)}
             expandable={details}
-            // loading={loading}
             onSearch={onSearch}
             pagination={pagination}
             searchPlaceholder={t('table.search')}
             showSearch
+            // loading={loading}
           />
         </StyledCenter>
       </AdminWrapper>
@@ -156,7 +306,10 @@ UserManager.propTypes = {
   onPageChange: PropTypes.func,
   onSearch: PropTypes.func,
   onDeactivate: PropTypes.func,
+  onInviteUser: PropTypes.func,
   currentUser: PropTypes.shape(),
+  onResendInvitation: PropTypes.func,
+  onCancelInvitation: PropTypes.func,
 }
 
 UserManager.defaultProps = {
@@ -167,7 +320,10 @@ UserManager.defaultProps = {
   onPageChange: null,
   onSearch: null,
   onDeactivate: null,
+  onInviteUser: null,
   currentUser: null,
+  onResendInvitation: null,
+  onCancelInvitation: null,
 }
 
 export default UserManager

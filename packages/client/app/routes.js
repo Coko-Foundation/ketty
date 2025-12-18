@@ -40,6 +40,7 @@ import {
   TemplateMananger,
   Profile,
   Users,
+  InvitationAccountSetup,
 } from './pages'
 
 import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
@@ -334,6 +335,11 @@ const routes = (
                           <Users />
                         </Authenticated>
                       </Route>
+                      <Route
+                        component={InvitationAccountSetup}
+                        exact
+                        path="/invitation/:token"
+                      />
                     </Switch>
                   </YjsProvider>
                 </GlobalContextProvider>

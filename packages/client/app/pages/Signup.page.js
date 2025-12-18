@@ -43,19 +43,12 @@ const SignupPage = () => {
       },
     }
 
-    signupMutation(mutationData).catch(e => console.error(e))
+    if (allowSignups) {
+      signupMutation(mutationData).catch(e => console.error(e))
+    }
   }
 
-  return allowSignups ? (
-    <Signup
-      errorMessage={error?.message}
-      hasError={!!error}
-      hasSuccess={!!data}
-      loading={loading}
-      onSubmit={signup}
-      termsAndConditions={termsAndConditions?.config}
-    />
-  ) : (
+  return allowSignups === false ? (
     <Result
       extra={<Link to="/login">Back to login</Link>}
       status="error"
@@ -66,6 +59,15 @@ const SignupPage = () => {
         </Paragraph>
       }
       title={<h1>Signups disabled</h1>}
+    />
+  ) : (
+    <Signup
+      errorMessage={error?.message}
+      hasError={!!error}
+      hasSuccess={!!data}
+      loading={loading}
+      onSubmit={signup}
+      termsAndConditions={termsAndConditions}
     />
   )
 }
