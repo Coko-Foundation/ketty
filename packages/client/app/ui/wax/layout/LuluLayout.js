@@ -642,6 +642,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
     updateFile,
     onPreview,
     preparingExportSpinner,
+    allowSignups,
   } = customProps
 
   // const [lastSelectedChapter, setLastSelectedChapter] = useState(null)
@@ -844,7 +845,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
         )
 
       case 'members':
-        return <UserInviteModal bookId={bookId} />
+        return <UserInviteModal allowSignups={allowSignups} bookId={bookId} />
 
       default:
         return null

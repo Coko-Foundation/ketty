@@ -29,6 +29,7 @@ const Wrapper = styled.div`
 
 const SearchWrapper = styled.div`
   display: flex;
+  gap: ${grid(3)};
   justify-content: center;
   margin-bottom: ${grid(3)};
 
@@ -46,20 +47,22 @@ const Table = props => {
     searchLoading,
     onSearch,
     searchPlaceholder,
+    customActions,
     ...rest
   } = props
 
   return (
     <Wrapper className={className}>
-      {showSearch && (
-        <SearchWrapper>
+      <SearchWrapper>
+        {showSearch && (
           <Search
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
           />
-        </SearchWrapper>
-      )}
+        )}
+        {customActions}
+      </SearchWrapper>
 
       <Spin spinning={loading}>
         <AntTable {...rest}>{children}</AntTable>
@@ -74,6 +77,7 @@ Table.propTypes = {
   searchLoading: PropTypes.bool,
   onSearch: PropTypes.func,
   searchPlaceholder: PropTypes.string,
+  customActions: PropTypes.element,
 }
 
 Table.defaultProps = {
@@ -82,6 +86,7 @@ Table.defaultProps = {
   searchLoading: false,
   onSearch: null,
   searchPlaceholder: null,
+  customActions: null,
 }
 
 export default Table

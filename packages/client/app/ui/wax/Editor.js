@@ -8,6 +8,7 @@ import configWithAi from './config/configWithAI'
 import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
+  allowSignups,
   bookId,
   title,
   subtitle,
@@ -308,6 +309,7 @@ const EditorWrapper = ({
       updateFile,
       onPreview,
       preparingExportSpinner,
+      allowSignups,
     })
   }, [
     title,

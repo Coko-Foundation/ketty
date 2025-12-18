@@ -36,7 +36,8 @@ const Signup = props => {
     loading,
     onSubmit,
     termsAndConditions,
-    // userEmail,
+    userEmail,
+    headerText,
   } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.signup' })
@@ -89,11 +90,19 @@ const Signup = props => {
     }
   }, [errorMessage])
 
+  useEffect(() => {
+    if (userEmail) {
+      form.setFieldValue('email', userEmail)
+    }
+  }, [userEmail])
+
   return (
     <Page maxWidth={600}>
       <Suspense fallback={<div>Loading...</div>}>
         <AuthenticationWrapper className={className}>
           <AuthenticationHeader>{t('title')}</AuthenticationHeader>
+
+          {headerText && <p>{headerText}</p>}
 
           {hasSuccess && (
             <div role="alert">
@@ -173,6 +182,7 @@ const Signup = props => {
               >
                 <Input
                   data-test="signup-email-input"
+                  disabled={!!userEmail}
                   placeholder={t('email.placeholder', {
                     keyPrefix: 'pages.common.form',
                   })}
@@ -306,6 +316,8 @@ Signup.propTypes = {
   hasSuccess: PropTypes.bool,
   loading: PropTypes.bool,
   termsAndConditions: PropTypes.string,
+  userEmail: PropTypes.string,
+  headerText: PropTypes.string,
 }
 
 Signup.defaultProps = {
@@ -314,6 +326,8 @@ Signup.defaultProps = {
   hasSuccess: false,
   loading: false,
   termsAndConditions: '',
+  userEmail: null,
+  headerText: null,
 }
 
 export default Signup

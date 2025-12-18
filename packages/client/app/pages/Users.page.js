@@ -4,7 +4,13 @@ import { useHistory } from 'react-router-dom'
 import { useCurrentUser } from '@coko/client'
 import { isAdmin } from '../helpers/permissions'
 import { UserManager } from '../ui/admin'
-import { FILTER_USERS, DEACTIVATE_USER } from '../graphql'
+import {
+  FILTER_USERS,
+  DEACTIVATE_USER,
+  INVITE_USER,
+  RESEND_INVITATION,
+  CANCEL_INVITATION,
+} from '../graphql'
 
 const PAGE_SIZE = 10
 
@@ -47,6 +53,46 @@ const UsersPage = () => {
     ],
   })
 
+  const [inviteUserMutation] = useMutation(INVITE_USER, {
+    refetchQueries: [
+      {
+        query: FILTER_USERS,
+        variables: {
+          filter: {
+            isActive: true,
+            ...searchParams,
+          },
+          pageInput: {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+          },
+        },
+        fetchPolicy: 'network-only',
+      },
+    ],
+  })
+
+  const [resendInvitationMutation] = useMutation(RESEND_INVITATION)
+
+  const [cancelInvitationMutation] = useMutation(CANCEL_INVITATION, {
+    refetchQueries: [
+      {
+        query: FILTER_USERS,
+        variables: {
+          filter: {
+            isActive: true,
+            ...searchParams,
+          },
+          pageInput: {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+          },
+        },
+        fetchPolicy: 'network-only',
+      },
+    ],
+  })
+
   const handlePageChange = page => {
     setCurrentPage(page - 1)
   }
@@ -64,6 +110,30 @@ const UsersPage = () => {
     return deactivateUserMutation({ variables })
   }
 
+  const handleInviteUser = email => {
+    const variables = {
+      email,
+    }
+
+    return inviteUserMutation({ variables })
+  }
+
+  const handleResendInvitation = userId => {
+    const variables = {
+      userId,
+    }
+
+    return resendInvitationMutation({ variables })
+  }
+
+  const handleCancelInvitation = userId => {
+    const variables = {
+      userId,
+    }
+
+    return cancelInvitationMutation({ variables })
+  }
+
   if (currentUser && !isAdmin(currentUser)) {
     history.push('/dashboard')
   }
@@ -72,8 +142,11 @@ const UsersPage = () => {
     <UserManager
       currentPage={currentPage + 1}
       currentUser={currentUser}
+      onCancelInvitation={handleCancelInvitation}
       onDeactivate={handleDeactivate}
+      onInviteUser={handleInviteUser}
       onPageChange={handlePageChange}
+      onResendInvitation={handleResendInvitation}
       onSearch={handleSearch}
       pageSize={PAGE_SIZE}
       totalUserCount={data?.filterUsers?.totalCount}

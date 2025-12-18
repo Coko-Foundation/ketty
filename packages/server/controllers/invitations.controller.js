@@ -7,11 +7,25 @@ const {
 
 const { bookInvite } = require('./helpers/emailTemplates')
 
+const {
+  getApplicationParameters,
+} = require('./applicationParameter.controller')
+
 const { Invitations, Book } = require('../models').models
 
 const sendInvitations = async (invitationData, userId, options = {}) => {
   try {
     const { trx } = options
+
+    const allowSignups = await getApplicationParameters(
+      'bookBuilder',
+      'allowSignups',
+    )
+
+    if (!allowSignups.config) {
+      throw new Error('Book level invitations are closed')
+    }
+
     logger.info(`sendInvitations: to ${invitationData.members.join(', ')}`)
 
     const book = await Book.getUserBookDetails(userId, invitationData.bookId, {
