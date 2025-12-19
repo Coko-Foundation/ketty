@@ -22,7 +22,7 @@ import Header from './ui/common/Header'
 
 import {
   BookTitlePage,
-  DashboardPage,
+  BooksPage,
   ImportPage,
   LoginPage,
   ProducerPage,
@@ -162,7 +162,7 @@ const SiteHeader = () => {
       brandLabel="Ketty"
       brandLogoURL="/ketida.png"
       canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
-      homeURL="/dashboard"
+      homeURL="/books"
       languages={languages?.config.filter(l => l.enabled)}
       onLogout={logout}
       profileURL="/profile"
@@ -215,7 +215,8 @@ const routes = (
                 <GlobalContextProvider>
                   <YjsProvider>
                     <Switch>
-                      <Redirect exact path="/" to="/dashboard" />
+                      <Redirect exact path="/" to="/books" />
+                      <Redirect exact path="/dashboard" to="/books" />
 
                       <Route component={SignupPage} exact path="/signup" />
                       <Route component={LoginPage} exact path="/login" />
@@ -247,10 +248,10 @@ const routes = (
                       />
                       <Route
                         exact
-                        path="/dashboard"
+                        path="/books"
                         render={() => (
                           <Authenticated>
-                            <DashboardPage />
+                            <BooksPage />
                           </Authenticated>
                         )}
                       />
