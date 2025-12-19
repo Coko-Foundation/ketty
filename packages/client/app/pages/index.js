@@ -1,4 +1,5 @@
-export { default as DashboardPage } from './Dashboard.page'
+// export { default as DashboardPage } from './Dashboard.page'
+export { default as BooksPage } from './Books.page'
 export { default as ProducerPage } from './Producer.page'
 export { default as LoginPage } from './Login.page'
 export { default as RequestPasswordResetPage } from './RequestPasswordReset.page'
@@ -11,8 +12,6 @@ export { default as BookTitlePage } from './BookTitle.page'
 export { default as ImportPage } from './Import.page'
 export { default as VerifyEmailPage } from './VerifyEmail.page'
 export { default as ExporterPage } from './Exporter.page'
-// import AiPDFDesignerPage false
-// console.log(AiPDFDesignerPage)
 export { default as AiPDFDesignerPage } from './AiPDFDesigner.page'
 export { default as AdminPage } from './Admin.page'
 export { default as KnowledgeBasePage } from './KnowledgeBase.page'
