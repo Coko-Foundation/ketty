@@ -469,6 +469,7 @@ const EditorContainer = styled.div`
     --padding-inline: clamp(1.25rem, -0.4022rem + 8.2609vw, 6rem);
     background: ${({ selectedChapterId }) =>
       selectedChapterId ? '#fff' : '#e8e8e8'};
+    font-size: 16px;
     min-height: calc(100vh - 104px);
     padding: ${grid(20)} var(--padding-inline) ${grid(20)}
       calc(50px + var(--padding-inline));
@@ -476,6 +477,30 @@ const EditorContainer = styled.div`
 
     @media (min-width: 600px) {
       padding: ${grid(20)} var(--padding-inline);
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.2em;
+    }
+
+    /* stylelint-disable-next-line selector-type-no-unknown */
+    footnote {
+      border-bottom: 1px solid black;
+      margin-left: 0.3ch;
+      width: 10px;
+
+      &::after {
+        font-size: 14px;
+        vertical-align: super;
+      }
     }
 
     table > caption {
@@ -992,7 +1017,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
                       onClick={collapseNotes}
                     />
                   </NotesTopBar>
-                  <div style={{ display: 'flex', 'flex-direction': 'row' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <NotesContainer id="notes-container">
                       <NotesArea view={main} />
                     </NotesContainer>
