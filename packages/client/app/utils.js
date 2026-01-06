@@ -8,3 +8,10 @@ export const usePrevious = value => {
   })
   return ref.current
 }
+
+export const getInitials = fullname => {
+  const deconstructName = fullname.split(' ')
+  return `${deconstructName[0][0].toUpperCase()}${
+    deconstructName[1][0] && deconstructName[1][0].toUpperCase()
+  }`
+}

@@ -6,12 +6,12 @@ import { UPDATE_USER_PROFILE, UPDATE_USER_PASSWORD } from '../graphql'
 import { Profile } from '../ui'
 
 const ProfilePage = () => {
-  const { currentUser } = useCurrentUser()
+  const { currentUser, setCurrentUser } = useCurrentUser()
   const [updateProfileMutation] = useMutation(UPDATE_USER_PROFILE)
   const [updatePasswordMutation] = useMutation(UPDATE_USER_PASSWORD)
 
   const handleProfileUpdate = values => {
-    const { givenNames, surname, displayName, email } = values
+    const { givenNames, surname, displayName, email, avatar } = values
 
     const variables = {
       input: {
@@ -20,10 +20,25 @@ const ProfilePage = () => {
         surname,
         displayName,
         email,
+        profilePic: avatar?.originFileObj,
       },
     }
 
-    return updateProfileMutation({ variables })
+    return updateProfileMutation({ variables }).then(
+      ({ data: { updateUserProfile } = {} }) => {
+        setCurrentUser({
+          ...currentUser,
+          displayName: updateUserProfile?.displayName,
+          givenNames: updateUserProfile?.givenNames,
+          surname: updateUserProfile?.surname,
+          avatar: updateUserProfile?.avatar,
+          defaultIdentity: {
+            ...currentUser.defaultIdentity,
+            email: updateUserProfile?.defaultIdentity?.email,
+          },
+        })
+      },
+    )
   }
 
   const handlePasswordUpdate = values => {

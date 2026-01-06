@@ -1,6 +1,16 @@
 const { logger, useTransaction, User: UserModel } = require('@coko/server')
 
 class User extends UserModel {
+  static get schema() {
+    return {
+      type: 'object',
+      required: ['name'],
+      properties: {
+        avatarId: { type: ['string', 'null'], format: 'uuid' },
+      },
+    }
+  }
+
   static async filter(data = {}, options = {}) {
     try {
       const { search, ...otherParams } = data

@@ -9,7 +9,7 @@ const {
 const {
   notify,
   notificationTypes: { EMAIL },
-} = require('@coko/server/src//services')
+} = require('@coko/server/src/services')
 
 const { login } = require('@coko/server/src/models/user/user.controller')
 const includes = require('lodash/includes')
@@ -21,6 +21,8 @@ const config = require('config')
 const BCRYPT_COST = config.util.getEnv('NODE_ENV') === 'test' ? 1 : 12
 const Identity = require('@coko/server/src/models/identity/identity.model')
 const User = require('../models/user/user.model')
+
+const { createFile, deleteFiles } = require('./file.controller')
 
 const isValidUser = ({ surname, givenNames }) => surname && givenNames
 
@@ -325,7 +327,7 @@ const updateUserProfile = async data => {
   try {
     logger.info(`[USER CONTROLLER] - updateUserProfile `)
     return useTransaction(async tr => {
-      const { id, givenNames, surname, email } = data
+      const { id, givenNames, surname, email, profilePic } = data
 
       const identity = await Identity.findOne(
         {
@@ -345,11 +347,39 @@ const updateUserProfile = async data => {
         )
       }
 
+      const user = await User.findById(id)
+      let avatarId = null
+
+      if (profilePic) {
+        const { createReadStream, filename } = await profilePic
+        // check if exists, if so delete old file
+
+        if (user?.avatarId) {
+          await deleteFiles([user.avatarId], true)
+        }
+
+        const fileStream = createReadStream()
+
+        const uploadedFile = await createFile(
+          fileStream,
+          filename,
+          null,
+          null,
+          [],
+          id,
+        )
+
+        avatarId = uploadedFile.id
+      } else {
+        user?.avatarId && (await deleteFiles([user.avatarId], true))
+      }
+
       return User.patchAndFetchById(
         id,
         {
           givenNames,
           surname,
+          avatarId,
         },
         { trx: tr },
       )

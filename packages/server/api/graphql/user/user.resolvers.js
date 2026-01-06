@@ -16,6 +16,7 @@ const {
 } = require('../../../controllers/user.controller')
 
 const { getBooks } = require('../../../controllers/book.controller')
+const File = require('../../../models/file/file.model')
 
 const searchForUsersHandler = async (
   _,
@@ -140,6 +141,20 @@ module.exports = {
       })
 
       return books.result
+    },
+    async avatar(user) {
+      const { avatarId } = user
+
+      if (avatarId) {
+        try {
+          return File.findById(avatarId)
+        } catch (error) {
+          logger.error(`Error fetching avatar for user ${user.id},`, error)
+          return []
+        }
+      }
+
+      return null
     },
     isInvited: user => {
       return !!user.invitationToken && !user.invitationToken.startsWith('used_')

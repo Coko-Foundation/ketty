@@ -3,6 +3,7 @@ extend type User {
   isGlobal: Boolean!
   books: [Book]
   isInvited: Boolean
+  avatar: File
 }
 
 type KetidaLoginResult {
@@ -16,6 +17,7 @@ input UserProfileInput {
   givenNames: String!
   surname: String!
   email: String!
+  profilePic: Upload
 }
 
 input InvitationAccountSetupInput {

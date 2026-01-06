@@ -11,6 +11,7 @@ import Popup from '@coko/client/dist/ui/common/Popup'
 import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { LanguageSwitcher } from '../languageSwitcher'
+import { getInitials } from '../../utils'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -135,13 +136,6 @@ const PopupContentWrapper = styled.div`
 `
 // #endregion styles
 
-const getInitials = fullname => {
-  const deconstructName = fullname.split(/\s+/g)
-  return `${deconstructName[0][0].toUpperCase()}${
-    deconstructName[1] ? deconstructName[1][0].toUpperCase() : ''
-  }`
-}
-
 const Header = props => {
   const {
     brandLabel,
@@ -153,7 +147,7 @@ const Header = props => {
     usersManagerUrl,
     canAccessAdminPage,
     onLogout,
-    userDisplayName,
+    user,
     showDashboard,
     showBackToBook,
     dropdownItems,
@@ -166,6 +160,9 @@ const Header = props => {
   const { t } = useTranslation(null, {
     keyPrefix: 'pages.common.header.menu.options',
   })
+
+  const userAvatar = user?.avatar?.url
+  const userDisplayName = user?.displayName
 
   const navItemsLeft = []
 
@@ -196,13 +193,13 @@ const Header = props => {
       <Navigation role="navigation">
         {navItemsLeft.map(el => el)}
         <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
-        {userDisplayName ? (
+        {user ? (
           <StyledPopup
             alignment="end"
             position="block-end"
             toggle={
               <Button type="text">
-                <StyledAvatar data-test="avatar-initials">
+                <StyledAvatar data-test="avatar-initials" src={userAvatar}>
                   {getInitials(userDisplayName)}
                 </StyledAvatar>
               </Button>
@@ -282,7 +279,6 @@ Header.propTypes = {
   usersManagerUrl: PropTypes.string,
   adminURL: PropTypes.string,
   templatesURL: PropTypes.string,
-  userDisplayName: PropTypes.string.isRequired,
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
   showDashboard: PropTypes.bool,
@@ -295,6 +291,7 @@ Header.propTypes = {
     }),
   ),
   languages: PropTypes.arrayOf(PropTypes.shape({})),
+  user: PropTypes.shape(),
 }
 
 Header.defaultProps = {
@@ -310,6 +307,7 @@ Header.defaultProps = {
   languages: [],
   showDashboard: true,
   bookTitle: '',
+  user: null,
 }
 
 export default Header

@@ -50,6 +50,10 @@ const CURRENT_USER = gql`
         provider
         hasValidRefreshToken
       }
+      avatar {
+        id
+        url(size: small)
+      }
     }
   }
 `
@@ -61,6 +65,10 @@ const UPDATE_USER_PROFILE = gql`
       displayName
       givenNames
       surname
+      avatar {
+        id
+        url(size: small)
+      }
       defaultIdentity {
         id
         email
