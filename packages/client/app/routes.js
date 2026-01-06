@@ -169,7 +169,7 @@ const SiteHeader = () => {
       showBackToBook={
         isExporterPage || isAiAssistantPage || isKnowledgeBasePage
       }
-      userDisplayName={currentUser ? currentUser.displayName : ''}
+      user={currentUser}
     />
   )
 }

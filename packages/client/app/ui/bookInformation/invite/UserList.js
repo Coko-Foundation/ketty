@@ -2,23 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import { Avatar } from 'antd'
+import { grid } from '@coko/client'
 import { List, Select } from '../../common'
+import { getInitials } from '../../../utils'
 
 const StyledListItem = styled.div`
   padding: 12px 0;
   width: 100%;
 `
-
-const getInitials = fullname => {
-  const deconstructName = fullname.split(' ')
-  return `${deconstructName[0][0].toUpperCase()}${
-    deconstructName[1][0] && deconstructName[1][0].toUpperCase()
-  }`
-}
-
-const getEmailInitials = email => {
-  return `${email[0].toUpperCase()}${email[1] && email[1].toUpperCase()}`
-}
 
 const UserRow = styled.div`
   align-items: center;
@@ -28,25 +20,17 @@ const UserRow = styled.div`
 `
 
 const UserDetails = styled.div`
+  align-items: center;
   display: flex;
+  gap: ${grid(2)};
 `
 
 const OwnerLabel = styled.span`
   padding: 0 12px;
 `
 
-const UserAvatar = styled.div`
-  align-items: center;
-  background-color: #ffc038;
-  border-radius: 50%;
-  color: #000;
-  display: flex;
-  font-size: 14px;
+const StyledAvatar = styled(Avatar)`
   font-weight: bold;
-  height: 24px;
-  justify-content: center;
-  margin-right: 8px;
-  width: 24px;
 `
 
 const StyledSelect = styled(Select)`
@@ -73,15 +57,15 @@ const UserListItem = ({
     { value: 'remove', label: t('options.remove') },
   ]
 
-  const { displayName, id: userId, email } = user
+  const { displayName, id: userId, email, avatar } = user
 
   return (
     <StyledListItem key={id}>
       <UserRow>
         <UserDetails>
-          <UserAvatar>
-            {email ? getEmailInitials(email) : getInitials(displayName)}
-          </UserAvatar>
+          <StyledAvatar src={avatar?.url}>
+            {getInitials(displayName)}
+          </StyledAvatar>
           <span>{displayName}</span>
         </UserDetails>
         {role === 'owner' ? (
@@ -117,6 +101,7 @@ UserListItem.propTypes = {
     displayName: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     email: PropTypes.string,
+    avatar: PropTypes.shape(),
   }).isRequired,
   canChangeAccess: PropTypes.bool.isRequired,
 }
