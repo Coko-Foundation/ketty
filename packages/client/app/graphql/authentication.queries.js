@@ -6,6 +6,12 @@ export const LOGIN = gql`
       user {
         id
         displayName
+        givenNames
+        surname
+        avatar {
+          id
+          url(size: small)
+        }
         username
         teams {
           id
@@ -24,6 +30,7 @@ export const LOGIN = gql`
         defaultIdentity {
           id
           isVerified
+          email
         }
         identities {
           id
