@@ -8,12 +8,15 @@ const { dirContents } = require('../../utilities/filesystem')
 const EPUBArchiver = async (
   EPUBtempFolderAssetsPath,
   EPUBtempFolderFilePath,
+  exportFilename,
 ) => {
   try {
     await fs.ensureDir(EPUBtempFolderFilePath)
     const epubFiles = await dirContents(EPUBtempFolderAssetsPath, ['mimetype'])
     return new Promise((resolve, reject) => {
-      const tempFilename = `${crypto.randomBytes(32).toString('hex')}.epub`
+      const tempFilename = exportFilename
+        ? `${exportFilename}.epub`
+        : `${crypto.randomBytes(32).toString('hex')}.epub`
 
       const destination = path.join(EPUBtempFolderFilePath, tempFilename)
 
