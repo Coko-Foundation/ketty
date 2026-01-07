@@ -1081,15 +1081,25 @@ const exportBook = async (
   try {
     const { trx } = options
     return useTransaction(
-      async tr =>
-        exporter(
+      async () => {
+        const bookTranslation = await BookTranslation.findOne({
+          bookId,
+          languageIso: 'en',
+          deleted: false,
+        })
+
+        const exportFilename = bookTranslation.title
+
+        return exporter(
           bookId,
           templateId,
           previewer,
           fileExtension,
           icmlNotes,
-          additionalExportOptions,
-        ),
+          { ...additionalExportOptions, exportFilename },
+        )
+      },
+
       { trx, passedTrxOnly: true },
     )
   } catch (e) {
