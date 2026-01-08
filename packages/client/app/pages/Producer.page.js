@@ -382,7 +382,6 @@ const ProducerPage = () => {
   }, [selectedChapterId])
 
   // SUBSCRIPTIONS SECTION START
-
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
