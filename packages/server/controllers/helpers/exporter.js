@@ -64,7 +64,7 @@ const ExporterService = async (
   previewer,
   fileExtension,
   icmlNotes,
-  { isbn, ...additionalExportOptions },
+  { exportFilename, isbn, ...additionalExportOptions },
 ) => {
   try {
     let template
@@ -104,6 +104,7 @@ const ExporterService = async (
       const filename = await EPUBArchiver(
         EPUBtempFolderAssetsPath,
         EPUBtempFolderFilePath,
+        exportFilename,
       )
 
       const { outcome, messages } = await epubcheckerHandler(
@@ -162,7 +163,10 @@ const ExporterService = async (
       )
 
       if (fileExtension === 'pdf') {
-        const PDFFilename = `${crypto.randomBytes(32).toString('hex')}.pdf`
+        const PDFFilename = exportFilename
+          ? `${exportFilename}.pdf`
+          : `${crypto.randomBytes(32).toString('hex')}.pdf`
+
         await PagedJSPreparation(
           book,
           template,

@@ -11,6 +11,7 @@ import Popup from '@coko/client/dist/ui/common/Popup'
 import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { LanguageSwitcher } from '../languageSwitcher'
+import { getInitials } from '../../utils'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -87,6 +88,7 @@ const StyledPopup = styled(Popup)`
   border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
+  inline-size: 170px;
   margin-top: ${grid(1)};
   padding: 5px;
 
@@ -134,27 +136,20 @@ const PopupContentWrapper = styled.div`
 `
 // #endregion styles
 
-const getInitials = fullname => {
-  const deconstructName = fullname.split(/\s+/g)
-  return `${deconstructName[0][0].toUpperCase()}${
-    deconstructName[1] ? deconstructName[1][0].toUpperCase() : ''
-  }`
-}
-
 const Header = props => {
   const {
-    homeURL,
-    profileURL,
     brandLabel,
     brandLogoURL,
+    homeURL,
+    profileURL,
+    adminURL,
+    templatesURL,
+    usersManagerUrl,
     canAccessAdminPage,
     onLogout,
-    userDisplayName,
+    user,
     showDashboard,
-    dashboardURL,
     showBackToBook,
-    backToBookURL,
-    previewURL,
     dropdownItems,
     bookId,
     languages,
@@ -165,6 +160,9 @@ const Header = props => {
   const { t } = useTranslation(null, {
     keyPrefix: 'pages.common.header.menu.options',
   })
+
+  const userAvatar = user?.avatar?.url
+  const userDisplayName = user?.displayName
 
   const navItemsLeft = []
 
@@ -195,13 +193,13 @@ const Header = props => {
       <Navigation role="navigation">
         {navItemsLeft.map(el => el)}
         <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
-        {userDisplayName ? (
+        {user ? (
           <StyledPopup
             alignment="end"
             position="block-end"
             toggle={
               <Button type="text">
-                <StyledAvatar data-test="avatar-initials">
+                <StyledAvatar data-test="avatar-initials" src={userAvatar}>
                   {getInitials(userDisplayName)}
                 </StyledAvatar>
               </Button>
@@ -215,47 +213,49 @@ const Header = props => {
                 }}
                 to={homeURL}
               >
-                Dashboard
+                {t('dashboard')}
               </UnstyledLink>
-              {canAccessAdminPage && (
-                <>
-                  <UnstyledLink
-                    data-test="header-template-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to="/template-manager"
-                  >
-                    Templates
-                  </UnstyledLink>
-                  <UnstyledLink
-                    data-test="header-users-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to="/users-manager"
-                  >
-                    Users
-                  </UnstyledLink>
-                  <UnstyledLink
-                    data-test="header-admin-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to="/admin"
-                  >
-                    {t('admin')}
-                  </UnstyledLink>
-                </>
-              )}
               <UnstyledLink
                 onClick={() => {
                   document.querySelector('#main-content').focus()
                 }}
                 to={profileURL}
               >
-                Profile
+                {t('profile')}
               </UnstyledLink>
+              {canAccessAdminPage && (
+                <>
+                  <UnstyledLink
+                    data-test="header-users-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to={usersManagerUrl}
+                  >
+                    {t('users')}
+                  </UnstyledLink>
+
+                  <UnstyledLink
+                    data-test="header-admin-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to={adminURL}
+                  >
+                    {t('admin')}
+                  </UnstyledLink>
+                  <UnstyledLink
+                    data-test="header-template-link"
+                    onClick={() => {
+                      document.querySelector('#main-content').focus()
+                    }}
+                    to={templatesURL}
+                  >
+                    {t('templates')}
+                  </UnstyledLink>
+                </>
+              )}
+
               <Button data-test="logout-button" onClick={onLogout}>
                 {t('logout')}
               </Button>
@@ -274,16 +274,15 @@ Header.propTypes = {
   brandLabel: PropTypes.string.isRequired,
   brandLogoURL: PropTypes.string,
   canAccessAdminPage: PropTypes.bool,
-  homeURL: PropTypes.string.isRequired,
-  profileURL: PropTypes.string.isRequired,
-  userDisplayName: PropTypes.string.isRequired,
+  homeURL: PropTypes.string,
+  profileURL: PropTypes.string,
+  usersManagerUrl: PropTypes.string,
+  adminURL: PropTypes.string,
+  templatesURL: PropTypes.string,
   onLogout: PropTypes.func.isRequired,
   showBackToBook: PropTypes.bool.isRequired,
   showDashboard: PropTypes.bool,
-  dashboardURL: PropTypes.string,
-  backToBookURL: PropTypes.string,
   bookTitle: PropTypes.string,
-  previewURL: PropTypes.string,
   dropdownItems: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
@@ -292,6 +291,7 @@ Header.propTypes = {
     }),
   ),
   languages: PropTypes.arrayOf(PropTypes.shape({})),
+  user: PropTypes.shape(),
 }
 
 Header.defaultProps = {
@@ -299,12 +299,15 @@ Header.defaultProps = {
   brandLogoURL: null,
   canAccessAdminPage: false,
   dropdownItems: [],
-  dashboardURL: null,
-  backToBookURL: null,
-  previewURL: null,
+  homeURL: '/books',
+  profileURL: '/profile',
+  usersManagerUrl: '/users-manager',
+  adminURL: '/admin',
+  templatesURL: '/template-manager',
   languages: [],
   showDashboard: true,
   bookTitle: '',
+  user: null,
 }
 
 export default Header

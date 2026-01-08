@@ -382,7 +382,6 @@ const ProducerPage = () => {
   }, [selectedChapterId])
 
   // SUBSCRIPTIONS SECTION START
-
   useSubscription(BOOK_UPDATED_SUBSCRIPTION, {
     variables: { id: bookId },
     fetchPolicy: 'network-only',
@@ -1164,6 +1163,12 @@ const ProducerPage = () => {
     { area: 'aiEnabled' },
   )
 
+  // block book level invitations if signups are closed by admin
+  const allowSignups = find(
+    applicationParametersData?.getApplicationParameters,
+    { area: 'allowSignups' },
+  )
+
   const members = bookMembers
     ?.map(team => {
       if (team.members.length > 0) {
@@ -1189,6 +1194,7 @@ const ProducerPage = () => {
       addComments={handleAddingComments}
       aiEnabled={isAIEnabled?.config}
       aiOn={aiOn}
+      allowSignups={allowSignups?.config}
       bookComponentContent={currentBookComponentContent}
       bookId={bookId}
       bookMembers={members}

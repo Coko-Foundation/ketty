@@ -50,6 +50,10 @@ const CURRENT_USER = gql`
         provider
         hasValidRefreshToken
       }
+      avatar {
+        id
+        url(size: small)
+      }
     }
   }
 `
@@ -61,6 +65,10 @@ const UPDATE_USER_PROFILE = gql`
       displayName
       givenNames
       surname
+      avatar {
+        id
+        url(size: small)
+      }
       defaultIdentity {
         id
         email
@@ -92,6 +100,7 @@ const FILTER_USERS = gql`
             id
           }
         }
+        isInvited
       }
       totalCount
     }
@@ -106,6 +115,73 @@ const DEACTIVATE_USER = gql`
   }
 `
 
+const INVITE_USER = gql`
+  mutation InviteUser($email: String!) {
+    inviteUser(email: $email) {
+      id
+    }
+  }
+`
+
+const GET_USER_BY_INVITATION_TOKEN = gql`
+  query UserByInvitationToken($token: String!) {
+    userByInvitationToken(token: $token) {
+      id
+      defaultIdentity {
+        email
+      }
+    }
+  }
+`
+
+const SIGN_UP_FROM_INVITATION = gql`
+  mutation SetupAccountOnInvitation($input: InvitationAccountSetupInput) {
+    setupAccountOnInvitation(input: $input) {
+      user {
+        id
+        displayName
+        username
+        teams {
+          id
+          role
+          objectId
+          global
+          members {
+            id
+            user {
+              id
+            }
+            status
+          }
+        }
+        isActive
+        defaultIdentity {
+          id
+          isVerified
+        }
+        identities {
+          id
+          provider
+          hasValidRefreshToken
+        }
+      }
+      token
+    }
+  }
+`
+
+const RESEND_INVITATION = gql`
+  mutation ResendInvitation($userId: ID!) {
+    resendInvitation(userId: $userId)
+  }
+`
+
+const CANCEL_INVITATION = gql`
+  mutation CancelInvitation($userId: ID!) {
+    cancelInvitation(userId: $userId)
+  }
+`
+
 export {
   SEARCH_USERS,
   CURRENT_USER,
@@ -113,4 +189,9 @@ export {
   UPDATE_USER_PASSWORD,
   FILTER_USERS,
   DEACTIVATE_USER,
+  INVITE_USER,
+  GET_USER_BY_INVITATION_TOKEN,
+  SIGN_UP_FROM_INVITATION,
+  RESEND_INVITATION,
+  CANCEL_INVITATION,
 }

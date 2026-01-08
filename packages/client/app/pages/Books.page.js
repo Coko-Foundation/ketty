@@ -18,7 +18,7 @@ import {
 
 const loaderDelay = 700
 
-const DashboardPage = () => {
+const BooksPage = () => {
   const { currentUser } = useCurrentUser()
   const [actionInProgress, setActionInProgress] = useState(false)
 
@@ -198,4 +198,4 @@ const DashboardPage = () => {
   )
 }
 
-export default DashboardPage
+export default BooksPage

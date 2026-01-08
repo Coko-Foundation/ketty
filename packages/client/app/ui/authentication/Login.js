@@ -9,7 +9,8 @@ import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
 
 const Login = props => {
-  const { className, errorMessage, hasError, loading, onSubmit } = props
+  const { className, errorMessage, hasError, loading, onSubmit, allowSignups } =
+    props
 
   const { t } = useTranslation(null, {
     keyPrefix: 'pages.login',
@@ -22,8 +23,12 @@ const Login = props => {
         <AuthenticationHeader>{t('title')}</AuthenticationHeader>
 
         <AuthenticationForm
-          alternativeActionLabel={t('links.signup')}
-          alternativeActionLink="/signup"
+          {...(allowSignups
+            ? {
+                alternativeActionLabel: t('links.signup'),
+                alternativeActionLink: '/signup',
+              }
+            : {})}
           errorMessage={errorMessage}
           hasError={hasError}
           loading={loading}
@@ -93,6 +98,7 @@ Login.propTypes = {
   errorMessage: PropTypes.string,
   hasError: PropTypes.bool,
   loading: PropTypes.bool,
+  allowSignups: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
 }
 
@@ -100,6 +106,7 @@ Login.defaultProps = {
   errorMessage: null,
   hasError: false,
   loading: false,
+  allowSignups: false,
 }
 
 export default Login

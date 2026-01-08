@@ -8,6 +8,7 @@ import configWithAi from './config/configWithAI'
 import YjsService from './config/YjsService'
 
 const EditorWrapper = ({
+  allowSignups,
   bookId,
   title,
   subtitle,
@@ -255,6 +256,19 @@ const EditorWrapper = ({
         handleAddedRemovedImages,
         showAlt: true,
       },
+      MenuService: selectedWaxConfig.MenuService.map(service => {
+        // Find the matching service in waxMenuConfig based on templateArea
+        const matchingConfig = waxMenuConfig.MenuService.find(
+          config => config.templateArea === service.templateArea,
+        )
+
+        return {
+          ...service,
+          toolGroups: matchingConfig
+            ? matchingConfig.toolGroups
+            : service.toolGroups,
+        }
+      }),
 
       services: [new YjsService(), ...selectedWaxConfig.services],
     })
@@ -308,6 +322,7 @@ const EditorWrapper = ({
       updateFile,
       onPreview,
       preparingExportSpinner,
+      allowSignups,
     })
   }, [
     title,

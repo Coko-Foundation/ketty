@@ -1,19 +1,30 @@
 import React from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-
-import { Signup } from '../ui'
+import { Signup, Result, Link, Paragraph } from '../ui'
 import { SIGNUP, APPLICATION_PARAMETERS } from '../graphql'
 
 const SignupPage = () => {
-  const { data: { getApplicationParameters } = {} } = useQuery(
-    APPLICATION_PARAMETERS,
-    {
-      variables: {
-        context: 'bookBuilder',
-        area: 'termsAndConditions',
-      },
+  const {
+    data: {
+      getApplicationParameters: [{ config: termsAndConditions } = {}] = [],
+    } = {},
+  } = useQuery(APPLICATION_PARAMETERS, {
+    variables: {
+      context: 'bookBuilder',
+      area: 'termsAndConditions',
     },
-  )
+  })
+
+  const {
+    data: {
+      getApplicationParameters: [{ config: allowSignups } = {}] = [],
+    } = {},
+  } = useQuery(APPLICATION_PARAMETERS, {
+    variables: {
+      context: 'bookBuilder',
+      area: 'allowSignups',
+    },
+  })
 
   const [signupMutation, { data, loading, error }] = useMutation(SIGNUP)
 
@@ -32,14 +43,24 @@ const SignupPage = () => {
       },
     }
 
-    signupMutation(mutationData).catch(e => console.error(e))
+    if (allowSignups) {
+      signupMutation(mutationData).catch(e => console.error(e))
+    }
   }
 
-  const termsAndConditions = getApplicationParameters?.find(
-    p => p.area === 'termsAndConditions',
-  )?.config
-
-  return (
+  return allowSignups === false ? (
+    <Result
+      extra={<Link to="/login">Back to login</Link>}
+      status="error"
+      subTitle={
+        <Paragraph>
+          Signups are disabled for this instance. Only administrators can invite
+          new users to join.
+        </Paragraph>
+      }
+      title={<h1>Signups disabled</h1>}
+    />
+  ) : (
     <Signup
       errorMessage={error?.message}
       hasError={!!error}

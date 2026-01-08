@@ -468,7 +468,7 @@
           "options": {
             "dashboard": {
               "type": "link(text)",
-              "value": "Dashboard"
+              "value": "Books"
             },
             "backToBook": {
               "type": "link(text)",
@@ -496,7 +496,19 @@
             },
             "admin": {
               "type": "link(text)",
-              "value": "Admin"
+              "value": "Admin Settings"
+            },
+            "users": {
+              "type": "link(text)",
+              "value": "Manage Users"
+            },
+            "templates": {
+              "type": "link(text)",
+              "value": "Manage Templates"
+            },
+            "profile": {
+              "type": "link(text)",
+              "value": "User Profile"
             },
             "logout": {
               "type": "action",

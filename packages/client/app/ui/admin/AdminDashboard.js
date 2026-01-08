@@ -52,6 +52,8 @@ const AdminDashboard = props => {
     onTranslationsUpload,
     onUpdatePsConfig,
     psConfig,
+    allowSignups,
+    onSignupToggleChange,
   } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
@@ -114,10 +116,13 @@ const AdminDashboard = props => {
               },
               {
                 key: 'tc',
-                label: t('termsAndConditions.heading'),
+                label: 'Signup settings', // t('termsAndConditions.heading'),
                 children: (
                   <TermsAndConditions
+                    allowSignups={allowSignups}
+                    onSignupToggleChange={onSignupToggleChange}
                     onTCUpdate={onTCUpdate}
+                    paramsLoading={paramsLoading}
                     termsAndConditions={termsAndConditions}
                   />
                 ),
@@ -156,6 +161,8 @@ AdminDashboard.propTypes = {
       }),
     ),
   }),
+  allowSignups: PropTypes.bool,
+  onSignupToggleChange: PropTypes.func,
 }
 
 AdminDashboard.defaultProps = {
@@ -175,6 +182,8 @@ AdminDashboard.defaultProps = {
   languages: [],
   onUpdatePsConfig: null,
   psConfig: null,
+  allowSignups: false,
+  onSignupToggleChange: false,
 }
 
 export default AdminDashboard

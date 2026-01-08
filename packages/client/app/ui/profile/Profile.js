@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
+import { Upload, Image } from 'antd'
 import { Button, Center, Form, Input, Divider } from '../common'
 
 const UpdateResult = styled.span`
@@ -18,6 +19,13 @@ const ResultWrapper = styled.div`
   gap: ${grid(8)};
 `
 
+const UploadAction = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${grid(1)};
+`
+
 const Profile = props => {
   const { onProfileUpdate, onPasswordUpdate, currentUser } = props
 
@@ -27,6 +35,21 @@ const Profile = props => {
   const [passwordForm] = Form.useForm()
   const [profileUpdateResult, setProfileUpdateResult] = useState()
   const [passwordUpdateResult, setPasswordUpdateResult] = useState()
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+
+  const [profilePicture, setProfilePicture] = useState(
+    currentUser?.avatar?.id
+      ? [
+          {
+            uid: currentUser.avatar.id,
+            name: 'rpofile',
+            status: 'done',
+            url: currentUser.avatar.url,
+          },
+        ]
+      : [],
+  )
 
   useEffect(() => {
     if (currentUser) {
@@ -42,7 +65,10 @@ const Profile = props => {
   const handleProfileUpdate = () => {
     setProfileUpdateResult({ loading: true })
     profileForm.validateFields().then(values => {
-      onProfileUpdate(values)
+      onProfileUpdate({
+        ...values,
+        avatar: profilePicture[0] || null,
+      })
         .then(() => {
           setProfileUpdateResult({
             success: true,
@@ -91,6 +117,15 @@ const Profile = props => {
     })
   }
 
+  const handleProfilePictureUpload = ({ fileList: newFileList }) => {
+    setProfilePicture(newFileList)
+  }
+
+  const handlePreview = async file => {
+    setPreviewImage(file.url || file.preview || file.thumbUrl)
+    setPreviewOpen(true)
+  }
+
   return (
     <Center>
       <h1 id="userProfile">{t('title')}</h1>
@@ -136,6 +171,41 @@ const Profile = props => {
         >
           <Input placeholder="Email" />
         </Form.Item>
+        <Form.Item
+          label="Profile picture"
+          labelCol={{ span: 24 }}
+          name="avatar"
+          valuePropName="file"
+        >
+          <Upload
+            accept="image/*"
+            beforeUpload={() => false}
+            fileList={profilePicture}
+            listType="picture-circle"
+            maxCount={1}
+            onChange={handleProfilePictureUpload}
+            onPreview={handlePreview}
+            onRemove={() => setProfilePicture([])}
+          >
+            {profilePicture?.length === 0 ? (
+              <UploadAction>
+                <PlusOutlined />
+                <span>Upload image</span>
+              </UploadAction>
+            ) : null}
+          </Upload>
+        </Form.Item>
+        {previewImage && (
+          <Image
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: visible => setPreviewOpen(visible),
+              afterOpenChange: visible => !visible && setPreviewImage(''),
+            }}
+            src={previewImage}
+            wrapperStyle={{ display: 'none' }}
+          />
+        )}
         <ResultWrapper>
           <Button
             htmlType="submit"

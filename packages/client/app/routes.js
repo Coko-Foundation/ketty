@@ -22,7 +22,7 @@ import Header from './ui/common/Header'
 
 import {
   BookTitlePage,
-  DashboardPage,
+  BooksPage,
   ImportPage,
   LoginPage,
   ProducerPage,
@@ -40,6 +40,7 @@ import {
   TemplateMananger,
   Profile,
   Users,
+  InvitationAccountSetup,
 } from './pages'
 
 import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
@@ -134,6 +135,10 @@ const SiteHeader = () => {
 
   const { data: applicationParametersData } = useQuery(APPLICATION_PARAMETERS, {
     fetchPolicy: 'network-only',
+    variables: {
+      context: 'bookBuilder',
+      area: 'languages',
+    },
   })
 
   const languages = applicationParametersData?.getApplicationParameters.find(
@@ -157,14 +162,14 @@ const SiteHeader = () => {
       brandLabel="Ketty"
       brandLogoURL="/ketida.png"
       canAccessAdminPage={currentUser ? isAdmin(currentUser) : false}
-      homeURL="/dashboard"
+      homeURL="/books"
       languages={languages?.config.filter(l => l.enabled)}
       onLogout={logout}
       profileURL="/profile"
       showBackToBook={
         isExporterPage || isAiAssistantPage || isKnowledgeBasePage
       }
-      userDisplayName={currentUser ? currentUser.displayName : ''}
+      user={currentUser}
     />
   )
 }
@@ -210,7 +215,8 @@ const routes = (
                 <GlobalContextProvider>
                   <YjsProvider>
                     <Switch>
-                      <Redirect exact path="/" to="/dashboard" />
+                      <Redirect exact path="/" to="/books" />
+                      <Redirect exact path="/dashboard" to="/books" />
 
                       <Route component={SignupPage} exact path="/signup" />
                       <Route component={LoginPage} exact path="/login" />
@@ -242,10 +248,10 @@ const routes = (
                       />
                       <Route
                         exact
-                        path="/dashboard"
+                        path="/books"
                         render={() => (
                           <Authenticated>
-                            <DashboardPage />
+                            <BooksPage />
                           </Authenticated>
                         )}
                       />
@@ -330,6 +336,11 @@ const routes = (
                           <Users />
                         </Authenticated>
                       </Route>
+                      <Route
+                        component={InvitationAccountSetup}
+                        exact
+                        path="/invitation/:token"
+                      />
                     </Switch>
                   </YjsProvider>
                 </GlobalContextProvider>

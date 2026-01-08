@@ -626,8 +626,8 @@ const updateComponentTypeHandler = async (_, { input }) => {
 
     const updatedBookComponent = await updateComponentType(id, componentType)
 
-    subscriptionManager.publish(BOOK_COMPONENT_TYPE_UPDATED, {
-      bookComponentTypeUpdated: updatedBookComponent.id,
+    subscriptionManager.publish(BOOK_UPDATED, {
+      bookUpdated: updatedBookComponent.bookId,
     })
     subscriptionManager.publish(BOOK_COMPONENT_UPDATED, {
       bookComponentUpdated: updatedBookComponent.id,

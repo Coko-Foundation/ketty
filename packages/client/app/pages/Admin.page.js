@@ -60,6 +60,10 @@ const AdminPage = () => {
     p => p.area === 'languages',
   )?.config
 
+  const allowSignups = getApplicationParameters?.find(
+    p => p.area === 'allowSignups',
+  )?.config
+
   const toggleLuluConfig = val => {
     const config = getApplicationParameters?.find(
       p => p.area === 'integrations',
@@ -210,6 +214,18 @@ const AdminPage = () => {
     return updateApplicationParametersMutation({ variables })
   }
 
+  const handleSignupToggleChange = val => {
+    const variables = {
+      input: {
+        context: 'bookBuilder',
+        area: 'allowSignups',
+        config: `${val}`,
+      },
+    }
+
+    return updateApplicationParametersMutation({ variables })
+  }
+
   const handleLanguagesUpdate = newConfig => {
     const variables = {
       input: {
@@ -241,6 +257,7 @@ const AdminPage = () => {
     <AdminDashboard
       aiEnabled={aiEnabled}
       aiToggleIntegration={toggleAIFeatures}
+      allowSignups={allowSignups}
       chatGptApiKey={chatGptApiKey}
       exportConfigUpdate={toggleExportsConfig}
       exportOptions={exportsConfig}
@@ -250,6 +267,7 @@ const AdminPage = () => {
       luluUpdateConfig={updateLuluConfig}
       onChatGPTKeyUpdate={handleUpdateChatGPTApiKey}
       onLanguagesUpdate={handleLanguagesUpdate}
+      onSignupToggleChange={handleSignupToggleChange}
       onTCUpdate={handleTCUppdate}
       onTranslationsUpload={handleTranslationsUpload}
       onUpdatePsConfig={handleUpdatePsConfig}

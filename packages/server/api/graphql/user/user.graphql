@@ -2,6 +2,8 @@ extend type User {
   admin: Boolean!
   isGlobal: Boolean!
   books: [Book]
+  isInvited: Boolean
+  avatar: File
 }
 
 type KetidaLoginResult {
@@ -15,6 +17,15 @@ input UserProfileInput {
   givenNames: String!
   surname: String!
   email: String!
+  profilePic: Upload
+}
+
+input InvitationAccountSetupInput {
+  id: ID!
+  givenNames: String!
+  surname: String!
+  password: String!
+  agreedTc: Boolean!
 }
 
 extend input UserFilter {
@@ -23,6 +34,7 @@ extend input UserFilter {
 
 extend type Query {
   filterUsers(filter: UserFilter, pagination: PageInput): Users!
+  userByInvitationToken(token: String!): User!
 }
 
 extend type Mutation {
@@ -30,4 +42,8 @@ extend type Mutation {
   searchForUsers(search: String!, exclude: [ID]!, exactMatch: Boolean): [User]!
   ketidaRequestVerificationEmail(email: String!): Boolean!
   updateUserProfile(input: UserProfileInput!): User!
+  inviteUser(email: String!): User!
+  setupAccountOnInvitation(input: InvitationAccountSetupInput): LoginResult!
+  resendInvitation(userId: ID!): Boolean
+  cancelInvitation(userId: ID!): Boolean
 }

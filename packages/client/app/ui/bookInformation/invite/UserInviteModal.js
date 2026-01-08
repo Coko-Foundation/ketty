@@ -29,7 +29,7 @@ const ScrollWrapper = styled.div`
   padding: ${grid(1)} ${grid(2)};
 `
 
-const UserInviteModal = ({ bookId }) => {
+const UserInviteModal = ({ bookId, allowSignups }) => {
   const { data: bookTeamsData, loading: loadingBookTeamsData } = useQuery(
     GET_BOOK_TEAMS,
     {
@@ -92,7 +92,7 @@ const UserInviteModal = ({ bookId }) => {
           .find(email => email.toLowerCase() === searchQuery.toLowerCase())
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!existingEmails && emailRegex.test(searchQuery))
+        if (!existingEmails && emailRegex.test(searchQuery) && allowSignups)
           return [
             {
               displayName: `Invite "${searchQuery}" by email`,
@@ -135,7 +135,7 @@ const UserInviteModal = ({ bookId }) => {
       user.label.includes('Invite'),
     )
 
-    if (emailInvites.length) {
+    if (emailInvites.length && allowSignups) {
       await sendInvitations({
         variables: {
           ...variables,
@@ -226,6 +226,7 @@ const UserInviteModal = ({ bookId }) => {
 
 UserInviteModal.propTypes = {
   bookId: PropTypes.string.isRequired,
+  allowSignups: PropTypes.bool.isRequired,
   // onCancel: PropTypes.func.isRequired,
   // open: PropTypes.bool.isRequired,
   // title: PropTypes.string.isRequired,

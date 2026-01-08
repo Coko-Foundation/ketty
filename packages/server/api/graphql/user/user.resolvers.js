@@ -8,9 +8,15 @@ const {
   isGlobal,
   updateUserProfile,
   filterUsers,
+  createUserByInvitation,
+  userByInvitationToken,
+  setupAccountOnInvitation,
+  resendInvitation,
+  cancelInvitation,
 } = require('../../../controllers/user.controller')
 
 const { getBooks } = require('../../../controllers/book.controller')
+const File = require('../../../models/file/file.model')
 
 const searchForUsersHandler = async (
   _,
@@ -59,15 +65,60 @@ const filterUsersResolver = async (_, { filter, pagination }) => {
   }
 }
 
+const inviteUserResolver = async (_, { email }) => {
+  try {
+    return createUserByInvitation(email)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const userByInvitationTokenResolver = async (_, { token }) => {
+  try {
+    return userByInvitationToken(token)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const setupAccountOnInvitationResolver = async (_, { input }) => {
+  try {
+    return setupAccountOnInvitation(input)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const resendInvitationResolver = async (_, { userId }) => {
+  try {
+    return resendInvitation(userId)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const cancelInvitationResolver = async (_, { userId }) => {
+  try {
+    return cancelInvitation(userId)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   Query: {
     filterUsers: filterUsersResolver,
+    userByInvitationToken: userByInvitationTokenResolver,
   },
   Mutation: {
     searchForUsers: searchForUsersHandler,
     ketidaLogin: ketidaLoginHandler,
     ketidaRequestVerificationEmail: ketidaRequestVerificationEmailHandler,
     updateUserProfile: updateUserProfileResolver,
+    inviteUser: inviteUserResolver,
+    setupAccountOnInvitation: setupAccountOnInvitationResolver,
+    resendInvitation: resendInvitationResolver,
+    cancelInvitation: cancelInvitationResolver,
   },
   User: {
     async admin(user) {
@@ -90,6 +141,23 @@ module.exports = {
       })
 
       return books.result
+    },
+    async avatar(user) {
+      const { avatarId } = user
+
+      if (avatarId) {
+        try {
+          return File.findById(avatarId)
+        } catch (error) {
+          logger.error(`Error fetching avatar for user ${user.id},`, error)
+          return []
+        }
+      }
+
+      return null
+    },
+    isInvited: user => {
+      return !!user.invitationToken && !user.invitationToken.startsWith('used_')
     },
   },
 }

@@ -1,4 +1,6 @@
-const { logger, useTransaction } = require('@coko/server')
+const { logger, useTransaction, createJWT } = require('@coko/server')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcrypt')
 
 const {
   identityVerification,
@@ -7,7 +9,7 @@ const {
 const {
   notify,
   notificationTypes: { EMAIL },
-} = require('@coko/server/src//services')
+} = require('@coko/server/src/services')
 
 const { login } = require('@coko/server/src/models/user/user.controller')
 const includes = require('lodash/includes')
@@ -16,8 +18,11 @@ const startsWith = require('lodash/startsWith')
 const crypto = require('crypto')
 const config = require('config')
 
+const BCRYPT_COST = config.util.getEnv('NODE_ENV') === 'test' ? 1 : 12
 const Identity = require('@coko/server/src/models/identity/identity.model')
 const User = require('../models/user/user.model')
+
+const { createFile, deleteFiles } = require('./file.controller')
 
 const isValidUser = ({ surname, givenNames }) => surname && givenNames
 
@@ -322,7 +327,7 @@ const updateUserProfile = async data => {
   try {
     logger.info(`[USER CONTROLLER] - updateUserProfile `)
     return useTransaction(async tr => {
-      const { id, givenNames, surname, email } = data
+      const { id, givenNames, surname, email, profilePic } = data
 
       const identity = await Identity.findOne(
         {
@@ -342,11 +347,39 @@ const updateUserProfile = async data => {
         )
       }
 
+      const user = await User.findById(id)
+      let avatarId = null
+
+      if (profilePic) {
+        const { createReadStream, filename } = await profilePic
+        // check if exists, if so delete old file
+
+        if (user?.avatarId) {
+          await deleteFiles([user.avatarId], true)
+        }
+
+        const fileStream = createReadStream()
+
+        const uploadedFile = await createFile(
+          fileStream,
+          filename,
+          null,
+          null,
+          [],
+          id,
+        )
+
+        avatarId = uploadedFile.id
+      } else {
+        user?.avatarId && (await deleteFiles([user.avatarId], true))
+      }
+
       return User.patchAndFetchById(
         id,
         {
           givenNames,
           surname,
+          avatarId,
         },
         { trx: tr },
       )
@@ -379,6 +412,183 @@ const filterUsers = async (params = {}, options = {}) => {
   }
 }
 
+const createUserByInvitation = async email => {
+  try {
+    return useTransaction(async tr => {
+      const existingIdentity = await Identity.findOne({ email }, { trx: tr })
+
+      if (existingIdentity) {
+        throw new Error('A user with this email already exists')
+      }
+
+      const randomPassword = await bcrypt.hash(generatePassword(), BCRYPT_COST)
+      const invitationToken = crypto.randomBytes(64).toString('hex')
+      // const invitationTokenTimestamp = new Date()
+
+      const newUser = await User.insert(
+        {
+          username: 'User invited',
+          agreedTc: false,
+          isActive: true,
+          passwordHash: randomPassword,
+          invitationToken,
+        },
+        { trx: tr },
+      )
+
+      await Identity.insert(
+        {
+          userId: newUser.id,
+          email,
+          isSocial: false,
+          isVerified: true,
+          isDefault: true,
+        },
+        { trx: tr },
+      )
+
+      const clientUrl = `${config.get('clientUrl')}`
+
+      const invitationUrl = `${clientUrl}/invitation/${invitationToken}`
+
+      const emailData = {
+        subject: 'Invitation to join Ketty',
+        to: email,
+        content: `
+          <p>You have been invited to join the Ketty instance at ${clientUrl}</p>
+          <p>Click the following link to set up your account:</p>
+          <a href="${invitationUrl}">${invitationUrl}</a>
+          <p>If you cannot click the link above, copy and paste the link below into your browser to continue:</p>
+          <span>${invitationUrl}</span>
+        `,
+      }
+
+      notify(EMAIL, emailData)
+
+      return newUser
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const userByInvitationToken = async invitationToken => {
+  try {
+    logger.info('[USER CONTROLLER] - userByInvitationToken')
+
+    return User.findOne({
+      invitationToken,
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const setupAccountOnInvitation = async ({
+  id,
+  givenNames,
+  surname,
+  password,
+  agreedTc,
+}) => {
+  try {
+    return useTransaction(async tr => {
+      logger.info(
+        '[USER CONTROLLER] - Setting up user account after invitation',
+      )
+
+      const user = await User.findById(id)
+
+      await User.patchAndFetchById(
+        id,
+        {
+          givenNames,
+          surname,
+          username: `${givenNames} ${surname}`,
+          agreedTc,
+          invitationToken: `used_${user.invitationToken}`, // set as empty string because invitationToken is defined as stringNotEmpty
+        },
+        { trx: tr },
+      )
+
+      await user.updatePassword(undefined, password, user.passwordResetToken, {
+        trx: tr,
+      })
+
+      return {
+        user,
+        token: createJWT(user),
+      }
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const resendInvitation = async userId => {
+  try {
+    logger.info('[USER CONTROLLER] - resendInvitation')
+
+    const user = await User.findById(userId)
+
+    const userIdentity = await Identity.findOne({
+      userId,
+    })
+
+    const clientUrl = `${config.get('clientUrl')}`
+
+    const invitationUrl = `${clientUrl}/invitation/${user?.invitationToken}`
+
+    const emailData = {
+      subject: 'Invitation to join Ketty',
+      to: userIdentity?.email,
+      content: `
+          <p>You have been invited to join the Ketty instance at ${clientUrl}</p>
+          <p>Click the following link to set up your account:</p>
+          <a href="${invitationUrl}">${invitationUrl}</a>
+          <p>If you cannot click the link above, copy and paste the link below into your browser to continue:</p>
+          <span>${invitationUrl}</span>
+        `,
+    }
+
+    notify(EMAIL, emailData)
+    return true
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const cancelInvitation = async userId => {
+  try {
+    return useTransaction(async tr => {
+      logger.info('[USER CONTROLLER] - cancelInvitation')
+
+      await Identity.query(tr).delete().where({ userId })
+      await User.deleteById(userId, { trx: tr })
+
+      return true
+    })
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+function generatePassword() {
+  const length = 8
+
+  const charset =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+  let retVal = ''
+  const n = charset.length
+
+  for (let i = 0; i < length; i += 1) {
+    retVal += charset.charAt(Math.floor(Math.random() * n))
+  }
+
+  return retVal
+}
+
 module.exports = {
   searchForUsers,
   isAdmin,
@@ -388,4 +598,9 @@ module.exports = {
   getIdentityByToken,
   updateUserProfile,
   filterUsers,
+  createUserByInvitation,
+  userByInvitationToken,
+  setupAccountOnInvitation,
+  resendInvitation,
+  cancelInvitation,
 }

@@ -178,4 +178,5 @@ module.exports = {
       },
     },
   ],
+  allowSignups: true,
 }
