@@ -130,6 +130,7 @@ const ExporterService = async (
         localPath,
         path: getURL(localPath),
         validationResult: errors,
+        filename,
       }
     }
 
@@ -200,6 +201,7 @@ const ExporterService = async (
           localPath,
           path: getURL(localPath),
           validationResult: undefined,
+          filename: PDFFilename,
         }
       }
 
