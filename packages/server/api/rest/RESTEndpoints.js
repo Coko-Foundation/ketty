@@ -561,15 +561,33 @@ const RESTEndpoints = app => {
       const { bookId, templateId, format, isbn, includedComponents } =
         exportProfile
 
-      const path = await exportBook(bookId, templateId, null, format, null, {
-        includeTOC: includedComponents.toc,
-        includeCopyrights: includedComponents.copyright,
-        includeTitlePage: includedComponents.titlePage,
-        includeCoverPage: includedComponents.cover,
-        isbn,
-      })
+      const filepath = await exportBook(
+        bookId,
+        templateId,
+        null,
+        format,
+        null,
+        {
+          includeTOC: includedComponents.toc,
+          includeCopyrights: includedComponents.copyright,
+          includeTitlePage: includedComponents.titlePage,
+          includeCoverPage: includedComponents.cover,
+          isbn,
+        },
+      )
 
-      res.status(200).json(path)
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filepath.filename}"`,
+      )
+
+      const fileStream = fs.createReadStream(filepath.localPath)
+      fileStream.pipe(res)
+
+      fileStream.on('end', () => {
+        fs.unlink(filepath.localPath).catch(console.error) // Delete temp file
+      })
     } catch (error) {
       res.status(500).json({ error: error.message })
     }
