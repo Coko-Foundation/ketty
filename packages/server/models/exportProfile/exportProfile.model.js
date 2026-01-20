@@ -11,7 +11,7 @@ const format = {
 }
 
 const trimSize = {
-  type: 'string',
+  type: ['string', 'null'],
   // enum: ['8.5x11', '6x9', '5.5x8.5', null],
 }
 
