@@ -472,7 +472,7 @@
             },
             "backToBook": {
               "type": "link(text)",
-              "value": "Back to Book"
+              "value": "Back to editor"
             },
             "previewAndPublish": {
               "type": "link(text)",

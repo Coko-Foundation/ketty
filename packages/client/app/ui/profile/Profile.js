@@ -181,7 +181,7 @@ const Profile = props => {
             accept="image/*"
             beforeUpload={() => false}
             fileList={profilePicture}
-            listType="picture-circle"
+            listType="picture-card"
             maxCount={1}
             onChange={handleProfilePictureUpload}
             onPreview={handlePreview}

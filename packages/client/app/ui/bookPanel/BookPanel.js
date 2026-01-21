@@ -24,10 +24,6 @@ const ChaptersHeader = styled.div`
   margin-bottom: ${grid(2)};
   padding: ${grid(1)};
   width: 100%;
-
-  button {
-    border-radius: 0;
-  }
 `
 
 const ChaptersActions = styled(Space)``

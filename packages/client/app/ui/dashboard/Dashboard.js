@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
-import { grid } from '@coko/client'
+import { grid, th, darken } from '@coko/client'
 import { Link } from 'react-router-dom'
 // import { Space } from 'antd'
 import { useTranslation } from 'react-i18next'
@@ -37,9 +37,8 @@ const SectionHeader = styled.div`
 
 const StyledLink = styled(Link)`
   align-items: center;
-  background-color: black;
-  border-radius: 3px;
-  color: white;
+  background-color: ${th('colorPrimary')};
+  color: #fff; // ${th('colorText')};
   display: flex;
   font-size: 16px;
   gap: 8px;
@@ -49,8 +48,8 @@ const StyledLink = styled(Link)`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #222;
-    color: white;
+    background-color: ${darken('colorPrimary', 0.25)};
+    color: #fff; // ${th('colorText')};
   }
 `
 

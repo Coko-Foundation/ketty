@@ -9,13 +9,14 @@ const Wrapper = styled.div`
     const { status } = props
     if (status === 'success') return props.theme.colorSuccess
     if (status === 'error' || status === 'danger') return props.theme.colorError
-    return props.theme.colorSecondary
+    if (status === 'warning') return props.theme.colorWarning
+    return props.theme.colorBackgroundHue
   }};
   border-radius: ${props => props.theme.borderRadius};
   color: ${props => {
     const { status } = props
-    if (status === 'success' || status === 'error' || status === 'danger')
-      return props.theme.colorTextReverse
+    if (['success', 'error', 'danger', 'warning'].includes(status))
+      return '#555'
     return props.theme.colorText
   }};
   opacity: 1;

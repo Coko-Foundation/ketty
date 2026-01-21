@@ -20,16 +20,7 @@ import {
   Table,
   Text,
 } from '../common'
-
-const AdminWrapper = styled.div`
-  background-color: #e8e8e8;
-  min-height: 100vh;
-  padding-block: 1rem 3rem;
-
-  h1 {
-    text-align: center;
-  }
-`
+import AdminWrapper from './AdminWrapper'
 
 const StyledCenter = styled(Center)`
   --max-width: 150ch;
@@ -275,11 +266,7 @@ const UserManager = props => {
           <Table
             columns={columns}
             customActions={
-              <Button
-                onClick={handleAddNewUser}
-                status="success"
-                type="primary"
-              >
+              <Button onClick={handleAddNewUser} type="primary">
                 Add new user
               </Button>
             }

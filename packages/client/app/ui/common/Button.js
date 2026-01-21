@@ -14,6 +14,7 @@ const colors = {
 }
 
 const StyledButton = styled(AntButton)`
+  box-shadow: none;
   font-size: ${th('fontSizeBase')};
   /* let lineHeight expand the button height */
   height: unset;
@@ -55,7 +56,6 @@ const StyledButton = styled(AntButton)`
         --color: ${color};
         background-color: var(--color);
         border-color: var(--color);
-        box-shadow: 0 2px 0 var(--color);
         color: ${theme.colorTextReverse};
 
         &:hover:not([disabled]),
@@ -63,7 +63,7 @@ const StyledButton = styled(AntButton)`
         &:active:not([disabled]) {
           --color: ${darken(color, 0.25)};
           background-color: var(--color) !important;
-          box-shadow: 0 2px 0 var(--color) !important;
+          box-shadow: none !important; //0 2px 0 var(--color) !important;
           border-color: var(--color) !important;
           color: ${theme.colorTextReverse};
         }

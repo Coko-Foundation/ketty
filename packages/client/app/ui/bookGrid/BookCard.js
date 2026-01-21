@@ -11,8 +11,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import Popup from '@coko/client/dist/ui/common/Popup'
-import { LinkWithoutStyles, Button } from '../common'
+import { LinkWithoutStyles, Button, Popup } from '../common'
 import BookCover from './BookCover'
 
 const { Meta } = Card
@@ -77,7 +76,6 @@ const TitleAndActionsWrapper = styled.div`
 
 const MoreActions = styled.div`
   button {
-    border-radius: 0;
     z-index: 1;
   }
 `
@@ -114,7 +112,6 @@ const PopupContentWrapper = styled.div`
 
 const StyledPopup = styled(Popup)`
   border: medium;
-  border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
   margin-top: 0;

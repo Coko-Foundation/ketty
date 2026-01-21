@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { Avatar } from 'antd'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { List, Select } from '../../common'
 import { getInitials } from '../../../utils'
 
@@ -30,6 +30,8 @@ const OwnerLabel = styled.span`
 `
 
 const StyledAvatar = styled(Avatar)`
+  background-color: ${th('colorPrimary')};
+  color: ${th('colorTextReverse')};
   font-weight: bold;
 `
 
@@ -63,7 +65,7 @@ const UserListItem = ({
     <StyledListItem key={id}>
       <UserRow>
         <UserDetails>
-          <StyledAvatar src={avatar?.url}>
+          <StyledAvatar shape="square" src={avatar?.url}>
             {getInitials(displayName)}
           </StyledAvatar>
           <span>{displayName}</span>
