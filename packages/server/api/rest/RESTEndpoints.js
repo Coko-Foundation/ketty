@@ -18,6 +18,7 @@ const {
   Book,
   Division,
   BookComponentTranslation,
+  ExportProfile,
 } = require('../../models').models
 
 const {
@@ -40,7 +41,7 @@ const {
   updateBookComponentParentId,
 } = require('../../controllers/bookComponent.controller')
 
-const { getBookTOC } = require('../../controllers/book.controller')
+const { getBookTOC, exportBook } = require('../../controllers/book.controller')
 
 const updateBookComponent = async (req, res) => {
   try {
@@ -438,6 +439,10 @@ const RESTEndpoints = app => {
 
       const order = division.bookComponents
 
+      const profiles = await ExportProfile.find({ bookId, deleted: false })
+      const pdfProfiles = profiles.result.filter(p => p.format === 'pdf')
+      const epubProfiles = profiles.result.filter(p => p.format === 'epub')
+
       res.status(200).json({
         bookId,
         chapters: chaptersContent
@@ -462,6 +467,18 @@ const RESTEndpoints = app => {
             (a, b) =>
               order.indexOf(a.componentId) - order.indexOf(b.componentId),
           ),
+        profiles: {
+          pdf: pdfProfiles.map(profile => ({
+            id: profile.id,
+            name: profile.displayName,
+            format: profile.format,
+          })),
+          epub: epubProfiles.map(profile => ({
+            id: profile.id,
+            name: profile.displayName,
+            format: profile.format,
+          })),
+        },
       })
     } catch (error) {
       res.status(500).json({ error: error.message })
@@ -532,6 +549,45 @@ const RESTEndpoints = app => {
       })
 
       res.status(200).send('Chapter translated successfully')
+    } catch (error) {
+      res.status(500).json({ error: error.message })
+    }
+  })
+  app.get('/api/export/:profileId', async (req, res) => {
+    try {
+      const { profileId } = req.params
+      const exportProfile = await ExportProfile.findById(profileId)
+
+      const { bookId, templateId, format, isbn, includedComponents } =
+        exportProfile
+
+      const filepath = await exportBook(
+        bookId,
+        templateId,
+        null,
+        format,
+        null,
+        {
+          includeTOC: includedComponents.toc,
+          includeCopyrights: includedComponents.copyright,
+          includeTitlePage: includedComponents.titlePage,
+          includeCoverPage: includedComponents.cover,
+          isbn,
+        },
+      )
+
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${filepath.filename}"`,
+      )
+
+      const fileStream = fs.createReadStream(filepath.localPath)
+      fileStream.pipe(res)
+
+      fileStream.on('end', () => {
+        fs.unlink(filepath.localPath).catch(console.error) // Delete temp file
+      })
     } catch (error) {
       res.status(500).json({ error: error.message })
     }
