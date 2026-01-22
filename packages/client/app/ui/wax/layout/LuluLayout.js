@@ -292,19 +292,21 @@ const CollapseContainer = styled.div`
 
 const PSButton = styled(Button)`
   align-items: center;
-  background-color: #13110c;
+  background-color: transparent;
   block-size: 32px;
+  border: none;
   display: flex;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 700;
   gap: 0;
-  padding: 0;
+  padding-inline: 3px;
   width: 34px;
 
   &:hover,
   &:active,
   &:focus-visible {
     /* stylelint-disable-next-line declaration-no-important */
-    background-color: #13110c !important;
+    background-color: ${th('colorBackgroundHue')} !important;
     border: 0;
     color: unset;
     outline: none;
@@ -312,7 +314,7 @@ const PSButton = styled(Button)`
 
   > span {
     &:nth-child(1) {
-      color: white;
+      color: ${th('colorText')};
     }
 
     &:nth-child(2) {
