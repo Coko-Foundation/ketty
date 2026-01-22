@@ -39,8 +39,8 @@ const StyledButton = styled(AntButton)`
           &:hover:not([disabled]),
           &:focus:not([disabled]),
           &:active:not([disabled]) {
-            background-color: ${darken('colorPrimary', 0.25)} !important;
-            color: ${th('colorTextReverse')} !important;
+            background-color: ${darken('colorPrimary', 0.25)};
+            /* color: ${th('colorTextReverse')}; */
           }
         `
       }
@@ -56,7 +56,7 @@ const StyledButton = styled(AntButton)`
         --color: ${color};
         background-color: var(--color);
         border-color: var(--color);
-        color: ${theme.colorTextReverse};
+        color: ${theme.colorTextReverse} !important;
 
         &:hover:not([disabled]),
         &:focus:not([disabled]),
@@ -95,7 +95,7 @@ const StyledButton = styled(AntButton)`
       }
     `
   }}
-  padding: ${grid(1)};
+  padding: ${grid(1)} ${grid(4)};
 `
 
 /**

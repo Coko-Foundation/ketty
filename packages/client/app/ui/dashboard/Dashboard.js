@@ -38,6 +38,7 @@ const SectionHeader = styled.div`
 const StyledLink = styled(Link)`
   align-items: center;
   background-color: ${th('colorPrimary')};
+  border-radius: ${th('borderRadius')};
   color: #fff; // ${th('colorText')};
   display: flex;
   font-size: 16px;

@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Radio, Button } from 'antd'
+import { Radio } from 'antd'
 import {
   BorderOutlined,
   ReadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons'
-
 import { grid, th } from '@coko/client'
+import { Button } from '../common'
 
 const Wrapper = styled.div`
   display: flex;

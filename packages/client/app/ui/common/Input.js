@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Input as AntInput } from 'antd'
+import { th } from '@coko/client'
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
 import EyeOutlined from '@ant-design/icons/EyeOutlined'
 
@@ -16,6 +17,7 @@ const StyledInput = styled(AntInput)`
 const NoStyleButton = styled.button`
   background: none;
   border: none;
+  color: ${th('colorText')};
 `
 
 const StyledPassword = styled(AntInput.Password)``

@@ -42,6 +42,7 @@ export { default as Box } from './primitives/Box'
 export { default as Center } from './primitives/Center'
 export { default as Cluster } from './primitives/Cluster'
 export { default as Stack } from './primitives/Stack'
+export { default as Switcher } from './primitives/Switcher'
 
 export * from './Headings'
 export * from './Typography'

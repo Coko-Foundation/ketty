@@ -30,3 +30,19 @@ export const withAlpha = (hexColor, alpha) => {
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
+
+export const themeInitializer = () => {
+  const selected = localStorage.getItem('ketty-theme')
+
+  if (selected) {
+    return selected
+  }
+
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+
+  localStorage.setItem('ketty-theme', systemTheme)
+
+  return systemTheme
+}

@@ -7,7 +7,7 @@ import { Space } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import ChapterList from './ChapterList'
-import { Button } from '../common'
+import { Button, Tooltip } from '../common'
 
 const ChaptersArea = styled.div`
   display: flex;
@@ -38,6 +38,8 @@ const IconWrapper = styled(Button)`
   cursor: pointer;
 `
 
+const InfoTooltip = props => <Tooltip trigger={['hover', 'focus']} {...props} />
+
 const BookPanel = props => {
   const {
     className,
@@ -64,23 +66,25 @@ const BookPanel = props => {
       <ChaptersHeader>
         <StyledHeading>{t('title')}</StyledHeading>
         <ChaptersActions>
-          <IconWrapper
-            aria-label={t('actions.upload')}
-            disabled={!canEdit}
-            icon={<CloudUploadOutlined />}
-            onClick={onUploadChapter}
-            title={t('actions.upload')}
-            type="text"
-          />
-          <IconWrapper
-            aria-label={t('actions.create')}
-            data-test="producer-createChapter-btn"
-            disabled={!canEdit}
-            icon={<PlusOutlined />}
-            onClick={onAddChapter}
-            title={t('actions.create')}
-            type="text"
-          />
+          <InfoTooltip placement="right" title={t('actions.upload')}>
+            <IconWrapper
+              aria-label={t('actions.upload')}
+              disabled={!canEdit}
+              icon={<CloudUploadOutlined />}
+              onClick={onUploadChapter}
+              type="text"
+            />
+          </InfoTooltip>
+          <InfoTooltip placement="left" title={t('actions.create')}>
+            <IconWrapper
+              aria-label={t('actions.create')}
+              data-test="producer-createChapter-btn"
+              disabled={!canEdit}
+              icon={<PlusOutlined />}
+              onClick={onAddChapter}
+              type="text"
+            />
+          </InfoTooltip>
         </ChaptersActions>
       </ChaptersHeader>
       <ChapterList

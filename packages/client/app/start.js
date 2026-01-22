@@ -2,16 +2,15 @@ import { startClient } from '@coko/client'
 
 import routes from './routes'
 import { lightTheme, darkTheme } from './themes'
+import { themeInitializer } from './utils'
 // import makeApolloConfig from './apolloConfig'
 
 const options = {
   // makeApolloConfig,
 }
 
-const theme =
-  localStorage.getItem('ketty-theme') === 'dark' ? darkTheme : lightTheme
-
-window.addEventListener('themUpdate', e => {
+// apply new theme on themeUpdate event
+window.addEventListener('themeUpdate', e => {
   const newTheme = e.detail['ketty-theme'] === 'dark' ? darkTheme : lightTheme
 
   startClient(routes, newTheme, options)
@@ -27,5 +26,8 @@ window.addEventListener('storage', event => {
     startClient(routes, newTheme, options)
   }
 })
+
+// calculate initial theme and use it to start the app
+const theme = themeInitializer() === 'dark' ? darkTheme : lightTheme
 
 startClient(routes, theme, options)

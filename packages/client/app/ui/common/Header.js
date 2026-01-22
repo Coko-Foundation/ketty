@@ -12,7 +12,7 @@ import Popup from './Popup'
 import Button from './Button'
 import { SunOutlined, MoonOutlined } from './icons'
 import { LanguageSwitcher } from '../languageSwitcher'
-import { getInitials } from '../../utils'
+import { getInitials, themeInitializer } from '../../utils'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -146,18 +146,6 @@ const ThemeButton = styled(Button)`
 `
 // #endregion styles
 
-const themeInitializer = () => {
-  const selected = localStorage.getItem('ketty-theme')
-
-  if (selected) {
-    return selected
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
-}
-
 const Header = props => {
   const {
     brandLabel,
@@ -176,8 +164,6 @@ const Header = props => {
     bookId,
     languages,
     bookTitle,
-    onThemeUpdate,
-    // currentTheme,
     ...rest
   } = props
 
@@ -225,7 +211,7 @@ const Header = props => {
     localStorage.setItem('ketty-theme', newTheme)
 
     window.dispatchEvent(
-      new CustomEvent('themUpdate', {
+      new CustomEvent('themeUpdate', {
         detail: { 'ketty-theme': newTheme },
       }),
     )
@@ -355,7 +341,6 @@ Header.propTypes = {
   ),
   languages: PropTypes.arrayOf(PropTypes.shape({})),
   user: PropTypes.shape(),
-  onThemeUpdate: PropTypes.func,
 }
 
 Header.defaultProps = {
@@ -372,7 +357,6 @@ Header.defaultProps = {
   showDashboard: true,
   bookTitle: '',
   user: null,
-  onThemeUpdate: () => {},
 }
 
 export default Header
