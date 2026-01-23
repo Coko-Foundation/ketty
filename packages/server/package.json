@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "2026.01.08-0",
+  "version": "2026.01.23-0",
   "packageManager": "yarn@4.9.2",
   "private": true,
   "description": "Ketida's Platform common server",
