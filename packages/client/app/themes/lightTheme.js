@@ -1,19 +1,20 @@
 module.exports = {
   colorBackground: 'white',
   colorBackgroundHue: '#f7f7f7',
-  colorPrimary: '#3f85c6',
+  colorPrimary: '#3A7AB5',
   colorSecondary: 'gainsboro',
   colorBorder: '#ccc',
   colorShadow: 'rgba(0, 0, 0, 0.1)',
 
-  colorSuccess: '#80af43',
-  colorError: 'red',
+  colorSuccess: '#4B8500',
+  colorError: '#ED0505',
   colorWarning: '#ffc300',
 
   colorText: '#555',
   colorTextLight: '#777',
+  colorTextContrast: '#333',
   colorTextReverse: '#fff',
-  colorOutline: '#3f85c6',
+  colorOutline: '#2C77BE',
 
   fontInterface:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",

@@ -124,6 +124,7 @@ const ProfileRow = props => {
           loading={deleteLoading}
           onClick={handleClickDelete}
           status="danger"
+          type="primary"
         >
           {t('profile.actions.delete')}
         </Button>

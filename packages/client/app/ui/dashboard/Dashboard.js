@@ -39,9 +39,10 @@ const StyledLink = styled(Link)`
   align-items: center;
   background-color: ${th('colorPrimary')};
   border-radius: ${th('borderRadius')};
-  color: #fff; // ${th('colorText')};
+  color: ${th('colorTextReverse')};
   display: flex;
   font-size: 16px;
+  font-weight: 700;
   gap: 8px;
   height: 40px;
   padding: ${grid(2)} ${grid(4)};
@@ -50,7 +51,7 @@ const StyledLink = styled(Link)`
 
   &:hover {
     background-color: ${darken('colorPrimary', 0.25)};
-    color: #fff; // ${th('colorText')};
+    color: ${th('colorTextReverse')};
   }
 `
 

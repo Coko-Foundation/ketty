@@ -75,6 +75,7 @@ const UnstyledLink = styled(Link)`
 `
 
 const BrandLogo = styled.img`
+  border-radius: ${th('borderRadius')};
   height: 36px;
 `
 

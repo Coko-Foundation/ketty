@@ -2,17 +2,17 @@ module.exports = {
   colorBackground: '#333',
   colorBackgroundHue: '#555',
   colorPrimary: '#80af43',
-  //   colorPrimary: '#3f85c6',
   colorSecondary: 'gainsboro',
   colorBorder: '#999',
   colorShadow: 'rgba(0, 0, 0, 0.1)',
 
-  colorSuccess: '#80af43',
-  colorError: 'red',
+  colorSuccess: '#4B8500',
+  colorError: '#ED0505',
   colorWarning: '#ffc300',
 
   colorText: '#eee',
   colorTextLight: '#aaa',
+  colorTextContrast: '#fff',
   colorTextReverse: '#333',
   colorOutline: '#80af43',
 

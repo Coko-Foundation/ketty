@@ -88,7 +88,7 @@ const UserManager = props => {
               onClick={() =>
                 !resendInvitation.disabled && handleResendInvitation(user.id)
               }
-              status="success"
+              // status="success"
               type="primary"
             >
               {resendInvitation.text}
@@ -210,7 +210,7 @@ const UserManager = props => {
                 })
                 .catch(err => console.error(err))
             }
-            status="success"
+            // status="success"
             type="primary"
           >
             Invite

@@ -253,6 +253,7 @@ const Footer = props => {
             key="unpublish-online"
             onClick={() => setUnpublishModalOpen(true)}
             status="danger"
+            type="primary"
           >
             Unpublish
           </Button>,

@@ -46,4 +46,10 @@ export default createGlobalStyle`
   .ant-modal-confirm-content {
     max-width: 100% !important;
   }
+
+  .ant-modal-root {
+    button {
+      box-shadow: none;
+    }
+  }
 `
