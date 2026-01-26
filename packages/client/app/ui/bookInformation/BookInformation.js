@@ -23,12 +23,12 @@ const Wrapper = styled.div`
   width: 100%;
 
   > button[aria-pressed='true'] {
-    background-color: rgb(63 133 198);
-    color: white;
+    background-color: ${th('colorPrimary')}; // rgb(63 133 198);
+    color: ${th('colorTextReverse')};
 
     &:hover {
-      border-color: rgb(63 133 198);
-      color: white;
+      border-color: ${th('colorPrimary')}; // rgb(63 133 198);
+      color: ${th('colorTextReverse')};
     }
   }
 

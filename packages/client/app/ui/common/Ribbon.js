@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   color: ${props => {
     const { status } = props
     if (['success', 'error', 'danger', 'warning'].includes(status))
-      return '#555'
+      return props.theme.colorTextReverse
     return props.theme.colorText
   }};
   opacity: 1;

@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 `
 
 const Label = styled.label`
-  color: ${th('colorTextLight')};
+  color: ${th('colorText')};
   white-space: nowrap;
 `
 

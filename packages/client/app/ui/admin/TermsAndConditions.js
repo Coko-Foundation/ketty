@@ -26,6 +26,11 @@ const TCWrapper = styled.div`
     display: flex;
     gap: calc(16px);
   }
+
+  button[disabled] {
+    /* stylelint-disable-next-line declaration-no-important */
+    opacity: 1 !important;
+  }
 `
 
 const TCHeader = styled.h2`
