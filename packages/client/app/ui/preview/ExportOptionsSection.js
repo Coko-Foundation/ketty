@@ -167,7 +167,7 @@ const ExportOptionsSection = props => {
     <>
       <div>
         {newProfile ? (
-          <ExportOption inline label={t('format.select')}>
+          <ExportOption label={t('format.select')}>
             <Select
               bordered={false}
               data-test="preview-format-menu"
@@ -215,7 +215,7 @@ const ExportOptionsSection = props => {
         )}
 
         {isPdf && (
-          <ExportOption inline label={t('pdfSize.select')}>
+          <ExportOption label={t('pdfSize.select')}>
             <Select
               bordered={false}
               onChange={handleSizeChange}
@@ -226,7 +226,7 @@ const ExportOptionsSection = props => {
         )}
 
         {isEpub && (
-          <ExportOption inline label={t('isbn.select')}>
+          <ExportOption label={t('isbn.select')}>
             <Select
               allowClear
               bordered={false}
@@ -240,7 +240,7 @@ const ExportOptionsSection = props => {
         )}
 
         {(isEpub || isPdf) && (
-          <FrontmatterOption inline label={t('frontMatter.select')}>
+          <FrontmatterOption label={t('frontMatter.select')}>
             <MultiSelect
               allowClear
               bordered={false}

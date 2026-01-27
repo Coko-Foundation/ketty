@@ -1,3 +1,4 @@
+/* stylelint-disable selector-type-no-unknown */
 /* stylelint-disable value-list-comma-newline-after */
 /* stylelint-disable string-quotes */
 import React from 'react'
@@ -22,13 +23,18 @@ const StyledDeleteOutlined = styled(DeleteOutlined)`
 
 const StyledLink = styled(LinkWithoutStyles)`
   overflow: hidden;
-  white-space: nowrap;
 
   &::before {
     content: '';
     inset: 0;
     position: absolute;
   }
+`
+
+const MetaLink = styled(LinkWithoutStyles)`
+  border-radius: ${th('borderRadius')};
+  outline-offset: 2px;
+  white-space: nowrap;
 `
 
 const StyledCard = styled(Card)`
@@ -57,7 +63,7 @@ const StyledCard = styled(Card)`
     }
   }
 
-  &:has(a:focus-visible) {
+  &:has(${StyledLink}:focus-visible) {
     outline: 2px solid ${th('colorOutline')};
   }
 `
@@ -68,7 +74,7 @@ const TitleAndActionsWrapper = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  a:focus-visible {
+  > a:focus-visible {
     /* stylelint-disable-next-line declaration-no-important */
     outline: none !important;
   }
@@ -151,7 +157,7 @@ const BookCard = ({
           <MoreActions>
             <StyledPopup
               alignment="end"
-              focusableContent={['button']}
+              focusableContent={['button', 'a[href]']}
               id={`more-actions-${id}`}
               position="block-end"
               toggle={<Button icon={<MoreOutlined />} type="text" />}
@@ -160,12 +166,9 @@ const BookCard = ({
                 <div>
                   <FileImageOutlined data-disabled={!canDeleteBook(id)} />
                   {canUploadBookThumbnail(id) ? (
-                    <StyledLink
-                      style={{}}
-                      to={`/books/${id}/producer#metadata`}
-                    >
+                    <MetaLink to={`/books/${id}/producer#metadata`}>
                       {t('menu.options.manageMetadata')}
-                    </StyledLink>
+                    </MetaLink>
                   ) : (
                     <DisabledPlaceholder>
                       {t('menu.options.manageMetadata')}

@@ -1,39 +1,35 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
-import { th, uuid } from '@coko/client'
-
-const Wrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 500px;
-  min-block-size: 32px;
-`
+import { grid, th } from '@coko/client'
 
 const Label = styled.label`
+  align-items: center;
   color: ${th('colorText')};
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${grid(2)};
+  max-width: 500px;
+  min-block-size: 32px;
   white-space: nowrap;
-`
 
-const ChildWrapper = styled.div`
-  overflow: auto;
+  > * {
+    width: fit-content;
+  }
 
-  > &:focus-within {
-    outline: 1px solid ${th('colorOutline')};
+  &:focus-within > * {
+    outline: 2px solid ${th('colorOutline')};
   }
 `
 
 const ExportOption = props => {
-  const { className, children, label, inline, id } = props
-  const labelId = uuid()
+  const { className, children, label, id } = props
 
   return (
-    <Wrapper className={className} inline={inline} {...(id ? { id } : {})}>
-      <Label id={labelId}>{label}</Label>
-      <ChildWrapper aria-labelledby={labelId}>{children}</ChildWrapper>
-    </Wrapper>
+    <Label className={className} {...(id ? { id } : {})}>
+      {label}
+      {children}
+    </Label>
   )
 }
 

@@ -327,7 +327,7 @@ const updateUserProfile = async data => {
   try {
     logger.info(`[USER CONTROLLER] - updateUserProfile `)
     return useTransaction(async tr => {
-      const { id, givenNames, surname, email, profilePic } = data
+      const { id, givenNames, surname, email, avatar, avatarAlt } = data
 
       const identity = await Identity.findOne(
         {
@@ -350,8 +350,8 @@ const updateUserProfile = async data => {
       const user = await User.findById(id)
       let avatarId = null
 
-      if (profilePic) {
-        const { createReadStream, filename } = await profilePic
+      if (avatar) {
+        const { createReadStream, filename } = await avatar
         // check if exists, if so delete old file
 
         if (user?.avatarId) {
@@ -363,7 +363,7 @@ const updateUserProfile = async data => {
         const uploadedFile = await createFile(
           fileStream,
           filename,
-          null,
+          avatarAlt,
           null,
           [],
           id,

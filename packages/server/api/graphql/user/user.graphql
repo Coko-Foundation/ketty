@@ -17,7 +17,8 @@ input UserProfileInput {
   givenNames: String!
   surname: String!
   email: String!
-  profilePic: Upload
+  avatar: Upload
+  avatarAlt: String
 }
 
 input InvitationAccountSetupInput {
