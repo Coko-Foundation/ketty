@@ -53,6 +53,7 @@ const CURRENT_USER = gql`
       avatar {
         id
         url(size: small)
+        alt
       }
     }
   }
@@ -68,6 +69,7 @@ const UPDATE_USER_PROFILE = gql`
       avatar {
         id
         url(size: small)
+        alt
       }
       defaultIdentity {
         id

@@ -49,7 +49,9 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   transition: background-color 0.2s ease;
 
-  &:hover {
+  &:hover,
+  &:active,
+  &:focus-within {
     background-color: ${darken('colorPrimary', 0.25)};
     color: ${th('colorTextReverse')};
   }

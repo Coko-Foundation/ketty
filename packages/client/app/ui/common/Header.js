@@ -173,6 +173,7 @@ const Header = props => {
   })
 
   const userAvatar = user?.avatar?.url
+  const userAvatarAlt = user?.avatar?.alt
   const userDisplayName = user?.displayName
 
   const navItemsLeft = []
@@ -231,7 +232,11 @@ const Header = props => {
       </BrandingContainer>
       <Navigation role="navigation">
         {navItemsLeft.map(el => el)}
-        <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
+        {bookTitle ? (
+          <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
+        ) : (
+          <p />
+        )}
         {user ? (
           <StyledPopup
             alignment="end"
@@ -239,6 +244,7 @@ const Header = props => {
             toggle={
               <Button type="text">
                 <StyledAvatar
+                  alt={userAvatarAlt || 'User avatar'}
                   data-test="avatar-initials"
                   shape="square"
                   src={userAvatar}
