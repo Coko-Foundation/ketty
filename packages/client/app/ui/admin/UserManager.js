@@ -274,6 +274,7 @@ const UserManager = props => {
             expandable={details}
             onSearch={onSearch}
             pagination={pagination}
+            searchLabel="Search users"
             searchPlaceholder={t('table.search')}
             showSearch
             // loading={loading}

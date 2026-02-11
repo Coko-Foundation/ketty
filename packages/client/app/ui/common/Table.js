@@ -48,6 +48,7 @@ const Table = props => {
     onSearch,
     searchPlaceholder,
     customActions,
+    searchLabel,
     ...rest
   } = props
 
@@ -56,6 +57,7 @@ const Table = props => {
       <SearchWrapper>
         {showSearch && (
           <Search
+            aria-label={searchLabel}
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
@@ -78,6 +80,7 @@ Table.propTypes = {
   onSearch: PropTypes.func,
   searchPlaceholder: PropTypes.string,
   customActions: PropTypes.element,
+  searchLabel: PropTypes.string,
 }
 
 Table.defaultProps = {
@@ -87,6 +90,7 @@ Table.defaultProps = {
   onSearch: null,
   searchPlaceholder: null,
   customActions: null,
+  searchLabel: 'Search',
 }
 
 export default Table
