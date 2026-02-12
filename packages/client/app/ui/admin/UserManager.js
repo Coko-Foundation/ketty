@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons'
 import { th } from '@coko/client'
 import { useTranslation, Trans } from 'react-i18next'
+import { isAdmin } from '../../helpers/permissions'
 import UserDetails from './UserDetails'
 import {
   Button,
@@ -38,6 +39,7 @@ const parseUsers = data => {
     key: d.id,
     displayName: d.displayName,
     email: d.defaultIdentity.email,
+    isAdmin: isAdmin(d),
     ...d,
   }))
 }
@@ -114,7 +116,7 @@ const UserManager = props => {
             >
               {t('table.actions.deactivate')}
             </Button>
-            {user.id !== currentUser.id && (
+            {user.id !== currentUser.id && !user.isAdmin && (
               <Button onClick={() => handleMakeAdmin(user)} type="primary">
                 Make admin
               </Button>

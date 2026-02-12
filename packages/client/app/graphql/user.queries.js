@@ -103,6 +103,12 @@ const FILTER_USERS = gql`
           }
         }
         isInvited
+        teams {
+          id
+          role
+          objectId
+          global
+        }
       }
       totalCount
     }
