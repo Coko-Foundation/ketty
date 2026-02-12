@@ -47,4 +47,5 @@ extend type Mutation {
   setupAccountOnInvitation(input: InvitationAccountSetupInput): LoginResult!
   resendInvitation(userId: ID!): Boolean
   cancelInvitation(userId: ID!): Boolean
+  makeAdmin(userId: ID!): Boolean
 }

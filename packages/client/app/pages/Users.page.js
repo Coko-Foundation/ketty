@@ -10,6 +10,7 @@ import {
   INVITE_USER,
   RESEND_INVITATION,
   CANCEL_INVITATION,
+  MAKE_ADMIN,
 } from '../graphql'
 
 const PAGE_SIZE = 10
@@ -93,6 +94,25 @@ const UsersPage = () => {
     ],
   })
 
+  const [makeAdminMutation] = useMutation(MAKE_ADMIN, {
+    refetchQueries: [
+      {
+        query: FILTER_USERS,
+        variables: {
+          filter: {
+            isActive: true,
+            ...searchParams,
+          },
+          pageInput: {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+          },
+        },
+        fetchPolicy: 'network-only',
+      },
+    ],
+  })
+
   const handlePageChange = page => {
     setCurrentPage(page - 1)
   }
@@ -108,6 +128,14 @@ const UsersPage = () => {
     }
 
     return deactivateUserMutation({ variables })
+  }
+
+  const handleMakeAdmin = userId => {
+    const variables = {
+      userId,
+    }
+
+    return makeAdminMutation({ variables })
   }
 
   const handleInviteUser = email => {
@@ -145,6 +173,7 @@ const UsersPage = () => {
       onCancelInvitation={handleCancelInvitation}
       onDeactivate={handleDeactivate}
       onInviteUser={handleInviteUser}
+      onMakeAdmin={handleMakeAdmin}
       onPageChange={handlePageChange}
       onResendInvitation={handleResendInvitation}
       onSearch={handleSearch}

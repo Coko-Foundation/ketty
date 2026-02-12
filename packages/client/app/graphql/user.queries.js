@@ -103,6 +103,12 @@ const FILTER_USERS = gql`
           }
         }
         isInvited
+        teams {
+          id
+          role
+          objectId
+          global
+        }
       }
       totalCount
     }
@@ -184,6 +190,12 @@ const CANCEL_INVITATION = gql`
   }
 `
 
+const MAKE_ADMIN = gql`
+  mutation MakeAdmin($userId: ID!) {
+    makeAdmin(userId: $userId)
+  }
+`
+
 export {
   SEARCH_USERS,
   CURRENT_USER,
@@ -196,4 +208,5 @@ export {
   SIGN_UP_FROM_INVITATION,
   RESEND_INVITATION,
   CANCEL_INVITATION,
+  MAKE_ADMIN,
 }
