@@ -12,7 +12,6 @@ module.exports = {
 
   colorText: '#555',
   colorTextLight: '#777',
-  colorTextContrast: '#333',
   colorTextReverse: '#fff',
   colorOutline: '#2C77BE',
 

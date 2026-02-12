@@ -355,6 +355,20 @@ const CommentsContainer = styled.div`
 
   > div {
     margin-inline-start: 1em;
+
+    > div {
+      background-color: ${th('colorBackground')};
+
+      > :first-child > button {
+        background-color: ${th('colorWarning')};
+        color: #333;
+        padding: ${grid(1)} ${grid(2)};
+      }
+
+      > :nth-child(3) {
+        background-color: ${th('colorBackground')};
+      }
+    }
   }
 
   div {
@@ -364,10 +378,18 @@ const CommentsContainer = styled.div`
   textarea {
     border: 1px solid ${th('colorBorder')};
     border-radius: ${th('borderRadius')};
+    color: ${th('colorText')};
   }
 
   button {
     border-radius: ${th('borderRadius')};
+    color: ${th('colorBackground')};
+    font-weight: bold;
+
+    &:not([type='submit']) {
+      background-color: ${th('colorSecondary')};
+      color: #333;
+    }
   }
 
   &:empty {
@@ -586,6 +608,15 @@ const EditorContainer = styled.div`
         min-block-size: 10em;
         padding: 1ch;
       }
+    }
+
+    .comment {
+      border-bottom-color: ${th('colorWarning')};
+    }
+
+    .active-comment {
+      background-color: ${th('colorWarning')};
+      color: #333;
     }
 
     [aria-controls='numerical-answer-list'] {
