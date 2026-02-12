@@ -13,6 +13,7 @@ const {
   setupAccountOnInvitation,
   resendInvitation,
   cancelInvitation,
+  makeAdmin,
 } = require('../../../controllers/user.controller')
 
 const { getBooks } = require('../../../controllers/book.controller')
@@ -105,6 +106,10 @@ const cancelInvitationResolver = async (_, { userId }) => {
   }
 }
 
+const makeAdminResolver = async (_, { userId }) => {
+  return makeAdmin(userId)
+}
+
 module.exports = {
   Query: {
     filterUsers: filterUsersResolver,
@@ -119,6 +124,7 @@ module.exports = {
     setupAccountOnInvitation: setupAccountOnInvitationResolver,
     resendInvitation: resendInvitationResolver,
     cancelInvitation: cancelInvitationResolver,
+    makeAdmin: makeAdminResolver,
   },
   User: {
     async admin(user) {

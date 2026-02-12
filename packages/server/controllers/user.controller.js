@@ -20,7 +20,7 @@ const config = require('config')
 
 const BCRYPT_COST = config.util.getEnv('NODE_ENV') === 'test' ? 1 : 12
 const Identity = require('@coko/server/src/models/identity/identity.model')
-const User = require('../models/user/user.model')
+const { User, Team } = require('../models').models
 
 const { createFile, deleteFiles } = require('./file.controller')
 
@@ -573,6 +573,14 @@ const cancelInvitation = async userId => {
   }
 }
 
+const makeAdmin = async userId => {
+  try {
+    await Team.addMemberToGlobalTeam(userId, 'admin')
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 function generatePassword() {
   const length = 8
 
@@ -603,4 +611,5 @@ module.exports = {
   setupAccountOnInvitation,
   resendInvitation,
   cancelInvitation,
+  makeAdmin,
 }
