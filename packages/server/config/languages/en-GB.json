@@ -2031,6 +2031,20 @@
           "cancel": {
             "value": "Cancel"
           }
+        },
+        "makeAdmin": {
+          "title": {
+            "value": "New admin user"
+          },
+          "body": {
+            "value": "Are you sure you want to make user <0>{{userName}}</0> an admin? They will be able to access the users page, invivte or deactivate other users and read all books in this instance of Ketty."
+          },
+          "confirm": {
+            "value": "Confirm"
+          },
+          "cancel": {
+            "value": "Cancel"
+          }
         }
       }
     }

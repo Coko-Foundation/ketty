@@ -173,18 +173,20 @@ const UserManager = props => {
   const handleMakeAdmin = user => {
     const adminModal = modal.confirm()
     adminModal.update({
-      title: <ModalHeader>New admin user</ModalHeader>,
+      title: <ModalHeader> {t('modals.makeAdmin.title')}</ModalHeader>,
       content: (
         <p>
-          Are you sure you want to make user {user.displayName} an admin? They
-          will have access to the users page, and can invivte or deactivate
-          other users.
+          <Trans
+            components={[<Text strong />]}
+            i18nKey="pages.manageUsers.modals.makeAdmin.body"
+            values={{ userName: user.displayName }}
+          />
         </p>
       ),
       footer: [
         <ModalFooter key="footer">
           <Button key="cancel" onClick={() => adminModal.destroy()}>
-            {t('modals.deactivate.cancel')}
+            {t('modals.makeAdmin.cancel')}
           </Button>
           <Button
             autoFocus
@@ -196,7 +198,7 @@ const UserManager = props => {
             }
             type="primary"
           >
-            {t('modals.deactivate.confirm')}
+            {t('modals.makeAdmin.confirm')}
           </Button>
         </ModalFooter>,
       ],
