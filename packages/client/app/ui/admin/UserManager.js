@@ -56,6 +56,7 @@ const UserManager = props => {
     onPageChange,
     onSearch,
     onDeactivate,
+    onMakeAdmin,
     currentUser,
     onInviteUser,
     onResendInvitation,
@@ -102,16 +103,23 @@ const UserManager = props => {
             </Button>
           </ButtonGroup>
         ) : (
-          <Button
-            disabled={user.id === currentUser.id}
-            onClick={
-              user.id !== currentUser.id ? () => handleDeactivate(user) : null
-            }
-            status="danger"
-            type="primary"
-          >
-            {t('table.actions.deactivate')}
-          </Button>
+          <ButtonGroup>
+            <Button
+              disabled={user.id === currentUser.id}
+              onClick={
+                user.id !== currentUser.id ? () => handleDeactivate(user) : null
+              }
+              status="danger"
+              type="primary"
+            >
+              {t('table.actions.deactivate')}
+            </Button>
+            {user.id !== currentUser.id && (
+              <Button onClick={() => handleMakeAdmin(user)} type="primary">
+                Make admin
+              </Button>
+            )}
+          </ButtonGroup>
         )
       },
     },
@@ -151,6 +159,39 @@ const UserManager = props => {
               })
             }
             status="danger"
+            type="primary"
+          >
+            {t('modals.deactivate.confirm')}
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
+  const handleMakeAdmin = user => {
+    const adminModal = modal.confirm()
+    adminModal.update({
+      title: <ModalHeader>New admin user</ModalHeader>,
+      content: (
+        <p>
+          Are you sure you want to make user {user.displayName} an admin? They
+          will have access to the users page, and can invivte or deactivate
+          other users.
+        </p>
+      ),
+      footer: [
+        <ModalFooter key="footer">
+          <Button key="cancel" onClick={() => adminModal.destroy()}>
+            {t('modals.deactivate.cancel')}
+          </Button>
+          <Button
+            autoFocus
+            key="deactivate"
+            onClick={() =>
+              onMakeAdmin(user.id).then(() => {
+                adminModal.destroy()
+              })
+            }
             type="primary"
           >
             {t('modals.deactivate.confirm')}
@@ -294,6 +335,7 @@ UserManager.propTypes = {
   onPageChange: PropTypes.func,
   onSearch: PropTypes.func,
   onDeactivate: PropTypes.func,
+  onMakeAdmin: PropTypes.func,
   onInviteUser: PropTypes.func,
   currentUser: PropTypes.shape(),
   onResendInvitation: PropTypes.func,
@@ -308,6 +350,7 @@ UserManager.defaultProps = {
   onPageChange: null,
   onSearch: null,
   onDeactivate: null,
+  onMakeAdmin: null,
   onInviteUser: null,
   currentUser: null,
   onResendInvitation: null,
