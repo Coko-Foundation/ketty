@@ -18,8 +18,11 @@ const StyledCollapse = styled(Collapse)`
 `
 
 const StyledP = styled.p`
-  color: ${th('colorError')};
+  background-color: ${th('colorWarning')};
+  border-radius: ${th('borderRadius')};
+  color: #333;
   margin: 0;
+  padding-inline: ${grid(3)};
 `
 
 const UpdateResult = styled.span`
