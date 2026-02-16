@@ -37,7 +37,19 @@ const StyledTabs = styled(Tabs)`
   width: 500px;
 
   .ant-tabs-nav {
+    background-color: ${th('colorBackground')};
+    border-bottom: 1px solid ${th('colorBackgroundHue')};
     padding-inline: 0;
+
+    .ant-tabs-tab {
+      background-color: ${th('colorBackground')};
+      border-block-end: 4px solid transparent;
+
+      &.ant-tabs-tab-active {
+        border-color: ${th('colorPrimary')};
+        color: ${th('colorPrimary')};
+      }
+    }
   }
 
   &[data-collapsed='true'] {
@@ -49,6 +61,7 @@ const StyledTabs = styled(Tabs)`
   }
 
   .ant-tabs-content {
+    padding-block-start: ${grid(4)};
     position: unset;
   }
 

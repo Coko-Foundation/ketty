@@ -11,8 +11,7 @@ import {
   CopyOutlined,
   CheckOutlined,
 } from '@ant-design/icons'
-import { Tooltip as AntTooltip } from 'antd'
-import { Button } from '../common'
+import { Button, Tooltip } from '../common'
 import RobotSvg from './RobotSvg'
 
 const Wrapper = styled.div`
@@ -24,12 +23,12 @@ const Wrapper = styled.div`
   width: 100%;
 
   > button[aria-pressed='true'] {
-    background-color: rgb(63 133 198);
-    color: white;
+    background-color: ${th('colorPrimary')}; // rgb(63 133 198);
+    color: ${th('colorTextReverse')};
 
     &:hover {
-      border-color: rgb(63 133 198);
-      color: white;
+      border-color: ${th('colorPrimary')}; // rgb(63 133 198);
+      color: ${th('colorTextReverse')};
     }
   }
 
@@ -63,7 +62,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Tooltip = props => <AntTooltip trigger={['hover', 'focus']} {...props} />
+const InfoTooltip = props => <Tooltip trigger={['hover', 'focus']} {...props} />
 
 const StyledButton = styled(Button)`
   block-size: 34px;
@@ -114,15 +113,15 @@ const BookInformation = props => {
 
   return (
     <Wrapper>
-      <Tooltip placement="bottomLeft" title="Copy book id">
+      <InfoTooltip placement="bottomLeft" title="Copy book id">
         <StyledButton
           aria-label="Copy book id"
           data-test="producer-copy-id-btn"
           icon={copiedId ? <StyledCheckIcon /> : <CopyOutlined />}
           onClick={copyBookId}
         />
-      </Tooltip>
-      <Tooltip placement="bottom" title="Metadata">
+      </InfoTooltip>
+      <InfoTooltip placement="bottom" title="Metadata">
         <StyledButton
           aria-label="Toggle book metadata"
           aria-pressed={viewInformation === 'metadata'}
@@ -130,56 +129,49 @@ const BookInformation = props => {
           icon={<DatabaseOutlined />}
           onClick={() => toggleInformation('metadata')}
         />
-      </Tooltip>
-      <Tooltip placement="bottom" title="Settings">
+      </InfoTooltip>
+      <InfoTooltip placement="bottom" title="Settings">
         <StyledButton
           aria-label="Toggle book settings"
           aria-pressed={viewInformation === 'settings'}
           icon={<SettingOutlined />}
           onClick={() => toggleInformation('settings')}
         />
-      </Tooltip>
-      <Tooltip placement="bottom" title="Share">
+      </InfoTooltip>
+      <InfoTooltip placement="bottom" title="Share">
         <StyledButton
           aria-label="Toggle book collaborators"
           aria-pressed={viewInformation === 'members'}
           icon={<UsergroupAddOutlined />}
           onClick={() => toggleInformation('members')}
         />
-      </Tooltip>
-      <Tooltip placement="bottom" title="Preview and Publish">
+      </InfoTooltip>
+      <InfoTooltip placement="bottom" title="Preview and Publish">
         <StyledButton
           aria-label="Preview and Publish"
           icon={<PrinterOutlined />}
           onClick={onPreview}
         />
-        {/* <StyledLink
-          aria-label="Preview and Publish"
-          to={`/books/${bookId}/exporter`}
-          onClick
-        > */}
-
-        {/* </StyledLink> */}
-      </Tooltip>
+      </InfoTooltip>
       {showKnowledgeBaseLink && (
-        <Tooltip placement="bottom" title="Knowledge Base">
+        <InfoTooltip placement="bottom" title="Knowledge Base">
           <StyledLink
             aria-label="Knowledge Base"
             to={`/books/${bookId}/knowledge-base`}
           >
             KB
           </StyledLink>
-        </Tooltip>
+        </InfoTooltip>
       )}
       {showAiAssistantLink && (
-        <Tooltip placement="bottomRight" title="AI Book Designer (Beta)">
+        <InfoTooltip placement="bottomRight" title="AI Book Designer (Beta)">
           <StyledLink
             aria-label="AI Book Designer (Beta)"
             to={`/books/${bookId}/ai-pdf`}
           >
             <RobotSvg />
           </StyledLink>
-        </Tooltip>
+        </InfoTooltip>
       )}
     </Wrapper>
   )

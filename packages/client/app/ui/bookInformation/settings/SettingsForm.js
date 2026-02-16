@@ -37,7 +37,7 @@ const ButtonsContainer = styled.div`
 
 const StyledButton = styled(Button)`
   box-shadow: none;
-  padding: 0 2%;
+  /* padding: 0 2%; */
 `
 
 const StyledForm = styled(Form)`

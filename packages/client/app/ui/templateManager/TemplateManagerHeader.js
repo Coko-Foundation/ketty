@@ -17,7 +17,9 @@ const TemplateManagerHeader = props => {
   return (
     <Wrapper>
       <h1>{t('title')}</h1>
-      <Button onClick={openNewTemplateModal}>{t('actions.add')}</Button>
+      <Button onClick={openNewTemplateModal} type="primary">
+        {t('actions.add')}
+      </Button>
     </Wrapper>
   )
 }

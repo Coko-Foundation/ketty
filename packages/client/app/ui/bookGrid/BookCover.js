@@ -16,6 +16,7 @@ const StyledBookImage = styled.img`
 
 const BookNoCover = styled.div`
   background-color: ${th('colorBackgroundHue')};
+  border-radius: ${th('borderRadius')} ${th('borderRadius')} 0 0;
   height: 100%;
   padding: ${grid(2.5)};
   position: relative;

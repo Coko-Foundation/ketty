@@ -308,6 +308,7 @@ const Languages = props => {
                     data-test="admindb-removeLang-btn"
                     onClick={() => removeLanguage(l.code)}
                     status="danger"
+                    type="primary"
                   >
                     {t('availableLanguages.actions.remove')}
                   </Button>

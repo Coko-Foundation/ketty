@@ -11,6 +11,7 @@ export const LOGIN = gql`
         avatar {
           id
           url(size: small)
+          alt
         }
         username
         teams {

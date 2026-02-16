@@ -1,7 +1,7 @@
 /* stylelint-disable no-descending-specificity */
 import React, { useContext, useEffect, useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import styled, { ThemeProvider, css } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { grid, th } from '@coko/client'
 // import { Spin } from 'antd'
 import PanelGroup from 'react-panelgroup'
@@ -9,7 +9,7 @@ import {
   ToTopOutlined,
   CaretUpFilled,
   CaretDownFilled,
-  VerticalAlignBottomOutlined,
+  VerticalAlignTopOutlined,
 } from '@ant-design/icons'
 import {
   ApplicationContext,
@@ -19,7 +19,7 @@ import {
   DocumentHelpers,
 } from 'wax-prosemirror-core'
 import { useTranslation } from 'react-i18next'
-import { usePrevious } from '../../../utils'
+import { usePrevious, withAlpha } from '../../../utils'
 import { Button, Checkbox, Result, Select, Spin } from '../../common'
 import BookPanel from '../../bookPanel/BookPanel'
 import {
@@ -29,7 +29,6 @@ import {
   UserInviteModal,
   PSModal,
 } from '../../bookInformation'
-import theme from '../../../theme'
 
 import YjsContext from '../../provider-yjs/YjsProvider'
 import FileUpload from '../../fileUpload/FileUpload'
@@ -65,7 +64,8 @@ const Main = styled.div`
 `
 
 const InfoWrapper = styled.div`
-  background: white;
+  /* background: white; */
+  background-color: ${th('colorBackgroundHue')};
   inset-inline: 0;
   min-block-size: 100%;
   position: absolute;
@@ -73,10 +73,12 @@ const InfoWrapper = styled.div`
 `
 
 const SpinnerWrapper = styled.div`
+  background-color: ${props => withAlpha(props.theme.colorBackgroundHue, 0.9)};
   display: ${({ showSpinner }) => (showSpinner ? 'block' : 'none')};
-  inset: 20% 0 0;
+  inset: 0;
+  padding-block-start: 20%;
   position: absolute;
-  z-index: 998;
+  z-index: 1000;
 `
 
 const StyledMetadataForm = styled(BookMetadataForm)`
@@ -90,7 +92,7 @@ const StyledMetadataForm = styled(BookMetadataForm)`
 const TopMenu = styled.div`
   align-items: center;
   background-color: ${th('colorBackground')};
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid ${th('colorBorder')};
   display: flex;
   flex: 1 0 var(--top-menu-base);
   flex-flow: nowrap;
@@ -152,8 +154,16 @@ const TopMenu = styled.div`
     }
   }
 
+  button > svg {
+    height: 26px;
+    width: 26px;
+  }
+
   [aria-controls='block-level-options'] {
+    align-items: center;
     background-color: transparent;
+    border-radius: ${th('borderRadius')};
+    color: ${th('colorText')};
     width: 90px;
   }
 
@@ -167,8 +177,19 @@ const TopMenu = styled.div`
   }
 
   #block-level-options {
+    background-color: ${th('colorBackground')};
+    color: ${th('colorText')};
     width: 100px;
     z-index: 1001;
+
+    option.disabled {
+      color: ${th('colorText')};
+    }
+
+    option:hover {
+      background-color: ${props => withAlpha(props.theme.colorPrimary, 0.7)};
+      outline: none;
+    }
   }
 
   #questions-list {
@@ -248,7 +269,7 @@ const CollapseContainer = styled.div`
 
   &[data-collapsed='true'] {
     align-items: start;
-    background-color: white;
+    background-color: ${th('colorBackground')};
     height: unset;
     inset: 0;
 
@@ -271,19 +292,21 @@ const CollapseContainer = styled.div`
 
 const PSButton = styled(Button)`
   align-items: center;
-  background-color: #13110c;
+  background-color: transparent;
   block-size: 32px;
+  border: none;
   display: flex;
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 700;
   gap: 0;
-  padding: 0;
+  padding-inline: 3px;
   width: 34px;
 
   &:hover,
   &:active,
   &:focus-visible {
     /* stylelint-disable-next-line declaration-no-important */
-    background-color: #13110c !important;
+    background-color: ${th('colorBackgroundHue')} !important;
     border: 0;
     color: unset;
     outline: none;
@@ -291,7 +314,7 @@ const PSButton = styled(Button)`
 
   > span {
     &:nth-child(1) {
-      color: white;
+      color: ${th('colorText')};
     }
 
     &:nth-child(2) {
@@ -301,16 +324,14 @@ const PSButton = styled(Button)`
 `
 
 const EditorArea = styled.div`
-  background: #e8e8e8;
-  border-bottom: 1px solid lightgrey;
   flex-grow: 1;
   height: 100%;
-  padding: 4px 0 0;
   position: relative;
   width: ${({ isFullscreen }) => (isFullscreen ? '100%' : '80%')};
 `
 
 const WaxSurfaceScroll = styled.div`
+  background-color: ${th('colorBackgroundHue')};
   box-sizing: border-box;
   display: flex;
   height: 100%;
@@ -334,14 +355,41 @@ const CommentsContainer = styled.div`
 
   > div {
     margin-inline-start: 1em;
+
+    > div {
+      background-color: ${th('colorBackground')};
+
+      > :first-child > button {
+        background-color: ${th('colorWarning')};
+        color: #333;
+        padding: ${grid(1)} ${grid(2)};
+      }
+
+      > :nth-child(3) {
+        background-color: ${th('colorBackground')};
+      }
+    }
+  }
+
+  div {
+    border-radius: ${th('borderRadius')};
   }
 
   textarea {
     border: 1px solid ${th('colorBorder')};
+    border-radius: ${th('borderRadius')};
+    color: ${th('colorText')};
   }
 
   button {
-    border-radius: 3px;
+    border-radius: ${th('borderRadius')};
+    color: ${th('colorBackground')};
+    font-weight: bold;
+
+    &:not([type='submit']) {
+      background-color: ${th('colorSecondary')};
+      color: #333;
+    }
   }
 
   &:empty {
@@ -350,7 +398,8 @@ const CommentsContainer = styled.div`
 `
 
 const NotesAreaContainer = styled.div`
-  background: #fff;
+  background: ${th('colorBackground')};
+  border-top: 1px solid ${th('colorBorder')};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -359,6 +408,7 @@ const NotesAreaContainer = styled.div`
   width: 100%;
   /* PM styles  for note content */
   .ProseMirror {
+    border-radius: ${th('borderRadius')};
     display: inline;
   }
 
@@ -373,15 +423,23 @@ const NotesAreaContainer = styled.div`
 
 const NotesTopBar = styled.div`
   display: flex;
-  padding-block: ${grid(2)};
+  padding-block: ${grid(1)};
 
   button {
+    align-items: center;
     border: none;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: ${grid(3)};
     margin-inline: auto ${grid(2)};
     transition: transform 0.1s ease;
 
-    &[data-collapsed='true'] {
+    &[data-collapsed='false'] {
       transform: rotate(180deg);
+
+      #notes-toggle-btn {
+        display: none;
+      }
     }
   }
 `
@@ -397,6 +455,21 @@ const NotesContainer = styled.div`
   padding-left: ${grid(10)};
   padding-top: 10px;
   width: 100%;
+
+  .ProseMirror {
+    background-color: inherit;
+    border-bottom: 1px solid ${th('colorBorder')};
+    box-shadow: none;
+    color: inherit;
+    outline: none;
+    transition: outline 0.4s linear;
+
+    &:focus-visible {
+      background-color: ${th('colorBackgroundHue')};
+      border-bottom: none;
+      outline: 1px solid ${th('colorBorder')};
+    }
+  }
 `
 
 const CommentsContainerNotes = styled.div``
@@ -467,10 +540,10 @@ const EditorContainer = styled.div`
 
   .ProseMirror {
     --padding-inline: clamp(1.25rem, -0.4022rem + 8.2609vw, 6rem);
-    background: ${({ selectedChapterId }) =>
-      selectedChapterId ? '#fff' : '#e8e8e8'};
+    background-color: ${th('colorBackground')};
+    color: ${th('colorText')};
     font-size: 16px;
-    min-height: calc(100vh - 104px);
+    min-height: calc(100vh - 96px);
     padding: ${grid(20)} var(--padding-inline) ${grid(20)}
       calc(50px + var(--padding-inline));
     width: calc(100% - 20px);
@@ -493,7 +566,9 @@ const EditorContainer = styled.div`
 
     /* stylelint-disable-next-line selector-type-no-unknown */
     footnote {
+      background-color: ${th('colorBackground')};
       border-bottom: 1px solid black;
+      color: ${th('colorText')};
       margin-left: 0.3ch;
       width: 10px;
 
@@ -535,6 +610,15 @@ const EditorContainer = styled.div`
       }
     }
 
+    .comment {
+      border-bottom-color: ${th('colorWarning')};
+    }
+
+    .active-comment {
+      background-color: ${th('colorWarning')};
+      color: #333;
+    }
+
     [aria-controls='numerical-answer-list'] {
       min-inline-size: 235px;
       width: unset;
@@ -549,7 +633,6 @@ const LeftPanelWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding-inline: ${grid(3)};
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
@@ -558,6 +641,10 @@ const LeftPanelWrapper = styled.div`
   &:has([data-collapsed='true']) {
     flex: 0 0 50px;
     width: 50px;
+  }
+
+  > :not([data-collapsed]) {
+    padding-inline: ${grid(3)};
   }
 
   @media (min-width: 600px) {
@@ -882,7 +969,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Wrapper id="wax-container" style={fullScreenStyles}>
         <TopMenu
           data-expanded={!mobileToolbarCollapsed}
@@ -1013,9 +1100,11 @@ const LuluLayout = ({ customProps, ...rest }) => {
                   <NotesTopBar>
                     <Button
                       data-collapsed={notesCollapsed}
-                      icon={<VerticalAlignBottomOutlined />}
+                      icon={<VerticalAlignTopOutlined />}
                       onClick={collapseNotes}
-                    />
+                    >
+                      <span id="notes-toggle-btn">Notes</span>
+                    </Button>
                   </NotesTopBar>
                   <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <NotesContainer id="notes-container">
@@ -1059,7 +1148,7 @@ const LuluLayout = ({ customProps, ...rest }) => {
         open={showPsModal}
         pureScienceConfig={pureScienceConfig}
       />
-    </ThemeProvider>
+    </>
   )
 }
 

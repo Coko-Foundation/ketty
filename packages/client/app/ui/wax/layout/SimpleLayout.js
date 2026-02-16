@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import styled from 'styled-components'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 
 const LayoutWrapper = styled.div`
@@ -10,8 +10,15 @@ const LayoutWrapper = styled.div`
 `
 
 const EditorWrapper = styled.div`
+  background-color: ${th('colorBackgroundHue')};
   border: 2px solid rgb(5 5 5 / 6%);
   padding: ${grid(2)};
+
+  .ProseMirror {
+    background-color: ${th('colorBackground')};
+    color: ${th('colorText')};
+    padding: ${grid(1)} ${grid(3)};
+  }
 `
 
 const ToolbarContainer = styled.div`

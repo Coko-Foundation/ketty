@@ -1,17 +1,18 @@
 /* stylelint-disable declaration-no-important */
 /* stylelint-disable string-quotes */
 /* stylelint-disable value-list-comma-newline-after */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { Avatar } from 'antd'
-import Popup from '@coko/client/dist/ui/common/Popup'
 import { useTranslation } from 'react-i18next'
+import Popup from './Popup'
 import Button from './Button'
+import { SunOutlined, MoonOutlined } from './icons'
 import { LanguageSwitcher } from '../languageSwitcher'
-import { getInitials } from '../../utils'
+import { getInitials, themeInitializer } from '../../utils'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -74,6 +75,7 @@ const UnstyledLink = styled(Link)`
 `
 
 const BrandLogo = styled.img`
+  border-radius: ${th('borderRadius')};
   height: 36px;
 `
 
@@ -85,7 +87,6 @@ const BrandLabel = styled.div`
 const StyledPopup = styled(Popup)`
   border: 1px solid ${th('colorBorder')};
   border-block-start: none;
-  border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
   inline-size: 170px;
@@ -114,6 +115,8 @@ const StyledPopup = styled(Popup)`
 `
 
 const StyledAvatar = styled(Avatar)`
+  background-color: ${th('colorPrimary')};
+  color: ${th('colorTextReverse')};
   font-weight: bold;
 `
 
@@ -133,6 +136,14 @@ const PopupContentWrapper = styled.div`
       outline: none;
     }
   }
+`
+
+const ThemeButton = styled(Button)`
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: ${grid(2)};
+  justify-content: center;
 `
 // #endregion styles
 
@@ -162,6 +173,7 @@ const Header = props => {
   })
 
   const userAvatar = user?.avatar?.url
+  const userAvatarAlt = user?.avatar?.alt
   const userDisplayName = user?.displayName
 
   const navItemsLeft = []
@@ -179,6 +191,34 @@ const Header = props => {
     )
   }
 
+  const [theme, setTheme] = useState(themeInitializer())
+
+  useEffect(() => {
+    const themeUpdateListener = event => {
+      const { key, newValue } = event
+
+      if (key === 'ketty-theme') {
+        setTheme(newValue)
+      }
+    }
+
+    window.addEventListener('storage', themeUpdateListener)
+
+    return () => window.removeEventListener('storage', themeUpdateListener)
+  }, [])
+
+  const changeTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    localStorage.setItem('ketty-theme', newTheme)
+
+    window.dispatchEvent(
+      new CustomEvent('themeUpdate', {
+        detail: { 'ketty-theme': newTheme },
+      }),
+    )
+  }
+
   return (
     <StyledHeader role="banner" {...rest}>
       <BrandingContainer>
@@ -192,14 +232,23 @@ const Header = props => {
       </BrandingContainer>
       <Navigation role="navigation">
         {navItemsLeft.map(el => el)}
-        <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
+        {bookTitle ? (
+          <BookTitle data-pad-left={showBackToBook}>{bookTitle}</BookTitle>
+        ) : (
+          <p />
+        )}
         {user ? (
           <StyledPopup
             alignment="end"
             position="block-end"
             toggle={
               <Button type="text">
-                <StyledAvatar data-test="avatar-initials" src={userAvatar}>
+                <StyledAvatar
+                  alt={userAvatarAlt || 'User avatar'}
+                  data-test="avatar-initials"
+                  shape="square"
+                  src={userAvatar}
+                >
                   {getInitials(userDisplayName)}
                 </StyledAvatar>
               </Button>
@@ -255,6 +304,13 @@ const Header = props => {
                   </UnstyledLink>
                 </>
               )}
+
+              <ThemeButton
+                icon={theme === 'dark' ? <MoonOutlined /> : <SunOutlined />}
+                onClick={changeTheme}
+              >
+                Theme
+              </ThemeButton>
 
               <Button data-test="logout-button" onClick={onLogout}>
                 {t('logout')}

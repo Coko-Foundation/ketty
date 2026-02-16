@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { th } from '@coko/client'
 import { Trans, useTranslation } from 'react-i18next'
 import { Modal, Form, Input } from '../common'
 
@@ -10,7 +11,7 @@ const Strong = styled.strong`
 
 const Info = styled.div`
   pre {
-    background: #eee;
+    background-color: ${th('colorBackgroundHue')};
     display: inline;
     padding-inline: 0.3ch;
   }

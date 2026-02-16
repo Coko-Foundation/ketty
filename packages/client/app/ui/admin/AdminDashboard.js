@@ -15,16 +15,7 @@ import Languages from './Languages'
 import TermsAndConditions from './TermsAndConditions'
 import useBreakpoint from '../../helpers/useBreakpoint'
 import { Center, Box } from '../common'
-
-const AdminWrapper = styled.div`
-  background-color: #e8e8e8;
-  min-height: 100vh;
-  padding-block: 1rem 3rem;
-
-  h1 {
-    text-align: center;
-  }
-`
+import AdminWrapper from './AdminWrapper'
 
 const StyledCenter = styled(Center)`
   --max-width: 100ch;
@@ -64,7 +55,7 @@ const AdminDashboard = props => {
     <AdminWrapper>
       <Box>
         <StyledCenter>
-          <h1>{t('title')}</h1>
+          <h1 style={{ textAlign: 'center' }}>{t('title')}</h1>
           <Tabs
             items={[
               {

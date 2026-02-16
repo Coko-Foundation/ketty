@@ -20,7 +20,7 @@ const config = require('config')
 
 const BCRYPT_COST = config.util.getEnv('NODE_ENV') === 'test' ? 1 : 12
 const Identity = require('@coko/server/src/models/identity/identity.model')
-const User = require('../models/user/user.model')
+const { User, Team } = require('../models').models
 
 const { createFile, deleteFiles } = require('./file.controller')
 
@@ -327,7 +327,7 @@ const updateUserProfile = async data => {
   try {
     logger.info(`[USER CONTROLLER] - updateUserProfile `)
     return useTransaction(async tr => {
-      const { id, givenNames, surname, email, profilePic } = data
+      const { id, givenNames, surname, email, avatar, avatarAlt } = data
 
       const identity = await Identity.findOne(
         {
@@ -350,8 +350,8 @@ const updateUserProfile = async data => {
       const user = await User.findById(id)
       let avatarId = null
 
-      if (profilePic) {
-        const { createReadStream, filename } = await profilePic
+      if (avatar) {
+        const { createReadStream, filename } = await avatar
         // check if exists, if so delete old file
 
         if (user?.avatarId) {
@@ -363,7 +363,7 @@ const updateUserProfile = async data => {
         const uploadedFile = await createFile(
           fileStream,
           filename,
-          null,
+          avatarAlt,
           null,
           [],
           id,
@@ -573,6 +573,14 @@ const cancelInvitation = async userId => {
   }
 }
 
+const makeAdmin = async userId => {
+  try {
+    await Team.addMemberToGlobalTeam(userId, 'admin')
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 function generatePassword() {
   const length = 8
 
@@ -603,4 +611,5 @@ module.exports = {
   setupAccountOnInvitation,
   resendInvitation,
   cancelInvitation,
+  makeAdmin,
 }

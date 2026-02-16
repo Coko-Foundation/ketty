@@ -11,11 +11,10 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons'
 import styled, { keyframes } from 'styled-components'
-import Popup from '@coko/client/dist/ui/common/Popup'
 import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import { Tooltip } from 'antd'
-import { Button } from '../common'
+import { Button, Popup, Tooltip } from '../common'
+import { withAlpha } from '../../utils'
 
 const animation = keyframes`
   0% { opacity: 1; }
@@ -27,6 +26,7 @@ const animation = keyframes`
 
 const StyledHolderOutlined = styled(HolderOutlined)`
   && {
+    border-radius: ${th('borderRadius')};
     cursor: grab;
   }
 `
@@ -36,6 +36,7 @@ const InnerWrapper = styled.div`
 
   align-items: center;
   border-inline-start: 2px solid transparent;
+  border-radius: ${th('borderRadius')};
   box-sizing: border-box;
   color: ${th('colorText')};
   display: flex;
@@ -44,8 +45,8 @@ const InnerWrapper = styled.div`
   transition: border-inline-start-color 0.1s ease, background-color 0.1s ease;
 
   &[data-selected='true'] {
-    background-color: #3f85c655;
-    border-inline-start-color: ${th('colorOutline')};
+    background-color: ${props => withAlpha(props.theme.colorPrimary, 0.33)};
+    border-inline-start-color: ${th('colorPrimary')};
   }
 
   > :first-child {
@@ -111,8 +112,9 @@ const Chapter = styled.div`
       position: relative;
 
       &::after {
-        background-color: #eee;
-        color: #777;
+        background-color: ${th('colorBackgroundHue')};
+        border-radius: ${th('borderRadius')};
+        color: ${th('colorText')};
         content: 'Drop chapters inside part';
         display: grid;
         height: 36px;
@@ -183,15 +185,19 @@ const ChapterTitle = styled.div`
 const MoreActions = styled.button`
   background-color: transparent;
   border: none;
+  border-radius: ${th('borderRadius')};
   cursor: pointer;
   font-size: 16px;
   opacity: 0;
   transition: opacity 0.1s ease;
+
+  svg {
+    fill: ${th('colorText')};
+  }
 `
 
 const StyledPopup = styled(Popup)`
   border: medium;
-  border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
   inset-block-start: ${grid(3)};
@@ -208,7 +214,6 @@ const PopupContentWrapper = styled.div`
   > * {
     background-color: transparent;
     border: none;
-    border-radius: 0;
     padding: 0 12px;
     text-align: start;
 

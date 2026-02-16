@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Radio, Button } from 'antd'
+import { Radio } from 'antd'
 import {
-  BorderOutlined,
   ReadOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons'
-
 import { grid, th } from '@coko/client'
+import { Button, SinglePage } from '../common'
 
 const Wrapper = styled.div`
   display: flex;
@@ -88,11 +87,11 @@ const PreviewDisplayOptions = props => {
         value={options.spread}
       >
         <Radio.Button data-test="preview-doublePage-btn" value="double">
-          <ReadOutlined />
+          <ReadOutlined aria-label="Double page" />
         </Radio.Button>
 
         <Radio.Button data-test="preview-singlePage-btn" value="single">
-          <BorderOutlined />
+          <SinglePage />
         </Radio.Button>
       </Radio.Group>
 

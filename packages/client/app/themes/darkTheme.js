@@ -1,19 +1,19 @@
 module.exports = {
-  colorBackground: 'white',
-  colorBackgroundHue: '#f9f9f9',
-  colorPrimary: '#000000',
+  colorBackground: '#333',
+  colorBackgroundHue: '#555',
+  colorPrimary: '#80af43',
   colorSecondary: 'gainsboro',
-  colorBorder: 'gainsboro',
+  colorBorder: '#999',
   colorShadow: 'rgba(0, 0, 0, 0.1)',
 
-  colorSuccess: '#80af43',
-  colorError: 'red',
+  colorSuccess: '#4B8500',
+  colorError: '#ED0505',
   colorWarning: '#ffc300',
 
-  colorText: '#555',
-  colorTextLight: '#757777',
-  colorTextReverse: 'white',
-  colorOutline: '#3f85c6',
+  colorText: '#eee',
+  colorTextLight: '#aaa',
+  colorTextReverse: '#333',
+  colorOutline: '#80af43',
 
   fontInterface:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
@@ -23,7 +23,7 @@ module.exports = {
 
   gridUnit: '4px',
 
-  borderRadius: '0px',
+  borderRadius: '4px',
   borderWidth: '1px',
   borderStyle: 'solid',
 

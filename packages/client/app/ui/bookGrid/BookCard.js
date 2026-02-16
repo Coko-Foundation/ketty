@@ -1,3 +1,4 @@
+/* stylelint-disable selector-type-no-unknown */
 /* stylelint-disable value-list-comma-newline-after */
 /* stylelint-disable string-quotes */
 import React from 'react'
@@ -11,8 +12,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { useTranslation } from 'react-i18next'
-import Popup from '@coko/client/dist/ui/common/Popup'
-import { LinkWithoutStyles, Button } from '../common'
+import { LinkWithoutStyles, Button, Popup } from '../common'
 import BookCover from './BookCover'
 
 const { Meta } = Card
@@ -23,13 +23,18 @@ const StyledDeleteOutlined = styled(DeleteOutlined)`
 
 const StyledLink = styled(LinkWithoutStyles)`
   overflow: hidden;
-  white-space: nowrap;
 
   &::before {
     content: '';
     inset: 0;
     position: absolute;
   }
+`
+
+const MetaLink = styled(LinkWithoutStyles)`
+  border-radius: ${th('borderRadius')};
+  outline-offset: 2px;
+  white-space: nowrap;
 `
 
 const StyledCard = styled(Card)`
@@ -58,7 +63,7 @@ const StyledCard = styled(Card)`
     }
   }
 
-  &:has(a:focus-visible) {
+  &:has(${StyledLink}:focus-visible) {
     outline: 2px solid ${th('colorOutline')};
   }
 `
@@ -69,7 +74,7 @@ const TitleAndActionsWrapper = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  a:focus-visible {
+  > a:focus-visible {
     /* stylelint-disable-next-line declaration-no-important */
     outline: none !important;
   }
@@ -77,7 +82,6 @@ const TitleAndActionsWrapper = styled.div`
 
 const MoreActions = styled.div`
   button {
-    border-radius: 0;
     z-index: 1;
   }
 `
@@ -114,7 +118,6 @@ const PopupContentWrapper = styled.div`
 
 const StyledPopup = styled(Popup)`
   border: medium;
-  border-radius: 0;
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
     0 9px 28px 8px rgb(0 0 0 / 5%);
   margin-top: 0;
@@ -154,7 +157,7 @@ const BookCard = ({
           <MoreActions>
             <StyledPopup
               alignment="end"
-              focusableContent={['button']}
+              focusableContent={['button', 'a[href]']}
               id={`more-actions-${id}`}
               position="block-end"
               toggle={<Button icon={<MoreOutlined />} type="text" />}
@@ -163,12 +166,9 @@ const BookCard = ({
                 <div>
                   <FileImageOutlined data-disabled={!canDeleteBook(id)} />
                   {canUploadBookThumbnail(id) ? (
-                    <StyledLink
-                      style={{}}
-                      to={`/books/${id}/producer#metadata`}
-                    >
+                    <MetaLink to={`/books/${id}/producer#metadata`}>
                       {t('menu.options.manageMetadata')}
-                    </StyledLink>
+                    </MetaLink>
                   ) : (
                     <DisabledPlaceholder>
                       {t('menu.options.manageMetadata')}
