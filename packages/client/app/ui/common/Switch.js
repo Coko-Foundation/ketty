@@ -30,7 +30,7 @@ const Switch = props => {
         <Label labelPosition={labelPosition}>{label}</Label>
       )}
 
-      <AntSwitch {...rest} />
+      <AntSwitch aria-label={rest.checked ? 'On' : 'Off'} {...rest} />
 
       {label && labelPosition === 'right' && (
         <Label labelPosition={labelPosition}>{label}</Label>

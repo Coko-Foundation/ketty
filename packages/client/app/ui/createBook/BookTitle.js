@@ -1,14 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
-import { grid } from '@coko/client'
-import { Button } from 'antd'
+import { grid, th } from '@coko/client'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
-import { Form, Page } from '../common'
+import { Button, Form, Page } from '../common'
 
 const StyledInput = styled.input`
-  border: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid ${th('colorPrimary')};
+  color: ${th('colorText')};
   font-size: 2em;
+  padding-bottom: ${grid(1)};
+
+  &::placeholder {
+    color: ${th('colorTextLight')};
+  }
 
   :focus-visible {
     /* stylelint-disable-next-line declaration-no-important */

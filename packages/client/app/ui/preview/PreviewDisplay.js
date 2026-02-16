@@ -22,6 +22,10 @@ const AlertWrapper = styled.div`
   display: flex;
   height: 100%;
   justify-content: center;
+
+  .ant-alert {
+    background-color: unset;
+  }
 `
 
 const PreviewWrapper = styled.div`
@@ -51,6 +55,7 @@ const StyledSpin = styled(Spin)`
 `
 
 const Iframe = styled.iframe`
+  background-color: white;
   border: solid 1px gainsboro;
   height: 100%;
   width: 100%;

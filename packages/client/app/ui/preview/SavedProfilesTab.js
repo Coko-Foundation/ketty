@@ -8,7 +8,7 @@ import Footer from './Footer'
 import LuluIntegration from './LuluIntegration'
 import FlaxIntegration from './FlaxIntegration'
 import FlaxTemplateCustomization from './FlaxTemplateCustomization'
-import { Ribbon } from '../common'
+import { Ribbon, Stack } from '../common'
 
 const SavedProfilesTab = props => {
   const {
@@ -61,7 +61,7 @@ const SavedProfilesTab = props => {
 
   return (
     <>
-      <div>
+      <Stack style={{ '--space': '4px' }}>
         <ProfileRow
           canModifyProfiles={canModify}
           hasChanges={hasChanges}
@@ -73,11 +73,11 @@ const SavedProfilesTab = props => {
           updateProfile={updateProfileOptions}
         />
         {profileSelected && canModify && hasChanges && !loadingPreview && (
-          <Ribbon hide={!hasChanges || !canModify}>
+          <Ribbon hide={!hasChanges || !canModify} status="warning">
             {t('profile.information.changes')}
           </Ribbon>
         )}
-      </div>
+      </Stack>
       {profileSelected && (
         <>
           {currentOptions.format === 'web' ? (

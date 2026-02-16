@@ -17,6 +17,14 @@ const StyledCollapse = styled(Collapse)`
   }
 `
 
+const StyledP = styled.p`
+  background-color: ${th('colorWarning')};
+  border-radius: ${th('borderRadius')};
+  color: #333;
+  margin: 0;
+  padding-inline: ${grid(3)};
+`
+
 const UpdateResult = styled.span`
   color: ${props => (props.$success ? th('colorSuccess') : th('colorError'))};
   display: inline-flex;
@@ -175,9 +183,15 @@ const Publishing = props => {
           <Switch
             checked={!luluConfig?.disabled}
             data-test="admindb-lulu-switch"
+            disabled
             loading={paramsLoading}
             onChange={luluToggleConfig}
           />
+
+          <StyledP>
+            This feature is temporarily disabled. We will enable it again in a
+            future update.
+          </StyledP>
           {!luluConfig?.disabled && (
             <StyledCollapse
               ghost

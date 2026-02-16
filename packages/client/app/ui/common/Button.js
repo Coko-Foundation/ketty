@@ -14,6 +14,7 @@ const colors = {
 }
 
 const StyledButton = styled(AntButton)`
+  box-shadow: none;
   font-size: ${th('fontSizeBase')};
   /* let lineHeight expand the button height */
   height: unset;
@@ -35,10 +36,14 @@ const StyledButton = styled(AntButton)`
     if (!Object.keys(colors).includes(status)) {
       if (type === 'primary' && !ghost) {
         return css`
+          background-color: ${th('colorPrimary')};
+          color: ${th('colorTextReverse')} !important;
+          font-weight: bold;
+
           &:hover:not([disabled]),
           &:focus:not([disabled]),
           &:active:not([disabled]) {
-            background-color: ${darken('colorPrimary', 0.25)} !important;
+            background-color: ${darken('colorPrimary', 0.25)};
             color: ${th('colorTextReverse')} !important;
           }
         `
@@ -55,26 +60,21 @@ const StyledButton = styled(AntButton)`
         --color: ${color};
         background-color: var(--color);
         border-color: var(--color);
-        box-shadow: 0 2px 0 var(--color);
-        color: ${theme.colorTextReverse};
+        color: #fff !important;
+        font-weight: bold;
 
         &:hover:not([disabled]),
         &:focus:not([disabled]),
         &:active:not([disabled]) {
           --color: ${darken(color, 0.25)};
           background-color: var(--color) !important;
-          box-shadow: 0 2px 0 var(--color) !important;
+          box-shadow: none !important; //0 2px 0 var(--color) !important;
           border-color: var(--color) !important;
-          color: ${theme.colorTextReverse};
+          color: #fff !important;
         }
 
-        &:hover:not([disabled]),
-        &:focus:not([disabled]) {
-          color: ${th('colorTextReverse')} !important;
-        }
-
-        &:active:not([disabled]) {
-          color: ${th('colorTextReverse')} !important;
+        &[disabled] {
+          color: ${theme.colorTextLight} !important;
         }
       `
 
@@ -95,7 +95,7 @@ const StyledButton = styled(AntButton)`
       }
     `
   }}
-  padding: ${grid(1)};
+  padding: ${grid(1)} ${grid(4)};
 `
 
 /**

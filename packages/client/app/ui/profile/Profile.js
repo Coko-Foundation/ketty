@@ -5,7 +5,7 @@ import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons'
 import { th, grid } from '@coko/client'
 import { useTranslation } from 'react-i18next'
 import { Upload, Image } from 'antd'
-import { Button, Center, Form, Input, Divider } from '../common'
+import { Button, Center, Form, Input, Divider, TextArea } from '../common'
 
 const UpdateResult = styled.span`
   color: ${props => (props.$success ? th('colorSuccess') : th('colorError'))};
@@ -24,6 +24,16 @@ const UploadAction = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${grid(1)};
+`
+
+const AvatarWrapper = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: 20px;
+
+  > :nth-child(2) {
+    flex-grow: 1;
+  }
 `
 
 const Profile = props => {
@@ -58,6 +68,7 @@ const Profile = props => {
         givenNames: currentUser.givenNames,
         surname: currentUser.surname,
         email: currentUser.defaultIdentity.email,
+        avatarAlt: currentUser.avatar?.alt,
       })
     }
   }, [currentUser])
@@ -171,30 +182,34 @@ const Profile = props => {
         >
           <Input placeholder="Email" />
         </Form.Item>
-        <Form.Item
-          label="Profile picture"
-          labelCol={{ span: 24 }}
-          name="avatar"
-          valuePropName="file"
-        >
-          <Upload
-            accept="image/*"
-            beforeUpload={() => false}
-            fileList={profilePicture}
-            listType="picture-circle"
-            maxCount={1}
-            onChange={handleProfilePictureUpload}
-            onPreview={handlePreview}
-            onRemove={() => setProfilePicture([])}
-          >
-            {profilePicture?.length === 0 ? (
-              <UploadAction>
-                <PlusOutlined />
-                <span>Upload image</span>
-              </UploadAction>
-            ) : null}
-          </Upload>
-        </Form.Item>
+        <AvatarWrapper>
+          <Form.Item label="Profile picture" name="avatar" valuePropName="file">
+            <Upload
+              accept="image/*"
+              beforeUpload={() => false}
+              fileList={profilePicture}
+              listType="picture-card"
+              maxCount={1}
+              onChange={handleProfilePictureUpload}
+              onPreview={handlePreview}
+              onRemove={() => setProfilePicture([])}
+            >
+              {profilePicture?.length === 0 ? (
+                <UploadAction>
+                  <PlusOutlined />
+                  <span>Upload image</span>
+                </UploadAction>
+              ) : null}
+            </Upload>
+          </Form.Item>
+
+          <Form.Item label="Profile picture alt text" name="avatarAlt">
+            <TextArea
+              disabled={!profilePicture.length}
+              placeholder="Describe your profile picture"
+            />
+          </Form.Item>
+        </AvatarWrapper>
         {previewImage && (
           <Image
             preview={{

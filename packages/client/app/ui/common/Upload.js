@@ -1,29 +1,28 @@
+/* stylelint-disable declaration-no-important */
 import React, { useState, useEffect } from 'react'
-import { Button, Row, Space, Typography, Upload as AntUpload } from 'antd'
+import { Typography, Upload as AntUpload } from 'antd'
+import { grid } from '@coko/client'
 import { CloseOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Trans } from 'react-i18next'
+import Button from './Button'
 
 const { Text } = Typography
 const { Dragger } = AntUpload
 
 const StyledDragger = styled(Dragger)`
-  .ant-upload-drag {
-    margin: 0;
-    min-height: 300px;
-    padding: 0;
-    position: relative;
+  .ant-upload {
+    display: grid !important;
+    max-inline-size: 500px;
+    padding: ${grid(4)};
+    place-content: center;
   }
 
   .ant-upload-drag-container {
     display: block;
     margin: 0;
     max-height: 100%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
   }
 
   .ant-upload-btn {
@@ -35,24 +34,24 @@ const StyledDragger = styled(Dragger)`
 
 const FileInfoText = styled(Text)`
   text-align: left;
-  width: 85%;
 `
 
-const StyledSpace = styled(Space)`
-  display: flex;
-`
+const FileList = styled.ul`
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0;
 
-// const FilesList = styled.div`
-//   max-height: 200px;
-//   overflow-y: auto;
-//   padding: 0 15px 0 35px;
-// `
+  li {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+  }
+`
 
 const Upload = props => {
   const { multiple, onFilesChange } = props
 
   const [files, setFiles] = useState([])
-  // const { t } = useTranslation()
 
   useEffect(() => {
     onFilesChange(files)
@@ -82,31 +81,27 @@ const Upload = props => {
       customRequest={onFileSelect}
       showUploadList={false}
     >
-      <StyledSpace direction="vertical" size="middle">
-        <Text>
-          <Trans i18nKey="pages.newBook.importPage.dropArea">
-            Drag and drop files, or <Text underline>browse</Text>
-          </Trans>
-        </Text>
+      <Text>
+        <Trans i18nKey="pages.newBook.importPage.dropArea">
+          Drag and drop files, or <Text underline>browse</Text>
+        </Trans>
+      </Text>
+      <FileList>
         {files.length > 0 &&
           files.map(file => (
-            <Row
-              align="middle"
-              justify="space-between"
-              key={file.uid}
-              span={24}
-            >
+            <li key={file.uid}>
               <FileInfoText ellipsis={{ tooltip: file.name }} strong>
                 {file.name}
               </FileInfoText>
               <Button
                 icon={<CloseOutlined />}
                 onClick={evt => onClickRemove(evt, file)}
-                type="link"
+                style={{ padding: '0' }}
+                type="ghost"
               />
-            </Row>
+            </li>
           ))}
-      </StyledSpace>
+      </FileList>
     </StyledDragger>
   )
 }

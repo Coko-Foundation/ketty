@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons'
 import { th } from '@coko/client'
 import { useTranslation, Trans } from 'react-i18next'
+import { isAdmin } from '../../helpers/permissions'
 import UserDetails from './UserDetails'
 import {
   Button,
@@ -20,16 +21,7 @@ import {
   Table,
   Text,
 } from '../common'
-
-const AdminWrapper = styled.div`
-  background-color: #e8e8e8;
-  min-height: 100vh;
-  padding-block: 1rem 3rem;
-
-  h1 {
-    text-align: center;
-  }
-`
+import AdminWrapper from './AdminWrapper'
 
 const StyledCenter = styled(Center)`
   --max-width: 150ch;
@@ -47,6 +39,7 @@ const parseUsers = data => {
     key: d.id,
     displayName: d.displayName,
     email: d.defaultIdentity.email,
+    isAdmin: isAdmin(d),
     ...d,
   }))
 }
@@ -65,6 +58,7 @@ const UserManager = props => {
     onPageChange,
     onSearch,
     onDeactivate,
+    onMakeAdmin,
     currentUser,
     onInviteUser,
     onResendInvitation,
@@ -97,7 +91,7 @@ const UserManager = props => {
               onClick={() =>
                 !resendInvitation.disabled && handleResendInvitation(user.id)
               }
-              status="success"
+              // status="success"
               type="primary"
             >
               {resendInvitation.text}
@@ -111,16 +105,23 @@ const UserManager = props => {
             </Button>
           </ButtonGroup>
         ) : (
-          <Button
-            disabled={user.id === currentUser.id}
-            onClick={
-              user.id !== currentUser.id ? () => handleDeactivate(user) : null
-            }
-            status="danger"
-            type="primary"
-          >
-            {t('table.actions.deactivate')}
-          </Button>
+          <ButtonGroup>
+            <Button
+              disabled={user.id === currentUser.id}
+              onClick={
+                user.id !== currentUser.id ? () => handleDeactivate(user) : null
+              }
+              status="danger"
+              type="primary"
+            >
+              {t('table.actions.deactivate')}
+            </Button>
+            {user.id !== currentUser.id && !user.isAdmin && (
+              <Button onClick={() => handleMakeAdmin(user)} type="primary">
+                Make admin
+              </Button>
+            )}
+          </ButtonGroup>
         )
       },
     },
@@ -163,6 +164,41 @@ const UserManager = props => {
             type="primary"
           >
             {t('modals.deactivate.confirm')}
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
+  const handleMakeAdmin = user => {
+    const adminModal = modal.confirm()
+    adminModal.update({
+      title: <ModalHeader> {t('modals.makeAdmin.title')}</ModalHeader>,
+      content: (
+        <p>
+          <Trans
+            components={[<Text strong />]}
+            i18nKey="pages.manageUsers.modals.makeAdmin.body"
+            values={{ userName: user.displayName }}
+          />
+        </p>
+      ),
+      footer: [
+        <ModalFooter key="footer">
+          <Button key="cancel" onClick={() => adminModal.destroy()}>
+            {t('modals.makeAdmin.cancel')}
+          </Button>
+          <Button
+            autoFocus
+            key="deactivate"
+            onClick={() =>
+              onMakeAdmin(user.id).then(() => {
+                adminModal.destroy()
+              })
+            }
+            type="primary"
+          >
+            {t('modals.makeAdmin.confirm')}
           </Button>
         </ModalFooter>,
       ],
@@ -219,7 +255,7 @@ const UserManager = props => {
                 })
                 .catch(err => console.error(err))
             }
-            status="success"
+            // status="success"
             type="primary"
           >
             Invite
@@ -275,11 +311,7 @@ const UserManager = props => {
           <Table
             columns={columns}
             customActions={
-              <Button
-                onClick={handleAddNewUser}
-                status="success"
-                type="primary"
-              >
+              <Button onClick={handleAddNewUser} type="primary">
                 Add new user
               </Button>
             }
@@ -287,6 +319,7 @@ const UserManager = props => {
             expandable={details}
             onSearch={onSearch}
             pagination={pagination}
+            searchLabel="Search users"
             searchPlaceholder={t('table.search')}
             showSearch
             // loading={loading}
@@ -306,6 +339,7 @@ UserManager.propTypes = {
   onPageChange: PropTypes.func,
   onSearch: PropTypes.func,
   onDeactivate: PropTypes.func,
+  onMakeAdmin: PropTypes.func,
   onInviteUser: PropTypes.func,
   currentUser: PropTypes.shape(),
   onResendInvitation: PropTypes.func,
@@ -320,6 +354,7 @@ UserManager.defaultProps = {
   onPageChange: null,
   onSearch: null,
   onDeactivate: null,
+  onMakeAdmin: null,
   onInviteUser: null,
   currentUser: null,
   onResendInvitation: null,

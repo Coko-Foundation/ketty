@@ -11,7 +11,8 @@ const ProfilePage = () => {
   const [updatePasswordMutation] = useMutation(UPDATE_USER_PASSWORD)
 
   const handleProfileUpdate = values => {
-    const { givenNames, surname, displayName, email, avatar } = values
+    const { givenNames, surname, displayName, email, avatar, avatarAlt } =
+      values
 
     const variables = {
       input: {
@@ -20,7 +21,8 @@ const ProfilePage = () => {
         surname,
         displayName,
         email,
-        profilePic: avatar?.originFileObj,
+        avatar: avatar?.originFileObj,
+        avatarAlt,
       },
     }
 

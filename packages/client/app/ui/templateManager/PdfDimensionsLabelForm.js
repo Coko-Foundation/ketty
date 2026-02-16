@@ -82,7 +82,11 @@ const PdfDimensionsLabelForm = props => {
         </Form.Item>
       ))}
       <div>
-        <Button htmlType="submit" loading={labelUpdateResult?.loading}>
+        <Button
+          htmlType="submit"
+          loading={labelUpdateResult?.loading}
+          type="primary"
+        >
           {t('pdfDimensions.actions.save')}
         </Button>
         <UpdateResult $success={labelUpdateResult?.success} role="status">

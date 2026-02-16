@@ -1,11 +1,12 @@
+/* stylelint-disable declaration-no-important */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { debounce as lodashDebounceFunc } from 'lodash'
 import { th } from '@coko/client'
-
 import { Select as AntSelect } from 'antd'
+import { withAlpha } from '../../utils'
 
 const StyledSelect = styled(AntSelect)`
   width: 100%;
@@ -20,8 +21,13 @@ const StyledDropdown = styled.div`
       `}
   }
 
-  .ant-select-item-option-selected .ant-select-item-option-content {
-    color: ${th('colorTextReverse')};
+  .ant-select-item-option-selected {
+    background-color: ${props =>
+      withAlpha(props.theme.colorPrimary, 0.7)} !important;
+
+    .ant-select-item-option-content {
+      color: ${th('colorText')};
+    }
   }
 
   .ant-select-item-option-disabled .ant-select-item-option-content {

@@ -121,6 +121,16 @@ const isAuthenticatedRule = rule()(async (parent, args, ctx, info) => {
   }
 })
 
+const isAdminRule = rule()(async (parent, args, ctx) => {
+  try {
+    const { userId } = ctx
+    if (!userId) return false
+    return isAdmin(userId)
+  } catch (e) {
+    throw new Error(e.message)
+  }
+})
+
 const createBookRule = rule()(async (parent, args, ctx, info) => {
   try {
     const { userId } = ctx
@@ -807,8 +817,9 @@ const permissions = {
     team: teamRule,
     teams: teamsRule,
     getInvitations: isAuthenticatedRule,
-    getTemplates: isAdmin,
+    getTemplates: isAdminRule,
     getUserFileManager: isAuthenticatedRule,
+    filterUsers: isAdminRule,
   },
   Mutation: {
     '*': deny,
@@ -817,10 +828,10 @@ const permissions = {
     createBook: createBookRule,
     createExportProfile: createExportProfileRule,
     createOAuthIdentity: isAuthenticatedRule,
-    addTemplate: isAdmin,
-    refreshTemplate: isAdmin,
-    disableTempalte: isAdmin,
-    enableTempalte: isAdmin,
+    addTemplate: isAdminRule,
+    refreshTemplate: isAdminRule,
+    disableTempalte: isAdminRule,
+    enableTempalte: isAdminRule,
     deleteBook: modifyBooksInDashboardRule,
     deleteExportProfile: interactWithExportProfileRule,
     exportBook: exportBookRule,

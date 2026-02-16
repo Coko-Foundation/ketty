@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { EditOutlined } from '@ant-design/icons'
-import { grid } from '@coko/client'
+import { grid, th, darken } from '@coko/client'
 import { Link } from 'react-router-dom'
 // import { Space } from 'antd'
 import { useTranslation } from 'react-i18next'
@@ -37,20 +37,23 @@ const SectionHeader = styled.div`
 
 const StyledLink = styled(Link)`
   align-items: center;
-  background-color: black;
-  border-radius: 3px;
-  color: white;
+  background-color: ${th('colorPrimary')};
+  border-radius: ${th('borderRadius')};
+  color: ${th('colorTextReverse')};
   display: flex;
   font-size: 16px;
+  font-weight: 700;
   gap: 8px;
   height: 40px;
   padding: ${grid(2)} ${grid(4)};
   text-decoration: none;
   transition: background-color 0.2s ease;
 
-  &:hover {
-    background-color: #222;
-    color: white;
+  &:hover,
+  &:active,
+  &:focus-within {
+    background-color: ${darken('colorPrimary', 0.25)};
+    color: ${th('colorTextReverse')};
   }
 `
 

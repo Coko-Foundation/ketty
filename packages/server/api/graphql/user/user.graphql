@@ -17,7 +17,8 @@ input UserProfileInput {
   givenNames: String!
   surname: String!
   email: String!
-  profilePic: Upload
+  avatar: Upload
+  avatarAlt: String
 }
 
 input InvitationAccountSetupInput {
@@ -46,4 +47,5 @@ extend type Mutation {
   setupAccountOnInvitation(input: InvitationAccountSetupInput): LoginResult!
   resendInvitation(userId: ID!): Boolean
   cancelInvitation(userId: ID!): Boolean
+  makeAdmin(userId: ID!): Boolean
 }

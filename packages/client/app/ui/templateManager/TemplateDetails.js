@@ -86,16 +86,16 @@ const TemplateDetails = props => {
       </TemplateInner>
       <TemplateActions>
         {enabled ? (
-          <Button onClick={disable} status="danger">
+          <Button onClick={disable} status="danger" type="primary">
             {t('actions.disable', { keyPrefix: 'pages.templateManager' })}
           </Button>
         ) : (
-          <Button onClick={enable} status="success">
+          <Button onClick={enable} status="success" type="primary">
             {t('actions.enable', { keyPrefix: 'pages.templateManager' })}
           </Button>
         )}
         {canBeDeleted ? (
-          <Button onClick={deleteTemplate} status="danger">
+          <Button onClick={deleteTemplate} status="danger" type="primary">
             {t('actions.delete', { keyPrefix: 'pages.templateManager' })}
           </Button>
         ) : (

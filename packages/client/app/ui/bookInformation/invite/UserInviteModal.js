@@ -22,8 +22,8 @@ import {
 import { isAdmin, isOwner } from '../../../helpers/permissions'
 
 const ScrollWrapper = styled.div`
+  background-color: ${th('colorBackground')};
   border: 1px solid ${th('colorBorder')};
-  border-radius: ${th('colorBorder')};
   max-height: 400px;
   overflow: auto;
   padding: ${grid(1)} ${grid(2)};

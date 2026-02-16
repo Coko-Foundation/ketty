@@ -300,8 +300,8 @@ const ProducerPage = () => {
 
     if (hash) {
       if (hash === 'metadata') {
-        setViewMetadata(true)
-        setSelectedChapterId(null)
+        setViewMetadata('metadata')
+        // setSelectedChapterId(null)
       } else {
         setSelectedChapterId(hash)
       }

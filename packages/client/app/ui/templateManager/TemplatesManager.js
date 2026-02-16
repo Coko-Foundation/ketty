@@ -11,12 +11,7 @@ import TemplateManagerHeader from './TemplateManagerHeader'
 import TemplateDetails from './TemplateDetails'
 import PdfDimensionsLabelForm from './PdfDimensionsLabelForm'
 import Modals from './Modals'
-
-const AdminWrapper = styled.div`
-  background-color: #e8e8e8;
-  min-height: 100vh;
-  padding-block: 1rem 3rem;
-`
+import AdminWrapper from '../admin/AdminWrapper'
 
 const Wrapper = styled.section`
   background-color: ${th('colorBackground')};
