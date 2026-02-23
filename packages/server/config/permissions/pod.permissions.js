@@ -819,6 +819,7 @@ const permissions = {
     getInvitations: isAuthenticatedRule,
     getTemplates: isAdminRule,
     getUserFileManager: isAuthenticatedRule,
+    getObjectFileManager: getBookRule,
     filterUsers: isAdminRule,
   },
   Mutation: {
