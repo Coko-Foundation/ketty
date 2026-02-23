@@ -256,6 +256,13 @@ const TopMenu = styled.div`
   &.scrollable #collapse {
     display: flex;
   }
+
+  .sr-only {
+    display: inline-block;
+    height: 0;
+    overflow: hidden;
+    width: 0;
+  }
 `
 
 const CollapseContainer = styled.div`
@@ -835,16 +842,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     return () => window.removeEventListener('keydown', backToEditor)
   }, [viewMetadata])
 
-  // useEffect(() => {
-  //   if (editorLoading) {
-  //     document.getElementById('toolbar').classList.remove('scrollable')
-  //   } else {
-  //     setTimeout(() => {
-  //       checkOverflow()
-  //     }, 1)
-  //   }
-  // }, [editorLoading])
-
   useEffect(() => {
     // make comments visible when adding a new comment and they are hidden
     if (previousComments?.length < savedComments?.length) {
@@ -852,10 +849,33 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }, [savedComments])
 
+  useEffect(() => {
+    function waitForElement(selector, callback) {
+      const interval = setInterval(() => {
+        const element = document.querySelector(selector)
+
+        if (element) {
+          clearInterval(interval)
+          callback(element)
+        }
+      }, 500)
+    }
+
+    const selector = '#toolbar label[for="file-upload"]'
+    waitForElement(selector, el => {
+      if (!document.querySelector(`${selector} span.sr-only`)) {
+        const span = document.createElement('span')
+        span.textContent = 'Upload an image'
+        span.classList = 'sr-only'
+
+        el.appendChild(span)
+      }
+    })
+  }, [selectedChapterId])
+
   const toggleMetadata = which => {
     if (viewMetadata !== which) {
       setViewMetadata(which)
-
       // if (selectedChapterId) {
       //   onChapterClick(selectedChapterId)
       //   setLastSelectedChapter(selectedChapterId)
@@ -865,7 +885,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
       //   setLastSelectedChapter(selectedChapterId)
       //   onChapterClick(lastSelectedChapter)
       // }
-
       setViewMetadata('')
     }
 
