@@ -207,6 +207,21 @@ const Header = props => {
     return () => window.removeEventListener('storage', themeUpdateListener)
   }, [])
 
+  useEffect(() => {
+    const focusUpdateOnNavLinkClick = () => {
+      document.querySelector('#main-content').focus()
+    }
+
+    document.querySelectorAll('#user-menu a[href]').forEach(link => {
+      link.addEventListener('click', focusUpdateOnNavLinkClick)
+    })
+
+    return () =>
+      document.querySelectorAll('#user-menu a[href]').forEach(link => {
+        link.removeEventListener('click', focusUpdateOnNavLinkClick)
+      })
+  }, [])
+
   const changeTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark'
     setTheme(newTheme)
@@ -240,6 +255,7 @@ const Header = props => {
         {user ? (
           <StyledPopup
             alignment="end"
+            id="user-menu"
             position="block-end"
             toggle={
               <Button type="text">
@@ -256,48 +272,22 @@ const Header = props => {
           >
             <PopupContentWrapper>
               <LanguageSwitcher languages={languages} />
-              <UnstyledLink
-                onClick={() => {
-                  document.querySelector('#main-content').focus()
-                }}
-                to={homeURL}
-              >
-                {t('dashboard')}
-              </UnstyledLink>
-              <UnstyledLink
-                onClick={() => {
-                  document.querySelector('#main-content').focus()
-                }}
-                to={profileURL}
-              >
-                {t('profile')}
-              </UnstyledLink>
+              <UnstyledLink to={homeURL}>{t('dashboard')}</UnstyledLink>
+              <UnstyledLink to={profileURL}>{t('profile')}</UnstyledLink>
               {canAccessAdminPage && (
                 <>
                   <UnstyledLink
                     data-test="header-users-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
                     to={usersManagerUrl}
                   >
                     {t('users')}
                   </UnstyledLink>
 
-                  <UnstyledLink
-                    data-test="header-admin-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
-                    to={adminURL}
-                  >
+                  <UnstyledLink data-test="header-admin-link" to={adminURL}>
                     {t('admin')}
                   </UnstyledLink>
                   <UnstyledLink
                     data-test="header-template-link"
-                    onClick={() => {
-                      document.querySelector('#main-content').focus()
-                    }}
                     to={templatesURL}
                   >
                     {t('templates')}
