@@ -107,7 +107,7 @@ const AdminDashboard = props => {
               },
               {
                 key: 'tc',
-                label: 'Signup settings', // t('termsAndConditions.heading'),
+                label: 'General settings', // t('termsAndConditions.heading'),
                 children: (
                   <TermsAndConditions
                     allowSignups={allowSignups}
