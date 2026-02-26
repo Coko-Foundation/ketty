@@ -12,10 +12,10 @@ import AiIntegration from './AiIntegration'
 import Publishing from './Publishing'
 import PureScienceConfig from './PureScienceConfig'
 import Languages from './Languages'
-import TermsAndConditions from './TermsAndConditions'
 import useBreakpoint from '../../helpers/useBreakpoint'
 import { Center, Box } from '../common'
 import AdminWrapper from './AdminWrapper'
+import GeneralSettings from './GeneralSettings'
 
 const StyledCenter = styled(Center)`
   --max-width: 100ch;
@@ -109,7 +109,7 @@ const AdminDashboard = props => {
                 key: 'tc',
                 label: 'General settings', // t('termsAndConditions.heading'),
                 children: (
-                  <TermsAndConditions
+                  <GeneralSettings
                     allowSignups={allowSignups}
                     onSignupToggleChange={onSignupToggleChange}
                     onTCUpdate={onTCUpdate}

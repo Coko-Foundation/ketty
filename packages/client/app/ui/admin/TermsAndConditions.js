@@ -5,11 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { Wax } from 'wax-prosemirror-core'
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
-import { Button, Divider } from '../common'
+import { Button } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
-import AllowSignups from './AllowSignups'
-import A11StatementEditor from './A11yStatementEditor'
 
 const TCWrapper = styled.div`
   align-items: flex-start;
@@ -42,13 +40,7 @@ const UpdateResult = styled.span`
 `
 
 const TermsAndConditions = props => {
-  const {
-    termsAndConditions,
-    onTCUpdate,
-    onSignupToggleChange,
-    allowSignups,
-    paramsLoading,
-  } = props
+  const { termsAndConditions, onTCUpdate } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
 
@@ -80,12 +72,6 @@ const TermsAndConditions = props => {
 
   return (
     <>
-      <AllowSignups
-        allowSignups={allowSignups}
-        onSignupToggleChange={onSignupToggleChange}
-        paramsLoading={paramsLoading}
-      />
-      <Divider />
       <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
       <p>{t('termsAndConditions.explanation')}</p>
       <TCWrapper>
@@ -120,8 +106,6 @@ const TermsAndConditions = props => {
           </UpdateResult>
         </div>
       </TCWrapper>
-      <Divider />
-      <A11StatementEditor />
     </>
   )
 }
@@ -129,16 +113,11 @@ const TermsAndConditions = props => {
 TermsAndConditions.propTypes = {
   termsAndConditions: PropTypes.string,
   onTCUpdate: PropTypes.func,
-  onSignupToggleChange: PropTypes.func,
-  allowSignups: PropTypes.bool,
-  paramsLoading: PropTypes.bool,
 }
+
 TermsAndConditions.defaultProps = {
   termsAndConditions: '',
   onTCUpdate: null,
-  onSignupToggleChange: null,
-  allowSignups: false,
-  paramsLoading: false,
 }
 
 export default TermsAndConditions
