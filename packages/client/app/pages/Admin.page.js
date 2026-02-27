@@ -224,15 +224,21 @@ const AdminPage = () => {
   }
 
   const handleA11yStatementUpdate = newContent => {
-    const variables = {
-      input: {
-        context: 'bookBuilder',
-        area: 'a11yStatement',
-        config: JSON.stringify(newContent),
-      },
+    if (newContent) {
+      const variables = {
+        input: {
+          context: 'bookBuilder',
+          area: 'a11yStatement',
+          config: JSON.stringify(newContent),
+        },
+      }
+
+      return updateApplicationParametersMutation({ variables })
     }
 
-    return updateApplicationParametersMutation({ variables })
+    return new Promise((_resolve, reject) => {
+      reject()
+    })
   }
 
   const handleSignupToggleChange = val => {
