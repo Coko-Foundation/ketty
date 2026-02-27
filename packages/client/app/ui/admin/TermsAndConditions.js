@@ -42,7 +42,9 @@ const UpdateResult = styled.span`
 const TermsAndConditions = props => {
   const { termsAndConditions, onTCUpdate } = props
 
-  const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
+  const { t } = useTranslation(null, {
+    keyPrefix: 'pages.admin.termsAndConditions',
+  })
 
   const waxRef = useRef()
   const [tcUpdateResult, setTCUpdateResult] = useState()
@@ -53,7 +55,7 @@ const TermsAndConditions = props => {
       .then(() => {
         setTCUpdateResult({
           success: true,
-          message: t('termsAndConditions.update.success'),
+          message: t('update.success'),
         })
         setTimeout(() => {
           setTCUpdateResult(null)
@@ -62,7 +64,7 @@ const TermsAndConditions = props => {
       .catch(() => {
         setTCUpdateResult({
           success: false,
-          message: t('termsAndConditions.update.error'),
+          message: t('update.error'),
         })
         setTimeout(() => {
           setTCUpdateResult(null)
@@ -72,8 +74,8 @@ const TermsAndConditions = props => {
 
   return (
     <>
-      <TCHeader>{t('termsAndConditions.heading')}</TCHeader>
-      <p>{t('termsAndConditions.explanation')}</p>
+      <TCHeader>{t('heading')}</TCHeader>
+      <p>{t('explanation')}</p>
       <TCWrapper>
         <Wax
           autoFocus={false}
@@ -89,7 +91,7 @@ const TermsAndConditions = props => {
             data-test="admindb-updateTC-btn"
             onClick={udpateTermsAndConditions}
           >
-            {t('termsAndConditions.update')}
+            {t('update')}
           </Button>
           <UpdateResult $success={tcUpdateResult?.success} role="status">
             {tcUpdateResult?.message && (

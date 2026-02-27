@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { useTranslation, Trans } from 'react-i18next'
 import { Link, Switch } from '../common'
 import StyledControlWrapper from './StyledControlWrapper'
 
@@ -17,18 +18,20 @@ const SignupToggleIndicator = styled.p`
 
 const AllowSignups = props => {
   const { allowSignups, paramsLoading, onSignupToggleChange } = props
+  const { t } = useTranslation(null, { keyPrefix: 'pages.admin.userSignup' })
 
   return (
     <>
-      <Heading>User signup</Heading>
+      <Heading>{t('heading')}</Heading>
       <p>
-        By toggling the button below you can allow or disallow new users to sign
-        up freely in your instance from the signup page. As an admin you can
-        always invite users in the{' '}
-        <Link to="/users-manager">Manage Users page</Link>.
+        <Trans
+          components={[<Link to="/users-manager" />]}
+          i18nKey="pages.admin.userSignup.explanation"
+          values={{ userName: 'Manage Users page' }}
+        />
       </p>
       <StyledControlWrapper>
-        <span>Open user signup to the instance</span>
+        <span>{t('setting')}</span>
         <Switch
           checked={allowSignups}
           data-test="admindb-signup-switch"
@@ -36,7 +39,7 @@ const AllowSignups = props => {
           onChange={onSignupToggleChange}
         />
         <SignupToggleIndicator>
-          Signups are {allowSignups ? 'open' : 'closed'}
+          {allowSignups ? t('state.on') : t('state.off')}
         </SignupToggleIndicator>
       </StyledControlWrapper>
     </>

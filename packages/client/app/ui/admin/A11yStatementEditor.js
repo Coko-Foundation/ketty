@@ -42,7 +42,7 @@ const UpdateResult = styled.span`
 const A11yStatementEditor = props => {
   const { a11yStatement, onA11yStatementUpdate } = props
 
-  const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
+  const { t } = useTranslation(null, { keyPrefix: 'pages.admin.a11yStatement' })
 
   const waxRef = useRef()
   const [a11yUpdateResult, setA11YUpdateResult] = useState()
@@ -53,7 +53,7 @@ const A11yStatementEditor = props => {
       .then(() => {
         setA11YUpdateResult({
           success: true,
-          message: t('termsAndConditions.update.success'),
+          message: t('update.success'),
         })
         setTimeout(() => {
           setA11YUpdateResult(null)
@@ -62,7 +62,7 @@ const A11yStatementEditor = props => {
       .catch(() => {
         setA11YUpdateResult({
           success: false,
-          message: t('termsAndConditions.update.error'),
+          message: t('update.error'),
         })
         setTimeout(() => {
           setA11YUpdateResult(null)
@@ -72,8 +72,8 @@ const A11yStatementEditor = props => {
 
   return (
     <>
-      <Heading>Accessibility statement</Heading>
-      <p>You can edit the accessibility statement in the editor below</p>
+      <Heading>{t('heading')}</Heading>
+      <p>{t('explanation')}</p>
       <Wrapper>
         <Wax
           autoFocus={false}
@@ -85,9 +85,7 @@ const A11yStatementEditor = props => {
           value={a11yStatement}
         />
         <div>
-          <Button onClick={udpateA11yStatement}>
-            {t('termsAndConditions.update')}
-          </Button>
+          <Button onClick={udpateA11yStatement}>{t('update')}</Button>
           <UpdateResult $success={a11yUpdateResult?.success} role="status">
             {a11yUpdateResult?.message && (
               <>
