@@ -45,6 +45,8 @@ const AdminDashboard = props => {
     psConfig,
     allowSignups,
     onSignupToggleChange,
+    a11yStatement,
+    onA11yStatementUpdate,
   } = props
 
   const { t } = useTranslation(null, { keyPrefix: 'pages.admin' })
@@ -107,10 +109,12 @@ const AdminDashboard = props => {
               },
               {
                 key: 'tc',
-                label: 'General settings', // t('termsAndConditions.heading'),
+                label: 'General settings',
                 children: (
                   <GeneralSettings
+                    a11yStatement={a11yStatement}
                     allowSignups={allowSignups}
+                    onA11yStatementUpdate={onA11yStatementUpdate}
                     onSignupToggleChange={onSignupToggleChange}
                     onTCUpdate={onTCUpdate}
                     paramsLoading={paramsLoading}
@@ -154,6 +158,8 @@ AdminDashboard.propTypes = {
   }),
   allowSignups: PropTypes.bool,
   onSignupToggleChange: PropTypes.func,
+  a11yStatement: PropTypes.string,
+  onA11yStatementUpdate: PropTypes.func,
 }
 
 AdminDashboard.defaultProps = {
@@ -175,6 +181,8 @@ AdminDashboard.defaultProps = {
   psConfig: null,
   allowSignups: false,
   onSignupToggleChange: false,
+  a11yStatement: '',
+  onA11yStatementUpdate: null,
 }
 
 export default AdminDashboard
