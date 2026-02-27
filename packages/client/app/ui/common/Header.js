@@ -295,6 +295,7 @@ const Header = props => {
                 </>
               )}
 
+              <UnstyledLink to="/accessibility">Accessibility</UnstyledLink>
               <ThemeButton
                 icon={theme === 'dark' ? <MoonOutlined /> : <SunOutlined />}
                 onClick={changeTheme}
