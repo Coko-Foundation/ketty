@@ -24,7 +24,7 @@ const StyledHeader = styled.header`
   justify-content: flex-start;
   padding: ${grid(1)};
   width: 100%;
-  z-index: 1000;
+  z-index: 1001;
 `
 
 const Navigation = styled.nav`
