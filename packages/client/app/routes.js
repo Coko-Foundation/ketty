@@ -39,6 +39,7 @@ import {
   Profile,
   Users,
   InvitationAccountSetup,
+  A11yStatement,
 } from './pages'
 
 import { GET_BOOK, APPLICATION_PARAMETERS, CURRENT_USER } from './graphql'
@@ -303,6 +304,11 @@ const routes = (
                       component={InvitationAccountSetup}
                       exact
                       path="/invitation/:token"
+                    />
+                    <Route
+                      component={A11yStatement}
+                      exact
+                      path="/accessibility"
                     />
                   </Switch>
                 </YjsProvider>

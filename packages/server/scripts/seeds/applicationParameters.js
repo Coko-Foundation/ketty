@@ -84,6 +84,7 @@ const seedApplicationParameters = async () => {
               case 'exportsConfig':
               case 'chatGptApiKey':
               case 'integrations':
+              case 'a11yStatement':
                 if (!existingParam) {
                   logger.info(
                     `Creating new Application Parameter: ${JSON.stringify(

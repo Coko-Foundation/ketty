@@ -9,7 +9,13 @@ import { Button } from '../common'
 import { SimpleLayout } from '../wax/layout'
 import simpleConfig from '../wax/config/simpleConfig'
 
-const TCWrapper = styled.div`
+const Heading = styled.h2`
+  &::first-letter {
+    text-transform: capitalize;
+  }
+`
+
+const Wrapper = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -27,99 +33,85 @@ const TCWrapper = styled.div`
   }
 `
 
-const TCHeader = styled.h2`
-  &::first-letter {
-    text-transform: capitalize;
-  }
-`
-
 const UpdateResult = styled.span`
   color: ${props => (props.$success ? th('colorSuccess') : th('colorError'))};
   display: inline-flex;
   gap: ${grid(1)};
 `
 
-const TermsAndConditions = props => {
-  const { termsAndConditions, onTCUpdate } = props
+const A11yStatementEditor = props => {
+  const { a11yStatement, onA11yStatementUpdate } = props
 
-  const { t } = useTranslation(null, {
-    keyPrefix: 'pages.admin.termsAndConditions',
-  })
+  const { t } = useTranslation(null, { keyPrefix: 'pages.admin.a11yStatement' })
 
   const waxRef = useRef()
-  const [tcUpdateResult, setTCUpdateResult] = useState()
+  const [a11yUpdateResult, setA11YUpdateResult] = useState()
 
-  const udpateTermsAndConditions = () => {
-    setTCUpdateResult({ loading: true })
-    onTCUpdate(waxRef.current.getContent())
+  const udpateA11yStatement = () => {
+    setA11YUpdateResult({ loading: true })
+    onA11yStatementUpdate(waxRef.current.getContent())
       .then(() => {
-        setTCUpdateResult({
+        setA11YUpdateResult({
           success: true,
           message: t('update.success'),
         })
         setTimeout(() => {
-          setTCUpdateResult(null)
+          setA11YUpdateResult(null)
         }, 5000)
       })
       .catch(() => {
-        setTCUpdateResult({
+        setA11YUpdateResult({
           success: false,
           message: t('update.error'),
         })
         setTimeout(() => {
-          setTCUpdateResult(null)
+          setA11YUpdateResult(null)
         }, 5000)
       })
   }
 
   return (
     <>
-      <TCHeader>{t('heading')}</TCHeader>
+      <Heading>{t('heading')}</Heading>
       <p>{t('explanation')}</p>
-      <TCWrapper>
+      <Wrapper>
         <Wax
           autoFocus={false}
           config={simpleConfig}
-          id="termsAndConditionsEditor"
-          key={termsAndConditions}
+          id="a11yStatementEditor"
+          key={a11yStatement}
           layout={SimpleLayout}
           ref={waxRef}
-          value={termsAndConditions}
+          value={a11yStatement}
         />
         <div>
-          <Button
-            data-test="admindb-updateTC-btn"
-            onClick={udpateTermsAndConditions}
-          >
-            {t('update')}
-          </Button>
-          <UpdateResult $success={tcUpdateResult?.success} role="status">
-            {tcUpdateResult?.message && (
+          <Button onClick={udpateA11yStatement}>{t('update')}</Button>
+          <UpdateResult $success={a11yUpdateResult?.success} role="status">
+            {a11yUpdateResult?.message && (
               <>
-                {tcUpdateResult?.success ? (
+                {a11yUpdateResult?.success ? (
                   <CheckOutlined />
                 ) : (
                   <CloseOutlined />
                 )}
 
-                {tcUpdateResult?.message}
+                {a11yUpdateResult?.message}
               </>
             )}
           </UpdateResult>
         </div>
-      </TCWrapper>
+      </Wrapper>
     </>
   )
 }
 
-TermsAndConditions.propTypes = {
-  termsAndConditions: PropTypes.string,
-  onTCUpdate: PropTypes.func,
+A11yStatementEditor.propTypes = {
+  a11yStatement: PropTypes.string,
+  onA11yStatementUpdate: PropTypes.func,
+}
+A11yStatementEditor.defaultProps = {
+  a11yStatement: '',
+  onA11yStatementUpdate: null,
 }
 
-TermsAndConditions.defaultProps = {
-  termsAndConditions: '',
-  onTCUpdate: null,
-}
-
-export default TermsAndConditions
+export default A11yStatementEditor

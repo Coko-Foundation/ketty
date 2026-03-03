@@ -64,12 +64,11 @@ const Main = styled.div`
 `
 
 const InfoWrapper = styled.div`
-  /* background: white; */
   background-color: ${th('colorBackgroundHue')};
   inset-inline: 0;
   min-block-size: 100%;
   position: absolute;
-  z-index: 999;
+  z-index: 1000;
 `
 
 const SpinnerWrapper = styled.div`
@@ -643,7 +642,7 @@ const LeftPanelWrapper = styled.div`
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
-  z-index: 999; // hate it but it's the wax cursor's fault!
+  z-index: 1001; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
     flex: 0 0 50px;

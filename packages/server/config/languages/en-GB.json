@@ -255,6 +255,49 @@
             "value": "Terms and conditions updated successfully"
           }
         }
+      },
+      "a11yStatement": {
+        "heading": {
+          "type": "heading",
+          "value": "Accessibility Statement"
+        },
+        "explanation": {
+          "type": "detail",
+          "value": "You can edit the accessibility statement in the editor below."
+        },
+        "update": {
+          "type": "button",
+          "value": "Update accessibility statement",
+          "error": {
+            "type": "error",
+            "value": "Accessibility statement update failed"
+          },
+          "success": {
+            "type": "message",
+            "value": "Accessibility statement updated successfully"
+          }
+        }
+      },
+      "userSignup": {
+        "heading": {
+          "type": "heading",
+          "value": "User signup"
+        },
+        "explanation": {
+          "value": "By toggling the button below you can allow or disallow new users to sign up freely in your instance from the signup page. As an admin you can always invite users in the <0>Manage Users page</0>."
+        },
+        "setting": {
+          "type": "switch(label)",
+          "value": "Allow user signup for the instance"
+        },
+        "state": {
+          "on": {
+            "value": "Signups are open"
+          },
+          "off": {
+            "value": "Signups are closed"
+          }
+        }
       }
     },
     "aiBookDesigner": {

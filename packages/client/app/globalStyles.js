@@ -25,6 +25,7 @@ export default createGlobalStyle`
       }
 
       &:focus-visible:not(#ai-overlay input) {
+        border-radius: ${th('borderRadius')};
         outline: 2px solid ${th('colorOutline')};
       }
     }
@@ -51,5 +52,9 @@ export default createGlobalStyle`
     button {
       box-shadow: none;
     }
+  }
+
+  a {
+    color: ${th('colorPrimary')};
   }
 `
