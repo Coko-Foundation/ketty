@@ -1,0 +1,22 @@
+on:
+  push:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install
+          cd ./packages/client
+          yarn install
+          cd ../server
+          yarn install
+
+      - name: Lint
+        run: yarn coko-lint run
