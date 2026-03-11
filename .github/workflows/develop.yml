@@ -1,7 +1,8 @@
 on:
-  branch:
-    - develop
-    - github-pipeline
+  push:
+    branches:
+      - develop
+      - github-pipeline
 
 jobs:
   lint:
