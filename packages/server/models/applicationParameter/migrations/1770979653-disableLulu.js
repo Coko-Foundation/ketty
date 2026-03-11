@@ -6,14 +6,18 @@ exports.up = async knex => {
       .select('config')
       .where('area', 'integrations')
 
-    const configObject = JSON.parse(config[0].config)
-    configObject.lulu.disabled = true
+    if (config.length) {
+      const configObject = JSON.parse(config[0].config)
 
-    await knex('application_parameter')
-      .update({
-        config: JSON.stringify(configObject),
-      })
-      .where('area', 'integrations')
+      if (configObject.lulu) {
+        configObject.lulu.disabled = true
+        await knex('application_parameter')
+          .update({
+            config: JSON.stringify(configObject),
+          })
+          .where('area', 'integrations')
+      }
+    }
   } catch (error) {
     logger.error('ApplicationParamer: disabling lulu config failed!')
     throw new Error(error)
