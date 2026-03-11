@@ -1,0 +1,9 @@
+on:
+  branch:
+    - develop
+    - github-pipeline
+
+jobs:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yml
