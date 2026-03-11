@@ -74,7 +74,8 @@ jobs:
       RELEASE_VERSION: ${{ needs.release.outputs.release_version }}
     steps:
       - name: Ensure release version exists
-        run: [ -n "${RELEASE_VERSION}" ]
+        run: |
+          [ -n "${RELEASE_VERSION}" ]
 
       - name: Checkout release commit
         uses: actions/checkout@v4
@@ -109,7 +110,8 @@ jobs:
       RELEASE_VERSION: ${{ needs.release.outputs.release_version }}
     steps:
       - name: Ensure release version exists
-        run: [ -n "${RELEASE_VERSION}" ]
+        run: |
+          [ -n "${RELEASE_VERSION}" ]
 
       - name: Checkout release commit
         uses: actions/checkout@v4
