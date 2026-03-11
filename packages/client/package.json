@@ -1,6 +1,6 @@
 {
   "name": "ketty-client",
-  "version": "2026.03.11-0",
+  "version": "2026.03.11-1",
   "license": "MIT",
   "packageManager": "yarn@4.9.2",
   "author": "Yannis Barlas, Alexandros Georgantas",
