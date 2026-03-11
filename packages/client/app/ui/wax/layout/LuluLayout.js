@@ -64,12 +64,11 @@ const Main = styled.div`
 `
 
 const InfoWrapper = styled.div`
-  /* background: white; */
   background-color: ${th('colorBackgroundHue')};
   inset-inline: 0;
   min-block-size: 100%;
   position: absolute;
-  z-index: 999;
+  z-index: 1000;
 `
 
 const SpinnerWrapper = styled.div`
@@ -255,6 +254,13 @@ const TopMenu = styled.div`
 
   &.scrollable #collapse {
     display: flex;
+  }
+
+  .sr-only {
+    display: inline-block;
+    height: 0;
+    overflow: hidden;
+    width: 0;
   }
 `
 
@@ -636,7 +642,7 @@ const LeftPanelWrapper = styled.div`
   position: absolute;
   transition: flex-basis 0.4s, width 0.4s;
   width: 320px;
-  z-index: 999; // hate it but it's the wax cursor's fault!
+  z-index: 1001; // hate it but it's the wax cursor's fault!
 
   &:has([data-collapsed='true']) {
     flex: 0 0 50px;
@@ -835,16 +841,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
     return () => window.removeEventListener('keydown', backToEditor)
   }, [viewMetadata])
 
-  // useEffect(() => {
-  //   if (editorLoading) {
-  //     document.getElementById('toolbar').classList.remove('scrollable')
-  //   } else {
-  //     setTimeout(() => {
-  //       checkOverflow()
-  //     }, 1)
-  //   }
-  // }, [editorLoading])
-
   useEffect(() => {
     // make comments visible when adding a new comment and they are hidden
     if (previousComments?.length < savedComments?.length) {
@@ -852,10 +848,33 @@ const LuluLayout = ({ customProps, ...rest }) => {
     }
   }, [savedComments])
 
+  useEffect(() => {
+    function waitForElement(selector, callback) {
+      const interval = setInterval(() => {
+        const element = document.querySelector(selector)
+
+        if (element) {
+          clearInterval(interval)
+          callback(element)
+        }
+      }, 500)
+    }
+
+    const selector = '#toolbar label[for="file-upload"]'
+    waitForElement(selector, el => {
+      if (!document.querySelector(`${selector} span.sr-only`)) {
+        const span = document.createElement('span')
+        span.textContent = 'Upload an image'
+        span.classList = 'sr-only'
+
+        el.appendChild(span)
+      }
+    })
+  }, [selectedChapterId])
+
   const toggleMetadata = which => {
     if (viewMetadata !== which) {
       setViewMetadata(which)
-
       // if (selectedChapterId) {
       //   onChapterClick(selectedChapterId)
       //   setLastSelectedChapter(selectedChapterId)
@@ -865,7 +884,6 @@ const LuluLayout = ({ customProps, ...rest }) => {
       //   setLastSelectedChapter(selectedChapterId)
       //   onChapterClick(lastSelectedChapter)
       // }
-
       setViewMetadata('')
     }
 

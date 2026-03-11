@@ -2,8 +2,9 @@ const cheerio = require('cheerio')
 const crypto = require('crypto')
 const find = require('lodash/find')
 const fs = require('fs-extra')
+const path = require('path')
 
-const { uuid, createFile } = require('@coko/server')
+const { uuid, createFile, tempFolderPath } = require('@coko/server')
 
 const { getBookComponent } = require('../controllers/bookComponent.controller')
 
@@ -159,7 +160,7 @@ const recreateImageFromBlob = async (imageSrc, bookId) => {
       .randomBytes(6)
       .toString('hex')}.${imageExtension}`
 
-    const tempFilepath = `uploads/temp/${filename}`
+    const tempFilepath = path.join(tempFolderPath, `${filename}`)
 
     fs.writeFileSync(tempFilepath, cleanedBase64Data, 'base64')
 

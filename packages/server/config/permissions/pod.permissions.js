@@ -798,6 +798,24 @@ const canUpdateProfile = rule()((_, { id }, ctx) => {
   return id === ctx
 })
 
+const getObjectFileManagerRule = rule()(async (_, { objectId }, ctx) => {
+  const { userId } = ctx
+  if (!userId) return false
+  /* eslint-disable global-require */
+  const Book = require('../../models/book/book.model')
+  const book = await Book.findOne({ id: objectId })
+
+  if (!book) {
+    return new Error(`book with id: ${objectId} does not exist`)
+  }
+
+  if (book.deleted) {
+    return new Error(`book with id: ${objectId} has been deleted`)
+  }
+
+  return canInteractWithBookAndRelevantAssets(userId, objectId)
+})
+
 const permissions = {
   Query: {
     '*': deny,
@@ -819,6 +837,7 @@ const permissions = {
     getInvitations: isAuthenticatedRule,
     getTemplates: isAdminRule,
     getUserFileManager: isAuthenticatedRule,
+    getObjectFileManager: getObjectFileManagerRule,
     filterUsers: isAdminRule,
   },
   Mutation: {

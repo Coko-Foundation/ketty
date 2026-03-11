@@ -140,6 +140,7 @@ module.exports = {
   heartbeatInterval: process.env.WS_HEARTBEAT_INTERVAL || 5000,
   integrations,
   termsAndConditions: '',
+  a11yStatement: '',
   exportsConfig: {
     pdfDownload: {
       enabled: true,

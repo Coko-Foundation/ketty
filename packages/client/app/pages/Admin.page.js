@@ -14,6 +14,7 @@ const AdminPage = () => {
   const { currentUser } = useCurrentUser()
   const history = useHistory()
   const [tcContent, setTCContent] = useState()
+  const [a11yStatement, setA11yStatement] = useState()
 
   const { data: { getApplicationParameters } = {}, loading: paramsLoading } =
     useQuery(APPLICATION_PARAMETERS, {
@@ -25,6 +26,14 @@ const AdminPage = () => {
           )?.config
 
           setTCContent(termsAndConditions)
+        }
+
+        if (a11yStatement === undefined) {
+          const statement = data.getApplicationParameters?.find(
+            p => p.area === 'a11yStatement',
+          )?.config
+
+          setA11yStatement(statement)
         }
       },
     })
@@ -214,6 +223,24 @@ const AdminPage = () => {
     return updateApplicationParametersMutation({ variables })
   }
 
+  const handleA11yStatementUpdate = newContent => {
+    if (newContent) {
+      const variables = {
+        input: {
+          context: 'bookBuilder',
+          area: 'a11yStatement',
+          config: JSON.stringify(newContent),
+        },
+      }
+
+      return updateApplicationParametersMutation({ variables })
+    }
+
+    return new Promise((_resolve, reject) => {
+      reject()
+    })
+  }
+
   const handleSignupToggleChange = val => {
     const variables = {
       input: {
@@ -255,6 +282,7 @@ const AdminPage = () => {
 
   return (
     <AdminDashboard
+      a11yStatement={a11yStatement}
       aiEnabled={aiEnabled}
       aiToggleIntegration={toggleAIFeatures}
       allowSignups={allowSignups}
@@ -265,6 +293,7 @@ const AdminPage = () => {
       luluConfig={luluConfig}
       luluToggleConfig={toggleLuluConfig}
       luluUpdateConfig={updateLuluConfig}
+      onA11yStatementUpdate={handleA11yStatementUpdate}
       onChatGPTKeyUpdate={handleUpdateChatGPTApiKey}
       onLanguagesUpdate={handleLanguagesUpdate}
       onSignupToggleChange={handleSignupToggleChange}
