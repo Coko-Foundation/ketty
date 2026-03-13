@@ -699,17 +699,20 @@ const teamRule = rule()(async (parent, { id: teamId }, ctx, info) => {
 //   }
 // })
 
-const teamsRule = rule()(async (parent, { global, objectId }, ctx) => {
-  try {
-    const { userId } = ctx
-    if (!userId) return false
+const teamsRule = rule()(
+  async (_, { filter: { global, objectId } = {} }, ctx) => {
+    try {
+      const { userId } = ctx
+      if (!userId) return false
 
-    if (global) return isAdmin(userId)
-    return canInteractWithBookAndRelevantAssets(userId, objectId)
-  } catch (e) {
-    throw new Error(e.message)
-  }
-})
+      if (global) return isAdmin(userId)
+
+      return canInteractWithBookAndRelevantAssets(userId, objectId)
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  },
+)
 
 const uploadBookThumbnailRule = rule()(
   async (parent, { bookId }, ctx, info) => {
