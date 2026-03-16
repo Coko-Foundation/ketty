@@ -57,9 +57,45 @@ const UserInviteModal = ({ bookId, allowSignups }) => {
   const bookTeamsAndInvites = bookTeams.concat(bookInvites)
 
   const [searchForUsers] = useMutation(SEARCH_USERS)
-  const [addTeamMembers] = useMutation(ADD_TEAM_MEMBERS)
-  const [updateTeamMemberStatus] = useMutation(UPDATE_TEAM_MEMBER_STATUS)
-  const [removeTeamMember] = useMutation(REMOVE_TEAM_MEMBER)
+
+  const [addTeamMembers] = useMutation(ADD_TEAM_MEMBERS, {
+    refetchQueries: [
+      {
+        query: GET_BOOK_TEAMS,
+        variables: {
+          filter: {
+            objectId: bookId,
+          },
+        },
+      },
+    ],
+  })
+
+  const [updateTeamMemberStatus] = useMutation(UPDATE_TEAM_MEMBER_STATUS, {
+    refetchQueries: [
+      {
+        query: GET_BOOK_TEAMS,
+        variables: {
+          filter: {
+            objectId: bookId,
+          },
+        },
+      },
+    ],
+  })
+
+  const [removeTeamMember] = useMutation(REMOVE_TEAM_MEMBER, {
+    refetchQueries: [
+      {
+        query: GET_BOOK_TEAMS,
+        variables: {
+          filter: {
+            objectId: bookId,
+          },
+        },
+      },
+    ],
+  })
 
   const [sendInvitations] = useMutation(SEND_INVITATIONS, {
     refetchQueries: [{ query: GET_INVITATIONS, variables: { bookId } }],
