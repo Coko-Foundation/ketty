@@ -4,6 +4,14 @@ import { createGlobalStyle } from 'styled-components'
 import { th } from '@coko/client'
 
 export default createGlobalStyle`
+  .rc-mentions-dropdown-menu-item-active {
+    background-color: ${th('colorBackgroundHue')};
+  }
+  
+  .rc-mentions-dropdown * {
+    background-color: ${th('colorBackground')};
+  }
+  
   #root {
     * ::selection {
       background-color: ${th('colorPrimary')} !important;
